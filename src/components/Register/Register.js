@@ -45,7 +45,13 @@ class Register extends Component {
               </div>
             </form>
             <footer>
-              <p>kati</p>
+              <div className="social-profile-paragraph">
+                <p>or continue with these social profiles</p>
+              </div>
+              <div id="social-profiles"></div>
+              <div className="social-profile-paragraph">
+                <p>Already a member? Login</p>
+              </div>
             </footer>
           </div>
         </div>
