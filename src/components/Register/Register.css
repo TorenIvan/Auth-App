@@ -135,6 +135,15 @@ footer {
   color: #828282;
 }
 
-/* #social-profiles {
-   
-} */
+#social-profiles {
+   /* width: 80%; */
+   /* flex: 1.8; */
+   list-style-type: none;
+   background-color: aqua;
+   display: flex;
+   flex-direction: row;
+}
+
+.social-item {
+  
+}

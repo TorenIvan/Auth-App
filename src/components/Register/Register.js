@@ -1,8 +1,9 @@
-import { Component } from "react";
+import { PureComponent } from "react";
+import { NavLink } from "react-router-dom";
 import "./Register.css";
 import "font-awesome/css/font-awesome.min.css";
 
-class Register extends Component {
+class Register extends PureComponent {
   render() {
     return (
       <div className="screen-container">
@@ -29,7 +30,7 @@ class Register extends Component {
                   type="email"
                   placeholder="&#xf0e0; Email"
                   pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$"
-                  required=""
+                  required
                 />
               </div>
               <div className="auth-item">
@@ -48,9 +49,14 @@ class Register extends Component {
               <div className="social-profile-paragraph">
                 <p>or continue with these social profiles</p>
               </div>
-              <div id="social-profiles"></div>
+              <ul id="social-profiles">
+                <li className="social-item"></li>
+                <li className="social-item"></li>
+                <li className="social-item"></li>
+                <li className="social-item"></li>
+              </ul>
               <div className="social-profile-paragraph">
-                <p>Already a member? Login</p>
+                <p>Already a member? <a><NavLink to="/login">Login</NavLink></a></p>
               </div>
             </footer>
           </div>
