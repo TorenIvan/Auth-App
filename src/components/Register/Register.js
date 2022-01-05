@@ -1,7 +1,8 @@
 import { PureComponent } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import "./Register.css";
 import "font-awesome/css/font-awesome.min.css";
+import {Facebook_icon, Twitter_icon, Github_icon, Google_icon} from "../../assets/index";
 
 class Register extends PureComponent {
   render() {
@@ -50,12 +51,12 @@ class Register extends PureComponent {
                 <p>or continue with these social profiles</p>
               </div>
               <ul id="social-profiles">
-                <li className="social-item"></li>
-                <li className="social-item"></li>
-                <li className="social-item"></li>
-                <li className="social-item"></li>
+                <li className="social-item"><Google_icon/></li>
+                <li className="social-item"><Facebook_icon/></li>
+                <li className="social-item"><Github_icon/></li>
+                <li className="social-item"><Twitter_icon/></li>
               </ul>
-              <div className="social-profile-paragraph">
+              <div className="social-login">
                 <p>Already a member? <a><NavLink to="/login">Login</NavLink></a></p>
               </div>
             </footer>
