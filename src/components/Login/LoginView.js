@@ -1,10 +1,9 @@
 import { NavLink } from "react-router-dom";
 import "./Login.css";
 import "font-awesome/css/font-awesome.min.css";
-import {Facebook_icon, Twitter_icon, Github_icon, Google_icon} from "../../assets/index";
+import { Facebook_icon, Twitter_icon, Github_icon, Google_icon } from "../../assets/index";
 
-
-export default loginView = (
+const LoginView = () => (
   <div className="screen-container">
     <div id="main-container">
       <div className="main-wrapper">
@@ -61,9 +60,7 @@ export default loginView = (
           <div className="social-login">
             <p>
               Dont have an account yet?{" "}
-              <a>
-                <NavLink to="/register">Register</NavLink>
-              </a>
+              <NavLink to="/register">Register</NavLink>
             </p>
           </div>
         </footer>
@@ -71,3 +68,5 @@ export default loginView = (
     </div>
   </div>
 );
+
+export default LoginView;
