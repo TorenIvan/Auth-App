@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
-import "./Register.css";
+import "../authStyles.css";
 import "font-awesome/css/font-awesome.min.css";
-import { Facebook_icon, Twitter_icon, Github_icon, Google_icon } from "../../assets/index";
+import { Facebook_icon, Twitter_icon, Github_icon, Google_icon } from "../../../assets/index";
 
 const RegisterView = () => (
   <div className="screen-container">
