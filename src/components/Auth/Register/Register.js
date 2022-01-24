@@ -1,9 +1,9 @@
 import { PureComponent } from "react";
-import RegisterView from "./RegisterView";
+import AuthForm from "../AuthForm";
 
 class Register extends PureComponent {
   render() {
-    return <RegisterView/>
+    return <AuthForm type={"Register"}/>
   }
 }
 
