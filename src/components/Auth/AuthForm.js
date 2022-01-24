@@ -8,7 +8,7 @@ import {
   Google_icon,
 } from "../../assets/index";
 
-const AuthForm = (props) => {
+const AuthForm = props => {
   const { type } = props;
   return (
     <div className="screen-container">
