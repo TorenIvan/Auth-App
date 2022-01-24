@@ -14,7 +14,7 @@ const AuthForm = props => {
     <div className="screen-container">
       <div id="main-container">
         <div className="main-wrapper">
-          {type === "Register" ? (
+          {type == "Register" ? (
             <header>
               <h2>
                 Join thousands of learners from
@@ -81,7 +81,7 @@ const AuthForm = props => {
                 <Twitter_icon />
               </li>
             </ul>
-            {type === "Register" ? (
+            {type == "Register" ? (
               <div className="social-login">
                 <p>
                   Already a member? <NavLink to="/login">Login</NavLink>
