@@ -1,9 +1,9 @@
 import { PureComponent } from "react";
-import LoginView from "./LoginView";
+import AuthForm from "../AuthForm";
 
 class Login extends PureComponent {
   render() {
-    return <LoginView/>
+    return <AuthForm/>
   }
 }
 
