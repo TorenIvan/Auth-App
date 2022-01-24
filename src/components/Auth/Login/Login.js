@@ -3,7 +3,7 @@ import AuthForm from "../AuthForm";
 
 class Login extends PureComponent {
   render() {
-    return <AuthForm/>
+    return <AuthForm type={"Login"}/>
   }
 }
 
