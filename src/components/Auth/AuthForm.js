@@ -1,3 +1,4 @@
+import { useState, memo } from "react";
 import { NavLink } from "react-router-dom";
 import "./authStyles.css";
 import "font-awesome/css/font-awesome.min.css";
@@ -10,6 +11,19 @@ import {
 
 const AuthForm = props => {
   const { type } = props;
+  const [formValue, setFormValue] = useState({email: "", password: ""});
+
+  const handleChange = event => {
+    const {type, value} = event.target;
+    setFormValue(prevState => ({...prevState, [type]: value}));
+  }
+
+  const handleSubmit = event => {
+    event.preventDefault();
+    console.log(JSON.stringify(formValue));
+  }
+  
+  const {email, password} = formValue;
   return (
     <div className="screen-container">
       <div id="main-container">
@@ -37,7 +51,7 @@ const AuthForm = props => {
               </h4>
             </header>
           )}
-          <form className="auth-container">
+          <form className="auth-container" onSubmit={handleSubmit}>
             <div className="auth-item">
               <input
                 id="email"
@@ -45,6 +59,8 @@ const AuthForm = props => {
                 placeholder="&#xf0e0; Email"
                 pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$"
                 required
+                onChange={handleChange}
+                value={email}
               />
             </div>
             <div className="auth-item">
@@ -52,7 +68,10 @@ const AuthForm = props => {
                 id="password"
                 type="password"
                 placeholder="&#xf06e; Password"
+                autoComplete="new-password"
                 required
+                onChange={handleChange}
+                value={password}
               />
             </div>
             <div id="submitBox">
@@ -98,4 +117,4 @@ const AuthForm = props => {
   );
 };
 
-export default AuthForm;
+export default memo(AuthForm);
