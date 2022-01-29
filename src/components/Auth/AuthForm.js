@@ -10,7 +10,7 @@ import {
 } from "../../assets/index";
 
 const AuthForm = props => {
-  const { type } = props;
+  const { type, onSubmit } = props;
   const [formValue, setFormValue] = useState({email: "", password: ""});
 
   const handleChange = event => {
@@ -20,7 +20,8 @@ const AuthForm = props => {
 
   const handleSubmit = event => {
     event.preventDefault();
-    console.log(JSON.stringify(formValue));
+    //validate common (Login/Register) things
+    onSubmit(JSON.stringify(formValue));
   }
   
   const {email, password} = formValue;
