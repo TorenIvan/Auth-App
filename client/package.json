@@ -11,7 +11,7 @@
   "scripts": {
     "start": "npx react-scripts start",
     "build": "npx react-scripts build",
-    "test":  "npx react-scripts test --env=jsdom",
+    "test": "npx react-scripts test --env=jsdom",
     "eject": "npx react-scripts eject"
   },
   "browserslist": {
@@ -27,6 +27,7 @@
     ]
   },
   "devDependencies": {
-    "eslint-config-react-app": "^7.0.0"
+    "eslint-config-react-app": "^7.0.0",
+    "jest": "^27.5.1"
   }
 }
