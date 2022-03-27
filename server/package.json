@@ -8,7 +8,8 @@
     "fastify-mongodb": "^4.1.1",
     "fastify-passport": "^0.5.0",
     "fastify-plugin": "^3.0.1",
-    "mongoose": "^6.2.8"
+    "mongoose": "^6.2.8",
+    "passport-google-oauth20": "^2.0.0"
   },
   "scripts": {
     "start": "node server.js",
