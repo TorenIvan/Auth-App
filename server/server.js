@@ -1,22 +1,29 @@
-// Require the framework and instantiate it
-import Fastify from 'fastify'
+import Fastify from "fastify";
+import dotenv from "dotenv";
+import mongodb from "fastify-mongodb";
+
 const fastify = Fastify({
-  logger: true
+  logger: true,
 });
 
-// Declare a route
-fastify.get('/', async (request, reply) => {
-  return { hello: 'world' }
-})
+dotenv.config();
 
-// Run the server!
+fastify.register(mongodb, {
+  forceClose: true,
+  url: process.env.CONNECT_DB,
+});
+
+fastify.get("/", async (request, reply) => {
+  return { hello: "world" };
+});
+
 const start = async () => {
   try {
     await fastify.listen(3030);
   } catch (err) {
-    fastify.log.error(err)
-    process.exit(1)
+    fastify.log.error(err);
+    process.exit(1);
   }
-}
+};
 
 start();
