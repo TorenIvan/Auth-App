@@ -1,3 +1,4 @@
+import { memo } from "react";
 import "../authStyles.css";
 
 const Header = ({title}) => {
@@ -13,4 +14,4 @@ const Header = ({title}) => {
   );
 };
 
-export default Header;
+export default memo(Header);

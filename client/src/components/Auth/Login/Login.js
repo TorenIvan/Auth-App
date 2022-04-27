@@ -18,7 +18,7 @@ class Login extends PureComponent {
   render() {
     return (
       <AuthForm 
-        onSubmit={this.handleLoginSubmit} 
+        onFormSubmit={this.handleLoginSubmit} 
         title={this.title} 
         navigateParagraph={this.navigateParagraph}
         submitButton={this.submitButtonString}

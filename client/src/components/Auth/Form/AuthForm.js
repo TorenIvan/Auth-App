@@ -1,9 +1,9 @@
-import { useState, memo } from "react";
+import { useState } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import "../authStyles.css";
 
-const AuthForm = ({ onSubmit, title, navigateParagraph, submitButton }) => {
+const AuthForm = ({ onFormSubmit, title, navigateParagraph, submitButton }) => {
   const [formValue, setFormValue] = useState({email: "", password: ""});
 
   const handleChange = event => {
@@ -14,7 +14,7 @@ const AuthForm = ({ onSubmit, title, navigateParagraph, submitButton }) => {
   const handleSubmit = event => {
     event.preventDefault();
     //validate common (Login/Register) things
-    onSubmit(JSON.stringify(formValue));
+    onFormSubmit(JSON.stringify(formValue));
   }
   
   const { email, password } = formValue;
@@ -57,4 +57,4 @@ const AuthForm = ({ onSubmit, title, navigateParagraph, submitButton }) => {
   );
 };
 
-export default memo(AuthForm);
+export default AuthForm;

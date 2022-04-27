@@ -4,10 +4,12 @@ import {
     Github_icon,
     Google_icon,
   } from "../../../assets/index";
+import { memo } from "react";
 import "font-awesome/css/font-awesome.min.css";
 import "../authStyles.css";
 
 const Footer = ({navigateParagraph}) => {
+  console.log("Mpika");
   return (
     <footer>
       <div className="social-profile-paragraph">
@@ -34,4 +36,4 @@ const Footer = ({navigateParagraph}) => {
   );
 };
 
-export default Footer;
+export default memo(Footer);
