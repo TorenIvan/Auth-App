@@ -1,9 +1,9 @@
 import "../authStyles.css";
 
-const LoginHeader = () => {
+const Header = ({title}) => {
   return (
     <header>
-      <h2>Sign In</h2>
+      {title}
       <h4>
         Master web development by making real-life&nbsp; 
         projects. There are multiple paths for you to&nbsp; 
@@ -13,4 +13,4 @@ const LoginHeader = () => {
   );
 };
 
-export default LoginHeader;
+export default Header;

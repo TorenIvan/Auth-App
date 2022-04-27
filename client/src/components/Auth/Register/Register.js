@@ -1,13 +1,13 @@
 import { PureComponent } from "react";
-import AuthForm from "../AuthForm";
-import RegisterHeader from "./RegisterHeader";
-import RegisterFooter from "./RegisterFooter";
+import AuthForm from "../Form/AuthForm";
+import RegisterTitle from "./RegisterTitle";
+import RegisterNavigate from "./RegisterNavigate";
 
 class Register extends PureComponent {
   constructor(props){
     super(props);
-    this.header = RegisterHeader();
-    this.footer = RegisterFooter();
+    this.title = RegisterTitle();
+    this.navigateParagraph = RegisterNavigate();
   }
   
   handleRegisterSubmit = reqObject => {
@@ -15,7 +15,7 @@ class Register extends PureComponent {
   }
 
   render() {
-    return <AuthForm onSubmit={this.handleRegisterSubmit} header={this.header} footer={this.footer}/>
+    return <AuthForm onSubmit={this.handleRegisterSubmit} title={this.title} navigateParagraph={this.navigateParagraph}/>
   }
 }
 

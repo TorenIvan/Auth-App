@@ -1,13 +1,13 @@
 import { PureComponent } from "react";
-import AuthForm from "../AuthForm";
-import LoginHeader from "./LoginHeader";
-import LoginFooter from "./LoginFooter";
+import AuthForm from "../Form/AuthForm";
+import LoginTitle from "./LoginTitle";
+import LoginNavigate from "./LoginNavigate";
 
 class Login extends PureComponent {
   constructor(props){
     super(props);
-    this.header = LoginHeader();
-    this.footer = LoginFooter();
+    this.title = LoginTitle();
+    this.navigateParagraph = LoginNavigate();
   }
 
   handleLoginSubmit = reqObject => {
@@ -15,7 +15,7 @@ class Login extends PureComponent {
   }
 
   render() {
-    return <AuthForm onSubmit={this.handleLoginSubmit} header={this.header} footer={this.footer}/>
+    return <AuthForm onSubmit={this.handleLoginSubmit} title={this.title} navigateParagraph={this.navigateParagraph}/>
   }
 }
 
