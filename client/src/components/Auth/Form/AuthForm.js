@@ -3,7 +3,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import "../authStyles.css";
 
-const AuthForm = ({ onSubmit, title, navigateParagraph }) => {
+const AuthForm = ({ onSubmit, title, navigateParagraph, submitButton }) => {
   const [formValue, setFormValue] = useState({email: "", password: ""});
 
   const handleChange = event => {
@@ -47,7 +47,7 @@ const AuthForm = ({ onSubmit, title, navigateParagraph }) => {
               />
             </div>
             <div id="submitBox">
-              <input type="submit" value="Register Now!"></input>
+              <input type="submit" value={submitButton}></input>
             </div>
           </form>
           <Footer navigateParagraph={navigateParagraph}/>

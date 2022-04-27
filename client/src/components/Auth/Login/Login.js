@@ -6,6 +6,7 @@ import LoginNavigate from "./LoginNavigate";
 class Login extends PureComponent {
   constructor(props){
     super(props);
+    this.submitButtonString = "Sign In";
     this.title = LoginTitle();
     this.navigateParagraph = LoginNavigate();
   }
@@ -15,7 +16,14 @@ class Login extends PureComponent {
   }
 
   render() {
-    return <AuthForm onSubmit={this.handleLoginSubmit} title={this.title} navigateParagraph={this.navigateParagraph}/>
+    return (
+      <AuthForm 
+        onSubmit={this.handleLoginSubmit} 
+        title={this.title} 
+        navigateParagraph={this.navigateParagraph}
+        submitButton={this.submitButtonString}
+      />
+    );
   }
 }
 
