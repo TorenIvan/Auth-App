@@ -1,12 +1,13 @@
 import { useState, memo } from "react";
-import "./authStyles.css";
+import Header from "./Header";
+import Footer from "./Footer";
+import "../authStyles.css";
 
-const AuthForm = props => {
-  const { onSubmit, header, footer } = props;
+const AuthForm = ({ onSubmit, title, navigateParagraph }) => {
   const [formValue, setFormValue] = useState({email: "", password: ""});
 
   const handleChange = event => {
-    const {type, value} = event.target;
+    const { type, value } = event.target;
     setFormValue(prevState => ({...prevState, [type]: value}));
   }
 
@@ -16,12 +17,12 @@ const AuthForm = props => {
     onSubmit(JSON.stringify(formValue));
   }
   
-  const {email, password} = formValue;
+  const { email, password } = formValue;
   return (
     <div className="screen-container">
       <div id="main-container">
         <div className="main-wrapper">
-          {header}
+          <Header title={title}/>
           <form className="auth-container" onSubmit={handleSubmit}>
             <div className="auth-item">
               <input
@@ -49,7 +50,7 @@ const AuthForm = props => {
               <input type="submit" value="Register Now!"></input>
             </div>
           </form>
-          {footer}
+          <Footer navigateParagraph={navigateParagraph}/>
         </div>
       </div>
     </div>

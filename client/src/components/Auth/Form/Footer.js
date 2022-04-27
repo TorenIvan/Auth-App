@@ -1,4 +1,3 @@
-import { NavLink } from "react-router-dom";
 import {
     Facebook_icon,
     Twitter_icon,
@@ -8,7 +7,7 @@ import {
 import "font-awesome/css/font-awesome.min.css";
 import "../authStyles.css";
 
-const LoginFooter = () => {
+const Footer = ({navigateParagraph}) => {
   return (
     <footer>
       <div className="social-profile-paragraph">
@@ -29,12 +28,10 @@ const LoginFooter = () => {
         </li>
       </ul>
       <div className="social-login">
-        <p>
-          Dont have an account yet? <NavLink to="/register">Register</NavLink>
-        </p>
+        {navigateParagraph}
       </div>
     </footer>
   );
 };
 
-export default LoginFooter;
+export default Footer;
