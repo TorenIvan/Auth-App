@@ -18,7 +18,6 @@ fastify.register(mongodb, {
 fastify.register(cors, {
   origin: [
     process.env.FRONT_END_URI,
-    process.env.BACK_END_URI,
     process.env.GITHUB_URI,
   ],
   methods: ["GET", "PUT", "POST", "DELETE"],
