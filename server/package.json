@@ -13,8 +13,11 @@
   "license": "ISC",
   "dependencies": {
     "@fastify/cors": "^7.0.0",
+    "@fastify/env": "^3.0.0",
     "@fastify/helmet": "^8.0.1",
+    "@fastify/mongodb": "^5.0.0",
     "@fastify/passport": "^1.0.1",
+    "@sinclair/typebox": "^0.23.5",
     "fastify": "^3.29.0"
   },
   "devDependencies": {
