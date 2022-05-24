@@ -1,15 +1,14 @@
 import {
-    Facebook_icon,
-    Twitter_icon,
-    Github_icon,
-    Google_icon,
+    FacebookIcon,
+    TwitterIcon,
+    GithubIcon,
+    GoogleIcon,
   } from "../../../assets/index";
 import { memo } from "react";
 import "font-awesome/css/font-awesome.min.css";
 import "../authStyles.css";
 
 const Footer = ({navigateParagraph}) => {
-  console.log("Mpika");
   return (
     <footer>
       <div className="social-profile-paragraph">
@@ -17,16 +16,16 @@ const Footer = ({navigateParagraph}) => {
       </div>
       <ul id="social-profiles">
         <li className="social-item">
-          <Google_icon />
+          <GoogleIcon />
         </li>
         <li className="social-item">
-          <Facebook_icon />
+          <FacebookIcon />
         </li>
         <li className="social-item">
-          <Github_icon />
+          <GithubIcon />
         </li>
         <li className="social-item">
-          <Twitter_icon />
+          <TwitterIcon />
         </li>
       </ul>
       <div className="social-login">

@@ -2,7 +2,7 @@ const Assets = {
 
 };
 
-function Facebook_icon() {
+function FacebookIcon() {
   return (
     <svg
       width="43"
@@ -32,7 +32,7 @@ function Facebook_icon() {
   );
 }
 
-function Github_icon() {
+function GithubIcon() {
   return (
     <svg
       width="43"
@@ -62,7 +62,7 @@ function Github_icon() {
   );
 }
 
-function Google_icon() {
+function GoogleIcon() {
   return (
     <svg
       width="43"
@@ -80,7 +80,7 @@ function Google_icon() {
   );
 }
 
-function Twitter_icon() {
+function TwitterIcon() {
   return (
     <svg
       width="43"
@@ -112,8 +112,8 @@ function Twitter_icon() {
 
 export {
   Assets as default,
-  Facebook_icon,
-  Github_icon,
-  Google_icon,
-  Twitter_icon,
+  FacebookIcon,
+  GithubIcon,
+  GoogleIcon,
+  TwitterIcon,
 };

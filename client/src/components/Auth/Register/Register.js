@@ -16,7 +16,6 @@ class Register extends PureComponent {
   }
 
   render() {
-    console.log("Na do poses fores 8a kaneis render");
     return (
       <AuthForm 
         onFormSubmit={this.handleRegisterSubmit} 
