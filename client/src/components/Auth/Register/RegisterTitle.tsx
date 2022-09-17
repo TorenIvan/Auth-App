@@ -1,6 +1,6 @@
 import "../authStyles.css";
 
-const RegisterTitle = () => {
+const RegisterTitle = (): JSX.Element  => {
   return (
       <h2>
         Join thousands of learners from

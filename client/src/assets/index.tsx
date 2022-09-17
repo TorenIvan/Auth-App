@@ -2,7 +2,7 @@ const Assets = {
 
 };
 
-function FacebookIcon() {
+function FacebookIcon(): JSX.Element {
   return (
     <svg
       width="43"
@@ -32,7 +32,7 @@ function FacebookIcon() {
   );
 }
 
-function GithubIcon() {
+function GithubIcon(): JSX.Element  {
   return (
     <svg
       width="43"
@@ -62,7 +62,7 @@ function GithubIcon() {
   );
 }
 
-function GoogleIcon() {
+function GoogleIcon(): JSX.Element  {
   return (
     <svg
       width="43"
@@ -80,7 +80,7 @@ function GoogleIcon() {
   );
 }
 
-function TwitterIcon() {
+function TwitterIcon(): JSX.Element  {
   return (
     <svg
       width="43"

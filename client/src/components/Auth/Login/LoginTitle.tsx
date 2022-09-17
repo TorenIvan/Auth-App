@@ -1,6 +1,6 @@
 import "../authStyles.css";
 
-const LoginTitle = () => {
+const LoginTitle = ():JSX.Element => {
   return (
       <h2>
         Sign In

@@ -1,7 +1,7 @@
 import { memo } from "react";
 import "../authStyles.css";
 
-const Header = ({title}) => {
+const Header = ({title}: {title: JSX.Element}): JSX.Element => {
   return (
     <header>
       {title}
