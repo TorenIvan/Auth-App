@@ -6,29 +6,30 @@ import {
   } from "../../../assets/index";
 import { memo } from "react";
 import "font-awesome/css/font-awesome.min.css";
-import "../authStyles.css";
+import styles from "../authStyles.module.css";
+import footerStyles from "../authFooter.module.css";
 
 const Footer = ({ navigateParagraph }: { navigateParagraph: JSX.Element }): JSX.Element => {
   return (
-    <footer>
-      <div className="social-profile-paragraph">
+    <footer className={footerStyles.footer}>
+      <div className={styles["social-profile-paragraph"]}>
         <p>or continue with these social profiles</p>
       </div>
-      <ul id="social-profiles">
-        <li className="social-item">
+      <ul id={styles["social-profiles"]}>
+        <li className={styles["social-item"]}>
           <GoogleIcon />
         </li>
-        <li className="social-item">
+        <li className={styles["social-item"]}>
           <FacebookIcon />
         </li>
-        <li className="social-item">
+        <li className={styles["social-item"]}>
           <GithubIcon />
         </li>
-        <li className="social-item">
+        <li className={styles["social-item"]}>
           <TwitterIcon />
         </li>
       </ul>
-      <div className="social-login">
+      <div className={styles["social-item"]}>
         {navigateParagraph}
       </div>
     </footer>
