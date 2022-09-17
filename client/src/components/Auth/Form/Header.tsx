@@ -1,9 +1,10 @@
 import { memo } from "react";
-import "../authStyles.css";
+import "../authStyles.module.css";
+import headerStyles from "../authHeader.module.css";
 
 const Header = ({title}: {title: JSX.Element}): JSX.Element => {
   return (
-    <header>
+    <header className={headerStyles.header}>
       {title}
       <h4>
         Master web development by making real-life&nbsp; 

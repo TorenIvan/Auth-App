@@ -1,7 +1,8 @@
 import { FC, useState } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
-import "../authStyles.css";
+import styles from "../authStyles.module.css";
+import inputStyles from "../authInput.module.css";
 
 interface IProps {
   onFormSubmit: (arg: any) => void;
@@ -10,7 +11,7 @@ interface IProps {
   submitButton: string;
 }
 
-const AuthForm:FC<IProps> = (props): JSX.Element => {
+const AuthForm: FC<IProps> = (props): JSX.Element => {
   const { onFormSubmit, title, navigateParagraph, submitButton } = props;
   const [formValue, setFormValue] = useState({ email: "", password: "" });
 
@@ -27,12 +28,12 @@ const AuthForm:FC<IProps> = (props): JSX.Element => {
 
   const { email, password } = formValue;
   return (
-    <div className="screen-container">
-      <div id="main-container">
-        <div className="main-wrapper">
+    <div className={styles["screen-container"]}>
+      <div id={styles["main-container"]}>
+        <div className={styles["main-wrapper"]}>
           <Header title={title} />
-          <form className="auth-container" onSubmit={handleSubmit}>
-            <div className="auth-item">
+          <form className={styles["auth-container"]} onSubmit={handleSubmit}>
+            <div className={inputStyles["auth-item"]}>
               <input
                 id="email"
                 type="email"
@@ -43,7 +44,7 @@ const AuthForm:FC<IProps> = (props): JSX.Element => {
                 value={email}
               />
             </div>
-            <div className="auth-item">
+            <div className={inputStyles["auth-item"]}>
               <input
                 id="password"
                 type="password"

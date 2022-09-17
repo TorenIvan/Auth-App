@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import "../authStyles.css";
+import "../authStyles.module.css";
 
 const LoginNavigate = (): JSX.Element => {
   return (

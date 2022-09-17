@@ -1,0 +1,84 @@
+.screen-container {
+  width: 100vw;
+  height: 100vh;
+  background: #333333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#main-container {
+  border: 1px solid #bdbdbd;
+  box-sizing: border-box;
+  border-radius: 24px;
+  background: #333333;
+  width: 100vw;
+  max-width: 500px;
+  height: 100vh;
+  max-height: 660px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.main-wrapper {
+  height: 100%;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: flex-start;
+}
+
+.auth-container {
+  flex: 1.5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  margin: 0 auto;
+}
+
+#submitBox {
+  flex: 1;
+  width: clamp(65%, 357px, 90%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.social-profile-paragraph {
+  flex: 0.1;
+  text-align: center;
+  font-family: NotoSansRegular;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 19px;
+  color: #828282;
+}
+
+#social-profiles {
+  width: 90%;
+  flex: 1;
+  align-items: center;
+  justify-content: space-evenly;
+  list-style-type: none;
+  display: flex;
+  flex-direction: row;
+}
+
+.social-login {
+  flex: 0.8;
+  text-align: center;
+  font-family: NotoSansRegular;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 19px;
+  color: #828282;
+}
+
+#social-profiles > li:hover {
+  cursor: pointer;
+}
