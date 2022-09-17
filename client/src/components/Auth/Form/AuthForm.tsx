@@ -1,28 +1,36 @@
-import { useState } from "react";
+import { FC, useState } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import "../authStyles.css";
 
-const AuthForm = ({ onFormSubmit, title, navigateParagraph, submitButton }) => {
-  const [formValue, setFormValue] = useState({email: "", password: ""});
+interface IProps {
+  onFormSubmit: (arg: any) => void;
+  title: JSX.Element;
+  navigateParagraph: JSX.Element;
+  submitButton: string;
+}
 
-  const handleChange = event => {
+const AuthForm:FC<IProps> = (props): JSX.Element => {
+  const { onFormSubmit, title, navigateParagraph, submitButton } = props;
+  const [formValue, setFormValue] = useState({ email: "", password: "" });
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { type, value } = event.target;
-    setFormValue(prevState => ({...prevState, [type]: value}));
-  }
+    setFormValue((prevState) => ({ ...prevState, [type]: value }));
+  };
 
-  const handleSubmit = event => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     //validate common (Login/Register) things
     onFormSubmit(JSON.stringify(formValue));
-  }
-  
+  };
+
   const { email, password } = formValue;
   return (
     <div className="screen-container">
       <div id="main-container">
         <div className="main-wrapper">
-          <Header title={title}/>
+          <Header title={title} />
           <form className="auth-container" onSubmit={handleSubmit}>
             <div className="auth-item">
               <input
@@ -50,7 +58,7 @@ const AuthForm = ({ onFormSubmit, title, navigateParagraph, submitButton }) => {
               <input type="submit" value={submitButton}></input>
             </div>
           </form>
-          <Footer navigateParagraph={navigateParagraph}/>
+          <Footer navigateParagraph={navigateParagraph} />
         </div>
       </div>
     </div>

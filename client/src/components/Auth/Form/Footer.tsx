@@ -8,7 +8,7 @@ import { memo } from "react";
 import "font-awesome/css/font-awesome.min.css";
 import "../authStyles.css";
 
-const Footer = ({navigateParagraph}) => {
+const Footer = ({ navigateParagraph }: { navigateParagraph: JSX.Element }): JSX.Element => {
   return (
     <footer>
       <div className="social-profile-paragraph">

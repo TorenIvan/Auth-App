@@ -3,15 +3,24 @@ import AuthForm from "../Form/AuthForm";
 import RegisterTitle from "./RegisterTitle";
 import RegisterNavigate from "./RegisterNavigate";
 
+interface IRequest {
+  email: string;
+  password: string;
+}
+
 class Register extends PureComponent {
-  constructor(props){
+  private readonly submitButtonString: string;
+  private readonly title: JSX.Element;
+  private readonly navigateParagraph: JSX.Element;
+
+  constructor(props: {}){
     super(props);
     this.submitButtonString = "Register Now!";
     this.title = RegisterTitle();
     this.navigateParagraph = RegisterNavigate();
   }
   
-  handleRegisterSubmit = reqObject => {
+  handleRegisterSubmit = (reqObject: IRequest) => {
     console.log("Now send the request: ", reqObject);
   }
 
