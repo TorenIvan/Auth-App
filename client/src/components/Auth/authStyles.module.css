@@ -22,7 +22,6 @@
 
 .main-wrapper {
   height: 100%;
-  width: 90%;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
@@ -35,16 +34,9 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  width: 100%;
+  width: 90%;
+  padding-left: 10%;
   margin: 0 auto;
-}
-
-#submitBox {
-  flex: 1;
-  width: clamp(65%, 357px, 90%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .social-profile-paragraph {
@@ -60,12 +52,13 @@
 
 #social-profiles {
   width: 90%;
+  padding-right: 10%;
   flex: 1;
+  display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-evenly;
   list-style-type: none;
-  display: flex;
-  flex-direction: row;
 }
 
 .social-login {

@@ -7,7 +7,16 @@
   width: clamp(65%, 357px, 90%);
 }
 
-.auth-item > input {
+#submitBox {
+  flex: 1;
+  width: clamp(65%, 357px, 90%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-item > input,
+#submitBox > input {
   width: clamp(80%, 220vw, 100%);
   font-family: NotoSansRegular, "FontAwesome";
   height: 45%;
@@ -28,7 +37,7 @@
   padding-left: 4px;
 }
 
-.auth-item > input[type="submit"] {
+#submitBox > input[type="submit"] {
   background-color: #2f80ed;
   outline: none;
   border: none;
@@ -41,6 +50,6 @@
   text-align: center;
 }
 
-.auth-item > input[type="submit"]:hover {
+#submitBox > input[type="submit"]:hover {
   cursor: pointer;
 }
