@@ -55,7 +55,7 @@ const AuthForm: FC<IProps> = (props): JSX.Element => {
                 value={password}
               />
             </div>
-            <div id="submitBox">
+            <div id={inputStyles["submitBox"]}>
               <input type="submit" value={submitButton}></input>
             </div>
           </form>

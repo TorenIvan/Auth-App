@@ -1,15 +1,19 @@
 import {
-    FacebookIcon,
-    TwitterIcon,
-    GithubIcon,
-    GoogleIcon,
-  } from "../../../assets/index";
+  FacebookIcon,
+  TwitterIcon,
+  GithubIcon,
+  GoogleIcon,
+} from "../../../assets/index";
 import { memo } from "react";
 import "font-awesome/css/font-awesome.min.css";
 import styles from "../authStyles.module.css";
 import footerStyles from "../authFooter.module.css";
 
-const Footer = ({ navigateParagraph }: { navigateParagraph: JSX.Element }): JSX.Element => {
+interface IProps {
+  navigateParagraph: JSX.Element;
+}
+
+const Footer = ({ navigateParagraph }: IProps): JSX.Element => {
   return (
     <footer className={footerStyles.footer}>
       <div className={styles["social-profile-paragraph"]}>
@@ -29,9 +33,7 @@ const Footer = ({ navigateParagraph }: { navigateParagraph: JSX.Element }): JSX.
           <TwitterIcon />
         </li>
       </ul>
-      <div className={styles["social-item"]}>
-        {navigateParagraph}
-      </div>
+      <div className={styles["social-item"]}>{navigateParagraph}</div>
     </footer>
   );
 };
