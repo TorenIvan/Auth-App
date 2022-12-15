@@ -3,6 +3,7 @@ export default {
     text: {
       primary: "#828282",
       secondary: "#333333",
+      navigationLink: "#2D9CDB",
       buttonWithBackground: "#ffffff",
     },
     background: {
@@ -17,6 +18,7 @@ export default {
     text: {
       primary: "#828282",
       secondary: "#E0E0E0",
+      navigationLink: "#2D9CDB",
       buttonWithBackground: "#ffffff",
     },
     background: {
