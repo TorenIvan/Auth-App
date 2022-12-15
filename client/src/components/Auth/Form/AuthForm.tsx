@@ -62,6 +62,12 @@ const AuthForm: FC<IProps> = (props): JSX.Element => {
           <Footer navigateParagraph={navigateParagraph} />
         </div>
       </div>
+      <div className={styles["developer-information"]}>
+        <span>
+          Created by <span id={styles["developer-name"]}>TorenIvan</span>
+        </span>
+        <span>devChallenges.io</span>
+      </div>
     </div>
   );
 };
