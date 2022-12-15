@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useRef } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import styles from "../authStyles.module.css";
@@ -14,20 +14,19 @@ interface IProps {
 
 const AuthForm: FC<IProps> = (props): JSX.Element => {
   const { onFormSubmit, title, navigateParagraph, submitButton } = props;
-  const [formValue, setFormValue] = useState({ email: "", password: "" });
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { type, value } = event.target;
-    setFormValue((prevState) => ({ ...prevState, [type]: value }));
-  };
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     //validate common (Login/Register) things
-    onFormSubmit(JSON.stringify(formValue));
+    const formValue = {
+      email: emailRef.current,
+      password: passwordRef.current,
+    };
+    onFormSubmit(formValue);
   };
 
-  const { email, password } = formValue;
   return (
     <div className={styles["screen-container"]}>
       <div id={styles["main-container"]}>
@@ -36,24 +35,22 @@ const AuthForm: FC<IProps> = (props): JSX.Element => {
           <form className={styles["auth-container"]} onSubmit={handleSubmit}>
             <div className={inputStyles["auth-item"]}>
               <input
+                ref={emailRef}
                 id="email"
                 type="email"
                 placeholder="&#xf0e0; Email"
                 pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$"
                 required
-                onChange={handleChange}
-                value={email}
               />
             </div>
             <div className={inputStyles["auth-item"]}>
               <input
+                ref={passwordRef}
                 id="password"
                 type="password"
                 placeholder="&#xf06e; Password"
                 autoComplete="new-password"
                 required
-                onChange={handleChange}
-                value={password}
               />
             </div>
             <div id={inputStyles["submitBox"]}>
