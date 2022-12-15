@@ -8,6 +8,7 @@ import { memo } from "react";
 import "font-awesome/css/font-awesome.min.css";
 import styles from "../authStyles.module.css";
 import footerStyles from "../authFooter.module.css";
+import Constants from "../../../utils/Constants";
 
 interface IProps {
   navigateParagraph: JSX.Element;
@@ -17,7 +18,7 @@ const Footer = ({ navigateParagraph }: IProps): JSX.Element => {
   return (
     <footer className={footerStyles.footer}>
       <div className={styles["social-profile-paragraph"]}>
-        <p>or continue with these social profiles</p>
+        <p>{Constants.SocialProfilesFormText}</p>
       </div>
       <ul id={styles["social-profiles"]}>
         <li className={styles["social-item"]}>
