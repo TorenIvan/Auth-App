@@ -4,6 +4,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  width: 90%;
+  margin-left: 5%;
   margin-top: 5%;
+  position: relative;
 }
