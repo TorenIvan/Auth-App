@@ -1,7 +1,7 @@
 export default {
-  CreatedBy: "CreatedBy",
+  CreatedBy: "created by",
   DeveloperName: "TorenIvan",
-  ChallengeSite: "devChallnges.io",
+  ChallengeSite: "devChallenges.io",
   SocialProfilesFormText: "or continue with these social profiles",
   FormHeader:
     "Master web development by making real-life projects. There are multiple paths for you to choose.",
