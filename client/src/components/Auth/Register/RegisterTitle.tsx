@@ -1,11 +1,12 @@
+import Constants from "../../../utils/Constants";
 import "../authStyles.module.css";
 
 const RegisterTitle = (): JSX.Element => {
   return (
     <h2>
-      Join thousands of learners from
+      {Constants.JoinLearners}
       <br />
-      around the world
+      {Constants.AroundTheWorld}
     </h2>
   );
 };

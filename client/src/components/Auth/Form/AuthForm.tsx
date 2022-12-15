@@ -3,6 +3,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import styles from "../authStyles.module.css";
 import inputStyles from "../authInput.module.css";
+import Constants from "../../../utils/Constants";
 
 interface IProps {
   onFormSubmit: (arg: any) => void;
@@ -64,9 +65,10 @@ const AuthForm: FC<IProps> = (props): JSX.Element => {
       </div>
       <div className={styles["developer-information"]}>
         <span>
-          Created by <span id={styles["developer-name"]}>TorenIvan</span>
+          {Constants.CreatedBy}{" "}
+          <span id={styles["developer-name"]}>{Constants.DeveloperName}</span>
         </span>
-        <span>devChallenges.io</span>
+        <span>{Constants.ChallengeSite}</span>
       </div>
     </div>
   );
