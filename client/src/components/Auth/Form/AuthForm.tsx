@@ -66,7 +66,15 @@ const AuthForm: FC<IProps> = (props): JSX.Element => {
       <div className={styles["developer-information"]}>
         <span>
           {Constants.CreatedBy}{" "}
-          <span id={styles["developer-name"]}>{Constants.DeveloperName}</span>
+          <span id={styles["developer-name"]}>
+            <a
+              href="https://github.com/TorenIvan"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              {Constants.DeveloperName}
+            </a>
+          </span>
         </span>
         <span>{Constants.ChallengeSite}</span>
       </div>
