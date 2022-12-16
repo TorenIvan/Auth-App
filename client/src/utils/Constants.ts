@@ -1,4 +1,4 @@
-export default {
+const Constants = {
   CreatedBy: "created by",
   DeveloperName: "TorenIvan",
   ChallengeSite: "devChallenges.io",
@@ -12,4 +12,9 @@ export default {
   Login: "Login",
   SignIn: "Sign In",
   DontHaveAnAccount: "Don't have an account yet?",
+  DeveloperGitHubProfile: "https://github.com/TorenIvan",
+  LightPalette: "light",
+  DarkPalette: "dark",
 };
+
+export default Constants;
