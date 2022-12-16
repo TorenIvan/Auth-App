@@ -1,4 +1,4 @@
-import { FC, useRef } from "react";
+import { useRef } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import styles from "../authStyles.module.css";
@@ -12,7 +12,7 @@ interface IProps {
   submitButton: string;
 }
 
-const AuthForm: FC<IProps> = (props): JSX.Element => {
+const AuthForm = (props: IProps): JSX.Element => {
   const { onFormSubmit, title, navigateParagraph, submitButton } = props;
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -65,7 +65,7 @@ const AuthForm: FC<IProps> = (props): JSX.Element => {
           {Constants.CreatedBy}{" "}
           <span id={styles["developer-name"]}>
             <a
-              href="https://github.com/TorenIvan"
+              href={Constants.DeveloperGitHubProfile}
               target="_blank"
               rel="noreferrer noopener"
             >

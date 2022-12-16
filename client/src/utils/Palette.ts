@@ -1,7 +1,7 @@
-export default {
+const palette = {
   light: {
     text: {
-      primary: "#828282",
+      primary: "#828283",
       secondary: "#333333",
       navigationLink: "#2D9CDB",
       buttonWithBackground: "#ffffff",
@@ -30,3 +30,5 @@ export default {
     },
   },
 };
+
+export default palette;
