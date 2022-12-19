@@ -16,8 +16,9 @@ const App = (): JSX.Element => {
     setPalette(newPalette);
   };
 
+  const theme = `${palette}-theme`;
   return (
-    <div data-theme={palette}>
+    <div className={theme}>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
