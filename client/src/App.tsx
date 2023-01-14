@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Register from "./components/Auth/Register/Register";
 import Login from "./components/Auth/Login/Login";
@@ -7,34 +7,37 @@ import Constants from "./utils/Constants";
 import { MoonIcon, SunIcon } from "./assets";
 
 const App = (): JSX.Element => {
-  const [palette, setPalette] = useState(Constants.LightPalette);
-  useEffect(() => {
-    console.log(palette);
-  }, [palette]);
+  const [palette, setPalette] = useState(Constants.DarkPalette);
 
-  const togglePalette = () => {
+  const togglePalette = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
     const newPalette =
       palette === Constants.LightPalette
         ? Constants.DarkPalette
         : Constants.LightPalette;
+    document.body.className = newPalette;
     setPalette(newPalette);
   };
 
   const renderThemeIcon = (): JSX.Element => {
-    if (palette === Constants.LightPalette) return <SunIcon />;
-    return <MoonIcon />;
+    if (palette === Constants.LightPalette) return <MoonIcon />;
+    return <SunIcon />;
   };
 
-  const theme = `${palette}-theme`;
+  console.log(palette);
   return (
-    <div className={`screen-container ${theme}`}>
-      <button onClick={togglePalette}>{renderThemeIcon()}</button>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
-    </div>
+    <Fragment>
+      <div className={`screen-container`}>
+        <button className="toggleButton" onClick={togglePalette}>
+          {renderThemeIcon()}
+        </button>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </div>
+    </Fragment>
   );
 };
 

@@ -1,14 +1,3 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 :root {
   --text-primary: "#828283";
   --text-navigationLink: "#2D9CDB";
@@ -19,10 +8,10 @@
 
 .dark-theme {
   --text-secondary: "#E0E0E0";
-  --backgroud-screen: #333333;
+  --background-screen: #333333;
 }
 
 .light-theme {
   --text-secondary: "#333333";
-  --backgroud-screen: #ffffff;
+  --background-screen: #ffffff;
 }

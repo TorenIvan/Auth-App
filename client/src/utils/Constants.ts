@@ -13,8 +13,8 @@ const Constants = {
   SignIn: "Sign In",
   DontHaveAnAccount: "Don't have an account yet?",
   DeveloperGitHubProfile: "https://github.com/TorenIvan",
-  LightPalette: "light",
-  DarkPalette: "dark",
+  LightPalette: "light-theme",
+  DarkPalette: "dark-theme",
 };
 
 export default Constants;
