@@ -1,10 +1,10 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useState } from "react";
 
 /* "function" keyword due to eslint problem with generic <T> */
 export function useLocalStorage<T>(
   key: string,
   value: T
-): [storedValue: T, setStoredValue: Dispatch<SetStateAction<T>>] {
+): [storedValue: T, updateStoredValue: (value: T) => void] {
   const [storedValue, setStoredValue] = useState(() => {
     try {
       const item = window.localStorage.getItem(key);
@@ -16,14 +16,16 @@ export function useLocalStorage<T>(
     }
   });
 
-  useEffect(() => {
+  const updateStoredValue = (value: T) => {
     try {
       window.localStorage.setItem(key, JSON.stringify(value));
       setStoredValue(value);
     } catch (error) {
-      console.error(`Failed to Update Local Storage Value with key: ${key} error: ${error}`);
+      console.error(
+        `Failed to Update Local Storage Value with key: ${key} error: ${error}`
+      );
     }
-  }, [key, value]);
+  };
 
-  return [storedValue, setStoredValue];
+  return [storedValue, updateStoredValue];
 }

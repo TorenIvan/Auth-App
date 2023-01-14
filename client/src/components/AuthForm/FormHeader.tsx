@@ -1,7 +1,6 @@
 import { memo } from "react";
-import "../authStyles.module.css";
-import headerStyles from "../authHeader.module.css";
-import Constants from "../../../utils/Constants";
+import headerStyles from "./Styles/authHeader.module.css";
+import Constants from "../../utils/Constants";
 
 const Header = ({ title }: { title: JSX.Element }): JSX.Element => {
   return (

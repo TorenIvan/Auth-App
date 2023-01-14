@@ -15,6 +15,8 @@ const Constants = {
   DeveloperGitHubProfile: "https://github.com/TorenIvan",
   LightPalette: "light-theme",
   DarkPalette: "dark-theme",
-};
+  RegisterButtonText: "Register Now!",
+  SignInButtonText: "Sign In!",
+} as const;
 
 export default Constants;

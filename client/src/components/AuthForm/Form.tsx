@@ -1,9 +1,9 @@
 import { Fragment, useRef } from "react";
-import Header from "./Header";
-import Footer from "./Footer";
-import styles from "../authStyles.module.css";
-import inputStyles from "../authInput.module.css";
-import Constants from "../../../utils/Constants";
+import Header from "./FormHeader";
+import Footer from "./SocialProfileItems";
+import styles from "./Styles/authStyles.module.css";
+import inputStyles from "./Styles/authInput.module.css";
+import Constants from "../../utils/Constants";
 
 interface IProps {
   onFormSubmit: (arg: any) => void;

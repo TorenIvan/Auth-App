@@ -1,7 +1,8 @@
 import { PureComponent } from "react";
-import AuthForm from "../Form/AuthForm";
-import LoginTitle from "./LoginTitle";
-import LoginNavigate from "./LoginNavigate";
+import AuthForm from "../../components/AuthForm/Form";
+import LoginTitle from "../../components/AuthForm/LoginForm/LoginTitle";
+import LoginNavigate from "../../components/AuthForm/LoginForm/LoginNavigateItem";
+import Constants from "../../utils/Constants";
 
 interface IRequest {
   email: string;
@@ -13,22 +14,22 @@ class Login extends PureComponent {
   private readonly title: JSX.Element;
   private readonly navigateParagraph: JSX.Element;
 
-  constructor(props: {}){
+  constructor(props: {}) {
     super(props);
-    this.submitButtonString = "Sign In";
+    this.submitButtonString = Constants.SignInButtonText;
     this.title = LoginTitle();
     this.navigateParagraph = LoginNavigate();
   }
 
   handleLoginSubmit = (reqObject: IRequest) => {
     console.log("Now send the request: ", reqObject);
-  }
+  };
 
   render() {
     return (
-      <AuthForm 
-        onFormSubmit={this.handleLoginSubmit} 
-        title={this.title} 
+      <AuthForm
+        onFormSubmit={this.handleLoginSubmit}
+        title={this.title}
         navigateParagraph={this.navigateParagraph}
         submitButton={this.submitButtonString}
       />

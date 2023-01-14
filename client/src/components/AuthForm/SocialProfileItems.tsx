@@ -3,12 +3,12 @@ import {
   TwitterIcon,
   GithubIcon,
   GoogleIcon,
-} from "../../../assets/index";
+} from "../../assets/index";
 import { memo } from "react";
 import "font-awesome/css/font-awesome.min.css";
-import styles from "../authStyles.module.css";
-import footerStyles from "../authFooter.module.css";
-import Constants from "../../../utils/Constants";
+import styles from "./Styles/authStyles.module.css";
+import footerStyles from "./Styles/authFooter.module.css";
+import Constants from "../../utils/Constants";
 
 interface IProps {
   navigateParagraph: JSX.Element;

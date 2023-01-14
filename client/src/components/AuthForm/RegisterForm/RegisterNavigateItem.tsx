@@ -1,21 +1,21 @@
 import { NavLink } from "react-router-dom";
 import Constants from "../../../utils/Constants";
-import styles from "../authStyles.module.css";
+import styles from "../Styles/authStyles.module.css";
 
-const LoginNavigate = (): JSX.Element => {
+const RegisterNavigate = (): JSX.Element => {
   return (
     <p id={styles["social-profiles-text"]}>
-      <span>{Constants.DontHaveAnAccount}&nbsp;&nbsp;&nbsp;</span>
+      <span>{Constants.AlreadyAMember}&nbsp;&nbsp;&nbsp;</span>
       <NavLink
-        to="/register"
+        to="/login"
         style={{
           color: "#545e6f",
         }}
       >
-        {Constants.Register}
+        {Constants.Login}
       </NavLink>
     </p>
   );
 };
 
-export default LoginNavigate;
+export default RegisterNavigate;

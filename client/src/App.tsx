@@ -1,13 +1,13 @@
 import { Fragment, useState } from "react";
 import { Route, Routes } from "react-router-dom";
-import Register from "./components/Auth/Register/Register";
-import Login from "./components/Auth/Login/Login";
+import Register from "./pages/Auth/Register";
+import Login from "./pages/Auth/Login";
 import "./App.css";
-import Constants from "./utils/Constants";
 import { MoonIcon, SunIcon } from "./assets";
+import Constants from "./utils/Constants";
 
 const App = (): JSX.Element => {
-  const [palette, setPalette] = useState(Constants.DarkPalette);
+  const [palette, setPalette] = useState<string>(Constants.DarkPalette);
 
   const togglePalette = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
