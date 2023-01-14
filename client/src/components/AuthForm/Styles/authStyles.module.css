@@ -20,7 +20,7 @@
 }
 
 .auth-container {
-  flex: 1.5;
+  flex: 1.2;
   display: flex;
   flex-direction: column;
   justify-content: center;

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-/* "function" keyword due to eslint problem with generic <T> */
+/* "function" keyword due to eslint problem with generic <T>; fml */
 export function useLocalStorage<T>(
   key: string,
   value: T

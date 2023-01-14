@@ -8,7 +8,8 @@
 }
 
 #submitBox {
-  flex: 1;
+  flex: .8;
+  margin-top: 5%;
   width: clamp(65%, 357px, 90%);
   display: flex;
   justify-content: center;
