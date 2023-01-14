@@ -1,9 +1,9 @@
 import { Fragment, useRef } from "react";
-import Header from "./FormHeader";
-import Footer from "./SocialProfileItems";
+import AuthHeader from "./FormHeader";
+import SocialProfileItems from "./SocialProfileItems";
 import styles from "./Styles/authStyles.module.css";
 import inputStyles from "./Styles/authInput.module.css";
-import Constants from "../../utils/Constants";
+import Footer from "../../layouts/Footer/Footer";
 
 interface IProps {
   onFormSubmit: (arg: any) => void;
@@ -31,7 +31,7 @@ const AuthForm = (props: IProps): JSX.Element => {
     <Fragment>
       <div id={styles["main-container"]}>
         <div className={styles["main-wrapper"]}>
-          <Header title={title} />
+          <AuthHeader title={title} />
           <form className={styles["auth-container"]} onSubmit={handleSubmit}>
             <div className={inputStyles["auth-item"]}>
               <input
@@ -57,24 +57,10 @@ const AuthForm = (props: IProps): JSX.Element => {
               <input type="submit" value={submitButton}></input>
             </div>
           </form>
-          <Footer navigateParagraph={navigateParagraph} />
+          <SocialProfileItems navigateParagraph={navigateParagraph} />
         </div>
       </div>
-      <div className={styles["developer-information"]}>
-        <span>
-          {Constants.CreatedBy}{" "}
-          <span id={styles["developer-name"]}>
-            <a
-              href={Constants.DeveloperGitHubProfile}
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              {Constants.DeveloperName}
-            </a>
-          </span>
-        </span>
-        <span>{Constants.ChallengeSite}</span>
-      </div>
+      <Footer />
     </Fragment>
   );
 };

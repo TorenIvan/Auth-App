@@ -1,0 +1,22 @@
+.developer-information {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: clamp(100px, 90%, 500px);
+  margin-top: 1rem;
+}
+
+.developer-information * {
+  font-family: NotoSansRegular;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 19px;
+  color: var(--text-primary);
+}
+
+#developer-name {
+  text-decoration: underline;
+  cursor: pointer;
+}
