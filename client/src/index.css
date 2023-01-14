@@ -19,7 +19,7 @@
   --border-primary: "#bdbdbd";
 }
 
-[data-theme="dark"] {
+:root [data-theme="dark"] {
   --text-secondary: "#E0E0E0";
   --backgroud-screen: #333333;
 }

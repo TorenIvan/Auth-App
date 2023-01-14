@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 /* "function" keyword due to eslint problem with generic <T> */
-function useLocalStorage<T>(
+export function useLocalStorage<T>(
   key: string,
   value: T
 ): [storedValue: T, setStoredValue: Dispatch<SetStateAction<T>>] {
@@ -32,5 +32,3 @@ function useLocalStorage<T>(
 
   return [storedValue, setStoredValue];
 }
-
-export default useLocalStorage;

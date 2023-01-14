@@ -17,3 +17,17 @@
   font-family: NotoSansBoldItalic;
   src: url(./assets/fonts/NotoSans-BoldItalic.ttf);
 }
+
+.screen-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--background-screen);
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  justify-content: center;
+  align-items: center;
+}

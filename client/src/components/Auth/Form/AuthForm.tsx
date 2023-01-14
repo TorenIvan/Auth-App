@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import styles from "../authStyles.module.css";
@@ -28,7 +28,7 @@ const AuthForm = (props: IProps): JSX.Element => {
   };
 
   return (
-    <div className={styles["screen-container"]}>
+    <Fragment>
       <div id={styles["main-container"]}>
         <div className={styles["main-wrapper"]}>
           <Header title={title} />
@@ -75,7 +75,7 @@ const AuthForm = (props: IProps): JSX.Element => {
         </span>
         <span>{Constants.ChallengeSite}</span>
       </div>
-    </div>
+    </Fragment>
   );
 };
 
