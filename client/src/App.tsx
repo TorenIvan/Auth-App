@@ -25,8 +25,9 @@ const App = (): JSX.Element => {
     return <MoonIcon />;
   };
 
+  const theme = `${palette}-theme`;
   return (
-    <div className="screen-container" data-theme={palette}>
+    <div className={`screen-container ${theme}`}>
       <button onClick={togglePalette}>{renderThemeIcon()}</button>
       <Routes>
         <Route path="/" element={<Login />} />

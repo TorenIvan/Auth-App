@@ -11,15 +11,18 @@
 
 :root {
   --text-primary: "#828283";
-  --text-secondary: "#333333";
   --text-navigationLink: "#2D9CDB";
   --text-buttonWithBackground: "#ffffff";
-  --backgroud-screen: #ffffff;
   --background-button: "#2f80ed";
   --border-primary: "#bdbdbd";
 }
 
-:root [data-theme="dark"] {
+.dark-theme {
   --text-secondary: "#E0E0E0";
   --backgroud-screen: #333333;
+}
+
+.light-theme {
+  --text-secondary: "#333333";
+  --backgroud-screen: #ffffff;
 }
