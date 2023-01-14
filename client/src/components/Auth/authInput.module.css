@@ -21,7 +21,7 @@
   font-family: NotoSansRegular, "FontAwesome";
   height: 45%;
   min-height: 40px;
-  border: 1px solid #bdbdbd;
+  border: 1px solid var(--border-primary);
   box-sizing: border-box;
   border-radius: 8px;
   outline: none;
@@ -38,10 +38,10 @@
 }
 
 #submitBox > input[type="submit"] {
-  background-color: #2f80ed;
+  background-color: var(--background-button);
   outline: none;
   border: none;
-  color: #ffffff;
+  color: var(--text-buttonWithBackground);
   font-family: NotoSansRegular;
   font-style: normal;
   font-weight: 600;

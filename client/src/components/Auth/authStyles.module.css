@@ -1,5 +1,5 @@
 #main-container {
-  border: 1px solid #bdbdbd;
+  border: 1px solid var(--border-primary);
   box-sizing: border-box;
   border-radius: 24px;
   background: var(--background-screen);
@@ -38,7 +38,7 @@
   font-style: normal;
   font-size: 14px;
   line-height: 19px;
-  color: #828282;
+  color: var(--text-primary);
 }
 
 #social-profiles {
@@ -60,7 +60,7 @@
   font-style: normal;
   font-size: 14px;
   line-height: 19px;
-  color: #828282;
+  color: var(--text-primary);
 }
 
 #social-profiles > li:hover {
@@ -68,7 +68,7 @@
 }
 
 #social-profiles-text {
-  color: #828282;
+  color: var(--text-primary);
   font-style: italic;
 }
 
@@ -87,7 +87,7 @@
   font-style: normal;
   font-size: 14px;
   line-height: 19px;
-  color: #828282;
+  color: var(--text-primary);
 }
 
 #developer-name {

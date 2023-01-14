@@ -1,17 +1,17 @@
 :root {
-  --text-primary: "#828283";
-  --text-navigationLink: "#2D9CDB";
-  --text-buttonWithBackground: "#ffffff";
-  --background-button: "#2f80ed";
-  --border-primary: "#bdbdbd";
+  --text-primary: #828282;
+  --text-navigationLink: #2D9CDB;
+  --text-buttonWithBackground: #fdfdfd;
+  --background-button: #2f80ed;
+  --border-primary: #bdbdbd;
 }
 
 .dark-theme {
-  --text-secondary: "#E0E0E0";
+  --text-secondary: #E0E0E0;
   --background-screen: #333333;
 }
 
 .light-theme {
-  --text-secondary: "#333333";
-  --background-screen: #ffffff;
+  --text-secondary: #333333;
+  --background-screen: #fdfdfd;
 }
