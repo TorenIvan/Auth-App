@@ -1,5 +1,5 @@
 import { Fragment, useRef } from "react";
-import AuthHeader from "./FormHeader";
+import FormHeader from "./FormHeader";
 import SocialProfileItems from "./SocialProfileItems";
 import styles from "./Styles/authStyles.module.css";
 import inputStyles from "./Styles/authInput.module.css";
@@ -31,7 +31,7 @@ const AuthForm = (props: IProps): JSX.Element => {
     <Fragment>
       <div id={styles["main-container"]}>
         <div className={styles["main-wrapper"]}>
-          <AuthHeader title={title} />
+          <FormHeader title={title} />
           <form className={styles["auth-container"]} onSubmit={handleSubmit}>
             <div className={inputStyles["auth-item"]}>
               <input
