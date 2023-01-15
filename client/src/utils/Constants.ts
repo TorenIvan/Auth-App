@@ -17,6 +17,7 @@ const Constants = {
   DarkPalette: "dark-theme",
   RegisterButtonText: "Register Now!",
   SignInButtonText: "Sign In!",
+  Theme: "theme",
 } as const;
 
 export default Constants;

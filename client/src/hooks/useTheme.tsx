@@ -5,7 +5,7 @@ import { useLocalStorage } from "./useLocalStorage";
 type returnType = [theme: Theme, toggleTheme: () => void];
 
 export function useTheme(themeArg: Theme): returnType {
-  const [theme, setTheme] = useLocalStorage<Theme>("theme", themeArg);
+  const [theme, setTheme] = useLocalStorage<Theme>(Constants.Theme, themeArg);
 
   const toggleTheme = () => {
     const newTheme =
