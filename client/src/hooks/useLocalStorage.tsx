@@ -8,6 +8,8 @@ export function useLocalStorage<T>(
   const [storedValue, setStoredValue] = useState(() => {
     try {
       const item = window.localStorage.getItem(key);
+      console.log("Item here: ", item);
+
       if (item) return JSON.parse(item) as T;
       return value;
     } catch (error) {
