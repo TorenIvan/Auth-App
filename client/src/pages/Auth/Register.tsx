@@ -1,7 +1,7 @@
 import { PureComponent } from "react";
 import AuthForm from "../../components/AuthForm/Form";
-import RegisterTitle from "../../components/AuthForm/RegisterForm/RegisterTitle";
-import RegisterNavigate from "../../components/AuthForm/RegisterForm/RegisterNavigateItem";
+import RegisterTitle from "../../components/AuthForm/RegisterFormItems/RegisterTitle";
+import RegisterNavigate from "../../components/AuthForm/RegisterFormItems/RegisterNavigateItem";
 import Constants from "../../utils/Constants";
 
 interface IRequest {
