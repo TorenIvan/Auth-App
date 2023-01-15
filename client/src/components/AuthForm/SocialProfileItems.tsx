@@ -1,9 +1,4 @@
-import {
-  FacebookIcon,
-  TwitterIcon,
-  GithubIcon,
-  GoogleIcon,
-} from "../../assets/index";
+import { FacebookIcon, TwitterIcon, GithubIcon, GoogleIcon } from "../Icons";
 import { memo } from "react";
 import "font-awesome/css/font-awesome.min.css";
 import styles from "./Styles/authStyles.module.css";

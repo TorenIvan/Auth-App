@@ -5,7 +5,7 @@ import Login from "./pages/Auth/Login";
 import "./App.css";
 import Constants from "./utils/Constants";
 import { useTheme } from "./hooks";
-import ThemeIcon from "./components/Icons/ThemeIcon";
+import { ThemeIcon } from "./components/Icons";
 
 const App = (): JSX.Element => {
   const [theme, toggleTheme] = useTheme(Constants.LightPalette);
