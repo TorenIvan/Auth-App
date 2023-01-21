@@ -1,15 +1,12 @@
 import { join } from "path";
 import AutoLoad, { AutoloadPluginOptions } from "@fastify/autoload";
-import { FastifyPluginAsync } from "fastify";
+import { FastifyPluginAsync as FPA } from "fastify";
 
 export type AppOptions = {
   // Place your custom options for app below here.
 } & Partial<AutoloadPluginOptions>;
 
-const app: FastifyPluginAsync<AppOptions> = async (
-  fastify,
-  opts
-): Promise<void> => {
+const app: FPA<AppOptions> = async (fastify, opts): Promise<void> => {
   // Place here your custom code!
 
   // Do not touch the following lines
@@ -20,6 +17,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
 
   void fastify.register(AutoLoad, {
     dir: join(__dirname, "./config/database"),
+    options: opts,
   });
 
   void fastify.register(AutoLoad, {
@@ -30,7 +28,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
   // This loads all plugins defined in routes
   // define your routes in one of these
   void fastify.register(AutoLoad, {
-    dir: join(__dirname, "./config/routes/v1"),
+    dir: join(__dirname, "./config/routes"),
     options: opts,
   });
 };
