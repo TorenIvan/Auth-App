@@ -1,7 +1,6 @@
 import { join } from "path";
 import AutoLoad, { AutoloadPluginOptions } from "@fastify/autoload";
 import { FastifyPluginAsync } from "fastify";
-import fastifyMongodb from "@fastify/mongodb";
 
 export type AppOptions = {
   // Place your custom options for app below here.
@@ -19,20 +18,19 @@ const app: FastifyPluginAsync<AppOptions> = async (
   // those should be support plugins that are reused
   // through your application
 
-  void fastify.register(fastifyMongodb, {
-    forceClose: true,
-    url: process.env.CONNECT_DB,
+  void fastify.register(AutoLoad, {
+    dir: join(__dirname, "./config/database"),
   });
 
   void fastify.register(AutoLoad, {
-    dir: join(__dirname, "plugins"),
+    dir: join(__dirname, "./config/plugins"),
     options: opts,
   });
 
   // This loads all plugins defined in routes
   // define your routes in one of these
   void fastify.register(AutoLoad, {
-    dir: join(__dirname, "routes"),
+    dir: join(__dirname, "./config/routes/v1"),
     options: opts,
   });
 };
