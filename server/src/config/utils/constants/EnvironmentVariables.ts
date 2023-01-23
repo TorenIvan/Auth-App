@@ -1,8 +1,3 @@
-import { config } from "dotenv";
-
-config({ path: `../../../../.env.${process.env.NODE_ENV}` });
-console.log("path: ", `../../../../.env.${process.env.NODE_ENV}`);
-
 export const EnvironmentVariables = {
-  DatabaseUri: process.env.DB_URI,
+  DatabaseUri: `mongodb://${process.env.DB_NAME}:${process.env.DB_PASSWORD}@${process.env.DB_URI}`,
 } as const;
