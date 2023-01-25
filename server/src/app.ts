@@ -1,7 +1,8 @@
-import { join } from "path";
+import { join, resolve } from "path";
 import AutoLoad, { AutoloadPluginOptions } from "@fastify/autoload";
 import { FastifyPluginAsync } from "fastify";
 import { config } from "dotenv";
+import routes from "./config/routes";
 
 export type AppOptions = {
   // Place your custom options for app below here.
@@ -19,7 +20,12 @@ const app: FastifyPluginAsync<AppOptions> = async (
   // those should be support plugins that are reused
   // through your application
 
-  config({ path: `../env.${process.env.NODE_ENV}` });
+  config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
+
+  void fastify.register(AutoLoad, {
+    dir: join(__dirname, "./config/utils"),
+    options: options,
+  });
 
   void fastify.register(AutoLoad, {
     dir: join(__dirname, "./config/database"),
@@ -33,10 +39,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
 
   // This loads all plugins defined in routes
   // define your routes in one of these
-  void fastify.register(AutoLoad, {
-    dir: join(__dirname, "./config/routes"),
-    options: options,
-  });
+  void fastify.register(routes, options);
 };
 
 export default app;
