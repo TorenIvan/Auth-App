@@ -1,15 +1,15 @@
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
 
 /**
- * Encapsulates the register route
+ * Encapsulates the register twitter route
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
-const register: FastifyPluginAsync = async (
+const registerWithTwitter: FastifyPluginAsync = async (
   fastify: FastifyInstance
 ): Promise<void> => {
   fastify.get("/", async function (request, reply) {
-    return "this is an example";
+    return "this is an example twitter";
   });
 };
 
-export default register;
+export default registerWithTwitter;

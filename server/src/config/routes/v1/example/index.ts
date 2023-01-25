@@ -11,7 +11,7 @@ const example: FastifyPluginAsync = async (
   options: object
 ): Promise<void> => {
   fastify.get("/", async function (request, reply) {
-    return "this is an example";
+    return "TI KANO LA8OS PES MOU KAI 8A GINO";
   });
 };
 

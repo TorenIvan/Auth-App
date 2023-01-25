@@ -1,15 +1,15 @@
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
 
 /**
- * Encapsulates the login route
+ * Encapsulates the login with github route
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
-const login: FastifyPluginAsync = async (
+const loginWithGithub: FastifyPluginAsync = async (
   fastify: FastifyInstance
 ): Promise<void> => {
   fastify.get("/", async function (request, reply) {
-    return "WTF is going on here; plz help";
+    return "this is a login example route with github";
   });
 };
 
-export default login;
+export default loginWithGithub;

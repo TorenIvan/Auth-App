@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyPluginAsync } from "fastify";
 import v1Routes from "./v1/root";
 
 /**
- * Encapsulates the routes
+ * Encapsulates all the routes
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  * @param {object} options plugin options, refer to https://www.fastify.io/docs/latest/Reference/Plugins/#plugin-options
  */
