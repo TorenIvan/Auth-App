@@ -3,5 +3,5 @@ const DatabaseUri = `mongodb://${process.env.DB_USERNAME}:${encodedDBPassword}@$
 
 export const EnvironmentVariables = {
   DatabaseUri: DatabaseUri,
-  CloseDB: "Closing DataBase...",
+  DatabaseName: process.env.DB_NAME,
 } as const;

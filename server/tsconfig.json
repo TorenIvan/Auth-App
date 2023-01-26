@@ -2,7 +2,12 @@
   "extends": "fastify-tsconfig",
   "compilerOptions": {
     "outDir": "dist",
-    "sourceMap": true
+    "sourceMap": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/config/utils/types/global.d.ts",
+      "./src/config/utils/types/fastify.d.ts"
+    ]
   },
   "include": ["src/**/*.ts"]
 }

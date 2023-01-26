@@ -1,3 +1,3 @@
 export const Strings = {
-  wtf: "wtf",
+  CloseDB: "Closing DataBase...",
 } as const;

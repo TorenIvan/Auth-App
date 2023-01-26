@@ -18,15 +18,17 @@
   "dependencies": {
     "@fastify/autoload": "^5.7.1",
     "@fastify/helmet": "^10.1.0",
-    "@fastify/mongodb": "^6.2.0",
     "@fastify/passport": "^2.2.0",
     "@fastify/sensible": "^5.2.0",
     "@sinclair/typebox": "^0.23.5",
     "dotenv": "^16.0.2",
     "fastify": "^4.11.0",
     "fastify-cli": "^5.7.1",
+    "fastify-overview": "^3.3.0",
     "fastify-plugin": "^4.5.0",
     "fastify-zod": "^1.2.0",
+    "install": "^0.13.0",
+    "mongodb": "^4.13.0",
     "path": "^0.12.7",
     "zod": "^3.20.2"
   },

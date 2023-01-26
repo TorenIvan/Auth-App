@@ -1,5 +1,6 @@
 import { join, resolve } from "path";
 import AutoLoad, { AutoloadPluginOptions } from "@fastify/autoload";
+import FastifyOverview from "fastify-overview";
 import { FastifyPluginAsync } from "fastify";
 import { config } from "dotenv";
 import routes from "./config/routes";
@@ -22,6 +23,8 @@ const app: FastifyPluginAsync<AppOptions> = async (
 
   config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
 
+  await fastify.register(FastifyOverview);
+
   void fastify.register(AutoLoad, {
     dir: join(__dirname, "./config/utils"),
     options: options,
@@ -29,7 +32,6 @@ const app: FastifyPluginAsync<AppOptions> = async (
 
   void fastify.register(AutoLoad, {
     dir: join(__dirname, "./config/database"),
-    options: options,
   });
 
   void fastify.register(AutoLoad, {
@@ -40,6 +42,11 @@ const app: FastifyPluginAsync<AppOptions> = async (
   // This loads all plugins defined in routes
   // define your routes in one of these
   void fastify.register(routes, options);
+
+  fastify.addHook("onReady", async function showStructure() {
+    const fastifyStructure = fastify.overview({ hideEmpty: true });
+    console.log(JSON.stringify(fastifyStructure));
+  });
 };
 
 export default app;
