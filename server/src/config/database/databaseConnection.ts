@@ -1,6 +1,7 @@
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
-import { MongoClient, Db } from "mongodb";
+import { MongoClient, Db, Collection } from "mongodb";
+import User from "../../api/v1/models/User";
 import { EnvironmentVariables } from "../utils/constants/EnvironmentVariables";
 import { Strings } from "../utils/constants/Strings";
 
@@ -17,9 +18,14 @@ const databaseConnectionPlugin: FastifyPluginAsync = fp(
       await client.connect();
 
       const db: Db = client.db(EnvironmentVariables.DatabaseName);
-      fastify.decorate("MongoDB", db).addHook("onClose", () => {
-        console.error(Strings.CloseDB);
-      });
+      const users: Collection<User> = db.collection<User>("users");
+
+      fastify
+        .decorate("MongoDB", db)
+        .decorate("User", users)
+        .addHook("onClose", () => {
+          console.error(Strings.CloseDB);
+        });
     } catch (error) {
       console.error(error);
     }
