@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { buildJsonSchemas } from "fastify-zod";
 import { Strings } from "../../../config/utils/constants/Strings";
 
 const authCredsBodySchema = z.object({
@@ -7,7 +8,7 @@ const authCredsBodySchema = z.object({
       required_error: Strings.EmailRequired,
       invalid_type_error: Strings.EmailInvalid,
     })
-    .email(),
+    .email({ message: Strings.EmailInvalid }),
   password: z
     .string({
       required_error: Strings.PasswordRequired,
@@ -16,23 +17,13 @@ const authCredsBodySchema = z.object({
     .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/),
 });
 
-const authCredsHeadersSchema = z.object({
-  "Content-Type": z.string(),
-});
-
 const registerUserResponseSchema = z.object({
-  200: z.object({
-    access_token: z.string(),
-  }),
-  201: z.object({
-    access_token: z.string(),
-  }),
+  access_token: z.string(),
 });
 
 export type credsUserInput = z.infer<typeof authCredsBodySchema>;
 
-export const registerCredentialsSchema = z.object({
-  body: authCredsBodySchema,
-  headers: authCredsHeadersSchema,
-  response: registerUserResponseSchema,
+export const { schemas: registerCredentialsSchema, $ref } = buildJsonSchemas({
+  authCredsBodySchema,
+  registerUserResponseSchema,
 });

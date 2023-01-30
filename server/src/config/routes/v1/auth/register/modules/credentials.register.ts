@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
-import { registerCredentialsSchema } from "../../../../../../api/v1/user/user.schema";
+import { $ref } from "../../../../../../api/v1/user/user.schema";
 import { registerCredentialsHandler } from "../../../../../../api/v1/user/user.controller";
 
 /**
@@ -11,7 +11,14 @@ const registerWithCredentials: FastifyPluginAsync = async (
 ): Promise<void> => {
   fastify.post(
     "/",
-    { schema: registerCredentialsSchema },
+    {
+      schema: {
+        body: $ref("authCredsBodySchema"),
+        response: {
+          201: $ref("registerUserResponseSchema"),
+        },
+      },
+    },
     registerCredentialsHandler
   );
 };

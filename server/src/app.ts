@@ -3,6 +3,7 @@ import AutoLoad, { AutoloadPluginOptions } from "@fastify/autoload";
 import FastifyOverview from "fastify-overview";
 import { FastifyPluginAsync } from "fastify";
 import { config } from "dotenv";
+import { registerCredentialsSchema } from "./api/v1/user/user.schema";
 import routes from "./config/routes";
 
 export type AppOptions = {
@@ -23,7 +24,9 @@ const app: FastifyPluginAsync<AppOptions> = async (
 
   config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
 
-  await fastify.register(FastifyOverview);
+  if (process.env.NODE_ENV === "development") {
+    await fastify.register(FastifyOverview);
+  }
 
   void fastify.register(AutoLoad, {
     dir: join(__dirname, "./config/utils"),
@@ -39,14 +42,20 @@ const app: FastifyPluginAsync<AppOptions> = async (
     options: options,
   });
 
+  for (const schema of registerCredentialsSchema) {
+    fastify.addSchema(schema);
+  }
+
   // This loads all plugins defined in routes
   // define your routes in one of these
   void fastify.register(routes, options);
 
-  fastify.addHook("onReady", async function showStructure() {
-    const fastifyStructure = fastify.overview({ hideEmpty: true });
-    console.log(JSON.stringify(fastifyStructure));
-  });
+  if (process.env.NODE_ENV === "development") {
+    fastify.addHook("onReady", async function showStructure() {
+      const fastifyStructure = fastify.overview({ hideEmpty: true });
+      console.log(JSON.stringify(fastifyStructure));
+    });
+  }
 };
 
 export default app;
