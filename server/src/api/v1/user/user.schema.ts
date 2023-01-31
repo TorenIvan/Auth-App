@@ -8,7 +8,7 @@ const authCredsBodySchema = z.object({
       required_error: Strings.EmailRequired,
       invalid_type_error: Strings.EmailInvalid,
     })
-    .email({ message: Strings.EmailInvalid }),
+    .email(),
   password: z
     .string({
       required_error: Strings.PasswordRequired,

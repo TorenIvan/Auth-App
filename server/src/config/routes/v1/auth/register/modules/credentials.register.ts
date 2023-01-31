@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
 import { $ref } from "../../../../../../api/v1/user/user.schema";
-import { registerCredentialsHandler } from "../../../../../../api/v1/user/user.controller";
+import UserController from "../../../../../../api/v1/user/user.controller";
 
 /**
  * Encapsulates the register with credentials route
@@ -9,6 +9,8 @@ import { registerCredentialsHandler } from "../../../../../../api/v1/user/user.c
 const registerWithCredentials: FastifyPluginAsync = async (
   fastify: FastifyInstance
 ): Promise<void> => {
+  const userController = new UserController(fastify);
+
   fastify.post(
     "/",
     {
@@ -19,7 +21,7 @@ const registerWithCredentials: FastifyPluginAsync = async (
         },
       },
     },
-    registerCredentialsHandler
+    userController.registerCredentialsHandler
   );
 };
 
