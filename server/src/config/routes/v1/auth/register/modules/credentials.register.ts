@@ -9,8 +9,6 @@ import UserController from "../../../../../../api/v1/user/user.controller";
 const registerWithCredentials: FastifyPluginAsync = async (
   fastify: FastifyInstance
 ): Promise<void> => {
-  const userController = new UserController(fastify);
-
   fastify.post(
     "/",
     {
@@ -21,7 +19,7 @@ const registerWithCredentials: FastifyPluginAsync = async (
         },
       },
     },
-    userController.registerCredentialsHandler
+    new UserController(fastify).registerCredentialsHandler
   );
 };
 

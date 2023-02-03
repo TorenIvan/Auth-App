@@ -1,17 +1,21 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { credsUserInput } from "./user.schema";
+import UserService from "./user.service";
 
 /**
- * Using singleton design pattern to initiate a class instance only once
+ * User Controller keeps all the "bussiness" logic User
+ * Using Singleton Design Pattern to initiate a UserController instance only once
  */
 class UserController {
   private static instance: InstanceType<typeof UserController>;
+  private static userService: InstanceType<typeof UserService>;
   private static fastifyInstance: FastifyInstance;
 
   constructor(fastifyInstance: FastifyInstance) {
     if (UserController.instance == null) {
       UserController.instance = this;
       UserController.fastifyInstance = fastifyInstance;
+      UserController.userService = new UserService(fastifyInstance.User);
     }
     return UserController.instance;
   }
@@ -22,9 +26,16 @@ class UserController {
   ) {
     const { email, password } = request.body;
 
-    console.log("this is: ", UserController.fastifyInstance.MongoDB);
-    reply.code(201);
-    return `Hello ${email}. You have a password of a ${password}`;
+    const insertedCorrectly: boolean =
+      await UserController.userService.InsertUserWithCredentials(
+        email,
+        password
+      );
+
+    console.log("this is: ", UserController.fastifyInstance.User);
+
+    const statusCode: number = insertedCorrectly === true ? 201 : 400;
+    reply.code(statusCode);
   }
 }
 
