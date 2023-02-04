@@ -46,8 +46,6 @@ const app: FastifyPluginAsync<AppOptions> = async (
     fastify.addSchema(schema);
   }
 
-  // This loads all plugins defined in routes
-  // define your routes in one of these
   void fastify.register(routes, options);
 
   if (process.env.NODE_ENV === "development") {

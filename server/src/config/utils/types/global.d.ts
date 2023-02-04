@@ -5,6 +5,10 @@ declare global {
     | "twitter"
     | "google"
     | "github";
+  type ServiceResponse = {
+    success: boolean;
+    customError?: string;
+  };
 }
 
 /* Just to make the file a module */

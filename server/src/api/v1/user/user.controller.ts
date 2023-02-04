@@ -3,8 +3,7 @@ import { credsUserInput } from "./user.schema";
 import UserService from "./user.service";
 
 /**
- * User Controller keeps all the "bussiness" logic User
- * Using Singleton Design Pattern to initiate a UserController instance only once
+ * User Controller keeps all the "bussiness" logic User Collection
  */
 class UserController {
   private static instance: InstanceType<typeof UserController>;
@@ -12,7 +11,7 @@ class UserController {
   private static fastifyInstance: FastifyInstance;
 
   constructor(fastifyInstance: FastifyInstance) {
-    if (UserController.instance == null) {
+    if (UserController.instance === undefined) {
       UserController.instance = this;
       UserController.fastifyInstance = fastifyInstance;
       UserController.userService = new UserService(fastifyInstance.User);
@@ -26,7 +25,7 @@ class UserController {
   ) {
     const { email, password } = request.body;
 
-    const insertedCorrectly: boolean =
+    const serviceResponse: ServiceResponse =
       await UserController.userService.InsertUserWithCredentials(
         email,
         password
@@ -34,8 +33,19 @@ class UserController {
 
     console.log("this is: ", UserController.fastifyInstance.User);
 
-    const statusCode: number = insertedCorrectly === true ? 201 : 400;
-    reply.code(statusCode);
+    const insertedCorrectly: boolean = serviceResponse.success;
+    if (insertedCorrectly === false) {
+      let error;
+      if (serviceResponse.customError !== undefined) {
+        error = UserController.fastifyInstance.httpErrors.badRequest(
+          serviceResponse.customError
+        );
+      } else {
+        error = UserController.fastifyInstance.httpErrors.badRequest();
+      }
+      reply.code(400).send(error);
+    }
+    reply.code(201);
   }
 }
 
