@@ -1,3 +1,5 @@
+import { ObjectId } from "mongodb";
+
 declare global {
   type SignInMethod =
     | "credentials"
@@ -8,6 +10,10 @@ declare global {
   type ServiceResponse = {
     success: boolean;
     customError?: string;
+    data?: ServiceInsertedData;
+  };
+  type ServiceInsertedData = {
+    userId: ObjectId;
   };
 }
 

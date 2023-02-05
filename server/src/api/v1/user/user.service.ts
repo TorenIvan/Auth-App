@@ -3,27 +3,26 @@ import { Errors } from "../../../config/utils/constants/Errors";
 import { objectAttributeExistsAndHasValue } from "../../../config/utils/helpers";
 import User from "./user.model";
 
+/**
+ * Keeps all the "database" logic of User Collection; including transactions if needed
+ */
 class UserService {
   private static instance: InstanceType<typeof UserService>;
-  private static users: Collection<User>;
+  private users!: Collection<User>;
 
   constructor(UserCollection: Collection<User>) {
     if (UserService.instance === undefined) {
       UserService.instance = this;
-      UserService.users = UserCollection;
+      this.users = UserCollection;
     }
     return UserService.instance;
   }
 
   static handleError(error: any): ServiceResponse {
     console.error(error);
-    console.log("Mpika error: ", error);
-
     if (objectAttributeExistsAndHasValue(error, "customError") === true) {
-      console.log("Aera mpika");
       return { success: false, customError: error.customError };
     }
-    console.log("Aera den mpika");
     return { success: false };
   }
 
@@ -33,7 +32,7 @@ class UserService {
   ): Promise<ServiceResponse> {
     const username: string = email.split("@")[0];
     try {
-      const userExists: boolean = !!(await UserService.users.findOne({
+      const userExists: boolean = !!(await this.users.findOne({
         email: email,
       }));
       if (userExists === true) {
@@ -41,13 +40,16 @@ class UserService {
           customError: Errors.UserAlreadyExists,
         };
       }
-      await UserService.users.insertOne({
+      const result = await this.users.insertOne({
         username: username,
         email: email,
         password: password,
         signInMethod: "credentials",
       });
-      return { success: true };
+      const data: ServiceInsertedData = {
+        userId: result.insertedId,
+      };
+      return { success: true, data: data };
     } catch (error) {
       return UserService.handleError(error);
     }
