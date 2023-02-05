@@ -2,6 +2,8 @@ import { Collection } from "mongodb";
 import { Errors } from "../../../config/utils/constants/Errors";
 import { objectAttributeExistsAndHasValue } from "../../../config/utils/helpers";
 import User from "./user.model";
+import * as bcrypt from "bcryptjs";
+import { EnvironmentVariables } from "../../../config/utils/constants/EnvironmentVariables";
 
 /**
  * Keeps all the "database" logic of User Collection; including transactions if needed
@@ -40,10 +42,13 @@ class UserService {
           customError: Errors.UserAlreadyExists,
         };
       }
+      const salt = await bcrypt.genSalt(Number(EnvironmentVariables.Salt_Size));
+      const hash = await bcrypt.hash(password, salt);
+
       const result = await UserService.users.insertOne({
         username: username,
         email: email,
-        password: password,
+        password: hash,
         signInMethod: "credentials",
       });
       const data: ServiceInsertedData = {

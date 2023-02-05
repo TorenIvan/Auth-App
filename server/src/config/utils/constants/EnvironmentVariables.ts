@@ -11,4 +11,5 @@ export const EnvironmentVariables = {
   Refresh_Token_Expiration_Time: process.env.REFRESH_TOKEN_SECRET_EXPIRATION!,
   Cookie_Name: process.env.COOKIE_NAME!,
   Cookie_Secret: process.env.COOKIE_SECRET!,
+  Salt_Size: process.env.SALT_SIZE!,
 } as const;
