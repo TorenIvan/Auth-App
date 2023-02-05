@@ -15,7 +15,7 @@ const registerWithCredentials: FastifyPluginAsync = async (
       schema: {
         body: $ref("authCredsBodySchema"),
         response: {
-          201: $ref("registerUserResponseSchema"),
+          201: $ref("authCredsUserResponseSchema"),
         },
       },
     },

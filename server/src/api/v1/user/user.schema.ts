@@ -17,7 +17,7 @@ const authCredsBodySchema = z.object({
     .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/),
 });
 
-const registerUserResponseSchema = z.object({
+const authCredsUserResponseSchema = z.object({
   access_token: z.string(),
 });
 
@@ -25,5 +25,5 @@ export type credsUserInput = z.infer<typeof authCredsBodySchema>;
 
 export const { schemas: registerCredentialsSchema, $ref } = buildJsonSchemas({
   authCredsBodySchema,
-  registerUserResponseSchema,
+  authCredsUserResponseSchema,
 });
