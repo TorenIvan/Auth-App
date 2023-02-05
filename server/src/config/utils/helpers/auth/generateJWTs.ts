@@ -1,6 +1,6 @@
-import { sign } from "jsonwebtoken";
+import * as jwt from "jsonwebtoken";
 
 export const generateJWT = (data: object, secret: string, expIn: string) => {
-  const token = sign(data, secret, { expiresIn: expIn });
+  const token = jwt.sign(data, secret, { expiresIn: expIn });
   return token;
 };

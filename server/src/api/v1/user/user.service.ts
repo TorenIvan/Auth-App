@@ -8,12 +8,12 @@ import User from "./user.model";
  */
 class UserService {
   private static instance: InstanceType<typeof UserService>;
-  private users!: Collection<User>;
+  private static users: Collection<User>;
 
   constructor(UserCollection: Collection<User>) {
     if (UserService.instance === undefined) {
       UserService.instance = this;
-      this.users = UserCollection;
+      UserService.users = UserCollection;
     }
     return UserService.instance;
   }
@@ -32,7 +32,7 @@ class UserService {
   ): Promise<ServiceResponse> {
     const username: string = email.split("@")[0];
     try {
-      const userExists: boolean = !!(await this.users.findOne({
+      const userExists: boolean = !!(await UserService.users.findOne({
         email: email,
       }));
       if (userExists === true) {
@@ -40,7 +40,7 @@ class UserService {
           customError: Errors.UserAlreadyExists,
         };
       }
-      const result = await this.users.insertOne({
+      const result = await UserService.users.insertOne({
         username: username,
         email: email,
         password: password,

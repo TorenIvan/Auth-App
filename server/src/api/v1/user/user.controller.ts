@@ -1,6 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { EnvironmentVariables } from "../../../config/utils/constants/EnvironmentVariables";
 import { generateJWT } from "../../../config/utils/helpers";
+import { generateCookieOptions } from "../../../config/utils/helpers/auth/generateCookieOptions";
 import { credsUserInput } from "./user.schema";
 import UserService from "./user.service";
 
@@ -9,14 +10,14 @@ import UserService from "./user.service";
  */
 class UserController {
   private static instance: InstanceType<typeof UserController>;
-  private userService!: InstanceType<typeof UserService>;
-  private fastifyInstance!: FastifyInstance;
+  private static userService: InstanceType<typeof UserService>;
+  private static fastifyInstance: FastifyInstance;
 
   constructor(fastifyInstance: FastifyInstance) {
     if (UserController.instance === undefined) {
       UserController.instance = this;
-      this.fastifyInstance = fastifyInstance;
-      this.userService = new UserService(fastifyInstance.User);
+      UserController.fastifyInstance = fastifyInstance;
+      UserController.userService = new UserService(fastifyInstance.User);
     }
     return UserController.instance;
   }
@@ -26,28 +27,49 @@ class UserController {
     reply: FastifyReply
   ) {
     const { email, password } = request.body;
+
     const serviceResponse: ServiceResponse =
-      await this.userService.InsertUserWithCredentials(email, password);
+      await UserController.userService.InsertUserWithCredentials(
+        email,
+        password
+      );
 
     const insertedCorrectly: boolean = serviceResponse.success;
     if (insertedCorrectly === false) {
       let error;
       if (serviceResponse.customError !== undefined) {
-        error = this.fastifyInstance.httpErrors.badRequest(
+        error = UserController.fastifyInstance.httpErrors.badRequest(
           serviceResponse.customError
         );
       } else {
-        error = this.fastifyInstance.httpErrors.badRequest();
+        error = UserController.fastifyInstance.httpErrors.badRequest();
       }
       reply.code(400).send(error);
+      return;
     }
 
+    const tokenPayload = {
+      userId: serviceResponse.data!.userId.toString(),
+      signInWithCredentials: true,
+    };
+
     const access_token = generateJWT(
-      { id: serviceResponse.data!.userId },
+      tokenPayload,
       EnvironmentVariables.Access_Token_Secret,
       EnvironmentVariables.Access_Token_Expiration_Time
     );
-    reply.code(201).send({ access_token: access_token });
+
+    const refresh_token = generateJWT(
+      tokenPayload,
+      EnvironmentVariables.Refresh_Token_Secret,
+      EnvironmentVariables.Refresh_Token_Expiration_Time
+    );
+
+    const cookieOptions = generateCookieOptions();
+    reply
+      .code(201)
+      .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
+      .send({ access_token: access_token });
   }
 }
 

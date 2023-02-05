@@ -9,12 +9,13 @@ import { Strings } from "../utils/constants/Strings";
  * Encapsulates DataBase connect/disconnect operations
  * @param {FastifyInstance} fastify Encapsulated Fastify Instance
  */
-const databaseConnectionPlugin: FastifyPluginAsync = fp(
-  async (fastify: FastifyInstance) => {
+const databasePlugin: FastifyPluginAsync = fp(
+  async (fastify: FastifyInstance): Promise<void> => {
     try {
       const client: MongoClient = new MongoClient(
         EnvironmentVariables.DatabaseUri
       );
+
       await client.connect();
 
       const db: Db = client.db(EnvironmentVariables.DatabaseName);
@@ -32,4 +33,4 @@ const databaseConnectionPlugin: FastifyPluginAsync = fp(
   }
 );
 
-export default databaseConnectionPlugin;
+export default databasePlugin;
