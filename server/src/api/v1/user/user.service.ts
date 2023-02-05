@@ -48,11 +48,63 @@ class UserService {
       const result = await UserService.users.insertOne({
         username: username,
         email: email,
+        biography: "",
+        phone: "",
         password: hash,
         signInMethod: "credentials",
       });
       const data: ServiceInsertedData = {
         userId: result.insertedId,
+        username: username,
+        email: email,
+        biography: "",
+        phone: "",
+      };
+      return { success: true, data: data };
+    } catch (error) {
+      return UserService.handleError(error);
+    }
+  }
+
+  async ValidateUserCreds(
+    email: string,
+    password: string
+  ): Promise<ServiceResponse> {
+    try {
+      const result = await UserService.users.findOne(
+        {
+          email: email,
+        },
+        {
+          projection: {
+            username: 1,
+            email: 1,
+            password: 1,
+            _id: 1,
+          },
+        }
+      );
+      if (!!result === false) {
+        throw {
+          customError: Errors.UserNotFoundWithTheseCreds,
+        };
+      }
+      const isCorrectPassword: boolean = await bcrypt.compare(
+        password,
+        result?.password || ""
+      );
+      if (isCorrectPassword === false) {
+        throw {
+          customError: Errors.UserNotFoundWithTheseCreds,
+        };
+      }
+
+      const data: ServiceInsertedData = {
+        userId: result!._id,
+        username: result!.username,
+        email: email,
+        biography: result!.biography,
+        phone: result!.phone,
       };
       return { success: true, data: data };
     } catch (error) {

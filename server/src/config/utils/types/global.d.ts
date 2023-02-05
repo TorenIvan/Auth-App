@@ -14,6 +14,10 @@ declare global {
   };
   type ServiceInsertedData = {
     userId: ObjectId;
+    username: string;
+    email: string;
+    biography: string;
+    phone: string;
   };
 }
 

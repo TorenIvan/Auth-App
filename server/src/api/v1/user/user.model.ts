@@ -5,7 +5,7 @@ const UserSchema = z.object({
   email: z.string().email(),
   phone: z
     .string()
-    .optional()
+    .length(0)
     .or(
       z
         .string()
@@ -13,7 +13,7 @@ const UserSchema = z.object({
           /(\+\d{1,3}\s?)?((\(\d{3}\)\s?)|(\d{3})(\s|-?))(\d{3}(\s|-?))(\d{4})(\s?(([E|e]xt[:|.|]?)|x|X)(\s?\d+))?/g
         )
     ),
-  biography: z.string().optional(),
+  biography: z.string(),
   password: z.string().optional(),
   signInMethod: z.string(),
 });

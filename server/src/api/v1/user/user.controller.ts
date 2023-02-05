@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { EnvironmentVariables } from "../../../config/utils/constants/EnvironmentVariables";
-import { generateJWT } from "../../../config/utils/helpers";
 import { generateCookieOptions } from "../../../config/utils/helpers/auth/generateCookieOptions";
+import { generateAuthJWTs } from "../../../config/utils/helpers/auth/generateJWTs";
 import { credsUserInput } from "./user.schema";
 import UserService from "./user.service";
 
@@ -22,6 +22,21 @@ class UserController {
     return UserController.instance;
   }
 
+  static handleError(
+    reply: FastifyReply,
+    errorCode: number,
+    customError?: string
+  ) {
+    let error;
+    if (customError !== undefined) {
+      error = UserController.fastifyInstance.httpErrors.badRequest(customError);
+    } else {
+      error = UserController.fastifyInstance.httpErrors.badRequest();
+    }
+    reply.code(errorCode).send(error);
+    return;
+  }
+
   async registerCredentialsHandler(
     request: FastifyRequest<{ Body: credsUserInput }>,
     reply: FastifyReply
@@ -36,38 +51,49 @@ class UserController {
 
     const insertedCorrectly: boolean = serviceResponse.success;
     if (insertedCorrectly === false) {
-      let error;
-      if (serviceResponse.customError !== undefined) {
-        error = UserController.fastifyInstance.httpErrors.badRequest(
-          serviceResponse.customError
-        );
-      } else {
-        error = UserController.fastifyInstance.httpErrors.badRequest();
-      }
-      reply.code(400).send(error);
-      return;
+      return UserController.handleError(
+        reply,
+        400,
+        serviceResponse?.customError
+      );
     }
 
-    const tokenPayload = {
-      userId: serviceResponse.data!.userId.toString(),
-      signInWithCredentials: true,
-    };
-
-    const access_token = generateJWT(
-      tokenPayload,
-      EnvironmentVariables.Access_Token_Secret,
-      EnvironmentVariables.Access_Token_Expiration_Time
-    );
-
-    const refresh_token = generateJWT(
-      tokenPayload,
-      EnvironmentVariables.Refresh_Token_Secret,
-      EnvironmentVariables.Refresh_Token_Expiration_Time
+    const { access_token, refresh_token } = generateAuthJWTs(
+      serviceResponse.data!.userId.toString()
     );
 
     const cookieOptions = generateCookieOptions();
     reply
       .code(201)
+      .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
+      .send({ access_token: access_token });
+  }
+
+  async loginCredentialsHandler(
+    request: FastifyRequest<{ Body: credsUserInput }>,
+    reply: FastifyReply
+  ) {
+    const { email, password } = request.body;
+
+    const serviceResponse: ServiceResponse =
+      await UserController.userService.ValidateUserCreds(email, password);
+
+    const credentialsAuthenticated: boolean = serviceResponse.success;
+    if (credentialsAuthenticated === false) {
+      return UserController.handleError(
+        reply,
+        400,
+        serviceResponse?.customError
+      );
+    }
+
+    const { access_token, refresh_token } = generateAuthJWTs(
+      serviceResponse.data!.userId.toString()
+    );
+    const cookieOptions = generateCookieOptions();
+
+    reply
+      .code(200)
       .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
       .send({ access_token: access_token });
   }
