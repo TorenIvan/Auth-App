@@ -52,6 +52,7 @@ class UserService {
         phone: "",
         password: hash,
         signInMethod: "credentials",
+        isVerified: false,
       });
       const data: ServiceInsertedData = {
         userId: result.insertedId,
@@ -66,7 +67,7 @@ class UserService {
     }
   }
 
-  async ValidateUserCreds(
+  async ValidateUserWithCredentials(
     email: string,
     password: string
   ): Promise<ServiceResponse> {
@@ -74,6 +75,7 @@ class UserService {
       const result = await UserService.users.findOne(
         {
           email: email,
+          isVerified: true,
         },
         {
           projection: {

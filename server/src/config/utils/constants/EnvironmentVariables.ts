@@ -12,4 +12,11 @@ export const EnvironmentVariables = {
   Cookie_Name: process.env.COOKIE_NAME!,
   Cookie_Secret: process.env.COOKIE_SECRET!,
   Salt_Size: process.env.SALT_SIZE!,
+  Email_Secret: process.env.EMAIL_SECRET!,
+  Email_Token_Expiration_Time: process.env.EMAIL_TOKEN_EXPIRATION!,
+  Email_Username: process.env.EMAIL_USERNAME!,
+  Email_Password: process.env.EMAIL_PASSWORD!,
+  Email_Verification_Uri: process.env.EMAIL_URI_VERIFICATION!,
+  Email_Host: process.env.EMAIL_HOST!,
+  Email_Port: process.env.EMAIL_PORT!,
 } as const;

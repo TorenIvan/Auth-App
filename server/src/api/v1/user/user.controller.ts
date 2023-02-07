@@ -1,12 +1,21 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { EnvironmentVariables } from "../../../config/utils/constants/EnvironmentVariables";
 import { generateCookieOptions } from "../../../config/utils/helpers/auth/generateCookieOptions";
-import { generateAuthJWTs } from "../../../config/utils/helpers/auth/generateJWTs";
+import {
+  generateAuthJWTs,
+  generateJWT,
+} from "../../../config/utils/helpers/auth/generateJWTs";
+import { sendEmail } from "../../../config/utils/helpers/general/sendEmail";
 import { credsUserInput } from "./user.schema";
 import UserService from "./user.service";
 
 /**
  * Keeps all the "bussiness" logic of User Collection
+ * ToDos:
+ * 1) MJML send email on register
+ * 2) Add isVerified and verification token flag
+ * 3) Do not let the user who is not verified enter the site
+ * 4) Add a way  to check access and refresh tokens
  */
 class UserController {
   private static instance: InstanceType<typeof UserController>;
@@ -58,15 +67,17 @@ class UserController {
       );
     }
 
-    const { access_token, refresh_token } = generateAuthJWTs(
-      serviceResponse.data!.userId.toString()
+    const email_token = generateJWT(
+      {
+        userId: serviceResponse.data!.userId.toString(),
+      },
+      EnvironmentVariables.Email_Secret,
+      EnvironmentVariables.Email_Token_Expiration_Time
     );
 
-    const cookieOptions = generateCookieOptions();
-    reply
-      .code(201)
-      .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
-      .send({ access_token: access_token });
+    sendEmail(email, email_token);
+
+    reply.code(201);
   }
 
   async loginCredentialsHandler(
@@ -76,7 +87,10 @@ class UserController {
     const { email, password } = request.body;
 
     const serviceResponse: ServiceResponse =
-      await UserController.userService.ValidateUserCreds(email, password);
+      await UserController.userService.ValidateUserWithCredentials(
+        email,
+        password
+      );
 
     const credentialsAuthenticated: boolean = serviceResponse.success;
     if (credentialsAuthenticated === false) {

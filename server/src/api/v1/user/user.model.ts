@@ -16,6 +16,7 @@ const UserSchema = z.object({
   biography: z.string(),
   password: z.string().optional(),
   signInMethod: z.string(),
+  isVerified: z.boolean(),
 });
 
 type User = z.infer<typeof UserSchema>;
