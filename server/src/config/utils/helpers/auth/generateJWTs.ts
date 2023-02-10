@@ -6,6 +6,11 @@ export const generateJWT = (data: object, secret: string, expIn: string) => {
   return token;
 };
 
+export const verifyJWT = (token: string, secret: string): TokenInterface => {
+  const decodedData = jwt.verify(token, secret);
+  return decodedData as TokenInterface;
+};
+
 export const generateAuthJWTs = (
   userId: string,
   signInWithCredentials: boolean = true

@@ -17,7 +17,11 @@ const transportOptions: SMTPConnection.Options = {
   debug: EnvironmentVariables.IsProduction === false,
 };
 
-export async function sendEmail(email: string, token: string) {
+export async function sendEmail(
+  email: string,
+  token: string,
+  action: SendEmailAction
+) {
   const transporter = createTransport(transportOptions);
 
   const mailOptions = {
@@ -25,7 +29,7 @@ export async function sendEmail(email: string, token: string) {
     to: email,
     subject: Strings.VerificationEmailSubject,
     text: Strings.VerificationEmailText,
-    html: `<p>Click <a href=${EnvironmentVariables.Email_Verification_Uri}token=${token}>here</a> to verify your account</p>`,
+    html: `<p>Please, click <a href=${EnvironmentVariables.Email_Verification_Uri}token=${token}>here</a> to ${action}</p>`,
   };
 
   try {

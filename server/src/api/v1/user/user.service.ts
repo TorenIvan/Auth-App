@@ -1,4 +1,4 @@
-import { Collection } from "mongodb";
+import { Collection, ObjectId } from "mongodb";
 import { Errors } from "../../../config/utils/constants/Errors";
 import { objectAttributeExistsAndHasValue } from "../../../config/utils/helpers";
 import User from "./user.model";
@@ -107,6 +107,68 @@ class UserService {
         email: email,
         biography: result!.biography,
         phone: result!.phone,
+      };
+      return { success: true, data: data };
+    } catch (error) {
+      return UserService.handleError(error);
+    }
+  }
+
+  async CheckUserEmailConfirmation(email: string) {
+    try {
+      const isVerified: boolean = !!(await UserService.users.findOne({
+        email: email,
+        isVerified: true,
+      }));
+      return { success: isVerified };
+    } catch (error) {
+      return UserService.handleError(error);
+    }
+  }
+
+  async UpdateIsVerifiedWhenUserExists(userId: string) {
+    try {
+      const userFound = !!(await UserService.users.findOne({
+        _id: new ObjectId(userId),
+      }));
+      if (userFound === false) {
+        throw {
+          customError: Errors.UserNotFoundWithTheseCreds,
+        };
+      }
+      await UserService.users.updateOne(
+        {
+          _id: new ObjectId(userId),
+        },
+        {
+          $set: {
+            isVerified: true,
+          },
+        }
+      );
+      return { success: true };
+    } catch (error) {
+      return UserService.handleError(error);
+    }
+  }
+
+  async CheckEmailExistence(email: string) {
+    try {
+      const itExists = await UserService.users.findOne(
+        {
+          email: email,
+        },
+        {
+          projection: {
+            _id: 1,
+          },
+        }
+      );
+      if (!!itExists === false) {
+        throw "User not found with this email";
+      }
+      const data: ServiceFoundData = {
+        userId: itExists!._id,
       };
       return { success: true, data: data };
     } catch (error) {
