@@ -3,10 +3,10 @@ import UserController from "../../../../../api/v1/user/user.controller";
 import { $ref } from "../../../../../api/v1/user/user.schema";
 
 /**
- * Encapsulates the register with credentials route
+ * Encapsulates the email verification process route
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
-const verifyEmail: FastifyPluginAsync = async (
+const confirmEmail: FastifyPluginAsync = async (
   fastify: FastifyInstance
 ): Promise<void> => {
   fastify.get(
@@ -16,7 +16,6 @@ const verifyEmail: FastifyPluginAsync = async (
         querystring: $ref("verifyEmailQueryStringSchema"),
         response: {
           200: $ref("verifyEmailResponseSchema"),
-          400: $ref("verifyEmailErrorSchema"),
         },
       },
     },
@@ -24,4 +23,4 @@ const verifyEmail: FastifyPluginAsync = async (
   );
 };
 
-export default verifyEmail;
+export default confirmEmail;

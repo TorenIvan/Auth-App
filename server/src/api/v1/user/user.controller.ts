@@ -44,14 +44,52 @@ class UserController {
     errorCode: number,
     customError?: string
   ) {
+    console.log("errorCode: ", errorCode);
     let error;
     if (customError !== undefined) {
-      error = UserController.fastifyInstance.httpErrors.badRequest(customError);
+      switch (errorCode) {
+        case 403:
+          error =
+            UserController.fastifyInstance.httpErrors.forbidden(customError);
+          break;
+        case 401:
+          error =
+            UserController.fastifyInstance.httpErrors.unauthorized(customError);
+          break;
+        default:
+          error =
+            UserController.fastifyInstance.httpErrors.badRequest(customError);
+      }
     } else {
-      error = UserController.fastifyInstance.httpErrors.badRequest();
+      switch (errorCode) {
+        case 403:
+          error = UserController.fastifyInstance.httpErrors.forbidden();
+          break;
+        case 401:
+          error = UserController.fastifyInstance.httpErrors.unauthorized();
+          break;
+        default:
+          error = UserController.fastifyInstance.httpErrors.badRequest();
+      }
     }
     reply.code(errorCode).send(error);
     return;
+  }
+
+  static verifyQueryToken(query: { token?: string }): TokenInterface | null {
+    let data: TokenInterface | null = null;
+    try {
+      let token = query.token;
+      if (!!token === false) throw "error";
+
+      data = verifyJWT(token!, EnvironmentVariables.Email_Secret);
+      if (!!data?.userId === false) throw "error";
+      if (!!data?.type === false) throw "error";
+
+      return data;
+    } catch (error) {
+      return null;
+    }
   }
 
   async registerCredentialsHandler(
@@ -87,6 +125,34 @@ class UserController {
     sendEmail(email, email_token, Strings.ActionConfirmEmail);
 
     reply.code(201);
+  }
+
+  async confirmEmailHandler(
+    request: FastifyRequest<{ Querystring: queryConfirmEmail }>,
+    reply: FastifyReply
+  ) {
+    const tokenVerifiedData = UserController.verifyQueryToken(request.query);
+    if (tokenVerifiedData === null) {
+      return UserController.handleError(reply, 401, Errors.TokenExpired);
+    }
+
+    const { userId, type } = tokenVerifiedData;
+    if (type !== Strings.ConfirmEmailType) {
+      return UserController.handleError(reply, 401, Errors.IncorrectToken);
+    }
+
+    const serviceResponse: ServiceResponse =
+      await UserController.userService.UpdateIsVerifiedWhenUserExists(userId);
+
+    const doneVerified: boolean = serviceResponse.success;
+    if (doneVerified === false) {
+      return UserController.handleError(
+        reply,
+        400,
+        serviceResponse?.customError
+      );
+    }
+    reply.code(200);
   }
 
   async loginCredentialsHandler(
@@ -142,47 +208,6 @@ class UserController {
       .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
       .send({ access_token: access_token });
   }
-
-  async confirmEmailHandler(
-    request: FastifyRequest<{ Querystring: queryConfirmEmail }>,
-    reply: FastifyReply
-  ) {
-    let token;
-    let data;
-
-    try {
-      token = request.query?.token;
-      if (!!token === false) throw "error";
-      data = verifyJWT(
-        token,
-        EnvironmentVariables.Email_Secret
-      ) as TokenInterface;
-      if (!!data?.userId === false || !!data?.type === false) {
-        throw "error";
-      }
-    } catch (error) {
-      return UserController.handleError(reply, 400, Errors.TokenExpired);
-    }
-
-    const { userId, type } = data;
-    if (type !== Strings.ConfirmEmailType) {
-      return UserController.handleError(reply, 400, Errors.IncorrectToken);
-    }
-
-    const serviceResponse: ServiceResponse =
-      await UserController.userService.UpdateIsVerifiedWhenUserExists(userId);
-
-    const doneVerified: boolean = serviceResponse.success;
-    if (doneVerified === false) {
-      return UserController.handleError(
-        reply,
-        400,
-        serviceResponse?.customError
-      );
-    }
-    reply.code(200).setCookie;
-  }
-
   async forgotPasswordHandler(
     request: FastifyRequest<{ Body: forgotPasswordInput }>,
     reply: FastifyReply
@@ -232,14 +257,48 @@ class UserController {
   }
 
   async resetPasswordHandler(
-    request: FastifyRequest<{ Body: resetPasswordUserInput }>,
+    request: FastifyRequest<{
+      Querystring: queryConfirmEmail;
+      Body: resetPasswordUserInput;
+    }>,
     reply: FastifyReply
   ) {
-    const { newPassword, confirmNewPassword } = request.body;
+    const tokenVerifiedData = UserController.verifyQueryToken(request.query);
+    if (tokenVerifiedData === null) {
+      return UserController.handleError(reply, 401, Errors.TokenExpired);
+    }
 
+    const { userId, type } = tokenVerifiedData;
+    if (type !== Strings.ActionResetPassword) {
+      return UserController.handleError(reply, 401, Errors.IncorrectToken);
+    }
+    const userExistsResponse: ServiceResponse =
+      await UserController.userService.CheckUserIdExistence(userId);
+
+    if (userExistsResponse.success === false) {
+      return UserController.handleError(
+        reply,
+        401,
+        Errors.GenericErrorResetPassword
+      );
+    }
+
+    const { newPassword, confirmNewPassword } = request.body;
     if (newPassword !== confirmNewPassword) {
       return UserController.handleError(reply, 400, Errors.PasswordsNotSame);
     }
+    const resetPasswordById: ServiceResponse =
+      await UserController.userService.ResetPassword(userId, newPassword);
+
+    if (resetPasswordById.success === false) {
+      return UserController.handleError(
+        reply,
+        400,
+        Errors.GenericErrorResetPassword
+      );
+    }
+
+    reply.code(200);
   }
 }
 

@@ -25,13 +25,11 @@ declare global {
 
   interface TokenInterface {
     userId: string;
-    type: string;
+    type?: TokenType;
+    signInMethod?: SignInMethod;
   }
 
-  type TokenType =
-    | Strings.ConfirmEmailType
-    | Strings.ForgotPasswordType
-    | undefined;
+  type TokenType = Strings.ConfirmEmailType | Strings.ForgotPasswordType;
 
   type SendEmailAction =
     | Strings.ActionConfirmEmail

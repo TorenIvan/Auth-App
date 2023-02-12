@@ -5,6 +5,14 @@ declare module "fastify" {
   export interface FastifyInstance {
     MongoDB: Db;
     User: Collection<User>;
+    verifyRefreshTokenCookie: (
+      request: FastifyRequest,
+      reply: FastifyReply
+    ) => Promise<void>;
+    verifyResetPasswordCookie: (
+      request: FastifyRequest,
+      reply: FastifyReply
+    ) => Promise<void>;
   }
 }
 

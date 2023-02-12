@@ -22,7 +22,7 @@ const authCredsUserResponseSchema = z.object({
 });
 
 const verifyEmailQueryStringSchema = z.object({
-  token: z.string(),
+  token: z.string().min(1, { message: "token is required" }),
 });
 
 const verifyEmailResponseSchema = z.object({

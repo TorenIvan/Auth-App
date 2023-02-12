@@ -47,6 +47,11 @@ const app: FastifyPluginAsync<AppOptions> = async (
     options: options,
   });
 
+  void fastify.register(AutoLoad, {
+    dir: join(__dirname, "./api/v1/user"),
+    matchFilter: (path) => path.endsWith(".middleware.ts"),
+  });
+
   for (const schema of registerCredentialsSchema) {
     fastify.addSchema(schema);
   }

@@ -75,7 +75,6 @@ class UserService {
       const result = await UserService.users.findOne(
         {
           email: email,
-          isVerified: true,
         },
         {
           projection: {
@@ -171,6 +170,48 @@ class UserService {
         userId: itExists!._id,
       };
       return { success: true, data: data };
+    } catch (error) {
+      return UserService.handleError(error);
+    }
+  }
+
+  async CheckUserIdExistence(id: string) {
+    try {
+      const itExists = await UserService.users.findOne(
+        {
+          _id: new ObjectId(id),
+        },
+        {
+          projection: {
+            _id: 1,
+          },
+        }
+      );
+      if (!!itExists === false) {
+        throw "User not found with this identifier";
+      }
+      const data: ServiceFoundData = {
+        userId: itExists!._id,
+      };
+      return { success: true, data: data };
+    } catch (error) {
+      return UserService.handleError(error);
+    }
+  }
+
+  async ResetPassword(userId: string, newPassword: string) {
+    try {
+      await UserService.users.updateOne(
+        {
+          _id: new ObjectId(userId),
+        },
+        {
+          $set: {
+            password: newPassword,
+          },
+        }
+      );
+      return { success: true };
     } catch (error) {
       return UserService.handleError(error);
     }

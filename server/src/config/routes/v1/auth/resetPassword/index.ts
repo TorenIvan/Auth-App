@@ -3,21 +3,23 @@ import UserController from "../../../../../api/v1/user/user.controller";
 import { $ref } from "../../../../../api/v1/user/user.schema";
 
 /**
- * Encapsulates the register with credentials route
+ * Encapsulates the reset password operation route
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
-const verifyEmail: FastifyPluginAsync = async (
+const resetPassword: FastifyPluginAsync = async (
   fastify: FastifyInstance
 ): Promise<void> => {
-  fastify.get(
+  //fastify.addHook("onRequest", fastify.verifyResetPasswordCookie);
+  fastify.post(
     "/",
     {
       schema: {
         body: $ref("resetPasswordRequestSchema"),
+        querystring: $ref("verifyEmailResponseSchema"),
       },
     },
     new UserController(fastify).resetPasswordHandler
   );
 };
 
-export default verifyEmail;
+export default resetPassword;
