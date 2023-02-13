@@ -208,6 +208,7 @@ class UserController {
       .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
       .send({ access_token: access_token });
   }
+
   async forgotPasswordHandler(
     request: FastifyRequest<{ Body: forgotPasswordInput }>,
     reply: FastifyReply
