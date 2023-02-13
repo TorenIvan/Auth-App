@@ -9,7 +9,9 @@ import { $ref } from "../../../../../api/v1/user/user.schema";
 const resetPassword: FastifyPluginAsync = async (
   fastify: FastifyInstance
 ): Promise<void> => {
-  //fastify.addHook("onRequest", fastify.verifyResetPasswordCookie);
+  fastify.addHook("onRequest", async (request, reply) => {
+    await fastify.verifyResetPasswordCookie(request, reply);
+  });
   fastify.post(
     "/",
     {
