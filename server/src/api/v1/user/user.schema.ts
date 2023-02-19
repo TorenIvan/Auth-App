@@ -34,7 +34,12 @@ const verifyEmailErrorSchema = z.object({
 });
 
 const forgotPasswordRequestSchema = z.object({
-  email: z.string(),
+  email: z
+    .string({
+      required_error: Strings.EmailRequired,
+      invalid_type_error: Strings.EmailInvalid,
+    })
+    .email(),
 });
 
 const resetPasswordRequestSchema = z.object({

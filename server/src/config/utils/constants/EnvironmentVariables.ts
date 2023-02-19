@@ -23,4 +23,5 @@ export const EnvironmentVariables = {
   Email_Verification_Uri: process.env.EMAIL_URI_VERIFICATION!,
   Email_Host: process.env.EMAIL_HOST!,
   Email_Port: process.env.EMAIL_PORT!,
+  Reset_Pass_Uri: process.env.RESET_PASS_URI!,
 } as const;

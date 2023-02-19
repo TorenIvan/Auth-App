@@ -44,7 +44,6 @@ class UserController {
     errorCode: number,
     customError?: string
   ) {
-    console.log("errorCode: ", errorCode);
     let error;
     if (customError !== undefined) {
       switch (errorCode) {
@@ -219,9 +218,6 @@ class UserController {
 
     const emailExists = serviceResponse.success;
 
-    /**
-     * Do not let the FrontEnd know if the email is actually valid
-     */
     if (emailExists === true) {
       const new_email_token = generateJWT(
         {
@@ -245,7 +241,7 @@ class UserController {
 
       const cookieOptions = generateResetCookieOptions();
 
-      return reply
+      reply
         .code(200)
         .setCookie(
           EnvironmentVariables.Reset_Pass_Cookie_Name,

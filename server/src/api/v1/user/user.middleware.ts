@@ -1,10 +1,10 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { fastifyPlugin } from "fastify-plugin";
+import { fastifyPlugin as fp } from "fastify-plugin";
 import { EnvironmentVariables } from "../../../config/utils/constants/EnvironmentVariables";
 import { Strings } from "../../../config/utils/constants/Strings";
 import { verifyJWT } from "../../../config/utils/helpers/auth/generateJWTs";
 
-export default fastifyPlugin((fastify: FastifyInstance) => {
+export default fp((fastify: FastifyInstance) => {
   fastify.decorate(
     "verifyRefreshTokenCookie",
     async function (

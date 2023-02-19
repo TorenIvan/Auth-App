@@ -24,12 +24,17 @@ export async function sendEmail(
 ) {
   const transporter = createTransport(transportOptions);
 
+  let emailLink = EnvironmentVariables.Email_Verification_Uri;
+  if (action === Strings.ActionResetPassword) {
+    emailLink = EnvironmentVariables.Reset_Pass_Uri;
+  }
+
   const mailOptions = {
     from: EnvironmentVariables.Email_Username,
     to: email,
     subject: Strings.VerificationEmailSubject,
     text: Strings.VerificationEmailText,
-    html: `<p>Please, click <a href=${EnvironmentVariables.Email_Verification_Uri}token=${token}>here</a> to ${action}</p>`,
+    html: `<p>Please, click <a href=${emailLink}token=${token}>here</a> to ${action}</p>`,
   };
 
   try {
