@@ -28,12 +28,11 @@ export const generateCookieOptions = () => {
   return options;
 };
 
-export const generateResetCookieOptions = (exp = resetCookieExpirationTime) => {
+export const generateResetCookieOptions = () => {
   const cookieExpirationDate = new Date(
-    new Date().setDate(new Date().getDate() + exp / 1440) //converting minutes to days
+    new Date().setTime(new Date().getTime() + resetCookieExpirationTime * 60000)
   );
 
-  console.log("cookie expiration time: ", cookieExpirationDate);
   const options = {
     signed: false, //refresh token is already signed
     httpOnly: true,

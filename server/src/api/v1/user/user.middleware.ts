@@ -36,7 +36,8 @@ const userMiddleware: FastifyPluginAsync = fp(
             throw "error";
           }
         } catch (error) {
-          reply.code(401);
+          const errorMessage = fastify.httpErrors.unauthorized();
+          reply.send(errorMessage);
         }
       }
     );
@@ -48,14 +49,15 @@ const userMiddleware: FastifyPluginAsync = fp(
         reply: FastifyReply
       ): Promise<void> {
         try {
+          const cookieName = EnvironmentVariables.Reset_Pass_Cookie_Name;
+
           if (request.cookies === null || request.cookies === undefined) {
             throw "error";
           }
-          const cookieName = EnvironmentVariables.Reset_Pass_Cookie_Name;
-          if (!!request.cookies[`${cookieName}`] === false) {
+          if (!!request.cookies[cookieName] === false) {
             throw "error";
           }
-          const token = request.cookies[`${cookieName}`] ?? "";
+          const token = request.cookies[cookieName] ?? "";
 
           const data = verifyJWT(
             token,
@@ -69,7 +71,8 @@ const userMiddleware: FastifyPluginAsync = fp(
             throw "error";
           }
         } catch (error) {
-          reply.code(401);
+          const errorMessage = fastify.httpErrors.forbidden();
+          reply.send(errorMessage);
         }
       }
     );

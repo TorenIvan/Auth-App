@@ -213,6 +213,7 @@ class UserController {
     reply: FastifyReply
   ) {
     const { email } = request.body;
+
     const serviceResponse: ServiceResponse =
       await UserController.userService.CheckEmailExistence(email);
 
@@ -260,23 +261,19 @@ class UserController {
     }>,
     reply: FastifyReply
   ) {
-    console.log("perasa ton elegxo apo ta cookies");
     const tokenVerifiedData = UserController.verifyQueryToken(request.query);
     if (tokenVerifiedData === null) {
-      console.log("Token Expired");
       return UserController.handleError(reply, 401, Errors.TokenExpired);
     }
 
     const { userId, type } = tokenVerifiedData;
     if (type !== Strings.ForgotPasswordType) {
-      console.log("Incorrect token");
       return UserController.handleError(reply, 401, Errors.IncorrectToken);
     }
     const userExistsResponse: ServiceResponse =
       await UserController.userService.CheckUserIdExistence(userId);
 
     if (userExistsResponse.success === false) {
-      console.log("success false first one");
       return UserController.handleError(
         reply,
         401,
@@ -286,14 +283,12 @@ class UserController {
 
     const { newPassword, confirmNewPassword } = request.body;
     if (newPassword !== confirmNewPassword) {
-      console.log("passwords not matched");
       return UserController.handleError(reply, 400, Errors.PasswordsNotSame);
     }
     const resetPasswordById: ServiceResponse =
       await UserController.userService.ResetPassword(userId, newPassword);
 
     if (resetPasswordById.success === false) {
-      console.log("success false second one");
       return UserController.handleError(
         reply,
         400,
@@ -301,27 +296,7 @@ class UserController {
       );
     }
 
-    /**
-     * Reset cookie by forcing its expiration
-     */
-    const reset_password_cookie_token = generateJWT(
-      {
-        userId: userId,
-        type: Strings.ForgotPasswordType,
-      },
-      EnvironmentVariables.Reset_Pass_Cookie_Secret,
-      "0s"
-    );
-
-    const cookieOptions = generateResetCookieOptions(-10);
-
-    reply
-      .code(200)
-      .setCookie(
-        EnvironmentVariables.Reset_Pass_Cookie_Name,
-        reset_password_cookie_token,
-        cookieOptions
-      );
+    reply.code(200).clearCookie(EnvironmentVariables.Reset_Pass_Cookie_Name);
   }
 }
 

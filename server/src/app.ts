@@ -44,6 +44,11 @@ const app: FastifyPluginAsync<AppOptions> = async (
     exposedHeaders: ["*", "Authorization"],
   });
 
+  void fastify.register(cookie, {
+    hook: "onRequest",
+    parseOptions: {},
+  } as FastifyCookieOptions);
+
   void fastify.register(AutoLoad, {
     dir: join(__dirname, "./config/database"),
   });
@@ -52,10 +57,6 @@ const app: FastifyPluginAsync<AppOptions> = async (
     dir: join(__dirname, "./config/utils"),
     options: options,
   });
-
-  void fastify.register(cookie, {
-    parseOptions: {},
-  } as FastifyCookieOptions);
 
   void fastify.register(AutoLoad, {
     dir: join(__dirname, "./config/plugins"),
