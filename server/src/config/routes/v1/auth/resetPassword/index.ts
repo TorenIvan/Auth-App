@@ -17,7 +17,7 @@ const resetPassword: FastifyPluginAsync = async (
     {
       schema: {
         body: $ref("resetPasswordRequestSchema"),
-        querystring: $ref("verifyEmailResponseSchema"),
+        querystring: $ref("verifyEmailQueryStringSchema"),
       },
     },
     new UserController(fastify).resetPasswordHandler

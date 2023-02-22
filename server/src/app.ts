@@ -7,7 +7,9 @@ config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
 import { registerCredentialsSchema } from "./api/v1/user/user.schema";
 import cookie from "@fastify/cookie";
 import type { FastifyCookieOptions } from "@fastify/cookie";
+import cors from "@fastify/cors";
 import routes from "./config/routes";
+import userMiddleware from "./api/v1/user/user.middleware";
 
 export type AppOptions = {
   // Place your custom options for app below here.
@@ -29,6 +31,19 @@ const app: FastifyPluginAsync<AppOptions> = async (
     await fastify.register(FastifyOverview);
   }
 
+  await fastify.register(cors, {
+    origin: [process.env.CLIENT_URI!, process.env.SERVER_URI!],
+    methods: ["GET", "PUT", "POST"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      process.env.COOKIE_NAME!,
+      process.env.RESET_PASS_COOKIE_NAME!,
+    ],
+    credentials: true,
+    exposedHeaders: ["*", "Authorization"],
+  });
+
   void fastify.register(AutoLoad, {
     dir: join(__dirname, "./config/database"),
   });
@@ -47,15 +62,11 @@ const app: FastifyPluginAsync<AppOptions> = async (
     options: options,
   });
 
-  void fastify.register(AutoLoad, {
-    dir: join(__dirname, "./api/v1/user"),
-    matchFilter: (path) => path.endsWith(".middleware.ts"),
-  });
-
   for (const schema of registerCredentialsSchema) {
     fastify.addSchema(schema);
   }
 
+  void fastify.register(userMiddleware);
   void fastify.register(routes, options);
 
   if (process.env.NODE_ENV === "development") {
