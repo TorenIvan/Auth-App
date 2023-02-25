@@ -1,6 +1,5 @@
 import { useRef } from "react";
-import styles from "./Styles/authStyles.module.css";
-import inputStyles from "./Styles/authInput.module.css";
+import styles from "./styles.module.css";
 
 interface IProps {
   onFormSubmit: (arg: any) => void;
@@ -24,7 +23,7 @@ const AuthForm = (props: IProps): JSX.Element => {
 
   return (
     <form className={styles["auth-container"]} onSubmit={handleSubmit}>
-      <div className={inputStyles["auth-item"]}>
+      <div className={styles["auth-item"]}>
         <input
           ref={emailRef}
           id="email"
@@ -34,7 +33,7 @@ const AuthForm = (props: IProps): JSX.Element => {
           required
         />
       </div>
-      <div className={inputStyles["auth-item"]}>
+      <div className={styles["auth-item"]}>
         <input
           ref={passwordRef}
           id="password"
@@ -44,7 +43,7 @@ const AuthForm = (props: IProps): JSX.Element => {
           required
         />
       </div>
-      <div id={inputStyles["submitBox"]}>
+      <div id={styles["submitBox"]}>
         <input type="submit" value={submitButtonText}></input>
       </div>
     </form>

@@ -1,8 +1,7 @@
-import { FacebookIcon, TwitterIcon, GithubIcon, GoogleIcon } from "../Icons";
+import { FacebookIcon, TwitterIcon, GithubIcon, GoogleIcon } from "../../icons";
 import { memo } from "react";
 import "font-awesome/css/font-awesome.min.css";
-import styles from "./Styles/authStyles.module.css";
-import socialParagraphStyles from "./Styles/authSocialParagraph.module.css";
+import styles from "./styles.module.css";
 import Constants from "../../utils/Constants";
 
 interface IProps {
@@ -11,7 +10,7 @@ interface IProps {
 
 const Footer = ({ navigateParagraph }: IProps): JSX.Element => {
   return (
-    <footer className={socialParagraphStyles.footer}>
+    <footer className={styles.footer}>
       <div className={styles["social-profile-paragraph"]}>
         <p>{Constants.SocialProfilesFormText}</p>
       </div>

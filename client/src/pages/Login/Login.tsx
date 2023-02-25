@@ -1,11 +1,12 @@
 import { Fragment, PureComponent } from "react";
-import AuthForm from "../../components/AuthForm/Form";
-import LoginTitle from "../../components/AuthForm/LoginFormItems/LoginTitle";
-import LoginNavigate from "../../components/AuthForm/LoginFormItems/LoginNavigateItem";
+import { Footer } from "../../layouts";
+import { LoginTitle, LoginNavigate } from "./components";
+import {
+  AuthForm,
+  AuthFormHeader,
+  AuthSocialProfileList,
+} from "../../components";
 import Constants from "../../utils/Constants";
-import SocialProfileItems from "../../components/AuthForm/SocialProfileItems";
-import FormHeader from "../../components/AuthForm/FormHeader";
-import Footer from "../../layouts/Footer/Footer";
 import styles from "./styles.module.scss";
 
 interface IRequest {
@@ -34,12 +35,12 @@ class Login extends PureComponent {
       <Fragment>
         <div id={styles["main-container"]}>
           <div className={styles["main-wrapper"]}>
-            <FormHeader title={this.title} />
+            <AuthFormHeader title={this.title} />
             <AuthForm
               onFormSubmit={this.handleLoginSubmit}
               submitButtonText={this.submitButtonText}
             />
-            <SocialProfileItems navigateParagraph={this.navigateParagraph} />
+            <AuthSocialProfileList navigateParagraph={this.navigateParagraph} />
           </div>
         </div>
         <Footer />

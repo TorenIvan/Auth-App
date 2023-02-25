@@ -1,5 +1,5 @@
-import Constants from "../utils/Constants";
-import { Theme } from "../utils/Types";
+import Constants from "../../utils/Constants";
+import { Theme } from "../../utils/Types";
 import { useLocalStorage } from "./useLocalStorage";
 
 type returnType = [theme: Theme, toggleTheme: () => void];

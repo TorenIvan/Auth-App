@@ -1,11 +1,11 @@
 import { Fragment } from "react";
 import { Route, Routes } from "react-router-dom";
-import Register from "./pages/Auth/Register";
-import Login from "./pages/Auth/Login";
+import Register from "./pages/Register/Register";
+import Login from "./pages/Login/Login";
 import "./App.css";
 import Constants from "./utils/Constants";
 import { useTheme } from "./hooks";
-import { ThemeIcon } from "./components/Icons";
+import { ThemeIcon } from "./icons";
 
 const App = (): JSX.Element => {
   const [theme, toggleTheme] = useTheme(Constants.LightPalette);

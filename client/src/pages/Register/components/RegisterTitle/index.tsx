@@ -1,5 +1,4 @@
-import Constants from "../../../utils/Constants";
-import "../Styles/authStyles.module.css";
+import Constants from "../../../../utils/Constants";
 
 const RegisterTitle = (): JSX.Element => {
   return (

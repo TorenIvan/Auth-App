@@ -1,11 +1,12 @@
 import { Fragment, PureComponent } from "react";
-import AuthForm from "../../components/AuthForm/Form";
-import RegisterTitle from "../../components/AuthForm/RegisterFormItems/RegisterTitle";
-import RegisterNavigate from "../../components/AuthForm/RegisterFormItems/RegisterNavigateItem";
+import { Footer } from "../../layouts";
+import { RegisterTitle, RegisterNavigate } from "./components";
+import {
+  AuthForm,
+  AuthFormHeader,
+  AuthSocialProfileList,
+} from "../../components";
 import Constants from "../../utils/Constants";
-import FormHeader from "../../components/AuthForm/FormHeader";
-import SocialProfileItems from "../../components/AuthForm/SocialProfileItems";
-import Footer from "../../layouts/Footer/Footer";
 import styles from "./styles.module.scss";
 
 interface IRequest {
@@ -34,12 +35,12 @@ class Register extends PureComponent {
       <Fragment>
         <div id={styles["main-container"]}>
           <div className={styles["main-wrapper"]}>
-            <FormHeader title={this.title} />
+            <AuthFormHeader title={this.title} />
             <AuthForm
               onFormSubmit={this.handleRegisterSubmit}
               submitButtonText={this.submitButtonText}
             />
-            <SocialProfileItems navigateParagraph={this.navigateParagraph} />
+            <AuthSocialProfileList navigateParagraph={this.navigateParagraph} />
           </div>
         </div>
         <Footer />

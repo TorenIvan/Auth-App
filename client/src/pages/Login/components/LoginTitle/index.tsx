@@ -1,5 +1,4 @@
-import Constants from "../../../utils/Constants";
-import "../Styles/authStyles.module.css";
+import Constants from "../../../../utils/Constants";
 
 const LoginTitle = (): JSX.Element => {
   return <h2>{Constants.SignIn}</h2>;

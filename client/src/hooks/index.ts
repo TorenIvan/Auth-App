@@ -1,2 +1,2 @@
-export { useLocalStorage } from "./useLocalStorage";
-export { useTheme } from "./useTheme";
+export { useTheme } from "./Modules/useTheme";
+export { useLocalStorage } from "./Modules/useLocalStorage";
