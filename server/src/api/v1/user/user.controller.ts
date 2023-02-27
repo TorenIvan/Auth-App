@@ -296,7 +296,11 @@ class UserController {
       );
     }
 
-    reply.code(200).clearCookie(EnvironmentVariables.Reset_Pass_Cookie_Name);
+    reply
+      .code(200)
+      .clearCookie(EnvironmentVariables.Reset_Pass_Cookie_Name, {
+        path: "/v1/auth",
+      });
   }
 }
 

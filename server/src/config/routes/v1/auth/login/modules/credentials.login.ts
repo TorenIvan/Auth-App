@@ -9,6 +9,7 @@ import { $ref } from "../../../../../../api/v1/user/user.schema";
 const loginWithCredentials: FastifyPluginAsync = async (
   fastify: FastifyInstance
 ): Promise<void> => {
+  fastify.decorateRequest("userId", "");
   fastify.post(
     "/",
     {

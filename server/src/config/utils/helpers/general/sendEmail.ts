@@ -9,9 +9,9 @@ const transportAuthenticationObject: SMTPConnection.AuthenticationType = {
 };
 
 const transportOptions: SMTPConnection.Options = {
-  host: EnvironmentVariables.Email_Host,
-  port: Number(EnvironmentVariables.Email_Port),
-  secure: EnvironmentVariables.IsProduction === true,
+  host: "smtp.office365.com",
+  port: 587,
+  // secure: false,
   auth: transportAuthenticationObject,
   logger: EnvironmentVariables.IsProduction === false,
   debug: EnvironmentVariables.IsProduction === false,
