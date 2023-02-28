@@ -12,6 +12,10 @@ import {
 } from "../../../config/utils/helpers/auth/generateJWTs";
 import { EnvironmentVariables } from "../../../config/utils/constants/EnvironmentVariables";
 import { Strings } from "../../../config/utils/constants/Strings";
+import {
+  retrieveAccessToken,
+  retrieveRefreshToken,
+} from "../../../config/utils/helpers";
 
 const userMiddleware: FastifyPluginAsync = fp(
   async (fastify: FastifyInstance): Promise<void> => {
@@ -125,9 +129,6 @@ const userMiddleware: FastifyPluginAsync = fp(
             throw "error";
           }
           const token = request.cookies[cookieName] ?? "";
-          console.log("cookiename : ", cookieName);
-
-          console.log("token: ", token);
 
           const data = verifyJWT(
             token,
@@ -162,60 +163,80 @@ const userMiddleware: FastifyPluginAsync = fp(
         reply: FastifyReply
       ): Promise<void> {
         try {
-          let accessToken: string | null = null;
-          let refreshToken: string | null = null;
+          const accessToken: string | null = retrieveAccessToken(
+            request.headers?.authorization
+          );
 
-          const authHeader: string | undefined = request.headers?.authorization;
-          if (authHeader !== undefined) {
-            if (authHeader.startsWith("Bearer ") === true) {
-              accessToken = authHeader.split(" ")[1];
-            }
-            if (authHeader.startsWith("bearer ") === true) {
-              accessToken = authHeader.split(" ")[1];
-            }
+          const refreshToken: string | null = retrieveRefreshToken(
+            request.cookies
+          );
+
+          if (accessToken === null && refreshToken === null) {
+            const errorMessage = fastify.httpErrors.forbidden();
+            reply.send(errorMessage);
+            return;
           }
 
           if (accessToken !== null) {
             try {
-              await fastify.verifyRefreshTokenCookie(request, reply);
+              const data = verifyJWT(
+                accessToken,
+                EnvironmentVariables.Access_Token_Secret
+              );
+
+              const userIdExistsInJWTPayload: boolean = !!data?.userId === true;
+              const signInMethodExistsInJWTPayload: boolean =
+                !!data?.signInMethod === true;
+
+              if (
+                userIdExistsInJWTPayload === false ||
+                signInMethodExistsInJWTPayload === false
+              ) {
+                throw "error";
+              }
+
+              const userIdExistsInDB = await userService.CheckUserIdExistence(
+                data.userId
+              );
+              if (userIdExistsInDB.success === false) {
+                const errorMessage = fastify.httpErrors.forbidden();
+                reply.send(errorMessage);
+              }
             } catch (error) {
               console.error(error);
-              return;
+              const errorMessage = fastify.httpErrors.forbidden();
+              reply.send(errorMessage);
             }
-          }
-
-          let requestCookiesExist: boolean = false;
-          const authCookieName = EnvironmentVariables.Cookie_Name;
-
-          if (request.cookies !== null && request.cookies !== undefined) {
-            requestCookiesExist = true;
-          }
-          if (requestCookiesExist === true) {
-            refreshToken = request.cookies[authCookieName] ?? null;
           }
 
           if (refreshToken !== null) {
-            const data = verifyJWT(
-              refreshToken,
-              EnvironmentVariables.Refresh_Token_Secret
-            );
+            try {
+              const data = verifyJWT(
+                refreshToken,
+                EnvironmentVariables.Refresh_Token_Secret
+              );
 
-            const userIdExistsInJWTPayload: boolean = !!data?.userId === true;
-            const signInMethodExistsInJWTPayload: boolean =
-              !!data?.signInMethod === true;
+              const userIdExistsInJWTPayload: boolean = !!data?.userId === true;
+              const signInMethodExistsInJWTPayload: boolean =
+                !!data?.signInMethod === true;
 
-            if (
-              userIdExistsInJWTPayload === false ||
-              signInMethodExistsInJWTPayload === false
-            ) {
-              throw "error";
-            }
+              if (
+                userIdExistsInJWTPayload === false ||
+                signInMethodExistsInJWTPayload === false
+              ) {
+                throw "error";
+              }
 
-            const userIdExistsInDB = await userService.CheckUserIdExistence(
-              data.userId
-            );
-            if (userIdExistsInDB.success === false) {
-              const errorMessage = fastify.httpErrors.unauthorized();
+              const userIdExistsInDB = await userService.CheckUserIdExistence(
+                data.userId
+              );
+              if (userIdExistsInDB.success === false) {
+                const errorMessage = fastify.httpErrors.unauthorized();
+                reply.send(errorMessage);
+              }
+            } catch (error) {
+              console.error(error);
+              const errorMessage = fastify.httpErrors.forbidden();
               reply.send(errorMessage);
             }
           }
