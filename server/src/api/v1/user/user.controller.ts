@@ -219,7 +219,12 @@ class UserController {
 
     const emailExists = serviceResponse.success;
 
-    if (emailExists === true) {
+    const hasConfirmedEmail: ServiceResponse =
+      await UserController.userService.CheckUserEmailConfirmation(email);
+
+    const emailConfirmed: boolean = hasConfirmedEmail.success;
+
+    if (emailExists === true && emailConfirmed === true) {
       const new_email_token = generateJWT(
         {
           userId: serviceResponse.data!.userId.toString(),
@@ -296,11 +301,9 @@ class UserController {
       );
     }
 
-    reply
-      .code(200)
-      .clearCookie(EnvironmentVariables.Reset_Pass_Cookie_Name, {
-        path: "/v1/auth",
-      });
+    reply.code(200).clearCookie(EnvironmentVariables.Reset_Pass_Cookie_Name, {
+      path: "/v1/auth",
+    });
   }
 }
 

@@ -1,11 +1,10 @@
 import { Fragment } from "react";
 import { Route, Routes } from "react-router-dom";
-import Register from "./pages/Register/Register";
-import Login from "./pages/Login/Login";
-import "./App.css";
-import Constants from "./utils/Constants";
-import { useTheme } from "./hooks";
+import { Register, Login } from "./pages";
 import { ThemeIcon } from "./icons";
+import { useTheme } from "./hooks";
+import Constants from "./utils/Constants";
+import "./App.css";
 
 const App = (): JSX.Element => {
   const [theme, toggleTheme] = useTheme(Constants.LightPalette);
@@ -17,7 +16,7 @@ const App = (): JSX.Element => {
 
   return (
     <Fragment>
-      <div className={`screen-container`}>
+      <div className="screen-container">
         <button className="toggleButton" onClick={handleThemeIconClick}>
           <ThemeIcon theme={theme} />
         </button>
