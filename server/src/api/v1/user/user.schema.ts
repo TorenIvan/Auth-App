@@ -57,6 +57,23 @@ const resetPasswordRequestSchema = z.object({
     .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/),
 });
 
+const userDetailsResponseSchema = z.object({
+  username: z.string(),
+  email: z.string().email(),
+  phone: z
+    .string()
+    .length(0)
+    .or(
+      z
+        .string()
+        .regex(
+          /(\+\d{1,3}\s?)?((\(\d{3}\)\s?)|(\d{3})(\s|-?))(\d{3}(\s|-?))(\d{4})(\s?(([E|e]xt[:|.|]?)|x|X)(\s?\d+))?/g
+        )
+    ),
+  biography: z.string(),
+  signInMethod: z.string(),
+});
+
 export type credsUserInput = z.infer<typeof authCredsBodySchema>;
 export type forgotPasswordInput = z.infer<typeof forgotPasswordRequestSchema>;
 export type resetPasswordUserInput = z.infer<typeof resetPasswordRequestSchema>;
@@ -70,4 +87,5 @@ export const { schemas: registerCredentialsSchema, $ref } = buildJsonSchemas({
   verifyEmailErrorSchema,
   forgotPasswordRequestSchema,
   resetPasswordRequestSchema,
+  userDetailsResponseSchema,
 });

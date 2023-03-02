@@ -259,6 +259,22 @@ class UserController {
     reply.code(200);
   }
 
+  async renewTokens(request: FastifyRequest, reply: FastifyReply) {
+    const { userId, signInMethod } = request;
+
+    const { access_token, refresh_token } = generateAuthJWTs(
+      userId,
+      signInMethod
+    );
+
+    const cookieOptions = generateCookieOptions();
+
+    reply
+      .code(200)
+      .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
+      .send({ access_token: access_token });
+  }
+
   async resetPasswordHandler(
     request: FastifyRequest<{
       Querystring: queryConfirmEmail;
@@ -303,6 +319,27 @@ class UserController {
 
     reply.code(200).clearCookie(EnvironmentVariables.Reset_Pass_Cookie_Name, {
       path: "/v1/auth",
+    });
+  }
+
+  async retrieveUserDetails(request: FastifyRequest, reply: FastifyReply) {
+    const { userId } = request;
+    const userDetails: ServiceResponse =
+      await UserController.userService.RetrieveUserDetails(userId);
+
+    if (userDetails.success === false) {
+      return UserController.handleError(reply, 400, userDetails?.customError);
+    }
+
+    const { username, email, phone, biography, signInMethod } =
+      userDetails.data as ServiceInsertedData;
+
+    reply.code(200).send({
+      username: username,
+      email: email,
+      phone: phone,
+      biography: biography,
+      signInMethod: signInMethod,
     });
   }
 }

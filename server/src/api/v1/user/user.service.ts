@@ -60,6 +60,7 @@ class UserService {
         email: email,
         biography: "",
         phone: "",
+        signInMethod: "credentials",
       };
       return { success: true, data: data };
     } catch (error) {
@@ -85,7 +86,7 @@ class UserService {
           },
         }
       );
-      if (!!result === false) {
+      if (result === null) {
         throw {
           customError: Errors.UserNotFoundWithTheseCreds,
         };
@@ -101,11 +102,12 @@ class UserService {
       }
 
       const data: ServiceInsertedData = {
-        userId: result!._id,
-        username: result!.username,
+        userId: result._id,
+        username: result.username,
         email: email,
-        biography: result!.biography,
-        phone: result!.phone,
+        biography: result.biography,
+        phone: result.phone,
+        signInMethod: result.signInMethod as SignInMethod,
       };
       return { success: true, data: data };
     } catch (error) {
@@ -212,6 +214,43 @@ class UserService {
         }
       );
       return { success: true };
+    } catch (error) {
+      return UserService.handleError(error);
+    }
+  }
+
+  async RetrieveUserDetails(userId: string): Promise<ServiceResponse> {
+    try {
+      const result = await UserService.users.findOne(
+        {
+          _id: new ObjectId(userId),
+        },
+        {
+          projection: {
+            username: 1,
+            email: 1,
+            signInMethod: 1,
+            biography: 1,
+            phone: 1,
+            _id: 1,
+          },
+        }
+      );
+      if (result === null) {
+        throw {
+          customError: Errors.UserNotFoundWithTheseCreds,
+        };
+      }
+
+      const data: ServiceInsertedData = {
+        userId: result._id,
+        username: result.username,
+        email: result.email,
+        biography: result.biography,
+        phone: result.phone,
+        signInMethod: result.signInMethod as SignInMethod,
+      };
+      return { success: true, data: data };
     } catch (error) {
       return UserService.handleError(error);
     }

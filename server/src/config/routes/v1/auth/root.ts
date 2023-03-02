@@ -4,6 +4,7 @@ import register from "./register/root";
 import confirmEmail from "./confirmEmail";
 import resetPassword from "./resetPassword";
 import forgotPassword from "./forgotPassword";
+import refreshTokens from "./refreshTokens";
 
 /**
  * Encapsulates all the authentication routes
@@ -17,7 +18,8 @@ const authRoutes: FastifyPluginAsync = async (
     .register(register, { prefix: "/register" })
     .register(confirmEmail, { prefix: "/verify" })
     .register(forgotPassword, { prefix: "/forgot-password" })
-    .register(resetPassword, { prefix: "/reset-password" });
+    .register(resetPassword, { prefix: "/reset-password" })
+    .register(refreshTokens, { prefix: "/refresh" });
 };
 
 export default authRoutes;

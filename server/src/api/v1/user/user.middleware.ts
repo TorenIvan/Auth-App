@@ -6,10 +6,7 @@ import {
 } from "fastify";
 import fp from "fastify-plugin";
 import UserService from "./user.service";
-import {
-  generateAccessToken,
-  verifyJWT,
-} from "../../../config/utils/helpers/auth/generateJWTs";
+import { verifyJWT } from "../../../config/utils/helpers/auth/generateJWTs";
 import { EnvironmentVariables } from "../../../config/utils/constants/EnvironmentVariables";
 import { Strings } from "../../../config/utils/constants/Strings";
 import {
@@ -28,28 +25,26 @@ const userMiddleware: FastifyPluginAsync = fp(
         reply: FastifyReply
       ): Promise<void> {
         try {
-          if (
-            request.headers?.authorization === null ||
-            request.headers?.authorization === undefined
-          ) {
+          const authHeader: string | undefined = request.headers?.authorization;
+
+          const authToken: string | null = retrieveAccessToken(authHeader);
+          if (authToken === null) {
             throw "error";
           }
 
-          const authHeader = request.headers.authorization;
-          if (
-            authHeader.startsWith("Bearer ") === false &&
-            authHeader.startsWith("bearer ") === false
-          ) {
-            throw "error";
-          }
-
-          const authToken: string = authHeader.split(" ")[1];
           const data = verifyJWT(
             authToken,
             EnvironmentVariables.Access_Token_Secret
           );
 
-          if (!!data?.userId === false || !!data?.signInMethod === false) {
+          const userIdExistsInJWTPayload: boolean = !!data?.userId === true;
+          const signInMethodExistsInJWTPayload: boolean =
+            !!data?.signInMethod === true;
+
+          if (userIdExistsInJWTPayload === false) {
+            throw "error";
+          }
+          if (signInMethodExistsInJWTPayload === false) {
             throw "error";
           }
 
@@ -60,6 +55,8 @@ const userMiddleware: FastifyPluginAsync = fp(
             const errorMessage = fastify.httpErrors.unauthorized();
             reply.send(errorMessage);
           }
+
+          fastify.decorateRequest("userId", data.userId);
         } catch (error) {
           const errorMessage = fastify.httpErrors.unauthorized();
           reply.send(errorMessage);
@@ -74,20 +71,21 @@ const userMiddleware: FastifyPluginAsync = fp(
         reply: FastifyReply
       ): Promise<void> {
         try {
-          if (request.cookies === null || request.cookies === undefined) {
-            throw "error";
-          }
+          const token = retrieveRefreshToken(request.cookies) ?? "";
 
-          const cookieName = EnvironmentVariables.Cookie_Name;
-          if (!!request.cookies[cookieName] === false) {
-            throw "error";
-          }
-          const token = request.cookies[cookieName] ?? "";
           const data = verifyJWT(
             token,
             EnvironmentVariables.Refresh_Token_Secret
           );
-          if (!!data?.userId === false || !!data?.signInMethod === false) {
+
+          const userIdExistsInJWTPayload: boolean = !!data?.userId === true;
+          const signInMethodExistsInJWTPayload: boolean =
+            !!data?.signInMethod === true;
+
+          if (userIdExistsInJWTPayload === false) {
+            throw "error";
+          }
+          if (signInMethodExistsInJWTPayload === false) {
             throw "error";
           }
 
@@ -99,13 +97,8 @@ const userMiddleware: FastifyPluginAsync = fp(
             reply.send(errorMessage);
           }
 
-          const tokenOptions: TokenInterface = {
-            userId: data.userId.toString(),
-            signInMethod: data.signInMethod,
-          };
-          const access_token = generateAccessToken(tokenOptions);
-
-          reply.code(200).send({ access_token: access_token });
+          request.userId = data.userId.toString();
+          request.signInMethod = data.signInMethod ?? "credentials";
         } catch (error) {
           const errorMessage = fastify.httpErrors.unauthorized();
           reply.send(errorMessage);

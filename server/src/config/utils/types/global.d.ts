@@ -21,6 +21,7 @@ declare global {
     email: string;
     biography: string;
     phone: string;
+    signInMethod: SignInMethod;
   };
 
   interface TokenInterface {

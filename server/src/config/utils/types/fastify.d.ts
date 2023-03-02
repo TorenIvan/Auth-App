@@ -22,6 +22,11 @@ declare module "fastify" {
       reply: FastifyReply
     ) => Promise<void>;
   }
+
+  export interface FastifyRequest {
+    userId: string;
+    signInMethod: SignInMethod;
+  }
 }
 
 export {};
