@@ -1,5 +1,4 @@
-import { Fragment, PureComponent } from "react";
-import { Footer } from "../../layouts";
+import { PureComponent } from "react";
 import { LoginTitle, LoginNavigate } from "./components";
 import {
   AuthForm,
@@ -32,19 +31,16 @@ class Login extends PureComponent {
 
   render() {
     return (
-      <Fragment>
-        <div id={styles["main-container"]}>
-          <div className={styles["main-wrapper"]}>
-            <AuthFormHeader title={this.title} />
-            <AuthForm
-              onFormSubmit={this.handleLoginSubmit}
-              submitButtonText={this.submitButtonText}
-            />
-            <AuthSocialProfileList navigateParagraph={this.navigateParagraph} />
-          </div>
+      <div id={styles["main-container"]}>
+        <div className={styles["main-wrapper"]}>
+          <AuthFormHeader title={this.title} />
+          <AuthForm
+            onFormSubmit={this.handleLoginSubmit}
+            submitButtonText={this.submitButtonText}
+          />
+          <AuthSocialProfileList navigateParagraph={this.navigateParagraph} />
         </div>
-        <Footer />
-      </Fragment>
+      </div>
     );
   }
 }

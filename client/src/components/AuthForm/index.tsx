@@ -7,9 +7,10 @@ interface IProps {
 }
 
 const AuthForm = (props: IProps): JSX.Element => {
-  const { onFormSubmit, submitButtonText } = props;
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+
+  const { onFormSubmit, submitButtonText } = props;
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

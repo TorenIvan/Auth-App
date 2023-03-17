@@ -1,3 +1,3 @@
-import Footer from "./Footer/Footer";
+import Layout from "./Layout";
 
-export { Footer };
+export default Layout;
