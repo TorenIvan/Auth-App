@@ -30,6 +30,7 @@ class Login extends PureComponent {
   };
 
   render() {
+    console.log("Mpika Login");
     return (
       <div id={styles["main-container"]}>
         <div className={styles["main-wrapper"]}>

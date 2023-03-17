@@ -30,6 +30,7 @@ class Register extends PureComponent {
   };
 
   render() {
+    console.log("Mpika register");
     return (
       <div id={styles["main-container"]}>
         <div className={styles["main-wrapper"]}>
