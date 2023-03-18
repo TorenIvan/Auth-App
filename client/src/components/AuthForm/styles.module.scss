@@ -5,10 +5,15 @@
   background: var(--background-screen);
   max-width: 500px;
   min-width: 100px;
-  height: 96rem;
-  max-height: 660px;
+  height: 660px;
+  max-height: 100%;
   display: flex;
   justify-content: flex-end;
+
+  @media screen and (max-width: 500px) {
+    border-left: none;
+    border-right: none;
+  }
 }
 
 .main-wrapper {

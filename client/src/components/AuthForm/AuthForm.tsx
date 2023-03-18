@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import AuthFormFooter from "./AuthFormFooter";
 import AuthFormHeader from "./AuthFormHeader";
 import AuthFormMain from "./AuthFormMain";
-import styles from "./styles.module.css";
+import styles from "./styles.module.scss";
 
 function AuthForm({ children }: { children: ReactNode }) {
   return (
