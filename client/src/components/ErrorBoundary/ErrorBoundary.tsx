@@ -1,0 +1,38 @@
+import { Component, ErrorInfo, ReactNode } from "react";
+import { toast } from "react-hot-toast";
+
+interface IProps {
+  children: ReactNode;
+}
+
+interface IState {
+  hasError: boolean;
+}
+
+class ErrorBoundary extends Component<IProps, IState> {
+  public state: IState = {
+    hasError: false,
+  };
+
+  public static getDerivedStateFromError(_: Error): IState {
+    return { hasError: true };
+  }
+
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    /**
+     * In more realistic scenarios you should log this to an external store (e.g MongoDB Atlas)
+     * and wake up everyone xD
+     */
+    console.error("Uncaught error:", error, errorInfo);
+  }
+
+  public render() {
+    if (this.state.hasError === true) {
+      toast("eee");
+    }
+
+    return this.props.children;
+  }
+}
+
+export default ErrorBoundary;

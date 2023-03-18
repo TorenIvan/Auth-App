@@ -1,3 +1,4 @@
 import AuthForm from "./AuthForm";
+import ErrorBoundary from "./ErrorBoundary";
 
-export { AuthForm };
+export { ErrorBoundary, AuthForm };
