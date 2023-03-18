@@ -1,12 +1,7 @@
 import { PureComponent } from "react";
-import { RegisterTitle, RegisterNavigate } from "./components";
-import {
-  AuthForm,
-  AuthFormHeader,
-  AuthSocialProfileList,
-} from "../../components";
+import { RegisterTitle, RegisterNavLink } from "./components";
+import { AuthForm } from "../../components";
 import Constants from "../../utils/Constants";
-import styles from "./styles.module.scss";
 
 interface IRequest {
   email: string;
@@ -16,13 +11,13 @@ interface IRequest {
 class Register extends PureComponent {
   private readonly submitButtonText: string;
   private readonly title: JSX.Element;
-  private readonly navigateParagraph: JSX.Element;
+  private readonly navigateLink: JSX.Element;
 
   constructor(props: object) {
     super(props);
     this.submitButtonText = Constants.RegisterButtonText;
     this.title = RegisterTitle();
-    this.navigateParagraph = RegisterNavigate();
+    this.navigateLink = RegisterNavLink();
   }
 
   handleRegisterSubmit = (reqObject: IRequest) => {
@@ -32,16 +27,14 @@ class Register extends PureComponent {
   render() {
     console.log("Mpika register");
     return (
-      <div id={styles["main-container"]}>
-        <div className={styles["main-wrapper"]}>
-          <AuthFormHeader title={this.title} />
-          <AuthForm
-            onFormSubmit={this.handleRegisterSubmit}
-            submitButtonText={this.submitButtonText}
-          />
-          <AuthSocialProfileList navigateParagraph={this.navigateParagraph} />
-        </div>
-      </div>
+      <AuthForm>
+        <AuthForm.Header titleSlot={this.title} />
+        <AuthForm.Main
+          onFormSubmit={this.handleRegisterSubmit}
+          submitButtonText={this.submitButtonText}
+        />
+        <AuthForm.Footer navLinkSlot={this.navigateLink} />
+      </AuthForm>
     );
   }
 }

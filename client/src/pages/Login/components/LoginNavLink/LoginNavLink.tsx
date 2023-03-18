@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import Constants from "../../../../utils/Constants";
 import styles from "./styles.module.css";
 
-const LoginNavigate = (): JSX.Element => {
+const LoginNavLink = (): JSX.Element => {
   return (
     <p id={styles["social-profiles-text"]}>
       <span>{Constants.DontHaveAnAccount}&nbsp;&nbsp;&nbsp;</span>
@@ -18,4 +18,4 @@ const LoginNavigate = (): JSX.Element => {
   );
 };
 
-export default LoginNavigate;
+export default LoginNavLink;

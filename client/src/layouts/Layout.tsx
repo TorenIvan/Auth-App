@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import Footer from "./Footer";
+import Main from "./Main";
 
 interface IProps {
   children: ReactNode;
@@ -8,7 +9,7 @@ interface IProps {
 function Layout({ children }: IProps) {
   return (
     <div className="screen-container">
-      <main>{children}</main>
+      <Main>{children}</Main>
       <Footer />
     </div>
   );

@@ -1,12 +1,7 @@
 import { PureComponent } from "react";
-import { LoginTitle, LoginNavigate } from "./components";
-import {
-  AuthForm,
-  AuthFormHeader,
-  AuthSocialProfileList,
-} from "../../components";
+import { LoginTitle, LoginNavLink } from "./components";
+import { AuthForm } from "../../components";
 import Constants from "../../utils/Constants";
-import styles from "./styles.module.scss";
 
 interface IRequest {
   email: string;
@@ -16,13 +11,13 @@ interface IRequest {
 class Login extends PureComponent {
   private readonly submitButtonText: string;
   private readonly title: JSX.Element;
-  private readonly navigateParagraph: JSX.Element;
+  private readonly navigateLink: JSX.Element;
 
   constructor(props: any) {
     super(props);
     this.submitButtonText = Constants.SignInButtonText;
     this.title = LoginTitle();
-    this.navigateParagraph = LoginNavigate();
+    this.navigateLink = LoginNavLink();
   }
 
   handleLoginSubmit = (reqObject: IRequest) => {
@@ -32,16 +27,14 @@ class Login extends PureComponent {
   render() {
     console.log("Mpika Login");
     return (
-      <div id={styles["main-container"]}>
-        <div className={styles["main-wrapper"]}>
-          <AuthFormHeader title={this.title} />
-          <AuthForm
-            onFormSubmit={this.handleLoginSubmit}
-            submitButtonText={this.submitButtonText}
-          />
-          <AuthSocialProfileList navigateParagraph={this.navigateParagraph} />
-        </div>
-      </div>
+      <AuthForm>
+        <AuthForm.Header titleSlot={this.title} />
+        <AuthForm.Main
+          onFormSubmit={this.handleLoginSubmit}
+          submitButtonText={this.submitButtonText}
+        />
+        <AuthForm.Footer navLinkSlot={this.navigateLink} />
+      </AuthForm>
     );
   }
 }

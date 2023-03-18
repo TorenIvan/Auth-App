@@ -1,67 +1,20 @@
-.auth-container {
-  flex: 1.2;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  width: 90%;
-  padding-left: 10%;
-  margin: 0 auto;
-}
-
-.auth-item {
-  flex: 1;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
-  width: clamp(65%, 357px, 90%);
-}
-
-#submitBox {
-  flex: .8;
-  margin-top: 5%;
-  width: clamp(65%, 357px, 90%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.auth-item > input,
-#submitBox > input {
-  width: clamp(80%, 220vw, 100%);
-  font-family: NotoSansRegular, "FontAwesome";
-  height: 45%;
-  min-height: 40px;
+#main-container {
   border: 1px solid var(--border-primary);
   box-sizing: border-box;
-  border-radius: 8px;
-  outline: none;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 18px;
-  line-height: 22px;
-  padding-left: 5px;
+  border-radius: 24px;
+  background: var(--background-screen);
+  max-width: 500px;
+  min-width: 100px;
+  height: 96rem;
+  max-height: 660px;
+  display: flex;
+  justify-content: flex-end;
 }
 
-.auth-item > input[type="password"]::placeholder,
-.auth-item > input[type="email"]::placeholder {
-  padding-left: 4px;
-}
-
-#submitBox > input[type="submit"] {
-  background-color: var(--background-button);
-  outline: none;
-  border: none;
-  color: var(--text-buttonWithBackground);
-  font-family: NotoSansRegular;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 22px;
-  text-align: center;
-}
-
-#submitBox > input[type="submit"]:hover {
-  cursor: pointer;
+.main-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: flex-start;
 }

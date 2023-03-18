@@ -1,13 +1,3 @@
-import Constants from "../../../../utils/Constants";
-
-const RegisterTitle = (): JSX.Element => {
-  return (
-    <h2>
-      {Constants.JoinLearners}
-      <br />
-      {Constants.AroundTheWorld}
-    </h2>
-  );
-};
+import RegisterTitle from "./RegisterTitle";
 
 export default RegisterTitle;

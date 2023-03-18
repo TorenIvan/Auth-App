@@ -1,4 +1,4 @@
 import LoginTitle from "./LoginTitle";
-import LoginNavigate from "./LoginNavigateItem";
+import LoginNavLink from "./LoginNavLink";
 
-export { LoginTitle, LoginNavigate };
+export { LoginNavLink, LoginTitle };

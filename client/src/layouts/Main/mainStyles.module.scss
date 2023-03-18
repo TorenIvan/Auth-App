@@ -1,0 +1,9 @@
+#main-container {
+  box-sizing: border-box;
+  background: var(--background-screen);
+  position: relative;
+  height: calc(100% - 4rem);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

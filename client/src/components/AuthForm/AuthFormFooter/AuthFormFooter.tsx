@@ -1,14 +1,19 @@
-import { FacebookIcon, TwitterIcon, GithubIcon, GoogleIcon } from "../../icons";
+import {
+  FacebookIcon,
+  TwitterIcon,
+  GithubIcon,
+  GoogleIcon,
+} from "../../../icons";
 import { memo } from "react";
 import "font-awesome/css/font-awesome.min.css";
 import styles from "./styles.module.css";
-import Constants from "../../utils/Constants";
+import Constants from "../../../utils/Constants";
 
 interface IProps {
-  navigateParagraph: JSX.Element;
+  navLinkSlot: JSX.Element;
 }
 
-const Footer = ({ navigateParagraph }: IProps): JSX.Element => {
+const AuthFormFooter = ({ navLinkSlot }: IProps): JSX.Element => {
   return (
     <footer className={styles.footer}>
       <div className={styles["social-profile-paragraph"]}>
@@ -28,9 +33,9 @@ const Footer = ({ navigateParagraph }: IProps): JSX.Element => {
           <TwitterIcon />
         </li>
       </ul>
-      <div className={styles["social-item"]}>{navigateParagraph}</div>
+      <div className={styles["social-item"]}>{navLinkSlot}</div>
     </footer>
   );
 };
 
-export default memo(Footer);
+export default memo(AuthFormFooter);

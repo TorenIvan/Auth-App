@@ -1,4 +1,4 @@
 import RegisterTitle from "./RegisterTitle";
-import RegisterNavigate from "./RegisterNavigateItem";
+import RegisterNavLink from "./RegisterNavLink";
 
-export { RegisterTitle, RegisterNavigate };
+export { RegisterTitle, RegisterNavLink };
