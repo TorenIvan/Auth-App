@@ -1,10 +1,11 @@
 .developer-information {
   display: flex;
+  position: absolute;
+  bottom: 1.5rem;
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
-  width: clamp(100px, 90%, 500px);
-  margin-top: 1rem;
+  width: 95%;
 }
 
 .developer-information * {

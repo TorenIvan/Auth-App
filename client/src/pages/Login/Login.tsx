@@ -18,7 +18,7 @@ class Login extends PureComponent {
   private readonly title: JSX.Element;
   private readonly navigateParagraph: JSX.Element;
 
-  constructor(props: object) {
+  constructor(props: any) {
     super(props);
     this.submitButtonText = Constants.SignInButtonText;
     this.title = LoginTitle();
