@@ -1,0 +1,11 @@
+.toast {
+  border-radius: 8px;
+  background-color: var(--text-secondary);
+  color: var(--background-screen);
+}
+
+.toast-button {
+  border-radius: 50%;
+  padding: .1em .2em .1em .2em;
+  transition-duration: 150ms;
+}

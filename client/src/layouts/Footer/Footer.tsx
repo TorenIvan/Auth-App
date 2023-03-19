@@ -1,5 +1,5 @@
 import { Fragment, memo } from "react";
-import { Toaster } from "react-hot-toast";
+import Toast from "../../components/Toast";
 import Constants from "../../utils/Constants";
 import styles from "./footerStyles.module.css";
 
@@ -21,26 +21,7 @@ const Footer = () => {
         </span>
         <span>{Constants.ChallengeSite}</span>
       </div>
-      <Toaster
-        position="bottom-right"
-        reverseOrder={false}
-        gutter={8}
-        toastOptions={{
-          className: "",
-          duration: 5000,
-          style: {
-            background: "#363636",
-            color: "#fff",
-          },
-
-          success: {
-            duration: 3000,
-          },
-          error: {
-            duration: 10000,
-          },
-        }}
-      />
+      <Toast />
     </Fragment>
   );
 };

@@ -1,5 +1,4 @@
-import { Component, ErrorInfo, ReactNode } from "react";
-import { toast } from "react-hot-toast";
+import { ErrorInfo, Component, ReactNode } from "react";
 
 interface IProps {
   children: ReactNode;
@@ -27,8 +26,9 @@ class ErrorBoundary extends Component<IProps, IState> {
   }
 
   public render() {
+    console.log("Mpika error boundary");
+
     if (this.state.hasError === true) {
-      toast("eee");
     }
 
     return this.props.children;

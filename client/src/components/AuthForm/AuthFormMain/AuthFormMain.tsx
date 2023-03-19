@@ -24,6 +24,8 @@ const AuthFormMain = (props: IProps): JSX.Element => {
       );
     }
     if (validEmail === false) {
+      console.log("edo poses fores mpikes");
+
       throwAsyncError("Email wrong format");
       return;
     }
