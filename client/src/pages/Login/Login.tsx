@@ -1,6 +1,6 @@
 import { PureComponent } from "react";
 import { LoginTitle, LoginNavLink } from "./components";
-import { AuthForm, ErrorBoundary } from "../../components";
+import { AuthForm } from "../../components";
 import Constants from "../../utils/Constants";
 
 interface IRequest {
@@ -26,16 +26,14 @@ class Login extends PureComponent {
 
   render() {
     return (
-      <ErrorBoundary>
-        <AuthForm>
-          <AuthForm.Header titleSlot={this.title} />
-          <AuthForm.Main
-            onFormSubmit={this.handleLoginSubmit}
-            submitButtonText={this.submitButtonText}
-          />
-          <AuthForm.Footer navLinkSlot={this.navigateLink} />
-        </AuthForm>
-      </ErrorBoundary>
+      <AuthForm>
+        <AuthForm.Header titleSlot={this.title} />
+        <AuthForm.Main
+          onFormSubmit={this.handleLoginSubmit}
+          submitButtonText={this.submitButtonText}
+        />
+        <AuthForm.Footer navLinkSlot={this.navigateLink} />
+      </AuthForm>
     );
   }
 }
