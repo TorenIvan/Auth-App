@@ -8,6 +8,11 @@ export default function Toast() {
       position="bottom-right"
       toastOptions={{
         className: styles.toast,
+        style: {
+          border: "1px solid #713200",
+          padding: "16px",
+          color: "#713200",
+        },
         success: {
           duration: 3000,
         },
