@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import constants from "./constants";
 import { Errors } from "../../../utils/Errors";
 
@@ -11,12 +11,15 @@ export async function loginUser(request: IRequest): Promise<string> {
     });
     const { access_token } = result;
     return access_token;
-  } catch (error: unknown) {
-    const statusCode = (error as any)?.response?.status;
-    const errorMessage = (error as any)?.response?.data?.message;
+  } catch (error: unknown | AxiosError) {
+    if (axios.isAxiosError(error)) {
+      const statusCode = (error as AxiosError)?.response?.status ?? 0;
+      const message = ((error as AxiosError)?.response?.data as any)?.message;
 
-    if (statusCode < 500) {
-      throw errorMessage ?? Errors.GenericError;
+      if (statusCode < 500) {
+        throw message ?? Errors.GenericError;
+      }
+      throw Errors.GenericError;
     }
     throw Errors.GenericError;
   }

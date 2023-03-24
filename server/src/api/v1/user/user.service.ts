@@ -203,13 +203,15 @@ class UserService {
 
   async ResetPassword(userId: string, newPassword: string) {
     try {
+      const salt = await bcrypt.genSalt(Number(EnvironmentVariables.Salt_Size));
+      const hash = await bcrypt.hash(newPassword, salt);
       await UserService.users.updateOne(
         {
           _id: new ObjectId(userId),
         },
         {
           $set: {
-            password: newPassword,
+            password: hash,
           },
         }
       );
