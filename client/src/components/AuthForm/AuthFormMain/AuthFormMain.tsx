@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { Form } from "react-router-dom";
+import { toast } from "react-hot-toast";
 import { emailValidator, passwordValidator } from "../helpers";
 import styles from "./styles.module.scss";
 
@@ -11,19 +12,23 @@ const AuthFormMain = ({ submitButtonText }: IProps): JSX.Element => {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     if (emailValidator(emailRef.current?.value ?? "") === false) {
+      toast.error("Email is not valid");
       event.preventDefault();
+      return;
     }
     if (passwordValidator(passwordRef.current?.value ?? "") === false) {
+      toast.error("Password is not valid");
       event.preventDefault();
+      return;
     }
-  };
+  }
 
   return (
     <Form
       method="post"
-      action="action"
+      action="../profile"
       className={styles["auth-container"]}
       onSubmit={handleSubmit}
     >

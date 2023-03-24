@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { toast, ToastBar, Toaster } from "react-hot-toast";
 import styles from "./styles.module.scss";
 
@@ -7,24 +8,18 @@ export default function Toast() {
       reverseOrder={false}
       position="bottom-right"
       toastOptions={{
-        className: styles.toast,
-        style: {
-          border: "1px solid #713200",
-          padding: "16px",
-          color: "#713200",
-        },
         success: {
           duration: 3000,
         },
         error: {
-          duration: Infinity,
+          duration: 9000,
         },
       }}
     >
       {(t) => (
         <ToastBar toast={t}>
           {({ icon, message }) => (
-            <>
+            <Fragment>
               {icon}
               {message}
               {isDismissable(t.type) === true && (
@@ -35,7 +30,7 @@ export default function Toast() {
                   x
                 </button>
               )}
-            </>
+            </Fragment>
           )}
         </ToastBar>
       )}

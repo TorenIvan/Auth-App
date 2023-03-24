@@ -1,11 +1,10 @@
 import { PureComponent } from "react";
+import { ActionFunctionArgs, redirect } from "react-router-dom";
+import { toast } from "react-hot-toast";
 import { LoginTitle, LoginNavLink } from "./components";
+import { loginUser } from "./api";
 import { AuthForm } from "../../components";
 import Constants from "../../utils/Constants";
-import { loginUser } from "./api";
-// import type { IRequest, IResponse } from "./api";
-import { toast } from "react-hot-toast";
-import { ActionFunctionArgs, redirect } from "react-router-dom";
 
 class Login extends PureComponent {
   private readonly submitButtonText: string;
@@ -34,8 +33,12 @@ class Login extends PureComponent {
   }
 }
 
-export async function action({ request }: ActionFunctionArgs): Promise<any> {
+export { Login as default, action };
+
+async function action({ request }: ActionFunctionArgs) {
   try {
+    console.log("Mpika");
+
     const response = await request.formData();
     const email = response.get("email") as string;
     const password = response.get("password") as string;
@@ -46,10 +49,8 @@ export async function action({ request }: ActionFunctionArgs): Promise<any> {
     });
 
     console.log({ access_token });
-    return redirect("/profile");
+    return redirect("../profile");
   } catch (error: unknown) {
     toast.error(error as string);
   }
 }
-
-export default Login;
