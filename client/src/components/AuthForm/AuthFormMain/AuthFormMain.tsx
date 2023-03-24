@@ -1,43 +1,38 @@
 import { useRef } from "react";
+import { Form } from "react-router-dom";
 import { emailValidator, passwordValidator } from "../helpers";
 import styles from "./styles.module.scss";
 
 interface IProps {
-  onFormSubmit: (arg: any) => void;
   submitButtonText: string;
 }
 
-const AuthFormMain = (props: IProps): JSX.Element => {
+const AuthFormMain = ({ submitButtonText }: IProps): JSX.Element => {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
-  const { onFormSubmit, submitButtonText } = props;
-
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.stopPropagation();
-    event.preventDefault();
-
     if (emailValidator(emailRef.current?.value ?? "") === false) {
-      return;
+      event.preventDefault();
     }
     if (passwordValidator(passwordRef.current?.value ?? "") === false) {
-      return;
+      event.preventDefault();
     }
-
-    const formValue = {
-      email: emailRef.current?.value,
-      password: passwordRef.current?.value,
-    };
-    onFormSubmit(formValue);
   };
 
   return (
-    <form className={styles["auth-container"]} onSubmit={handleSubmit}>
+    <Form
+      method="post"
+      action="action"
+      className={styles["auth-container"]}
+      onSubmit={handleSubmit}
+    >
       <div className={styles["auth-item"]}>
         <input
           ref={emailRef}
           id="email"
           type="email"
+          name="email"
           placeholder="&#xf0e0; Email"
           required
         />
@@ -47,6 +42,7 @@ const AuthFormMain = (props: IProps): JSX.Element => {
           ref={passwordRef}
           id="password"
           type="password"
+          name="password"
           placeholder="&#xf06e; Password"
           autoComplete="new-password"
           required
@@ -55,7 +51,7 @@ const AuthFormMain = (props: IProps): JSX.Element => {
       <div id={styles["submitBox"]}>
         <input type="submit" value={submitButtonText}></input>
       </div>
-    </form>
+    </Form>
   );
 };
 
