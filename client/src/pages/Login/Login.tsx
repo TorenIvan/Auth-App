@@ -1,6 +1,7 @@
 import { PureComponent } from "react";
 import { ActionFunctionArgs, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 import { LoginTitle, LoginNavLink } from "./components";
 import { loginUser } from "./api";
 import { AuthForm } from "../../components";
@@ -40,6 +41,14 @@ async function action({ request }: ActionFunctionArgs) {
     const access_token = await loginUser({
       email: email,
       password: password,
+    });
+
+    /**
+     * Update query cache for access token manually
+     */
+    const queryClient = useQueryClient();
+    queryClient.setQueryData(["access_token"], {
+      access_token: access_token,
     });
 
     return redirect("profile");
