@@ -26,8 +26,6 @@ class ErrorBoundary extends Component<IProps, IState> {
   }
 
   public render() {
-    console.log("Mpika error boundary");
-
     if (this.state.hasError === true) {
     }
 

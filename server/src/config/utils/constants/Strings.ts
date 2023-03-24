@@ -11,4 +11,6 @@ export const Strings = {
   ForgotPasswordType: "forgotPassword",
   ActionConfirmEmail: "verify your account",
   ActionResetPassword: "reset your password",
+  Login: "Login",
+  Register: "Register",
 } as const;

@@ -18,10 +18,6 @@ class Login extends PureComponent {
     this.navigateLink = LoginNavLink();
   }
 
-  // handleLoginSubmit = (reqObject: IRequest) => {
-  //   console.log("Now send the request: ", reqObject);
-  // };
-
   render() {
     return (
       <AuthForm>
@@ -37,8 +33,6 @@ export { Login as default, action };
 
 async function action({ request }: ActionFunctionArgs) {
   try {
-    console.log("Mpika");
-
     const response = await request.formData();
     const email = response.get("email") as string;
     const password = response.get("password") as string;
@@ -48,11 +42,9 @@ async function action({ request }: ActionFunctionArgs) {
       password: password,
     });
 
-    console.log({ access_token });
     return redirect("profile");
   } catch (error: unknown) {
-    console.log("Mpika error? ti skata gnt?");
-
     toast.error(error as string);
+    return redirect("");
   }
 }

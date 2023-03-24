@@ -28,6 +28,7 @@ const AuthFormMain = ({ submitButtonText }: IProps): JSX.Element => {
   return (
     <Form
       method="post"
+      action=""
       className={styles["auth-container"]}
       onSubmit={handleSubmit}
     >

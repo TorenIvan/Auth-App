@@ -13,4 +13,5 @@ export const Errors = {
   ConfirmEmailInOrderToContinue:
     "A new validation email link will be sent to your email soon. Please, confirm it in order to proceed",
   PasswordsNotSame: "Passwords do not match. Please, try again",
+  GenericError: "Something went wrong. Please, try again!",
 } as const;
