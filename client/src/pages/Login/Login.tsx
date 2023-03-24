@@ -49,8 +49,10 @@ async function action({ request }: ActionFunctionArgs) {
     });
 
     console.log({ access_token });
-    return redirect("../profile");
+    return redirect("profile");
   } catch (error: unknown) {
+    console.log("Mpika error? ti skata gnt?");
+
     toast.error(error as string);
   }
 }

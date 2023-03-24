@@ -4,6 +4,8 @@ import constants from "./constants";
 export async function loginUser(request: IRequest): Promise<string> {
   const { email, password } = request;
   try {
+    console.log("request");
+
     const result: IResponse = await axios.post(constants.loginUri, {
       email: email,
       password: password,
