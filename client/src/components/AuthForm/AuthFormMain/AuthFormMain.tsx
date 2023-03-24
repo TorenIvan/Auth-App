@@ -3,6 +3,7 @@ import { Form } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { emailValidator, passwordValidator } from "../helpers";
 import styles from "./styles.module.scss";
+import { Errors } from "../../../utils/Errors";
 
 interface IProps {
   submitButtonText: string;
@@ -14,12 +15,12 @@ const AuthFormMain = ({ submitButtonText }: IProps): JSX.Element => {
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     if (emailValidator(emailRef.current?.value ?? "") === false) {
-      toast.error("Email is not valid");
+      toast.error(Errors.InvalidEmail);
       event.preventDefault();
       return;
     }
     if (passwordValidator(passwordRef.current?.value ?? "") === false) {
-      toast.error("Password is not valid");
+      toast.error(Errors.InvalidPassword);
       event.preventDefault();
       return;
     }
