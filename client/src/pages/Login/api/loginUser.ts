@@ -12,8 +12,11 @@ export async function loginUser(request: IRequest): Promise<string> {
     const { access_token } = result;
     return access_token;
   } catch (error: unknown) {
-    if ((error as any)?.statusCode < 500) {
-      throw (error as any)?.message ?? Errors.GenericError;
+    const statusCode = (error as any)?.response?.status;
+    const errorMessage = (error as any)?.response?.data?.message;
+
+    if (statusCode < 500) {
+      throw errorMessage ?? Errors.GenericError;
     }
     throw Errors.GenericError;
   }

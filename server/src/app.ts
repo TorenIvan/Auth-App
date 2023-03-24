@@ -31,9 +31,10 @@ const app: FastifyPluginAsync<AppOptions> = async (
     await fastify.register(FastifyOverview);
   }
 
+  console.log("env: ", process.env.CLIENT_URI);
   await fastify.register(cors, {
-    origin: [process.env.CLIENT_URI!, process.env.SERVER_URI!],
-    methods: ["GET", "PUT", "POST"],
+    origin: "http://localhost:5173",
+    methods: ["GET", "PUT", "POST", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
       "Authorization",

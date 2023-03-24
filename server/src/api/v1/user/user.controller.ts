@@ -202,6 +202,8 @@ class UserController {
     );
     const cookieOptions = generateCookieOptions();
 
+    console.log("Mpika me cors");
+
     reply
       .code(200)
       .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
