@@ -2,11 +2,11 @@ import { Profile, ProfileDetails, ProfileEdit } from "../../pages";
 
 const profileRoutes = [
   {
-    path: "profile/",
+    path: "profile",
     Component: Profile,
     children: [
       {
-        path: "",
+        index: true,
         Component: ProfileDetails,
       },
       {

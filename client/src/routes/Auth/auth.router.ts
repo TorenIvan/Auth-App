@@ -1,5 +1,4 @@
-import { Login, Register } from "../../pages";
-import { loginAction } from "../../pages/Login";
+import { Login, loginAction, Register } from "../../pages";
 
 const authRoutes = [
   {
