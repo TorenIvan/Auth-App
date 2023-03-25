@@ -1,12 +1,17 @@
-import { ErrorPage } from "../../pages";
+import { Profile, ProfileDetails, ProfileEdit } from "../../pages";
 
 const profileRoutes = [
   {
-    path: "/profile",
-    ErrorBoundary: ErrorPage,
+    path: "profile/",
+    Component: Profile,
     children: [
       {
-        path: "/profile/edit",
+        path: "",
+        Component: ProfileDetails,
+      },
+      {
+        path: "edit",
+        Component: ProfileEdit,
       },
     ],
   },

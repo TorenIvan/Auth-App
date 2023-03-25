@@ -1,17 +1,15 @@
-import { ErrorPage, Login, Register } from "../../pages";
+import { Login, Register } from "../../pages";
 import { loginAction } from "../../pages/Login";
 
 const authRoutes = [
   {
-    path: "/login",
+    path: "login",
     Component: Login,
-    ErrorBoundary: ErrorPage,
     action: loginAction,
   },
   {
-    path: "/register",
+    path: "register",
     Component: Register,
-    ErrorBoundary: ErrorPage,
   },
 ];
 
