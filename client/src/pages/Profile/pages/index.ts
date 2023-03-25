@@ -1,4 +1,4 @@
-import ProfileDetails from "./ProfileDetails";
-import ProfileEdit from "./ProfileEdit";
+import ProfileDetails, { ProfileDetailsRouter } from "./ProfileDetails";
+import ProfileEdit, { ProfileEditRouter } from "./ProfileEdit";
 
-export { ProfileDetails, ProfileEdit };
+export { ProfileDetails, ProfileDetailsRouter, ProfileEdit, ProfileEditRouter };

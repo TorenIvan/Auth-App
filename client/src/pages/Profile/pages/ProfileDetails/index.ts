@@ -1,3 +1,4 @@
 import ProfileDetails from "./ProfileDetails";
+import { ProfileDetailsRouter } from "./ProfileDetails.router";
 
-export default ProfileDetails;
+export { ProfileDetails as default, ProfileDetailsRouter };

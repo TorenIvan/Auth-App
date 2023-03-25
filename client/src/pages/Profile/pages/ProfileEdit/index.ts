@@ -1,3 +1,4 @@
 import ProfileEdit from "./ProfileEdit";
+import { ProfileEditRouter } from "./ProfileEdit.router";
 
-export default ProfileEdit;
+export { ProfileEdit as default, ProfileEditRouter };
