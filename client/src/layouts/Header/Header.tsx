@@ -1,9 +1,7 @@
 import React from "react";
-import { Atom, useAtom } from "jotai";
 import { useTheme } from "../../hooks";
 import { ThemeIcon } from "../../icons";
 import Constants from "../../utils/Constants";
-import { isThemeDarkAtom } from "../../store";
 import styles from "./styles.module.scss";
 
 function Header() {
