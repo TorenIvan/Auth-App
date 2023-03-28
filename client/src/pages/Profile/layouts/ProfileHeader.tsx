@@ -1,8 +1,7 @@
 import { useAtom } from "jotai";
 import { themeAtom } from "../../../store";
-import { ThemeIcon } from "../helpers";
+import { ThemeIcon, UserAvatar, UserOptionList } from "../components";
 import styles from "./styles.module.scss";
-import { UserAvatar } from "../components";
 
 function ProfileHeader() {
   const [theme, _] = useAtom(themeAtom);
@@ -12,7 +11,7 @@ function ProfileHeader() {
       <ThemeIcon theme={theme} />
       <div className={styles["avatar-select-container"]}>
         <UserAvatar theme={theme} />
-        <span>{"UserName ali8eias"}</span>
+        <UserOptionList />
       </div>
     </div>
   );
