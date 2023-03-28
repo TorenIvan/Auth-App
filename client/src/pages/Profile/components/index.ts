@@ -1,5 +1,5 @@
-export { default as UserAvatar } from "./UserAvatar";
-export { default as UserOptionList } from "./UserOptionList";
-export { default as UserOption } from "./UserOption";
-export { default as UserSignOutOption } from "./UserSignOutOption";
 export { default as ThemeIcon } from "./ThemeIcon";
+export { default as UserAvatar } from "./UserAvatar";
+export { default as SideMenu } from "./SideMenu";
+export { default as SideMenuItem } from "./SideMenuItem";
+export { default as SideMenuItemContent } from "./SideMenuItemContent";

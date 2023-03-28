@@ -11,6 +11,7 @@ const Constants = {
   Register: "Register",
   Login: "Login",
   SignIn: "Sign In",
+  Logout: "Logout",
   DontHaveAnAccount: "Don't have an account yet?",
   DeveloperGitHubProfile: "https://github.com/TorenIvan",
   LightPalette: "light-theme",
@@ -18,6 +19,8 @@ const Constants = {
   RegisterButtonText: "Register Now!",
   SignInButtonText: "Sign In!",
   Theme: "theme",
+  MyProfile: "My Profile",
+  GroupChat: "Group Chat",
 } as const;
 
 export default Constants;
