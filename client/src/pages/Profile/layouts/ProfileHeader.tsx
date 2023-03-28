@@ -5,13 +5,13 @@ import styles from "./styles.module.scss";
 import { UserAvatar } from "../components";
 
 function ProfileHeader() {
-  const [themeAtomValue, _] = useAtom(themeAtom);
+  const [theme, _] = useAtom(themeAtom);
 
   return (
     <div className={styles["developer-information"]}>
-      <ThemeIcon theme={themeAtomValue} />
+      <ThemeIcon theme={theme} />
       <div className={styles["avatar-select-container"]}>
-        <UserAvatar theme={themeAtomValue} />
+        <UserAvatar theme={theme} />
         <span>{"UserName ali8eias"}</span>
       </div>
     </div>

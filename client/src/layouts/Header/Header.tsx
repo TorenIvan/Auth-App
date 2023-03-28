@@ -1,11 +1,10 @@
 import React from "react";
 import { useTheme } from "../../hooks";
 import { ThemeIcon } from "../../icons";
-import Constants from "../../utils/Constants";
 import styles from "./styles.module.scss";
 
 function Header() {
-  const [theme, toggleTheme] = useTheme(Constants.LightPalette);
+  const [theme, toggleTheme] = useTheme();
 
   const handleThemeIconClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();

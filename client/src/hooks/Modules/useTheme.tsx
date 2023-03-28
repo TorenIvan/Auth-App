@@ -1,14 +1,12 @@
-import { useLocalStorage } from "./useLocalStorage";
+import { useAtom } from "jotai";
 import Constants from "../../utils/Constants";
 import { Theme } from "../../utils/Types";
-import { useAtom } from "jotai";
 import { themeAtom } from "../../store";
 
 type returnType = [theme: Theme, toggleTheme: () => void];
 
-export function useTheme(themeArg: Theme): returnType {
-  const [theme, setTheme] = useLocalStorage<Theme>(Constants.Theme, themeArg);
-  const [, setThemeAtomValue] = useAtom(themeAtom);
+export function useTheme(): returnType {
+  const [theme, setTheme] = useAtom(themeAtom);
 
   const toggleTheme = () => {
     const newTheme =
@@ -17,7 +15,6 @@ export function useTheme(themeArg: Theme): returnType {
         : Constants.LightPalette;
 
     setTheme(newTheme);
-    setThemeAtomValue(newTheme);
   };
 
   document.body.className = theme;
