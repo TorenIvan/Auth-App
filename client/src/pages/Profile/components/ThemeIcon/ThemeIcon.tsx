@@ -1,13 +1,12 @@
+import { useAtom } from "jotai";
+import { themeAtom } from "../../../../store";
 import Constants from "../../../../utils/Constants";
-import { Theme } from "../../../../utils/Types";
 import { DevChallengesDark, DevChallengesLight } from "../../../../icons";
 import styles from "./styles.module.scss";
 
-interface IProps {
-  theme: Theme;
-}
+const ThemeIcon = (): JSX.Element => {
+  const [theme, _] = useAtom(themeAtom);
 
-const ThemeIcon = ({ theme }: IProps): JSX.Element => {
   let themeIcon: JSX.Element = <DevChallengesLight />;
   if (theme === Constants.LightPalette) {
     themeIcon = <DevChallengesDark />;

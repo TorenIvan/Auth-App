@@ -1,35 +1,29 @@
-import { useAtom } from "jotai";
 import { useState } from "react";
-import { themeAtom } from "../../../store";
-import { ThemeIcon, UserAvatar, SideMenu } from "../components";
+import { ThemeIcon, SideMenu } from "../components";
 import styles from "./styles.module.scss";
 
 function ProfileHeader(): JSX.Element {
-  const [theme, _] = useAtom(themeAtom);
-  const [isSideMenuOpen, setIsSideMenuOpen] = useState<boolean>(false);
+  const [isSideMenuOpen, setIsSideMenuOpen] = useState<boolean>(true);
 
   return (
     <div className={styles["developer-information"]}>
-      <ThemeIcon theme={theme} />
-      <div className={styles["avatar-select-container"]}>
-        <UserAvatar theme={theme} />
-        <SideMenu
-          isOpen={isSideMenuOpen}
-          onPressingOpenButton={() =>
-            setIsSideMenuOpen((isSideMenuOpen) => !isSideMenuOpen)
-          }
-        >
-          <SideMenu.Item isUsed onClick={() => {}}>
-            <SideMenu.Item.Content image="" value="" color="red" />
-          </SideMenu.Item>
-          <SideMenu.Item isUsed={false} onClick={() => {}}>
-            <SideMenu.Item.Content image="" value="" color="red" />
-          </SideMenu.Item>
-          <SideMenu.Item isUsed={false} onClick={() => {}}>
-            <SideMenu.Item.Content image="" value="" color="red" />
-          </SideMenu.Item>
-        </SideMenu>
-      </div>
+      <ThemeIcon />
+      <SideMenu
+        isOpen={isSideMenuOpen}
+        onPressingOpenButton={() =>
+          setIsSideMenuOpen((isSideMenuOpen) => !isSideMenuOpen)
+        }
+      >
+        <SideMenu.Item isUsed onClick={() => {}}>
+          <SideMenu.Item.Content image="" value="" color="red" />
+        </SideMenu.Item>
+        <SideMenu.Item isUsed={false} onClick={() => {}}>
+          <SideMenu.Item.Content image="" value="" color="red" />
+        </SideMenu.Item>
+        <SideMenu.Item isUsed={false} onClick={() => {}}>
+          <SideMenu.Item.Content image="" value="" color="red" />
+        </SideMenu.Item>
+      </SideMenu>
     </div>
   );
 }

@@ -1,5 +1,9 @@
-import { Fragment, ReactNode } from "react";
+import { useAtom } from "jotai";
+import { ReactNode } from "react";
+import { themeAtom } from "../../../../store";
 import SideMenuItem from "../SideMenuItem";
+import UserAvatar from "../UserAvatar";
+import styles from "./styles.module.scss";
 
 interface IProps {
   isOpen: boolean;
@@ -8,15 +12,35 @@ interface IProps {
 }
 
 function SideMenu({ isOpen, onPressingOpenButton, children }: IProps) {
+  const [theme, _] = useAtom(themeAtom);
+
   if (isOpen === true) {
     return (
-      <Fragment>
-        <label htmlFor="userAction">Username ali8eias</label>
-        <select name="userInfo">{children}</select>
-      </Fragment>
+      <div
+        className={styles["side-menu-container"]}
+        onClick={onPressingOpenButton}
+      >
+        <UserAvatar theme={theme} />
+        <div
+          style={{
+            fontSize: "25px",
+            display: "inline-block",
+            cursor: "pointer",
+            // color: var(--text-secondary)
+          }}
+        >
+          <span>UserName </span>
+          &darr;
+        </div>
+      </div>
     );
   }
-  return <Fragment></Fragment>;
+
+  return (
+    <div className={styles["side-menu-container"]}>
+      <UserAvatar theme={theme} />
+    </div>
+  );
 }
 
 export default SideMenu;

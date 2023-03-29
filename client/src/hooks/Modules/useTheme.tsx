@@ -3,9 +3,9 @@ import Constants from "../../utils/Constants";
 import { Theme } from "../../utils/Types";
 import { themeAtom } from "../../store";
 
-type returnType = [theme: Theme, toggleTheme: () => void];
+type ReturnType = [theme: Theme, toggleTheme: () => void];
 
-export function useTheme(): returnType {
+export function useTheme(): ReturnType {
   const [theme, setTheme] = useAtom(themeAtom);
 
   const toggleTheme = () => {
