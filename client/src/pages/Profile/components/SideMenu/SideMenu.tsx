@@ -21,23 +21,19 @@ function SideMenu({ isOpen, onPressingOpenButton, children }: IProps) {
         onClick={onPressingOpenButton}
       >
         <UserAvatar theme={theme} />
-        <div
-          style={{
-            fontSize: "25px",
-            display: "inline-block",
-            cursor: "pointer",
-            // color: var(--text-secondary)
-          }}
-        >
+        <div className={styles["side-menu-span-info"]}>
           <span>UserName </span>
-          &darr;
+          <span>&darr;</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={styles["side-menu-container"]}>
+    <div
+      className={styles["side-menu-container"]}
+      onClick={onPressingOpenButton}
+    >
       <UserAvatar theme={theme} />
     </div>
   );
