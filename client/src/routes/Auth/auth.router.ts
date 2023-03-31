@@ -1,4 +1,4 @@
-import { AuthLayout as Layout } from "../../layouts";
+import { Layout } from "./layouts";
 import { Login, loginAction, Register } from "../../pages";
 
 const authRoutes = [

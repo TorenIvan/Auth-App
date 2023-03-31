@@ -1,4 +1,5 @@
-import Layout from "./Layout";
-import ProfileLayout from "./ProfileLayout";
+import Header from "./Header";
+import Main from "./Main";
+import Footer from "./Footer";
 
-export { Layout as AuthLayout, ProfileLayout };
+export { Header, Main, Footer };

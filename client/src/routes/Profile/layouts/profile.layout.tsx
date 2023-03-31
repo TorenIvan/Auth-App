@@ -1,7 +1,7 @@
-import { Header, Main, Footer } from "./components";
-import { Outlet } from "react-router-dom";
-import { SideMenu } from "../pages/Profile/components";
 import { useState } from "react";
+import { Outlet } from "react-router-dom";
+import { Footer, Header, Main } from "../../../layouts";
+import { SideMenu } from "../../../pages/Profile/components";
 
 function ProfileLayout() {
   const [isSideMenuOpen, setIsSideMenuOpen] = useState<boolean>(true);

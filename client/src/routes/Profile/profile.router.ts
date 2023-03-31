@@ -1,10 +1,10 @@
-import { ProfileLayout } from "../../layouts";
+import { Layout } from "./layouts";
 import { Profile, ProfileDetails, ProfileEdit } from "../../pages";
 
 const profileRoutes = [
   {
     path: "",
-    Component: ProfileLayout,
+    Component: Layout,
     children: [
       {
         path: "profile",
