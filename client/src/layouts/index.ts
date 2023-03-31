@@ -1,3 +1,4 @@
 import Layout from "./Layout";
+import ProfileLayout from "./ProfileLayout";
 
-export default Layout;
+export { Layout as AuthLayout, ProfileLayout };

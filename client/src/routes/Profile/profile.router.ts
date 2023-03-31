@@ -1,17 +1,24 @@
+import { ProfileLayout } from "../../layouts";
 import { Profile, ProfileDetails, ProfileEdit } from "../../pages";
 
 const profileRoutes = [
   {
-    path: "profile",
-    Component: Profile,
+    path: "",
+    Component: ProfileLayout,
     children: [
       {
-        index: true,
-        Component: ProfileDetails,
-      },
-      {
-        path: "edit",
-        Component: ProfileEdit,
+        path: "profile",
+        Component: Profile,
+        children: [
+          {
+            index: true,
+            Component: ProfileDetails,
+          },
+          {
+            path: "edit",
+            Component: ProfileEdit,
+          },
+        ],
       },
     ],
   },

@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
-import { themeAtom } from "../../../../store";
-import Constants from "../../../../utils/Constants";
-import { DevChallengesDark, DevChallengesLight } from "../../../../icons";
+import { themeAtom } from "../../../store";
+import Constants from "../../../utils/Constants";
+import { DevChallengesDark, DevChallengesLight } from "../..";
 import styles from "./styles.module.scss";
 
 const ThemeIcon = (): JSX.Element => {

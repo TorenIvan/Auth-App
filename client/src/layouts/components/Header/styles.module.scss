@@ -1,0 +1,31 @@
+.developer-information {
+  display: flex;
+  position: absolute;
+  top: 1.8rem;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 95%;
+}
+
+.developer-information * {
+  font-family: NotoSansRegular;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 19px;
+  color: var(--text-primary);
+}
+
+
+.toggleButton {
+  border: none;
+  outline: none;
+  background-color: inherit;
+}
+
+.toggleButton svg {
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+}

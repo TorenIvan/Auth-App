@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ThemeIcon, SideMenu } from "../components";
+import { LogoIcon, SideMenu } from "../components";
 import styles from "./styles.module.scss";
 
 function ProfileHeader(): JSX.Element {
@@ -7,7 +7,7 @@ function ProfileHeader(): JSX.Element {
 
   return (
     <div className={styles["developer-information"]}>
-      <ThemeIcon />
+      <LogoIcon />
       <SideMenu
         isOpen={isSideMenuOpen}
         onPressingOpenButton={() =>

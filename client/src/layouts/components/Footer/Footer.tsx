@@ -1,6 +1,6 @@
 import { Fragment, memo } from "react";
-import Toast from "../../components/Toast";
-import Constants from "../../utils/Constants";
+import Toast from "../../../components/Toast";
+import Constants from "../../../utils/Constants";
 import styles from "./footerStyles.module.css";
 
 const Footer = () => {

@@ -1,17 +1,13 @@
-import { ReactNode } from "react";
-import Header from "./Header";
-import Main from "./Main";
-import Footer from "./Footer";
+import { Header, Main, Footer } from "./components";
+import { Outlet } from "react-router-dom";
 
-interface IProps {
-  children: ReactNode;
-}
-
-function Layout({ children }: IProps) {
+function Layout() {
   return (
     <div className="screen-container">
       <Header />
-      <Main>{children}</Main>
+      <Main>
+        <Outlet />
+      </Main>
       <Footer />
     </div>
   );

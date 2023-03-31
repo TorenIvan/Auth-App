@@ -1,3 +1,4 @@
+export { LogoIcon } from "../pages/Profile/components";
 export { ThemeIcon } from "./Modules/ThemeIcon";
 export { FacebookIcon } from "./Modules/SocialProfiles/FacebookIcon";
 export { GithubIcon } from "./Modules/SocialProfiles/GithubIcon";
