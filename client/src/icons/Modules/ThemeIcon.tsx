@@ -1,6 +1,5 @@
 import { memo } from "react";
-import { MoonIcon } from "./ThemeSpecific/MoonIcon";
-import { SunIcon } from "./ThemeSpecific/SunIcon";
+import { MoonIcon, SunIcon } from "./ThemeSpecific";
 import { GlobalConstants } from "../../utils";
 import { Theme } from "../../utils/Types";
 

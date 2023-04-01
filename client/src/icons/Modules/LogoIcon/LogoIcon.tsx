@@ -4,7 +4,7 @@ import { GlobalConstants } from "../../../utils";
 import { DevChallengesDark, DevChallengesLight } from "../..";
 import styles from "./styles.module.scss";
 
-const ThemeIcon = (): JSX.Element => {
+const LogoIcon = (): JSX.Element => {
   const [theme, _] = useAtom(themeAtom);
 
   let themeIcon: JSX.Element = <DevChallengesLight />;
@@ -15,4 +15,4 @@ const ThemeIcon = (): JSX.Element => {
   return <div className={styles["icon-container"]}>{themeIcon}</div>;
 };
 
-export default ThemeIcon;
+export default LogoIcon;

@@ -1,5 +1,5 @@
 import { Layout } from "./layouts";
-import { Profile, ProfileDetails, ProfileEdit } from "../../pages";
+import { Profile, ProfileDetails, ProfileEdit } from "./pages";
 
 const profileRoutes = [
   {

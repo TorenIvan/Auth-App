@@ -1,3 +1,3 @@
-import ThemeIcon from "./ThemeIcon";
+import LogoIcon from "./LogoIcon";
 
-export default ThemeIcon;
+export { LogoIcon };

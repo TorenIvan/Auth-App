@@ -6,6 +6,4 @@ export const Constants = {
   LightPalette: "light-theme",
   DarkPalette: "dark-theme",
   Theme: "theme",
-  MyProfile: "My Profile",
-  GroupChat: "Group Chat",
 } as const;

@@ -1,4 +1,4 @@
-import { DefaultError } from "../../utils/Errors";
+import { DefaultError } from "../../utils";
 import errorStyles from "./styles.module.scss";
 
 interface IProps {
