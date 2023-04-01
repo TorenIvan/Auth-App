@@ -2,10 +2,9 @@ import { PureComponent } from "react";
 import { ActionFunctionArgs, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { LoginTitle, LoginNavLink } from "./components";
-import { loginUser } from "./api";
-import { AuthForm } from "../../components";
-import Constants from "../../utils/Constants";
+import { AuthForm, LoginTitle, LoginNavLink } from "../../components";
+import { loginUser } from "../../api";
+import { Constants } from "../../constants";
 
 class Login extends PureComponent {
   private readonly submitButtonText: string;

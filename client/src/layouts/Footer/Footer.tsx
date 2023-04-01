@@ -1,6 +1,6 @@
 import { Fragment, memo } from "react";
 import Toast from "../../components/Toast";
-import Constants from "../../utils/Constants";
+import { GlobalConstants } from "../../utils";
 import styles from "./footerStyles.module.css";
 
 const Footer = () => {
@@ -8,18 +8,18 @@ const Footer = () => {
     <Fragment>
       <div className={styles["developer-information"]}>
         <span>
-          {Constants.CreatedBy}{" "}
+          {GlobalConstants.CreatedBy}{" "}
           <span id={styles["developer-name"]}>
             <a
-              href={Constants.DeveloperGitHubProfile}
+              href={GlobalConstants.DeveloperGitHubProfile}
               target="_blank"
               rel="noreferrer noopener"
             >
-              {Constants.DeveloperName}
+              {GlobalConstants.DeveloperName}
             </a>
           </span>
         </span>
-        <span>{Constants.ChallengeSite}</span>
+        <span>{GlobalConstants.ChallengeSite}</span>
       </div>
       <Toast />
     </Fragment>

@@ -1,9 +1,9 @@
 import { useRef } from "react";
 import { Form } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { emailValidator, passwordValidator } from "../helpers";
+import { emailValidator, passwordValidator } from "../../../helpers";
+import { Errors } from "../../../errors";
 import styles from "./styles.module.scss";
-import { Errors } from "../../../utils/Errors";
 
 interface IProps {
   submitButtonText: string;

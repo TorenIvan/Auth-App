@@ -1,5 +1,5 @@
 import { Layout } from "./layouts";
-import { Login, loginAction, Register } from "../../pages";
+import { Login, loginAction, Register } from "./pages";
 
 const authRoutes = [
   {

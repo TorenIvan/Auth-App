@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import { ErrorPage } from "../pages";
 import authRoutes from "./Auth";
 import profileRoutes from "./Profile";

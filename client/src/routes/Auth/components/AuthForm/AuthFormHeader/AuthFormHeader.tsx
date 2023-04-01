@@ -1,6 +1,6 @@
 import { memo } from "react";
+import { Constants } from "../../../constants";
 import headerStyles from "./styles.module.css";
-import Constants from "../../../utils/Constants";
 
 interface IProps {
   titleSlot: JSX.Element;

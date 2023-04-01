@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
-import { useTheme } from "../../../hooks";
-import { LogoIcon, ThemeIcon } from "../../../icons";
+import { useTheme } from "../../hooks";
+import { LogoIcon, ThemeIcon } from "../../icons";
 import styles from "./styles.module.scss";
 
 interface IProps {

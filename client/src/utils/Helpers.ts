@@ -1,1 +1,1 @@
-export default {};
+export const Helpers = {} as const;

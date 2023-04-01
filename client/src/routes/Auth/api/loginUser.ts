@@ -1,11 +1,12 @@
 import axios, { AxiosError } from "axios";
-import constants from "./constants";
-import { Errors } from "../../../utils/Errors";
+import { Errors } from "../errors";
+
+const loginUri = `${import.meta.env.VITE_SERVER_URI}v1/auth/login/credentials`;
 
 export async function loginUser(request: IRequest): Promise<string> {
   const { email, password } = request;
   try {
-    const result: IResponse = await axios.post(constants.loginUri, {
+    const result: IResponse = await axios.post(loginUri, {
       email: email,
       password: password,
     });

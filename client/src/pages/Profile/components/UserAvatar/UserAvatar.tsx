@@ -1,5 +1,5 @@
 import Assets from "../../../../assets";
-import Constants from "../../../../utils/Constants";
+import { GlobalConstants } from "../../../../utils";
 import { Theme } from "../../../../utils/Types";
 import styles from "./styles.module.scss";
 
@@ -10,7 +10,7 @@ function UserAvatar({ theme, userAvatar }: IProps): JSX.Element {
         src={Assets.GenericAvatar}
         alt="Avatar"
         className={`${styles.genericAvatar} ${
-          theme === Constants.DarkPalette ? styles.invertWhite : ""
+          theme === GlobalConstants.DarkPalette ? styles.invertWhite : ""
         }`}
       />
     );

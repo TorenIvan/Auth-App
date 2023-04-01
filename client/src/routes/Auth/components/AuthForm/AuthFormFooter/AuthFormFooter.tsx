@@ -3,11 +3,11 @@ import {
   TwitterIcon,
   GithubIcon,
   GoogleIcon,
-} from "../../../icons";
+} from "../../../../../icons";
 import { memo } from "react";
 import "font-awesome/css/font-awesome.min.css";
 import styles from "./styles.module.css";
-import Constants from "../../../utils/Constants";
+import { Constants } from "../../../constants";
 
 interface IProps {
   navLinkSlot: JSX.Element;

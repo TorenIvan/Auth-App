@@ -1,11 +1,11 @@
 import { memo } from "react";
 import { MoonIcon } from "./ThemeSpecific/MoonIcon";
 import { SunIcon } from "./ThemeSpecific/SunIcon";
-import Constants from "../../utils/Constants";
+import { GlobalConstants } from "../../utils";
 import { Theme } from "../../utils/Types";
 
 const ThemeIcon = memo(({ theme }: { theme: Theme }): JSX.Element => {
-  if (theme === Constants.LightPalette) return <MoonIcon />;
+  if (theme === GlobalConstants.LightPalette) return <MoonIcon />;
   return <SunIcon />;
 });
 

@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import { themeAtom } from "../../../store";
-import Constants from "../../../utils/Constants";
+import { GlobalConstants } from "../../../utils";
 import { DevChallengesDark, DevChallengesLight } from "../..";
 import styles from "./styles.module.scss";
 
@@ -8,7 +8,7 @@ const ThemeIcon = (): JSX.Element => {
   const [theme, _] = useAtom(themeAtom);
 
   let themeIcon: JSX.Element = <DevChallengesLight />;
-  if (theme === Constants.LightPalette) {
+  if (theme === GlobalConstants.LightPalette) {
     themeIcon = <DevChallengesDark />;
   }
 

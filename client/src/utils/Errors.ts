@@ -4,10 +4,3 @@ export const DefaultError = {
   title: "I have bad news for you",
   body: "Something went wrong with this page. Please, try searching again. Thank you!!!",
 } as const;
-
-export const Errors = {
-  GenericError: "Something went wrong. Please, try again later!",
-  InvalidEmail: "Email is not valid. Please try again!",
-  InvalidPassword:
-    "Password must contain at least 1 upper case, numeric, and special character.\n Please try again!",
-} as const;

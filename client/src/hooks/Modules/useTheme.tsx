@@ -1,5 +1,5 @@
 import { useAtom } from "jotai";
-import Constants from "../../utils/Constants";
+import { GlobalConstants } from "../../utils";
 import { Theme } from "../../utils/Types";
 import { themeAtom } from "../../store";
 
@@ -10,9 +10,9 @@ export function useTheme(): ReturnType {
 
   const toggleTheme = () => {
     const newTheme =
-      theme === Constants.LightPalette
-        ? Constants.DarkPalette
-        : Constants.LightPalette;
+      theme === GlobalConstants.LightPalette
+        ? GlobalConstants.DarkPalette
+        : GlobalConstants.LightPalette;
 
     setTheme(newTheme);
   };

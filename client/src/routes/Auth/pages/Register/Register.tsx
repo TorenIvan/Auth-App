@@ -1,7 +1,6 @@
 import { PureComponent } from "react";
-import { RegisterTitle, RegisterNavLink } from "./components";
-import { AuthForm } from "../../components";
-import Constants from "../../utils/Constants";
+import { AuthForm, RegisterTitle, RegisterNavLink } from "../../components";
+import { Constants } from "../../constants";
 
 interface IRequest {
   email: string;
@@ -29,10 +28,7 @@ class Register extends PureComponent {
     return (
       <AuthForm>
         <AuthForm.Header titleSlot={this.title} />
-        <AuthForm.Main
-          onFormSubmit={this.handleRegisterSubmit}
-          submitButtonText={this.submitButtonText}
-        />
+        <AuthForm.Main submitButtonText={this.submitButtonText} />
         <AuthForm.Footer navLinkSlot={this.navigateLink} />
       </AuthForm>
     );

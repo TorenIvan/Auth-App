@@ -1,4 +1,4 @@
-import Constants from "../../../../utils/Constants";
+import { Constants } from "../../constants";
 
 const LoginTitle = (): JSX.Element => {
   return <h2>{Constants.SignIn}</h2>;
