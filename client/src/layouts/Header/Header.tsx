@@ -4,23 +4,25 @@ import { LogoIcon, ThemeIcon } from "../../icons";
 import styles from "./styles.module.scss";
 
 interface IProps {
-  rightElement?: ReactNode;
+  rightSlot?: ReactNode;
 }
 
-function Header({ rightElement }: IProps) {
+function Header({ rightSlot }: IProps) {
   const [theme, toggleTheme] = useTheme();
 
-  const handleThemeIconClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleThemeIconClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
     toggleTheme();
   };
   return (
-    <div className={styles["developer-information"]}>
+    <div className={styles["container"]}>
       <LogoIcon />
-      <button className={styles.toggleButton} onClick={handleThemeIconClick}>
-        <ThemeIcon theme={theme} />
-      </button>
-      {rightElement}
+      <div className={styles["developer-information"]}>
+        <div className={styles.toggleButton} onClick={handleThemeIconClick}>
+          <ThemeIcon theme={theme} />
+        </div>
+        {rightSlot}
+      </div>
     </div>
   );
 }

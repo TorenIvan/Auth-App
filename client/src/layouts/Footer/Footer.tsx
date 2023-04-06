@@ -1,5 +1,4 @@
 import { Fragment, memo } from "react";
-import Toast from "../../components/Toast";
 import { GlobalConstants } from "../../utils";
 import styles from "./footerStyles.module.css";
 
@@ -21,7 +20,6 @@ const Footer = () => {
         </span>
         <span>{GlobalConstants.ChallengeSite}</span>
       </div>
-      <Toast />
     </Fragment>
   );
 };

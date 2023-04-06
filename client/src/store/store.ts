@@ -1,6 +1,5 @@
 import { atomWithStorage } from "jotai/utils";
-import { GlobalConstants } from "../utils";
-import { Theme } from "../utils/Types";
+import { GlobalConstants, Theme } from "../utils";
 
 export const themeAtom = atomWithStorage<Theme>(
   GlobalConstants.Theme,

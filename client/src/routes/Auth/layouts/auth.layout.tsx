@@ -1,15 +1,16 @@
+import { Fragment } from "react";
 import { Outlet } from "react-router-dom";
 import { Footer, Header, Main } from "../../../layouts";
 
 function Layout() {
   return (
-    <div className="screen-container">
+    <Fragment>
       <Header />
       <Main>
         <Outlet />
       </Main>
       <Footer />
-    </div>
+    </Fragment>
   );
 }
 

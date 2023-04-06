@@ -1,5 +1,5 @@
-import { useAtom } from "jotai";
 import { ReactNode } from "react";
+import { useAtom } from "jotai";
 import { themeAtom } from "../../../../store";
 import SideMenuItem from "../SideMenuItem";
 import UserAvatar from "../UserAvatar";

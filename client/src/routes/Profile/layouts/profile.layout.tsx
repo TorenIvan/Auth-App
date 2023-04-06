@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Footer, Header, Main } from "../../../layouts";
 import { SideMenu } from "../components";
@@ -7,9 +7,9 @@ function ProfileLayout() {
   const [isSideMenuOpen, setIsSideMenuOpen] = useState<boolean>(true);
 
   return (
-    <div className="screen-container">
+    <Fragment>
       <Header
-        rightElement={
+        rightSlot={
           <SideMenu
             isOpen={isSideMenuOpen}
             onPressingOpenButton={() =>
@@ -32,7 +32,7 @@ function ProfileLayout() {
         <Outlet />
       </Main>
       <Footer />
-    </div>
+    </Fragment>
   );
 }
 

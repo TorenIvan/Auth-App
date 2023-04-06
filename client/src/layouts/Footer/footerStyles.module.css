@@ -1,10 +1,10 @@
 .developer-information {
   display: flex;
-  position: absolute;
-  bottom: 1.8rem;
+  position: relative;
   flex-direction: row;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  margin-bottom: 2rem;
   width: 95%;
 }
 
