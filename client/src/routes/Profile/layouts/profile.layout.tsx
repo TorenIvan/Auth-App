@@ -4,7 +4,7 @@ import { Footer, Header, Main } from "../../../layouts";
 import { SideMenu } from "../components";
 
 function ProfileLayout() {
-  const [isSideMenuOpen, setIsSideMenuOpen] = useState<boolean>(true);
+  const [isSideMenuOpen, setIsSideMenuOpen] = useState<boolean>(false);
 
   return (
     <Fragment>

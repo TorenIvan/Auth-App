@@ -25,10 +25,10 @@
   justify-content: center;
   position: relative;
   padding: 10px;
+  cursor: pointer;
 }
 
 .developer-information {
-  cursor: pointer;
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;

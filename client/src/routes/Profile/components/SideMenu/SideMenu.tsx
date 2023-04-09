@@ -14,29 +14,32 @@ interface IProps {
 function SideMenu({ isOpen, onPressingOpenButton, children }: IProps) {
   const [theme, _] = useAtom(themeAtom);
 
-  if (isOpen === true) {
-    return (
-      <div className={styles["account-menu"]} onClick={onPressingOpenButton}>
-        <div className={styles["account-menu-dropdown"]}>
-          <span>
-            <UserAvatar theme={theme} />
-          </span>
-          <span>Vaggelisshmos</span>
-          <span>arrow</span>
-        </div>
-        <div className={styles["account-menu-info-sub-menu"]}></div>
-      </div>
-    );
-  }
-
+  //if (isOpen === true) {
   return (
-    <div
-      className={styles["side-menu-container"]}
-      onClick={onPressingOpenButton}
-    >
-      {/*<UserAvatar theme={theme} /> */}
+    <div className={styles["account-menu"]} onClick={onPressingOpenButton}>
+      <div className={styles["account-menu-dropdown"]}>
+        <span>
+          <UserAvatar theme={theme} />
+        </span>
+        <span>Vaggelisshmos</span>
+        <span
+          className={`${styles.caret} ${isOpen === true ? styles.open : ""}`}
+          role="presentation"
+        />
+      </div>
+      <div className={styles["account-menu-info-sub-menu"]}></div>
     </div>
   );
+  //}
+
+  //return (
+  //  <div
+  //    className={styles["side-menu-container"]}
+  //    onClick={onPressingOpenButton}
+  //  >
+  //    {/*<UserAvatar theme={theme} /> */}
+  //  </div>
+  //);
 }
 
 export default SideMenu;
