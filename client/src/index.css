@@ -1,17 +1,19 @@
 :root {
   --text-primary: #828282;
-  --text-navigationLink: #2D9CDB;
+  --text-navigationLink: #2d9cdb;
   --text-buttonWithBackground: #fdfdfd;
   --background-button: #2f80ed;
   --border-primary: #bdbdbd;
 }
 
 .dark-theme {
-  --text-secondary: #E0E0E0;
+  --border-icon: "#fff";
+  --text-secondary: #e0e0e0;
   --background-screen: #333333;
 }
 
 .light-theme {
+  --border-icon: "#000";
   --text-secondary: #333333;
   --background-screen: #fdfdfd;
 }

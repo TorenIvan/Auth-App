@@ -4,6 +4,7 @@ import { themeAtom } from "../../../../store";
 import SideMenuItem from "../SideMenuItem";
 import UserAvatar from "../UserAvatar";
 import styles from "./styles.module.scss";
+import { GlobalConstants } from "../../../../utils";
 
 interface IProps {
   isOpen: boolean;
@@ -23,7 +24,13 @@ function SideMenu({ isOpen, onPressingOpenButton, children }: IProps) {
         </span>
         <span>Vaggelisshmos</span>
         <span
-          className={`${styles.caret} ${isOpen === true ? styles.open : ""}`}
+          className={`${styles.caret} 
+            ${
+              theme === GlobalConstants.LightPalette
+                ? styles["black-border"]
+                : styles["white-border"]
+            }
+          ${isOpen === true ? styles.open : ""}`}
           role="presentation"
         />
       </div>

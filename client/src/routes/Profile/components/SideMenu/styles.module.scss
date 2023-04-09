@@ -33,13 +33,20 @@ $limit-font-mobile-width: 600px;
 }
 
 .caret {
-  border-color: #fff transparent transparent;
   border-style: solid;
   border-width: 5px 5px 0;
   height: 0;
   margin-left: 10px;
   transition: transform 367ms cubic-bezier(0.21, 0, 0.07, 1);
   width: 0;
+}
+
+.white-border {
+  border-color: #fff transparent transparent;
+}
+
+.black-border {
+  border-color: #000 transparent transparent;
 }
 
 .caret.open {
