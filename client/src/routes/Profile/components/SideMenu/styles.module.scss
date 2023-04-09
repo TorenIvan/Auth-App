@@ -1,25 +1,33 @@
 $limit-font-mobile-width: 600px;
 
-.side-menu-container {
+.account-menu {
   align-self: flex-start;
   flex-direction: row;
   justify-content: center;
   user-select: none;
   align-items: center;
+  margin-bottom: 8px;
   margin-left: 10px;
   margin-right: 10px;
   cursor: pointer;
 }
 
-.side-menu-span-info {
+.account-menu-dropdown {
   font-size: 16px;
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: 0.5em;
+
   @media screen and (max-width: $limit-font-mobile-width) {
     display: none;
   }
 
-  span:last-child {
-    font-size: 25px;
-    font-weight: bold;
+  span:nth-child(2) {
+    margin-right: 0.5em;
+  }
+
+  span:not(:first-child) {
+    font-size: 16px;
   }
 }

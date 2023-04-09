@@ -1,6 +1,5 @@
 import Assets from "../../../../assets";
-import { GlobalConstants } from "../../../../utils";
-import { Theme } from "../../../../utils/Types";
+import { Theme, GlobalConstants } from "../../../../utils";
 import styles from "./styles.module.scss";
 
 function UserAvatar({ theme, userAvatar }: IProps): JSX.Element {

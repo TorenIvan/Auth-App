@@ -5,7 +5,6 @@ import {
   FastifyRequest,
 } from "fastify";
 import fp from "fastify-plugin";
-import UserService from "./user.service";
 import { verifyJWT } from "../../../config/utils/helpers/auth/generateJWTs";
 import { EnvironmentVariables } from "../../../config/utils/constants/EnvironmentVariables";
 import { Strings } from "../../../config/utils/constants/Strings";
@@ -16,8 +15,6 @@ import {
 
 const userMiddleware: FastifyPluginAsync = fp(
   async (fastify: FastifyInstance): Promise<void> => {
-    const userService = new UserService(fastify.User);
-
     fastify.decorate(
       "verifyAccessTokenHeader",
       async function (
@@ -46,14 +43,6 @@ const userMiddleware: FastifyPluginAsync = fp(
           }
           if (signInMethodExistsInJWTPayload === false) {
             throw "error";
-          }
-
-          const userIdExistsInDB = await userService.CheckUserIdExistence(
-            data.userId
-          );
-          if (userIdExistsInDB.success === false) {
-            const errorMessage = fastify.httpErrors.unauthorized();
-            reply.send(errorMessage);
           }
 
           fastify.decorateRequest("userId", data.userId);
@@ -87,14 +76,6 @@ const userMiddleware: FastifyPluginAsync = fp(
           }
           if (signInMethodExistsInJWTPayload === false) {
             throw "error";
-          }
-
-          const userIdExistsInDB = await userService.CheckUserIdExistence(
-            data.userId
-          );
-          if (userIdExistsInDB.success === false) {
-            const errorMessage = fastify.httpErrors.unauthorized();
-            reply.send(errorMessage);
           }
 
           request.userId = data.userId.toString();
@@ -133,14 +114,6 @@ const userMiddleware: FastifyPluginAsync = fp(
           }
           if (data.type !== Strings.ForgotPasswordType) {
             throw "error";
-          }
-
-          const userIdExistsInDB = await userService.CheckUserIdExistence(
-            data.userId
-          );
-          if (userIdExistsInDB.success === false) {
-            const errorMessage = fastify.httpErrors.unauthorized();
-            reply.send(errorMessage);
           }
         } catch (error) {
           const errorMessage = fastify.httpErrors.forbidden();
@@ -187,14 +160,6 @@ const userMiddleware: FastifyPluginAsync = fp(
               ) {
                 throw "error";
               }
-
-              const userIdExistsInDB = await userService.CheckUserIdExistence(
-                data.userId
-              );
-              if (userIdExistsInDB.success === false) {
-                const errorMessage = fastify.httpErrors.forbidden();
-                reply.send(errorMessage);
-              }
             } catch (error) {
               console.error(error);
               const errorMessage = fastify.httpErrors.forbidden();
@@ -218,14 +183,6 @@ const userMiddleware: FastifyPluginAsync = fp(
                 signInMethodExistsInJWTPayload === false
               ) {
                 throw "error";
-              }
-
-              const userIdExistsInDB = await userService.CheckUserIdExistence(
-                data.userId
-              );
-              if (userIdExistsInDB.success === false) {
-                const errorMessage = fastify.httpErrors.unauthorized();
-                reply.send(errorMessage);
               }
             } catch (error) {
               console.error(error);

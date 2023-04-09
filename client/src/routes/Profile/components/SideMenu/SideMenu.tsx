@@ -16,15 +16,15 @@ function SideMenu({ isOpen, onPressingOpenButton, children }: IProps) {
 
   if (isOpen === true) {
     return (
-      <div
-        className={styles["side-menu-container"]}
-        onClick={onPressingOpenButton}
-      >
-        <UserAvatar theme={theme} />
-        <div className={styles["side-menu-span-info"]}>
-          <span>UserName </span>
-          <span>&darr;</span>
+      <div className={styles["account-menu"]} onClick={onPressingOpenButton}>
+        <div className={styles["account-menu-dropdown"]}>
+          <span>
+            <UserAvatar theme={theme} />
+          </span>
+          <span>Vaggelisshmos</span>
+          <span>arrow</span>
         </div>
+        <div className={styles["account-menu-info-sub-menu"]}></div>
       </div>
     );
   }
@@ -34,7 +34,7 @@ function SideMenu({ isOpen, onPressingOpenButton, children }: IProps) {
       className={styles["side-menu-container"]}
       onClick={onPressingOpenButton}
     >
-      <UserAvatar theme={theme} />
+      {/*<UserAvatar theme={theme} /> */}
     </div>
   );
 }
