@@ -2,14 +2,11 @@ $limit-font-mobile-width: 600px;
 
 .account-menu {
   align-self: flex-start;
-  flex-direction: row;
-  justify-content: center;
   user-select: none;
-  align-items: center;
   margin-bottom: 6px;
   margin-left: 10px;
   margin-right: 10px;
-  cursor: pointer;
+  position: relative;
 }
 
 .account-menu-dropdown {
@@ -18,9 +15,11 @@ $limit-font-mobile-width: 600px;
   justify-content: center;
   align-items: center;
   padding-right: 0.5em;
+  cursor: pointer;
 
   span:nth-child(2) {
     margin-right: 0.5em;
+    color: var(--text-secondary);
   }
 
   span:not(:first-child) {
@@ -32,6 +31,7 @@ $limit-font-mobile-width: 600px;
 }
 
 .caret {
+  border-color: var(--border-icon);
   border-style: solid;
   border-width: 5px 5px 0;
   height: 0;
@@ -40,14 +40,24 @@ $limit-font-mobile-width: 600px;
   width: 0;
 }
 
-.white-border {
-  border-color: #fff transparent transparent;
-}
-
-.black-border {
-  border-color: #000 transparent transparent;
-}
-
 .caret.open {
   transform: rotate(180deg);
+}
+
+.account-menu-info-sub-menu {
+  position: absolute;
+  top: 80%;
+  opacity: 0;
+  left: 25%;
+  z-index: -1;
+  border-color: 1px solid var(--border-icon);
+  border-radius: 12px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s ease-in-out;
+}
+
+.account-menu-info-sub-menu.open {
+  z-index: 200;
+  top: 140%;
+  opacity: 1;
 }

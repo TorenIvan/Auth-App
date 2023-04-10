@@ -4,7 +4,6 @@ import { themeAtom } from "../../../../store";
 import SideMenuItem from "../SideMenuItem";
 import UserAvatar from "../UserAvatar";
 import styles from "./styles.module.scss";
-import { GlobalConstants } from "../../../../utils";
 
 interface IProps {
   isOpen: boolean;
@@ -15,38 +14,30 @@ interface IProps {
 function SideMenu({ isOpen, onPressingOpenButton, children }: IProps) {
   const [theme, _] = useAtom(themeAtom);
 
-  //if (isOpen === true) {
   return (
-    <div className={styles["account-menu"]} onClick={onPressingOpenButton}>
-      <div className={styles["account-menu-dropdown"]}>
+    <div className={styles["account-menu"]}>
+      <div
+        className={styles["account-menu-dropdown"]}
+        onClick={onPressingOpenButton}
+      >
         <span>
           <UserAvatar theme={theme} />
         </span>
         <span>Vaggelisshmos</span>
         <span
-          className={`${styles.caret} 
-            ${
-              theme === GlobalConstants.LightPalette
-                ? styles["black-border"]
-                : styles["white-border"]
-            }
-          ${isOpen === true ? styles.open : ""}`}
+          className={`${styles.caret} ${isOpen === true ? styles.open : ""}`}
           role="presentation"
         />
       </div>
-      <div className={styles["account-menu-info-sub-menu"]}></div>
+      <div
+        className={`${styles["account-menu-info-sub-menu"]} ${
+          isOpen === true ? styles.open : ""
+        }`}
+      >
+        {children}
+      </div>
     </div>
   );
-  //}
-
-  //return (
-  //  <div
-  //    className={styles["side-menu-container"]}
-  //    onClick={onPressingOpenButton}
-  //  >
-  //    {/*<UserAvatar theme={theme} /> */}
-  //  </div>
-  //);
 }
 
 export default SideMenu;

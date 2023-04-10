@@ -7,13 +7,13 @@
 }
 
 .dark-theme {
-  --border-icon: "#fff";
+  --border-icon: #e0e0e0 transparent transparent;
   --text-secondary: #e0e0e0;
   --background-screen: #333333;
 }
 
 .light-theme {
-  --border-icon: "#000";
+  --border-icon: #333 transparent transparent;
   --text-secondary: #333333;
   --background-screen: #fdfdfd;
 }
