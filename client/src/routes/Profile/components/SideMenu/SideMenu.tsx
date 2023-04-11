@@ -9,7 +9,7 @@ import styles from "./styles.module.scss";
 
 interface IProps {
   isOpen: boolean;
-  onPressingOpenButton: () => void;
+  onPressingOpenButton: (isOpen: boolean) => void;
   children: ReactNode;
 }
 
@@ -17,11 +17,12 @@ function SideMenu({ isOpen, onPressingOpenButton, children }: IProps) {
   const [theme, _] = useAtom(themeAtom);
 
   return (
-    <div className={styles["account-menu"]}>
-      <div
-        className={styles["account-menu-dropdown"]}
-        onClick={onPressingOpenButton}
-      >
+    <div
+      className={styles["account-menu"]}
+      onMouseOver={() => onPressingOpenButton(true)}
+      onMouseOut={() => onPressingOpenButton(false)}
+    >
+      <div className={styles["account-menu-dropdown"]}>
         <span>
           <UserAvatar theme={theme} />
         </span>

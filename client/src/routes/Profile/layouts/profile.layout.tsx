@@ -12,8 +12,8 @@ function ProfileLayout() {
         rightSlot={
           <SideMenu
             isOpen={isSideMenuOpen}
-            onPressingOpenButton={() =>
-              setIsSideMenuOpen((isSideMenuOpen) => !isSideMenuOpen)
+            onPressingOpenButton={(isOpen: boolean) =>
+              setIsSideMenuOpen(isOpen)
             }
           >
             <SideMenu.Item isUsed onClick={() => {}}>
