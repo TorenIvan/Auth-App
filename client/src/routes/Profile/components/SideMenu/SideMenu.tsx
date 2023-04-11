@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 import { useAtom } from "jotai";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleUser, faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import { themeAtom } from "../../../../store";
 import SideMenuItem from "../SideMenuItem";
 import UserAvatar from "../UserAvatar";
@@ -34,7 +36,24 @@ function SideMenu({ isOpen, onPressingOpenButton, children }: IProps) {
           isOpen === true ? styles.open : ""
         }`}
       >
-        {children}
+        <ul className={styles["account-menu-list"]}>
+          <li>
+            <FontAwesomeIcon
+              icon={faCircleUser}
+              className={styles["account-menu-icon"]}
+              size="2xl"
+            />
+            <span>My Profile</span>
+          </li>
+          <li>
+            <FontAwesomeIcon
+              icon={faUserGroup}
+              className={styles["account-menu-icon"]}
+              size="xl"
+            />
+            <span>Group Chat</span>
+          </li>
+        </ul>
       </div>
     </div>
   );
