@@ -1,7 +1,11 @@
 import { ReactNode } from "react";
 import { useAtom } from "jotai";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleUser, faUserGroup } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleUser,
+  faUserGroup,
+  faRightFromBracket,
+} from "@fortawesome/free-solid-svg-icons";
 import { themeAtom } from "../../../../store";
 import SideMenuItem from "../SideMenuItem";
 import UserAvatar from "../UserAvatar";
@@ -42,7 +46,7 @@ function SideMenu({ isOpen, onPressingOpenButton, children }: IProps) {
             <FontAwesomeIcon
               icon={faCircleUser}
               className={styles["account-menu-icon"]}
-              size="2xl"
+              size="xl"
             />
             <span>My Profile</span>
           </li>
@@ -50,9 +54,18 @@ function SideMenu({ isOpen, onPressingOpenButton, children }: IProps) {
             <FontAwesomeIcon
               icon={faUserGroup}
               className={styles["account-menu-icon"]}
-              size="xl"
+              size="lg"
             />
             <span>Group Chat</span>
+          </li>
+          <hr className={styles.divider}></hr>
+          <li>
+            <FontAwesomeIcon
+              icon={faRightFromBracket}
+              className={styles["account-menu-icon"]}
+              size="lg"
+            />
+            <span>Logout</span>
           </li>
         </ul>
       </div>

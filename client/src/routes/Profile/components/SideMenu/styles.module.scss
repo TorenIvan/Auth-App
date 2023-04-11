@@ -72,16 +72,15 @@ $limit-font-mobile-width: 600px;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-  height: 8rem;
+  height: 12rem;
 
   li {
     display: flex;
     justify-content: flex-start;
-    gap: 1rem;
+    gap: 1.5rem;
     align-items: center;
     width: 100%;
     border-radius: 8px;
-    //padding: 0.8rem;
 
     span {
       font-family: "Noto Sans";
@@ -98,4 +97,9 @@ $limit-font-mobile-width: 600px;
 .account-menu-icon {
   color: var(--sub-icon);
   cursor: pointer;
+}
+
+.divider {
+  border-top: 1px solid var(--side-border);
+  width: 100%;
 }
