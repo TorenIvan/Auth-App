@@ -46,12 +46,14 @@ $limit-font-mobile-width: 600px;
 
 .account-menu-info-sub-menu {
   position: absolute;
+  padding-left: 10%;
+  padding-right: 10%;
   top: 80%;
   opacity: 0;
-  left: 25%;
+  right: 15%;
   z-index: -1;
   transition: all 0.4s ease-in-out;
-  border-color: 2px solid green;
+  border: 1px solid var(--side-border);
   border-radius: 12px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
 }
@@ -60,27 +62,38 @@ $limit-font-mobile-width: 600px;
   z-index: 200;
   top: 140%;
   opacity: 1;
-  background-color: green;
 }
 
-.account-menu-list {
+.account-menu-list-container {
   position: relative;
+  margin: 0;
+  padding: 0;
   list-style: none;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-  align-items: space-evenly;
-  max-width: 100%;
   height: 8rem;
 
   li {
-    position: relative;
-    max-width: 100%;
-    background-color: red;
+    display: flex;
+    justify-content: flex-start;
+    gap: 1rem;
+    align-items: center;
+    width: 100%;
+
+    span {
+      font-family: "Noto Sans";
+      font-style: normal;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 17px;
+      color: var(--sub-icon);
+      cursor: pointer;
+    }
   }
 }
 
 .account-menu-icon {
-  background-color: purple;
   color: var(--sub-icon);
+  cursor: pointer;
 }

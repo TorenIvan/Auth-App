@@ -36,7 +36,7 @@ function SideMenu({ isOpen, onPressingOpenButton, children }: IProps) {
           isOpen === true ? styles.open : ""
         }`}
       >
-        <ul className={styles["account-menu-list"]}>
+        <ul className={styles["account-menu-list-container"]}>
           <li>
             <FontAwesomeIcon
               icon={faCircleUser}
