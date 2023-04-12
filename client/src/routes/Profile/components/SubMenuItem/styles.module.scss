@@ -1,0 +1,14 @@
+li {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1.5rem;
+  align-items: center;
+  width: 80%;
+  border-radius: 8px;
+  padding: 4%;
+  cursor: pointer;
+}
+
+.used {
+  background-color: var(--background-list-item);
+}

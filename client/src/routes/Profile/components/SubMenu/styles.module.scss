@@ -1,0 +1,30 @@
+.account-menu-info-sub-menu {
+  position: absolute;
+  top: 80%;
+  opacity: 0;
+  right: 15%;
+  width: 12rem;
+  z-index: -1;
+  transition: all 0.4s ease-in-out;
+  border: 1px solid var(--side-border);
+  border-radius: 12px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.account-menu-info-sub-menu.open {
+  z-index: 200;
+  top: 140%;
+  opacity: 1;
+}
+
+.account-menu-list-container {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 12rem;
+}
