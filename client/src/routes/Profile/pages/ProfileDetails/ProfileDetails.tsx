@@ -1,5 +1,67 @@
 function ProfileDetails() {
-  return <div>ProfileDetails</div>;
+  return (
+    <div>
+      <div>
+        <p></p>
+        <span></span>
+      </div>
+      <section>
+        <div>
+          <div>
+            <span></span>
+            <span></span>
+          </div>
+          <button>Edit</button>
+        </div>
+        <div>
+          <div>
+            <span>PHOTO</span>
+          </div>
+          <div>Picture</div>
+        </div>
+        <div>
+          <div>
+            <span>NAME</span>
+          </div>
+          <div>
+            <span>Vaggelisshmos</span>
+          </div>
+        </div>
+        <div>
+          <div>
+            <span>BIO</span>
+          </div>
+          <div>
+            <span>Some BIO</span>
+          </div>
+        </div>
+        <div>
+          <div>
+            <span>PHONE</span>
+          </div>
+          <div>
+            <span>+306912855623</span>
+          </div>
+        </div>
+        <div>
+          <div>
+            <span>EMAIL</span>
+          </div>
+          <div>
+            <span>Vaggelisshmos@gmail.com</span>
+          </div>
+        </div>
+        <div>
+          <div>
+            <span>PASSWORD</span>
+          </div>
+          <div>
+            <span>***********</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 }
 
 export default ProfileDetails;
