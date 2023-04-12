@@ -1,17 +1,29 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Footer, Header, Main } from "../../../layouts";
 import { SideMenu } from "../components";
-import { useToggleSubMenu } from "../hooks";
+import {useToggleSubMenu} from "../hooks";
 
 function ProfileLayout() {
   const [isSubMenuOpen, toggleSubMenu] = useToggleSubMenu();
+  const [isSideMenuOpen, setIsSideMenuOpen] = useState<boolean>(false);
+
+  function handleSideMenuOpen(isOpen?: boolean) {
+    if (isOpen === undefined) {
+      setIsSideMenuOpen((isOpen) => !isOpen);
+      return;
+    }
+    setIsSideMenuOpen(isOpen);
+  }
 
   return (
     <Fragment>
       <Header
         rightSlot={
-          <SideMenu isOpen={isSubMenuOpen} onPressingOpenButton={toggleSubMenu}>
+          <SideMenu
+            isOpen={isSideMenuOpen}
+            onPressingOpenButton={handleSideMenuOpen}
+          >
             <SideMenu.Item isUsed onClick={() => {}}>
               <SideMenu.Item.Content image="" value="" color="red" />
             </SideMenu.Item>

@@ -46,16 +46,17 @@ $limit-font-mobile-width: 600px;
 
 .account-menu-info-sub-menu {
   position: absolute;
-  padding-left: 10%;
-  padding-right: 10%;
   top: 80%;
   opacity: 0;
   right: 15%;
+  width: 10rem;
   z-index: -1;
   transition: all 0.4s ease-in-out;
   border: 1px solid var(--side-border);
   border-radius: 12px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+  padding-left: 5%;
+  padding-right: 5%;
 }
 
 .account-menu-info-sub-menu.open {
@@ -81,6 +82,8 @@ $limit-font-mobile-width: 600px;
     align-items: center;
     width: 100%;
     border-radius: 8px;
+    padding-left: 5%;
+    padding-right: 5%;
 
     span {
       font-family: "Noto Sans";
