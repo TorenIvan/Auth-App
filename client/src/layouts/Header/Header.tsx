@@ -14,6 +14,7 @@ function Header({ rightSlot }: IProps) {
     event.stopPropagation();
     toggleTheme();
   };
+
   return (
     <div className={styles["container"]}>
       <LogoIcon />

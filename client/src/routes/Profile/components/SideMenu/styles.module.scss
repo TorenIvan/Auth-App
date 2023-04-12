@@ -49,14 +49,12 @@ $limit-font-mobile-width: 600px;
   top: 80%;
   opacity: 0;
   right: 15%;
-  width: 10rem;
+  width: 12rem;
   z-index: -1;
   transition: all 0.4s ease-in-out;
   border: 1px solid var(--side-border);
   border-radius: 12px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
-  padding-left: 5%;
-  padding-right: 5%;
 }
 
 .account-menu-info-sub-menu.open {
@@ -73,17 +71,22 @@ $limit-font-mobile-width: 600px;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
+  align-items: center;
   height: 12rem;
+
+  li:first-child {
+    background-color: var(--background-list-item);
+  }
 
   li {
     display: flex;
     justify-content: flex-start;
     gap: 1.5rem;
     align-items: center;
-    width: 100%;
+    width: 80%;
     border-radius: 8px;
-    padding-left: 5%;
-    padding-right: 5%;
+    padding: 4%;
+    cursor: pointer;
 
     span {
       font-family: "Noto Sans";
@@ -92,17 +95,15 @@ $limit-font-mobile-width: 600px;
       font-size: 14px;
       line-height: 17px;
       color: var(--sub-icon);
-      cursor: pointer;
     }
   }
 }
 
 .account-menu-icon {
   color: var(--sub-icon);
-  cursor: pointer;
 }
 
 .divider {
   border-top: 1px solid var(--side-border);
-  width: 100%;
+  width: 85%;
 }

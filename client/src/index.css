@@ -12,6 +12,7 @@
   --text-secondary: #e0e0e0;
   --background-screen: #333333;
   --sub-icon: #b0b0b0;
+  --background-list-item: #1f1f1f;
 }
 
 .light-theme {
@@ -19,4 +20,5 @@
   --text-secondary: #333333;
   --background-screen: #fdfdfd;
   --sub-icon: #4f4f4f;
+  --background-list-item: #e0e0e0;
 }
