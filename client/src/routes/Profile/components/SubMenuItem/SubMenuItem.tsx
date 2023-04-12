@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
-import SubMenuItemContent from "../SubMenuItemContent";
+import SubMenuItemImage from "../SubMenuItemImage";
+import SubMenuItemText from "../SubMenuItemText";
 import styles from "./styles.module.scss";
 
 function SubMenuItem({ isUsed, children, onClick }: IProps): JSX.Element {
@@ -8,7 +9,8 @@ function SubMenuItem({ isUsed, children, onClick }: IProps): JSX.Element {
   );
 }
 
-SubMenuItem.Content = SubMenuItemContent;
+SubMenuItem.Image = SubMenuItemImage;
+SubMenuItem.Text = SubMenuItemText;
 
 export default SubMenuItem;
 

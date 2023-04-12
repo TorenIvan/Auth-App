@@ -1,10 +1,10 @@
+import { Fragment } from "react";
+import { Outlet } from "react-router-dom";
 import {
   faCircleUser,
   faRightFromBracket,
   faUserGroup,
 } from "@fortawesome/free-solid-svg-icons";
-import { Fragment } from "react";
-import { Outlet } from "react-router-dom";
 import { Footer, Header, Main } from "../../../layouts";
 import { SideMenu } from "../components";
 import { Constants } from "../constants";
@@ -19,28 +19,25 @@ function ProfileLayout() {
         rightSlot={
           <SideMenu isOpen={isSubMenuOpen} onPressingOpenButton={toggleSubMenu}>
             <SideMenu.SubMenu isOpen={isSubMenuOpen}>
-              <Fragment>
-                <SideMenu.SubMenu.Item isUsed onClick={() => {}}>
-                  <SideMenu.SubMenu.Item.Content
-                    icon={faCircleUser}
-                    value={Constants.MyProfile}
-                  />
-                </SideMenu.SubMenu.Item>
-                <SideMenu.SubMenu.Item isUsed={false} onClick={() => {}}>
-                  <SideMenu.SubMenu.Item.Content
-                    icon={faUserGroup}
-                    value={Constants.GroupChat}
-                  />
-                </SideMenu.SubMenu.Item>
-                <SideMenu.SubMenu.Divider />
-                <SideMenu.SubMenu.Item isUsed={false} onClick={() => {}}>
-                  <SideMenu.SubMenu.Item.Content
-                    icon={faRightFromBracket}
-                    value={Constants.Logout}
-                    color="red"
-                  />
-                </SideMenu.SubMenu.Item>
-              </Fragment>
+              <SideMenu.SubMenu.Item isUsed onClick={() => {}}>
+                <SideMenu.SubMenu.Item.Image icon={faCircleUser} />
+                <SideMenu.SubMenu.Item.Text value={Constants.MyProfile} />
+              </SideMenu.SubMenu.Item>
+              <SideMenu.SubMenu.Item isUsed={false} onClick={() => {}}>
+                <SideMenu.SubMenu.Item.Image icon={faUserGroup} />
+                <SideMenu.SubMenu.Item.Text value={Constants.GroupChat} />
+              </SideMenu.SubMenu.Item>
+              <SideMenu.SubMenu.Divider />
+              <SideMenu.SubMenu.Item isUsed={false} onClick={() => {}}>
+                <SideMenu.SubMenu.Item.Image
+                  icon={faRightFromBracket}
+                  color="#EB5757"
+                />
+                <SideMenu.SubMenu.Item.Text
+                  value={Constants.Logout}
+                  color="#EB5757"
+                />
+              </SideMenu.SubMenu.Item>
             </SideMenu.SubMenu>
           </SideMenu>
         }
