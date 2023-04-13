@@ -1,9 +1,7 @@
 $border-text: var(--side-border);
 $sub-text: var(--text-primary);
 $value-text: var(--text-secondary);
-$label-text: var(--border-primary);
 $title-text: var(--text-contrast);
-$border-bottom-first-row: var(--border-secondary);
 
 @mixin flex-row {
   flex: 1;
@@ -106,40 +104,5 @@ $border-bottom-first-row: var(--border-secondary);
   span {
     display: inline-block;
     margin: 0.5rem 1.5rem;
-  }
-}
-
-.details-row {
-  @include flex-row;
-  justify-content: flex-start;
-  border-top: 1px solid $border-bottom-first-row;
-}
-
-.details-label-column {
-  margin-left: 5%;
-  flex: 1;
-  span {
-    font-family: "Noto Sans";
-    font-style: normal;
-    font-weight: 500;
-    font-size: 13px;
-    line-height: 18px;
-    color: $label-text;
-  }
-}
-
-.details-value-column {
-  margin-left: 5%;
-  flex: 3;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  font-family: "Noto Sans";
-  color: $value-text;
-  span {
-    font-style: normal;
-    font-weight: 500;
-    font-size: 18px;
-    line-height: 25px;
   }
 }
