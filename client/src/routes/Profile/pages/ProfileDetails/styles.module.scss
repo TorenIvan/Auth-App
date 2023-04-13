@@ -59,6 +59,7 @@ $title-text: var(--text-contrast);
 .details-first-row-label-column {
   margin-left: 5%;
   font-family: "Noto Sans";
+  user-select: none;
   h3 {
     font-style: normal;
     font-weight: 400;
@@ -87,6 +88,7 @@ $title-text: var(--text-contrast);
   font-weight: 500;
   font-size: 16px;
   line-height: 22px;
+  user-select: none;
   cursor: pointer;
   opacity: 0.6;
   transition: 0.3s;

@@ -18,6 +18,7 @@ $value-text: var(--text-secondary);
 .details-label-column {
   margin-left: 5%;
   flex: 1;
+  user-select: none;
   span {
     font-family: "Noto Sans";
     font-style: normal;
