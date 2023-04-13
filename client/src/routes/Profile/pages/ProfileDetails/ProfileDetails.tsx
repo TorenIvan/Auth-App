@@ -1,65 +1,71 @@
+import styles from "./styles.module.scss";
+
 function ProfileDetails() {
   return (
-    <div>
-      <div>
-        <p></p>
-        <span></span>
-      </div>
-      <section>
-        <div>
+    <div className={styles["page-container"]}>
+      <article id={styles.header}>
+        <h2 id={styles["header-title"]}>Personal Info</h2>
+        <span id={styles["header-subtext"]}>
+          Basic info, like your name and photo
+        </span>
+      </article>
+      <main className={styles["details-container"]}>
+        <section className={styles["details-first-row"]}>
           <div>
-            <span></span>
-            <span></span>
+            <span>Profile</span>
+            <span>Some info may be visible</span>
           </div>
           <button>Edit</button>
-        </div>
-        <div>
-          <div>
+        </section>
+        <section className={styles["details-row"]}>
+          <div className={styles["details-label-column"]}>
             <span>PHOTO</span>
           </div>
-          <div>Picture</div>
-        </div>
-        <div>
-          <div>
+          <div className={styles["details-value-column"]}>
+            <div>PICTURE</div>
+          </div>
+        </section>
+        <section className={styles["details-row"]}>
+          <div className={styles["details-label-column"]}>
             <span>NAME</span>
           </div>
-          <div>
+          <div className={styles["details-value-column"]}>
             <span>Vaggelisshmos</span>
           </div>
-        </div>
-        <div>
-          <div>
+        </section>
+        <section className={styles["details-row"]}>
+          <div className={styles["details-label-column"]}>
             <span>BIO</span>
           </div>
-          <div>
+          <div className={styles["details-value-column"]}>
             <span>Some BIO</span>
           </div>
-        </div>
-        <div>
-          <div>
+        </section>
+        <section className={styles["details-row"]}>
+          <div className={styles["details-label-column"]}>
             <span>PHONE</span>
           </div>
-          <div>
+          <div className={styles["details-value-column"]}>
             <span>+306912855623</span>
           </div>
-        </div>
-        <div>
-          <div>
+        </section>
+        <section className={styles["details-row"]}>
+          <div className={styles["details-label-column"]}>
             <span>EMAIL</span>
           </div>
-          <div>
+          <div className={styles["details-value-column"]}>
             <span>Vaggelisshmos@gmail.com</span>
           </div>
-        </div>
-        <div>
-          <div>
+        </section>
+        <section className={styles["details-row"]}>
+          <div className={styles["details-label-column"]}>
             <span>PASSWORD</span>
           </div>
-          <div>
+          <div className={styles["details-value-column"]}>
             <span>***********</span>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
     </div>
   );
 }

@@ -9,16 +9,20 @@
 
 .dark-theme {
   --border-icon: #e0e0e0 transparent transparent;
+  --border-secondary: #2c2c2c;
   --text-secondary: #e0e0e0;
   --background-screen: #333333;
   --sub-icon: #b0b0b0;
   --background-list-item: #1f1f1f;
+  --text-contrast: #fdfdfd;
 }
 
 .light-theme {
   --border-icon: #333 transparent transparent;
+  --border-secondary: #d3d3d3;
   --text-secondary: #333333;
   --background-screen: #fdfdfd;
   --sub-icon: #4f4f4f;
   --background-list-item: #e0e0e0;
+  --text-contrast: #020202;
 }
