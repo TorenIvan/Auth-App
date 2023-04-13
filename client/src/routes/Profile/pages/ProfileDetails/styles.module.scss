@@ -93,7 +93,13 @@ $border-bottom-first-row: var(--border-secondary);
   opacity: 0.6;
   transition: 0.3s;
 
-  &:hover {
+  @media only screen and (min-width: 768px) {
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  @media only screen and (max-width: 768px) {
     opacity: 1;
   }
 
