@@ -11,11 +11,13 @@ function ProfileDetails() {
       </article>
       <main className={styles["details-container"]}>
         <section className={styles["details-first-row"]}>
-          <div>
-            <span>Profile</span>
+          <div className={styles["details-first-row-label-column"]}>
+            <h3>Profile</h3>
             <span>Some info may be visible</span>
           </div>
-          <button>Edit</button>
+          <div className={styles["details-first-row-value-column"]}>
+            <span>Edit</span>
+          </div>
         </section>
         <section className={styles["details-row"]}>
           <div className={styles["details-label-column"]}>

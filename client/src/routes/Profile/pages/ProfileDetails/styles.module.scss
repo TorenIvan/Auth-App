@@ -2,30 +2,81 @@ $border-text: var(--side-border);
 $sub-text: var(--text-primary);
 $value-text: var(--text-secondary);
 $label-text: var(--border-primary);
-$title-text: var(--almost-contrast);
+$title-text: var(--text-contrast);
 $border-bottom-first-row: var(--border-secondary);
 
+@mixin flex-row {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 .page-container {
+  position: relative;
+  min-height: 40rem;
+  width: 100%;
+  max-width: 50rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 3rem;
+  margin-bottom: 5rem;
 }
 
 #header {
+  text-align: center;
+  color: $title-text;
+  font-family: "Noto Sans";
+  font-style: normal;
   &#header-title {
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 49px;
   }
   &#header-subtext {
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 25px;
   }
 }
 
 .details-container {
+  box-sizing: border-box;
+  border: 1px sold $border-text;
+  border-radius: 12px;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 }
 
 .details-first-row {
+  @include flex-row;
+  justify-content: space-between;
+}
+
+.details-first-row-label-column {
+  margin-left: 5%;
+}
+
+.details-first-row-value-column {
+  margin-right: 5%;
 }
 
 .details-row {
+  @include flex-row;
+  justify-content: flex-start;
 }
 
 .details-label-column {
+  margin-left: 5%;
+  flex: 1;
 }
 
 .details-value-column {
+  margin-left: 5%;
+  flex: 3;
 }
