@@ -24,7 +24,7 @@ function ProfileDetails() {
             <span>PHOTO</span>
           </div>
           <div className={styles["details-value-column"]}>
-            <div>PICTURE</div>
+            <span>PICTURE</span>
           </div>
         </section>
         <section className={styles["details-row"]}>
@@ -40,7 +40,10 @@ function ProfileDetails() {
             <span>BIO</span>
           </div>
           <div className={styles["details-value-column"]}>
-            <span>Some BIO</span>
+            <span>
+              Some BIO kai kati akoma pou i8ela dhudgfvods; hcuyh gt omos? ti
+              sou ekdjoihj;o
+            </span>
           </div>
         </section>
         <section className={styles["details-row"]}>

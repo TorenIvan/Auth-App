@@ -5,11 +5,11 @@
   --background-button: #2f80ed;
   --border-primary: #bdbdbd;
   --side-border: #e0e0e0;
+  --border-secondary: #d3d3d3;
 }
 
 .dark-theme {
   --border-icon: #e0e0e0 transparent transparent;
-  --border-secondary: #2c2c2c;
   --text-secondary: #e0e0e0;
   --background-screen: #333333;
   --sub-icon: #b0b0b0;
@@ -19,7 +19,6 @@
 
 .light-theme {
   --border-icon: #333 transparent transparent;
-  --border-secondary: #d3d3d3;
   --text-secondary: #333333;
   --background-screen: #fdfdfd;
   --sub-icon: #4f4f4f;

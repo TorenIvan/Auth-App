@@ -9,12 +9,12 @@
   border: 1px solid var(--side-border);
   border-radius: 12px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
-}
 
-.account-menu-info-sub-menu.open {
-  z-index: 200;
-  top: 140%;
-  opacity: 1;
+  &.open {
+    z-index: 2000000;
+    top: 140%;
+    opacity: 1;
+  }
 }
 
 .account-menu-list-container {

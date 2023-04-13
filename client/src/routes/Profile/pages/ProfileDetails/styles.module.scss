@@ -16,7 +16,7 @@ $border-bottom-first-row: var(--border-secondary);
   position: relative;
   min-height: 40rem;
   width: 100%;
-  max-width: 50rem;
+  max-width: 60rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -44,7 +44,7 @@ $border-bottom-first-row: var(--border-secondary);
 
 .details-container {
   box-sizing: border-box;
-  border: 1px sold $border-text;
+  border: 1px solid $border-text;
   border-radius: 12px;
   width: 100%;
   flex: 1;
@@ -60,23 +60,80 @@ $border-bottom-first-row: var(--border-secondary);
 
 .details-first-row-label-column {
   margin-left: 5%;
+  font-family: "Noto Sans";
+  h3 {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 33px;
+    color: $title-text;
+    margin: 0;
+  }
+  span {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 18px;
+    color: $sub-text;
+  }
 }
 
 .details-first-row-value-column {
   margin-right: 5%;
+  border: 1px solid $sub-text;
+  color: $value-text;
+  border-radius: 12px;
+  text-align: center;
+  font-family: "Noto Sans";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 22px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: 0.3s;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  span {
+    display: inline-block;
+    margin: 0.5rem 1.5rem;
+  }
 }
 
 .details-row {
   @include flex-row;
   justify-content: flex-start;
+  border-top: 1px solid $border-bottom-first-row;
 }
 
 .details-label-column {
   margin-left: 5%;
   flex: 1;
+  span {
+    font-family: "Noto Sans";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 18px;
+    color: $label-text;
+  }
 }
 
 .details-value-column {
   margin-left: 5%;
   flex: 3;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: "Noto Sans";
+  color: $value-text;
+  span {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 25px;
+  }
 }
