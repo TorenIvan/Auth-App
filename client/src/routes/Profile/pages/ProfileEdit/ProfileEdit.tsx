@@ -1,12 +1,13 @@
+import { NavLink } from "react-router-dom";
 import styles from "./styles.module.scss";
 
 function ProfileEdit() {
   return (
     <div className={styles["page-container"]}>
-      <div className={styles["back-button"]}>
+      <NavLink className={styles["back-button"]} to="/profile" replace>
         <span className={styles["arrow-left"]} />
         <span>Back</span>
-      </div>
+      </NavLink>
       <fieldset>
         <article>
           <h3>Change Info</h3>
@@ -56,6 +57,13 @@ function ProfileEdit() {
             <input placeholder="Enter your new password..."></input>
           </section>
         </section>
+
+        {/* <section className={styles["edit-item-container"]}>
+          <section className={styles["edit-item"]}>
+            <input type="submit" />
+          </section>
+        </section>
+          */}
       </fieldset>
     </div>
   );

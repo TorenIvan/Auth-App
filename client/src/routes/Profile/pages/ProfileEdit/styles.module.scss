@@ -6,17 +6,19 @@ $title-text: var(--text-contrast);
 $label-text: var(--sub-icon);
 $value-text: var(--text-secondary);
 $placeholder-text: var(--border-primary);
+$input-focus: var(--input-border-focus);
+$input-focus-shadow: var(--input-border-focus-shadow);
 
 .page-container {
   position: relative;
-  min-height: 48rem;
+  min-height: 49rem;
   width: 100%;
-  max-width: 40rem;
+  max-width: 50rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  gap: 0.5rem;
+  gap: 1.5rem;
   margin-bottom: 1rem;
 }
 
@@ -35,6 +37,7 @@ $placeholder-text: var(--border-primary);
   justify-content: center;
   align-items: center;
   gap: 0.6rem;
+  text-decoration: none;
 
   span {
     display: inline-block;
@@ -105,11 +108,13 @@ article {
   input,
   textarea {
     box-sizing: border-box;
+    font-size: 15px;
     border: 1px solid #828282;
     border-radius: 12px;
     width: 100%;
     padding: 12px;
     resize: none;
+    outline: none;
 
     &::placeholder {
       font-weight: 500;
@@ -117,5 +122,18 @@ article {
       line-height: 18px;
       color: $placeholder-text;
     }
+
+    &:focus {
+      box-shadow: 0 0 5px $input-focus-shadow;
+      border: 1px solid $input-focus;
+    }
+  }
+
+  input {
+    height: 52px;
+  }
+
+  textarea {
+    height: 90px;
   }
 }

@@ -1,3 +1,4 @@
+import { NavLink } from "react-router-dom";
 import { ProfileDetail } from "../../components";
 import { Constants } from "../../constants";
 import styles from "./styles.module.scss";
@@ -17,9 +18,13 @@ function ProfileDetails() {
             <h3>{Constants.ProfileHeaderTitle}</h3>
             <span>{Constants.ProfileHeaderSubText}</span>
           </div>
-          <div className={styles["details-first-row-value-column"]}>
+          <NavLink
+            className={styles["details-first-row-value-column"]}
+            to="/profile/edit"
+            replace
+          >
             <span>{Constants.Edit}</span>
-          </div>
+          </NavLink>
         </section>
         <ProfileDetail
           label={Constants.Photo.toUpperCase()}

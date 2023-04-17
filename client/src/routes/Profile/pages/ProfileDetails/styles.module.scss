@@ -78,6 +78,7 @@ $title-text: var(--text-contrast);
 }
 
 .details-first-row-value-column {
+  text-decoration: none;
   margin-right: 5%;
   border: 1px solid $sub-text;
   color: $value-text;
