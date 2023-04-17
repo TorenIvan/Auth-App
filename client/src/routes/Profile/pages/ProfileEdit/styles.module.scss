@@ -6,3 +6,51 @@ $title-text: var(--text-contrast);
 $label-text: var(--sub-icon);
 $value-text: var(--text-secondary);
 $placeholder-text: var(--border-primary);
+
+@mixin flex-row {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.page-container {
+  position: relative;
+  min-height: 45rem;
+  width: 100%;
+  max-width: 60rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 3rem;
+  margin-bottom: 5rem;
+}
+
+.page-container * {
+  font-family: "Noto Sans";
+  font-style: normal;
+}
+
+.back-button {
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 25px;
+  color: $button-primary;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.6rem;
+
+  span {
+    display: inline-block;
+    cursor: pointer;
+  }
+}
+
+.arrow-left {
+  border: solid $button-primary;
+  border-width: 0 0.2rem 0.2rem 0;
+  padding: 4px;
+  transform: rotate(135deg);
+}

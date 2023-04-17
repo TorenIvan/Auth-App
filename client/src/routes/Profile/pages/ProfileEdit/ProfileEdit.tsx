@@ -4,6 +4,7 @@ function ProfileEdit() {
   return (
     <div className={styles["page-container"]}>
       <div className={styles["back-button"]}>
+        <span className={styles["arrow-left"]} />
         <span>Back</span>
       </div>
       <fieldset>
