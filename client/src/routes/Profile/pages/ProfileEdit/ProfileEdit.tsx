@@ -57,13 +57,13 @@ function ProfileEdit() {
             <input placeholder="Enter your new password..."></input>
           </section>
         </section>
-
-        {/* <section className={styles["edit-item-container"]}>
+        <section className={styles["edit-item-container"]}>
           <section className={styles["edit-item"]}>
-            <input type="submit" />
+            <div id={styles["save-button"]}>
+              <span id={styles["save-button-text"]}>Save</span>
+            </div>
           </section>
         </section>
-          */}
       </fieldset>
     </div>
   );
