@@ -18,9 +18,14 @@ function ProfileEdit() {
         <section className={styles["edit-item-container"]}>
           <section className={styles["edit-photo-item"]}>
             <section id={styles["image-container"]}>
-              <FontAwesomeIcon icon={faCamera} color="#ffffff" />
+              <FontAwesomeIcon
+                icon={faCamera}
+                color="#ffffff"
+                className={styles["edit-photo-icon"]}
+              />
+              <span id={styles["mobile-photo-text"]}>ADD PHOTO</span>
             </section>
-            <span>ADD PHOTO</span>
+            <span id={styles["default-photo-text"]}>ADD PHOTO</span>
           </section>
         </section>
         <section className={styles["edit-item-container"]}>
