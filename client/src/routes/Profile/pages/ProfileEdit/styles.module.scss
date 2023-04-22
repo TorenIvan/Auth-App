@@ -12,15 +12,15 @@ $save-button-text: var(--white);
 
 .page-container {
   position: relative;
-  min-height: 49rem;
+  min-height: 50.5rem;
   width: 100%;
   max-width: 50rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  gap: 1.5rem;
-  margin-bottom: 1rem;
+  gap: 0.8rem;
+  margin-bottom: 0.4rem;
 }
 
 .page-container * {
@@ -37,7 +37,7 @@ $save-button-text: var(--white);
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.6rem;
+  //gap: 0.6rem;
   text-decoration: none;
 
   span {
@@ -75,7 +75,7 @@ article {
     font-weight: 400;
     font-size: 24px;
     line-height: 33px;
-    margin: 2rem 0 0 0;
+    margin: 1rem 0 0 0;
   }
   span {
     color: $border-item;
@@ -91,6 +91,35 @@ article {
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+}
+
+.edit-photo-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-left: 5%;
+  //background-color: red;
+  flex: 0.8;
+  gap: 2rem;
+
+  #image-container {
+    background: #828282;
+    border-radius: 8px;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+  span {
+    color: #828282;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 18px;
+    cursor: pointer;
+  }
 }
 
 .edit-item {
@@ -159,7 +188,7 @@ article {
   flex-direction: row;
   justify-content: center;
   margin-top: 0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   align-items: center;
 
   @media only screen and (min-width: 768px) {

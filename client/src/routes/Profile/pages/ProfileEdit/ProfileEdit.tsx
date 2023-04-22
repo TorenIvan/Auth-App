@@ -1,4 +1,6 @@
 import { NavLink } from "react-router-dom";
+import { faCamera } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./styles.module.scss";
 
 function ProfileEdit() {
@@ -13,14 +15,14 @@ function ProfileEdit() {
           <h3>Change Info</h3>
           <span>Changes will be reflected to every service</span>
         </article>
-        {/* <section className={styles["edit-item-container"]}>
-          <section className={styles["edit-item"]}>
-            <figure>
-              <img alt="User Photo with Edit Option" />
-              <figcaption>CHANGE PHOTO</figcaption>
-            </figure>
+        <section className={styles["edit-item-container"]}>
+          <section className={styles["edit-photo-item"]}>
+            <section id={styles["image-container"]}>
+              <FontAwesomeIcon icon={faCamera} color="#ffffff" />
+            </section>
+            <span>ADD PHOTO</span>
           </section>
-        </section> */}
+        </section>
         <section className={styles["edit-item-container"]}>
           <section className={styles["edit-item"]}>
             <label>Name</label>

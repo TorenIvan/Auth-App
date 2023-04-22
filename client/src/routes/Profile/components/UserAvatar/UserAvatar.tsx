@@ -1,8 +1,12 @@
+import { useAtom } from "jotai";
+import { themeAtom } from "../../../../store";
 import Assets from "../../../../assets";
 import { Theme, GlobalConstants } from "../../../../utils";
 import styles from "./styles.module.scss";
 
-function UserAvatar({ theme, userAvatar }: IProps): JSX.Element {
+function UserAvatar({ userAvatar }: IProps): JSX.Element {
+  const [theme, _] = useAtom<Theme>(themeAtom);
+
   if (userAvatar === undefined) {
     return (
       <img
@@ -20,6 +24,5 @@ function UserAvatar({ theme, userAvatar }: IProps): JSX.Element {
 export default UserAvatar;
 
 interface IProps {
-  theme: Theme;
   userAvatar?: string;
 }

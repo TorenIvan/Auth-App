@@ -2,6 +2,7 @@ import { memo } from "react";
 import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./styles.module.scss";
+import { SizeProp } from "@fortawesome/fontawesome-svg-core";
 
 function SubMenuItemImage({ icon, size, color }: IProps): JSX.Element {
   return (
@@ -18,6 +19,6 @@ export default memo(SubMenuItemImage);
 
 interface IProps {
   icon: IconDefinition;
-  size: string;
+  size: SizeProp;
   color?: string;
 }
