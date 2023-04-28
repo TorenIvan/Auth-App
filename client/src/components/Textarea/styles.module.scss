@@ -4,7 +4,7 @@ $placeholder-text: var(--border-primary);
 $input-focus: var(--input-border-focus);
 $input-focus-shadow: var(--input-border-focus-shadow);
 
-.input-container {
+.textarea-container {
   display: flex;
   flex-direction: column;
   margin-left: 5%;
@@ -26,28 +26,27 @@ $input-focus-shadow: var(--input-border-focus-shadow);
     color: $label-text;
     margin-left: 0.3rem;
   }
-}
+  textarea {
+    box-sizing: border-box;
+    font-size: 15px;
+    border: 1px solid #828282;
+    border-radius: 12px;
+    width: 100%;
+    padding: 12px;
+    resize: none;
+    outline: none;
+    height: 90px;
 
-.input {
-  box-sizing: border-box;
-  font-size: 15px;
-  border: 1px solid #828282;
-  border-radius: 12px;
-  width: 100%;
-  padding: 12px;
-  resize: none;
-  outline: none;
-  height: 52px;
+    &::placeholder {
+      font-weight: 500;
+      font-size: 13px;
+      line-height: 18px;
+      color: $placeholder-text;
+    }
 
-  &::placeholder {
-    font-weight: 500;
-    font-size: 13px;
-    line-height: 18px;
-    color: $placeholder-text;
-  }
-
-  &:focus {
-    box-shadow: 0 0 5px $input-focus-shadow;
-    border: 1px solid $input-focus;
+    &:focus {
+      box-shadow: 0 0 5px $input-focus-shadow;
+      border: 1px solid $input-focus;
+    }
   }
 }

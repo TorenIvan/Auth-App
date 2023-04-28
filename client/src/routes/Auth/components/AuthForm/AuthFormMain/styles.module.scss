@@ -19,7 +19,7 @@
 }
 
 #submitBox {
-  flex: .8;
+  flex: 0.8;
   margin-top: 5%;
   width: clamp(65%, 357px, 90%);
   display: flex;
@@ -31,17 +31,13 @@
 #submitBox > input {
   width: clamp(80%, 220vw, 100%);
   font-family: NotoSansRegular, "FontAwesome";
-  height: 45%;
-  min-height: 40px;
-  border: 1px solid var(--border-primary);
+  height: 40px;
   box-sizing: border-box;
+  padding-left: 10px;
+}
+
+#submitBox > input {
   border-radius: 8px;
-  outline: none;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 18px;
-  line-height: 22px;
-  padding-left: 5px;
 }
 
 .auth-item > input[type="password"]::placeholder,
@@ -57,12 +53,11 @@
   font-family: NotoSansRegular;
   font-style: normal;
   font-weight: 600;
-  font-size: 16px;
-  line-height: 22px;
+  font-size: 15px;
+  line-height: 21px;
   text-align: center;
 }
 
 #submitBox > input[type="submit"]:hover {
   cursor: pointer;
 }
-

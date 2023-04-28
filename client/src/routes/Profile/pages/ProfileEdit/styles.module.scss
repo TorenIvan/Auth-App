@@ -107,6 +107,22 @@ article {
   }
 }
 
+.edit-item {
+  display: flex;
+  flex-direction: column;
+  margin-left: 5%;
+  flex: 0.8;
+
+  @media only screen and (max-width: 768px) {
+    margin-left: 0;
+    flex: 0.9;
+  }
+
+  @media only screen and (max-width: 600px) {
+    flex: 1;
+  }
+}
+
 .edit-photo-item {
   display: flex;
   flex-direction: row;
@@ -174,61 +190,6 @@ article {
     @media only screen and (max-width: 600px) {
       display: none;
     }
-  }
-}
-
-.edit-item {
-  display: flex;
-  flex-direction: column;
-  margin-left: 5%;
-  flex: 0.8;
-
-  @media only screen and (max-width: 768px) {
-    margin-left: 0;
-    flex: 0.9;
-  }
-
-  @media only screen and (max-width: 600px) {
-    flex: 1;
-  }
-
-  label {
-    font-weight: 500;
-    font-size: 13px;
-    line-height: 18px;
-    color: $label-text;
-    margin-left: 0.3rem;
-  }
-  input,
-  textarea {
-    box-sizing: border-box;
-    font-size: 15px;
-    border: 1px solid #828282;
-    border-radius: 12px;
-    width: 100%;
-    padding: 12px;
-    resize: none;
-    outline: none;
-
-    &::placeholder {
-      font-weight: 500;
-      font-size: 13px;
-      line-height: 18px;
-      color: $placeholder-text;
-    }
-
-    &:focus {
-      box-shadow: 0 0 5px $input-focus-shadow;
-      border: 1px solid $input-focus;
-    }
-  }
-
-  input {
-    height: 52px;
-  }
-
-  textarea {
-    height: 90px;
   }
 }
 

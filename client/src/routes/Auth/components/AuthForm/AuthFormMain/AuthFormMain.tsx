@@ -3,6 +3,7 @@ import { Form } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { emailValidator, passwordValidator } from "../../../helpers";
 import { Errors } from "../../../errors";
+import { inputStyles } from "../../../../../styles";
 import styles from "./styles.module.scss";
 
 interface IProps {
@@ -35,6 +36,7 @@ const AuthFormMain = ({ submitButtonText }: IProps): JSX.Element => {
     >
       <div className={styles["auth-item"]}>
         <input
+          className={inputStyles.input}
           ref={emailRef}
           id="email"
           type="email"
@@ -45,6 +47,7 @@ const AuthFormMain = ({ submitButtonText }: IProps): JSX.Element => {
       </div>
       <div className={styles["auth-item"]}>
         <input
+          className={inputStyles.input}
           ref={passwordRef}
           id="password"
           type="password"

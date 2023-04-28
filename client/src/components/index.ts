@@ -1,4 +1,4 @@
-import AuthForm from "./AuthForm";
 import ErrorBoundary from "./ErrorBoundary";
+import Textarea from "./Textarea";
 
-export { ErrorBoundary, AuthForm };
+export { ErrorBoundary, Textarea };

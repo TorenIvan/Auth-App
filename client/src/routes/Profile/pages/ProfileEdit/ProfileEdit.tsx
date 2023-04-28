@@ -2,6 +2,8 @@ import { NavLink } from "react-router-dom";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./styles.module.scss";
+import { Textarea } from "../../../../components";
+import { ProfileInput as Input } from "../../components";
 
 function ProfileEdit() {
   return (
@@ -29,40 +31,40 @@ function ProfileEdit() {
           </section>
         </section>
         <section className={styles["edit-item-container"]}>
-          <section className={styles["edit-item"]}>
-            <label>Name</label>
-            <input placeholder="Enter your name..."></input>
-          </section>
+          <Input
+            label="Name"
+            attributes={{ placeholder: "Enter your name..." }}
+          />
         </section>
         <section className={styles["edit-item-container"]}>
-          <section className={styles["edit-item"]}>
-            <label>Bio</label>
-            <textarea placeholder="Enter your bio..."></textarea>
-          </section>
+          <Textarea
+            labelSlot={<label>Bio</label>}
+            attributes={{ placeholder: "Enter your bio..." }}
+          />
         </section>
         <section className={styles["edit-item-container"]}>
-          <section className={styles["edit-item"]}>
-            <label>Phone</label>
-            <input placeholder="Enter your phone..."></input>
-          </section>
+          <Input
+            label="Phone"
+            attributes={{ placeholder: "Enter your phone..." }}
+          />
         </section>
         <section className={styles["edit-item-container"]}>
-          <section className={styles["edit-item"]}>
-            <label>Email</label>
-            <input placeholder="Enter your email..."></input>
-          </section>
+          <Input
+            label="Email"
+            attributes={{ placeholder: "Enter your email..." }}
+          />
         </section>
         <section className={styles["edit-item-container"]}>
-          <section className={styles["edit-item"]}>
-            <label>Current Password</label>
-            <input placeholder="Enter your current password..."></input>
-          </section>
+          <Input
+            label="Current Password"
+            attributes={{ placeholder: "Enter your current password..." }}
+          />
         </section>
         <section className={styles["edit-item-container"]}>
-          <section className={styles["edit-item"]}>
-            <label>New Password</label>
-            <input placeholder="Enter your new password..."></input>
-          </section>
+          <Input
+            label="New Password"
+            attributes={{ placeholder: "Enter your new password..." }}
+          />
         </section>
         <section className={styles["edit-item-container"]}>
           <section className={styles["edit-item"]}>
