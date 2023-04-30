@@ -9,9 +9,6 @@ import { $ref } from "../../../../../api/v1/user/user.schema";
 const refreshTokens: FastifyPluginAsync = async (
   fastify: FastifyInstance
 ): Promise<void> => {
-  fastify.decorateRequest("userId", "");
-  fastify.decorateRequest("signInMethod", "credentials");
-
   fastify.addHook("onRequest", async (request, reply) => {
     await fastify.verifyRefreshTokenCookie(request, reply);
   });

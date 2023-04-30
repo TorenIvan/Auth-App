@@ -1,7 +1,7 @@
 import { PureComponent } from "react";
-import { ActionFunctionArgs, redirect } from "react-router-dom";
+import { ActionFunctionArgs, Navigate, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { useQueryClient } from "@tanstack/react-query";
+import { globalQueryClient } from "../../../../App";
 import { AuthForm, LoginTitle, LoginNavLink } from "../../components";
 import { loginUser } from "../../api";
 import { Constants } from "../../constants";
@@ -42,15 +42,11 @@ async function action({ request }: ActionFunctionArgs) {
       password: password,
     });
 
-    /**
-     * Update query cache for access token manually
-     */
-    const queryClient = useQueryClient();
-    queryClient.setQueryData(["access_token"], {
+    globalQueryClient.setQueryData(["access_token"], {
       access_token: access_token,
     });
 
-    return redirect("profile");
+    return redirect("../profile");
   } catch (error: unknown) {
     toast.error(error as string);
     return redirect("");

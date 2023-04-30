@@ -1,0 +1,1 @@
+export { userDetailsQuery } from "./retrieveUserData";

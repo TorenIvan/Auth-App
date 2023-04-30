@@ -1,5 +1,5 @@
-import Profile from "./Profile";
+import Profile, { loader as profileLoader } from "./Profile";
 import ProfileDetails from "./ProfileDetails";
 import ProfileEdit from "./ProfileEdit";
 
-export { Profile, ProfileDetails, ProfileEdit };
+export { Profile, profileLoader, ProfileDetails, ProfileEdit };

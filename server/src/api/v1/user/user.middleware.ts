@@ -15,6 +15,8 @@ import {
 
 const userMiddleware: FastifyPluginAsync = fp(
   async (fastify: FastifyInstance): Promise<void> => {
+    fastify.decorateRequest("userId", "");
+    fastify.decorateRequest("signInMethod", "credentials");
     fastify.decorate(
       "verifyAccessTokenHeader",
       async function (
@@ -44,8 +46,7 @@ const userMiddleware: FastifyPluginAsync = fp(
           if (signInMethodExistsInJWTPayload === false) {
             throw "error";
           }
-
-          fastify.decorateRequest("userId", data.userId);
+          request.userId = data.userId;
         } catch (error) {
           const errorMessage = fastify.httpErrors.unauthorized();
           reply.send(errorMessage);

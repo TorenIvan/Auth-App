@@ -1,10 +1,11 @@
 import { Layout } from "./layouts";
-import { Profile, ProfileDetails, ProfileEdit } from "./pages";
+import { Profile, profileLoader, ProfileDetails, ProfileEdit } from "./pages";
 
 const profileRoutes = [
   {
     path: "",
     Component: Layout,
+    loader: profileLoader,
     children: [
       {
         path: "profile",

@@ -204,8 +204,6 @@ class UserController {
     );
     const cookieOptions = generateCookieOptions();
 
-    console.log("Mpika me cors");
-
     reply
       .code(200)
       .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
@@ -327,9 +325,10 @@ class UserController {
   }
 
   async retrieveUserDetails(request: FastifyRequest, reply: FastifyReply) {
-    const { userId } = request;
     const userDetails: ServiceResponse =
-      await UserController.userService.RetrieveUserDetails(userId);
+      await UserController.userService.RetrieveUserDetails(
+        request.userId ?? ""
+      );
 
     if (userDetails.success === false) {
       return UserController.handleError(reply, 400, userDetails?.customError);

@@ -1,5 +1,5 @@
 import { Layout } from "./layouts";
-import { Login, loginAction, Register } from "./pages";
+import { Login, loginAction, Register, registerAction } from "./pages";
 
 const authRoutes = [
   {
@@ -14,6 +14,7 @@ const authRoutes = [
       {
         path: "register",
         Component: Register,
+        action: registerAction,
       },
     ],
   },

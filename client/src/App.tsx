@@ -5,12 +5,22 @@ import Toast from "./components/Toast";
 import indexRouter from "./routes";
 import "./App.css";
 
-const queryClient = new QueryClient();
+export const globalQueryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      retry: false,
+      staleTime: Infinity,
+    },
+  },
+});
 
 const App = (): JSX.Element => {
   return (
     <JotaiGlobalProvider>
-      <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={globalQueryClient}>
         <div className="screen-container">
           <RouterProvider router={indexRouter} />
         </div>

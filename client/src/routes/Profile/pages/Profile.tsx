@@ -1,5 +1,8 @@
 import { Fragment } from "react";
-import { Outlet } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { Outlet, redirect } from "react-router-dom";
+import { globalQueryClient } from "../../../App";
+import { userDetailsQuery } from "../api";
 
 function Profile() {
   return (
@@ -9,4 +12,17 @@ function Profile() {
   );
 }
 
-export default Profile;
+export { Profile as default, loader };
+
+async function loader() {
+  try {
+    const query = userDetailsQuery();
+    return (
+      globalQueryClient.getQueryData(query.queryKey) ??
+      (await globalQueryClient.fetchQuery(query))
+    );
+  } catch (error: unknown) {
+    toast.error(error as string);
+    return redirect("/login");
+  }
+}
