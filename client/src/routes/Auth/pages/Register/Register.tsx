@@ -1,6 +1,6 @@
 import { PureComponent } from "react";
 import { ActionFunctionArgs, redirect } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import { AuthForm, RegisterTitle, RegisterNavLink } from "../../components";
 import { Constants } from "../../constants";
@@ -40,28 +40,26 @@ class Register extends PureComponent {
 
 export { Register as default, action };
 
-async function action({ request }: ActionFunctionArgs) {
-  try {
-    const response = await request.formData();
-    const email = response.get("email") as string;
-    const password = response.get("password") as string;
+function action(queryClient: QueryClient) {
+  return async function ({ request }: ActionFunctionArgs) {
+    try {
+      const response = await request.formData();
+      const email = response.get("email") as string;
+      const password = response.get("password") as string;
 
-    const access_token = await registerUser({
-      email: email,
-      password: password,
-    });
+      const access_token = await registerUser({
+        email: email,
+        password: password,
+      });
 
-    /**
-     * Update query cache for access token manually
-     */
-    const queryClient = useQueryClient();
-    queryClient.setQueryData(["access_token"], {
-      access_token: access_token,
-    });
+      queryClient.setQueryData(["access_token"], {
+        access_token: access_token,
+      });
 
-    return redirect("profile");
-  } catch (error: unknown) {
-    toast.error(error as string);
-    return redirect("");
-  }
+      return redirect("../profile");
+    } catch (error: unknown) {
+      toast.error(error as string);
+      return redirect("");
+    }
+  };
 }

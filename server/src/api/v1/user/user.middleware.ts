@@ -24,12 +24,18 @@ const userMiddleware: FastifyPluginAsync = fp(
         reply: FastifyReply
       ): Promise<void> {
         try {
+          console.log("I'me here with my cookies: ", request.cookies);
           const authHeader: string | undefined = request.headers?.authorization;
+
+          const refresh_token = retrieveRefreshToken(request.cookies) ?? "";
+          console.log("auth_token: ", refresh_token);
 
           const authToken: string | null = retrieveAccessToken(authHeader);
           if (authToken === null) {
             throw "error";
           }
+
+          console.log("access_token: ", authToken);
 
           const data = verifyJWT(
             authToken,
@@ -61,6 +67,10 @@ const userMiddleware: FastifyPluginAsync = fp(
         reply: FastifyReply
       ): Promise<void> {
         try {
+          console.log(
+            "I'me here with my credential cookies: ",
+            request.cookies
+          );
           const token = retrieveRefreshToken(request.cookies) ?? "";
 
           const data = verifyJWT(
@@ -82,6 +92,9 @@ const userMiddleware: FastifyPluginAsync = fp(
           request.userId = data.userId.toString();
           request.signInMethod = data.signInMethod ?? "credentials";
         } catch (error) {
+          console.log(
+            "Katse gia na katalabo, debn ekana verify sosto to refresh token"
+          );
           const errorMessage = fastify.httpErrors.unauthorized();
           reply.send(errorMessage);
         }

@@ -22,7 +22,7 @@ const App = (): JSX.Element => {
     <JotaiGlobalProvider>
       <QueryClientProvider client={globalQueryClient}>
         <div className="screen-container">
-          <RouterProvider router={indexRouter} />
+          <RouterProvider router={indexRouter(globalQueryClient)} />
         </div>
         <Toast />
       </QueryClientProvider>

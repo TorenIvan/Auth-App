@@ -20,10 +20,11 @@ export const generateCookieOptions = () => {
 
   const options = {
     signed: false, //refresh token is already signed
-    httpOnly: true,
+    httpOnly: EnvironmentVariables.IsProduction,
     sameSite: "none" as SameSiteType,
     secure: EnvironmentVariables.IsProduction,
     expires: cookieExpirationDate, //for tabs compatibility
+    path: "/",
   };
   return options;
 };
@@ -35,7 +36,7 @@ export const generateResetCookieOptions = () => {
 
   const options = {
     signed: false, //refresh token is already signed
-    httpOnly: true,
+    httpOnly: EnvironmentVariables.IsProduction,
     sameSite: "none" as SameSiteType,
     secure: EnvironmentVariables.IsProduction,
     expires: cookieExpirationDate, //for tabs compatibility

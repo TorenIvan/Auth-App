@@ -2,7 +2,7 @@ import { AxiosError, isAxiosError } from "axios";
 import { axiosInstance } from "../../../config";
 import { Errors } from "../errors";
 
-const registerUri = "v1/auth/login/credentials";
+const loginUri = "v1/auth/login/credentials";
 
 export const loginQuery = () => ({
   queryKey: ["access_token"],
@@ -12,7 +12,7 @@ export const loginQuery = () => ({
 export async function loginUser(request: IRequest): Promise<string> {
   const { email, password } = request;
   try {
-    const result = await axiosInstance.post(registerUri, {
+    const result = await axiosInstance.post(loginUri, {
       email: email,
       password: password,
     });
@@ -20,7 +20,6 @@ export async function loginUser(request: IRequest): Promise<string> {
     if (data?.access_token === undefined) throw "error";
     return data.access_token;
   } catch (error: unknown | AxiosError) {
-    console.log("Error inside here: ", error);
     if (isAxiosError(error)) {
       const statusCode = (error as AxiosError)?.response?.status ?? 0;
       const message = ((error as AxiosError)?.response?.data as any)?.message;

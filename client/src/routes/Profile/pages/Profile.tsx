@@ -1,7 +1,7 @@
+import { QueryClient } from "@tanstack/react-query";
 import { Fragment } from "react";
 import { toast } from "react-hot-toast";
 import { Outlet, redirect } from "react-router-dom";
-import { globalQueryClient } from "../../../App";
 import { userDetailsQuery } from "../api";
 
 function Profile() {
@@ -14,15 +14,17 @@ function Profile() {
 
 export { Profile as default, loader };
 
-async function loader() {
-  try {
-    const query = userDetailsQuery();
-    return (
-      globalQueryClient.getQueryData(query.queryKey) ??
-      (await globalQueryClient.fetchQuery(query))
-    );
-  } catch (error: unknown) {
-    toast.error(error as string);
-    return redirect("/login");
-  }
+function loader(queryClient: QueryClient) {
+  return async function () {
+    try {
+      const query = userDetailsQuery();
+      return (
+        queryClient.getQueryData(query.queryKey) ??
+        (await queryClient.fetchQuery(query))
+      );
+    } catch (error: unknown) {
+      toast.error(error as string);
+      return redirect("../login");
+    }
+  };
 }

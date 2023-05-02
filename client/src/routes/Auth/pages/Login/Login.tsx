@@ -1,10 +1,11 @@
 import { PureComponent } from "react";
-import { ActionFunctionArgs, Navigate, redirect } from "react-router-dom";
+import { ActionFunctionArgs, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { globalQueryClient } from "../../../../App";
+import { addAuthorizationHeader } from "../../../../config/Axios";
 import { AuthForm, LoginTitle, LoginNavLink } from "../../components";
 import { loginUser } from "../../api";
 import { Constants } from "../../constants";
+import { QueryClient } from "@tanstack/react-query";
 
 class Login extends PureComponent {
   private readonly submitButtonText: string;
@@ -31,24 +32,23 @@ class Login extends PureComponent {
 
 export { Login as default, action };
 
-async function action({ request }: ActionFunctionArgs) {
-  try {
-    const response = await request.formData();
-    const email = response.get("email") as string;
-    const password = response.get("password") as string;
+function action(queryClient: QueryClient) {
+  return async function ({ request }: ActionFunctionArgs) {
+    try {
+      const response = await request.formData();
+      const email = response.get("email") as string;
+      const password = response.get("password") as string;
 
-    const access_token = await loginUser({
-      email: email,
-      password: password,
-    });
+      const access_token = await loginUser({
+        email: email,
+        password: password,
+      });
 
-    globalQueryClient.setQueryData(["access_token"], {
-      access_token: access_token,
-    });
-
-    return redirect("../profile");
-  } catch (error: unknown) {
-    toast.error(error as string);
-    return redirect("");
-  }
+      addAuthorizationHeader(access_token);
+      return redirect("../profile");
+    } catch (error: unknown) {
+      toast.error(error as string);
+      return redirect("");
+    }
+  };
 }

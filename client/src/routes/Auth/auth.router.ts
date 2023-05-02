@@ -1,22 +1,25 @@
+import { QueryClient } from "@tanstack/react-query";
 import { Layout } from "./layouts";
 import { Login, loginAction, Register, registerAction } from "./pages";
 
-const authRoutes = [
-  {
-    path: "",
-    Component: Layout,
-    children: [
-      {
-        path: "login",
-        Component: Login,
-        action: loginAction,
-      },
-      {
-        path: "register",
-        Component: Register,
-        action: registerAction,
-      },
-    ],
-  },
-];
+function authRoutes(queryClient: QueryClient) {
+  return [
+    {
+      path: "",
+      Component: Layout,
+      children: [
+        {
+          path: "login",
+          Component: Login,
+          action: loginAction(queryClient),
+        },
+        {
+          path: "register",
+          Component: Register,
+          action: registerAction(queryClient),
+        },
+      ],
+    },
+  ];
+}
 export default authRoutes;
