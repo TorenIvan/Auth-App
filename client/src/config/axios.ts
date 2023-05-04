@@ -15,9 +15,9 @@ const axiosInstance = axios.create({
 
 export function addAuthorizationHeader(access_token: string) {
   const isTokenInvalid: boolean =
-    !access_token ||
-    typeof access_token !== "string" ||
-    access_token.trim() === "";
+    access_token === null ||
+    access_token === undefined ||
+    typeof access_token !== "string";
 
   if (isTokenInvalid === true) {
     throw new Error("Invalid access token");

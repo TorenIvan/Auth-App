@@ -36,8 +36,8 @@ export const generateResetCookieOptions = () => {
 
   const options = {
     signed: false, //refresh token is already signed
-    httpOnly: EnvironmentVariables.IsProduction,
-    sameSite: "none" as SameSiteType,
+    httpOnly: true,
+    sameSite: "lax" as SameSiteType,
     secure: EnvironmentVariables.IsProduction,
     expires: cookieExpirationDate, //for tabs compatibility
   };

@@ -161,7 +161,6 @@ class UserController {
     reply: FastifyReply
   ) {
     const { email, password } = request.body;
-    console.log("Mpika me email: ", email, " kai password: ", password);
 
     const userCredsResponse: ServiceResponse =
       await UserController.userService.ValidateUserWithCredentials(
@@ -169,7 +168,6 @@ class UserController {
         password
       );
 
-    console.log("Mpika me email: ", email, " kai password: ", password);
     const credentialsAuthenticated: boolean = userCredsResponse.success;
     if (credentialsAuthenticated === false) {
       return UserController.handleError(
@@ -205,7 +203,6 @@ class UserController {
       userCredsResponse.data!.userId.toString()
     );
 
-    console.log("refresh_token inside login: ", refresh_token);
     const cookieOptions = generateCookieOptions();
 
     reply
@@ -274,13 +271,6 @@ class UserController {
     );
 
     const cookieOptions = generateCookieOptions();
-
-    console.log(
-      "Eimai se fasi renew: na des access, refresh tokens :  ",
-      access_token,
-      ",  : ",
-      refresh_token
-    );
 
     reply
       .code(200)
@@ -354,6 +344,12 @@ class UserController {
       phone: phone,
       biography: biography,
       signInMethod: signInMethod,
+    });
+  }
+
+  async logout(request: FastifyRequest, reply: FastifyReply) {
+    reply.code(200).clearCookie(EnvironmentVariables.Cookie_Name, {
+      path: "/",
     });
   }
 }
