@@ -1,1 +1,1 @@
-export { renewAccessToken } from "./refresh_token";
+export { renewTokens } from "./renewTokens";

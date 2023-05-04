@@ -27,9 +27,6 @@ const userMiddleware: FastifyPluginAsync = fp(
           console.log("I'me here with my cookies: ", request.cookies);
           const authHeader: string | undefined = request.headers?.authorization;
 
-          const refresh_token = retrieveRefreshToken(request.cookies) ?? "";
-          console.log("auth_token: ", refresh_token);
-
           const authToken: string | null = retrieveAccessToken(authHeader);
           if (authToken === null) {
             throw "error";
