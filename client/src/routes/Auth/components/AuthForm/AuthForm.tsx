@@ -1,6 +1,8 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Form } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import "font-awesome/css/font-awesome.min.css";
 import { Constants } from "../../constants";
 import { Errors } from "../../errors";
@@ -17,6 +19,7 @@ import {
 function AuthForm({ titleSlot, submitButtonText, navLinkSlot }: IProps) {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const [hidePassword, setHidePassword] = useState<boolean>(true);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     if (emailValidator(emailRef.current?.value ?? "") === false) {
@@ -59,11 +62,16 @@ function AuthForm({ titleSlot, submitButtonText, navLinkSlot }: IProps) {
               className={inputStyles.input}
               ref={passwordRef}
               id="password"
-              type="password"
+              type={hidePassword === true ? "password" : "text"}
               name="password"
               placeholder="&#xf06e; Password"
               autoComplete="new-password"
               required
+            />
+            <FontAwesomeIcon
+              icon={hidePassword === true ? faEye : faEyeSlash}
+              className={inputStyles["fa-eye"]}
+              onClick={() => setHidePassword((hidePassword) => !hidePassword)}
             />
           </div>
           <div id={mainStyles["submitBox"]}>

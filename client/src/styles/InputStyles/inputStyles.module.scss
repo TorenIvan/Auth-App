@@ -28,3 +28,10 @@ $input-focus-shadow: var(--input-border-focus-shadow);
     border: 1px solid $input-focus;
   }
 }
+
+.fa-eye {
+  position: absolute;
+  right: 4%;
+  cursor: pointer;
+  color: lightgray;
+}
