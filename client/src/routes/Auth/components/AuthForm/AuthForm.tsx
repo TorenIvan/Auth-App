@@ -33,6 +33,13 @@ function AuthForm({ titleSlot, submitButtonText, navLinkSlot }: IProps) {
       return;
     }
   }
+
+  function togglePasswordVisibility() {
+    console.log("Im types");
+    setHidePassword((prevHidePassword) => !prevHidePassword);
+  }
+  const inputType = hidePassword === true ? "password" : "text";
+
   return (
     <div id={styles["main-container"]}>
       <div className={styles["main-wrapper"]}>
@@ -62,16 +69,16 @@ function AuthForm({ titleSlot, submitButtonText, navLinkSlot }: IProps) {
               className={inputStyles.input}
               ref={passwordRef}
               id="password"
-              type={hidePassword === true ? "password" : "text"}
+              type={inputType}
               name="password"
               placeholder="&#xf06e; Password"
-              autoComplete="new-password"
+              autoComplete="off"
               required
             />
             <FontAwesomeIcon
               icon={hidePassword === true ? faEye : faEyeSlash}
               className={inputStyles["fa-eye"]}
-              onClick={() => setHidePassword((hidePassword) => !hidePassword)}
+              onClick={togglePasswordVisibility}
             />
           </div>
           <div id={mainStyles["submitBox"]}>
