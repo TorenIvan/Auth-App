@@ -1,1 +1,1 @@
-export { default as axiosInstance } from "./axios";
+export { default as axiosInstance, addAuthorizationHeader } from "./axios";

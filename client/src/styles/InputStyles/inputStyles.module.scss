@@ -12,6 +12,7 @@ $input-focus-shadow: var(--input-border-focus-shadow);
   resize: none;
   outline: none;
   height: 52px;
+  font-family: NotoSansRegular, "FontAwesome";
 
   &::placeholder {
     font-weight: 500;
