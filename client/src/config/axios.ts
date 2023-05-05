@@ -48,7 +48,7 @@ axiosInstance.interceptors.response.use(
           addAuthorizationHeader(access_token);
 
           // Resend original request
-          failedQueue?.forEach((prom) => prom && prom());
+          failedQueue?.forEach((promise) => promise && promise());
           failedQueue = [];
 
           return axiosInstance(originalRequest);
