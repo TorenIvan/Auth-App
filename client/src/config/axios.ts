@@ -1,6 +1,7 @@
 import axios from "axios";
 import { redirect } from "react-router-dom";
 import { renewTokens } from "../api";
+import { logoutUser } from "../routes/Profile/api";
 
 let isRefreshing = false;
 let failedQueue: Array<(() => void) | null> = [];
@@ -57,10 +58,6 @@ axiosInstance.interceptors.response.use(
 
           return axiosInstance(originalRequest);
         } catch (err) {
-          // Handle token renewal error
-          // For example, logout user
-          console.log("Se epiase ertror?");
-          //return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
           window.location.replace(`${import.meta.env.VITE_CLIENT_URI}login`);
         } finally {
           isRefreshing = false;

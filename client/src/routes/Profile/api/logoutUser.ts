@@ -5,12 +5,12 @@ import { Errors } from "../errors";
 
 const logoutUri = "v1/auth/logout";
 
-export async function logout(queryClient?: QueryClient): Promise<void> {
+export async function logoutUser(queryClient?: QueryClient): Promise<void> {
   try {
     await axiosInstance.post(logoutUri);
     addAuthorizationHeader("");
     queryClient?.clear();
-    window.location.replace(`${import.meta.env.VITE_CLIENT_URI}login`);
+    console.log("KAI OMOS PERASA");
   } catch (error: unknown | AxiosError) {
     if (isAxiosError(error)) {
       const statusCode = (error as AxiosError)?.response?.status ?? 0;

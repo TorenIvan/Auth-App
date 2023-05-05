@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, redirect, useNavigate } from "react-router-dom";
 import {
   faCircleUser,
   faRightFromBracket,
@@ -9,12 +9,18 @@ import { Footer, Header, Main } from "../../../layouts";
 import { SideMenu } from "../components";
 import { Constants } from "../constants";
 import { useToggleSubMenu } from "../hooks";
-import { logout } from "../api";
+import { logoutUser } from "../api";
 import { useQueryClient } from "@tanstack/react-query";
 
 function ProfileLayout() {
   const [isSubMenuOpen, toggleSubMenu] = useToggleSubMenu();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  async function logout() {
+    await logoutUser(queryClient);
+    navigate("login");
+  }
 
   return (
     <Fragment>
@@ -31,12 +37,7 @@ function ProfileLayout() {
                 <SideMenu.SubMenu.Item.Text value={Constants.GroupChat} />
               </SideMenu.SubMenu.Item>
               <SideMenu.SubMenu.Divider />
-              <SideMenu.SubMenu.Item
-                isUsed={false}
-                onClick={() => {
-                  logout(queryClient);
-                }}
-              >
+              <SideMenu.SubMenu.Item isUsed={false} onClick={logout}>
                 <SideMenu.SubMenu.Item.Image
                   icon={faRightFromBracket}
                   size="lg"

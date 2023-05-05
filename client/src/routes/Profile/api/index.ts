@@ -1,2 +1,2 @@
 export { userDetailsQuery } from "./retrieveUserData";
-export { logout } from "./logout";
+export { logoutUser } from "./logoutUser";
