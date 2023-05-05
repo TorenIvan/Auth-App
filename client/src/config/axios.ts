@@ -60,7 +60,8 @@ axiosInstance.interceptors.response.use(
           // Handle token renewal error
           // For example, logout user
           console.log("Se epiase ertror?");
-          return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
+          //return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
+          window.location.replace(`${import.meta.env.VITE_CLIENT_URI}login`);
         } finally {
           isRefreshing = false;
         }

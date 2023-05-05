@@ -5,7 +5,9 @@ import styles from "./styles.module.scss";
 
 function SubMenuItem({ isUsed, children, onClick }: IProps): JSX.Element {
   return (
-    <li className={`${isUsed === true ? styles.used : ""}`}>{children}</li>
+    <li className={`${isUsed === true ? styles.used : ""}`} onClick={onClick}>
+      {children}
+    </li>
   );
 }
 

@@ -9,9 +9,12 @@ import { Footer, Header, Main } from "../../../layouts";
 import { SideMenu } from "../components";
 import { Constants } from "../constants";
 import { useToggleSubMenu } from "../hooks";
+import { logout } from "../api";
+import { useQueryClient } from "@tanstack/react-query";
 
 function ProfileLayout() {
   const [isSubMenuOpen, toggleSubMenu] = useToggleSubMenu();
+  const queryClient = useQueryClient();
 
   return (
     <Fragment>
@@ -28,7 +31,12 @@ function ProfileLayout() {
                 <SideMenu.SubMenu.Item.Text value={Constants.GroupChat} />
               </SideMenu.SubMenu.Item>
               <SideMenu.SubMenu.Divider />
-              <SideMenu.SubMenu.Item isUsed={false} onClick={() => {}}>
+              <SideMenu.SubMenu.Item
+                isUsed={false}
+                onClick={() => {
+                  logout(queryClient);
+                }}
+              >
                 <SideMenu.SubMenu.Item.Image
                   icon={faRightFromBracket}
                   size="lg"
