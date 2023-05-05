@@ -79,7 +79,7 @@ export type forgotPasswordInput = z.infer<typeof forgotPasswordRequestSchema>;
 export type resetPasswordUserInput = z.infer<typeof resetPasswordRequestSchema>;
 export type queryConfirmEmail = z.infer<typeof verifyEmailQueryStringSchema>;
 
-export const { schemas: registerCredentialsSchema, $ref } = buildJsonSchemas({
+export const { schemas: userSchemas, $ref } = buildJsonSchemas({
   authCredsBodySchema,
   authCredsUserResponseSchema,
   verifyEmailQueryStringSchema,

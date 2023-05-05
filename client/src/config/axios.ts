@@ -14,6 +14,7 @@ const axiosInstance = axios.create({
 });
 
 export function addAuthorizationHeader(access_token: string) {
+  console.log("access_token is: ", access_token);
   const isTokenInvalid: boolean =
     access_token === null ||
     access_token === undefined ||
@@ -23,6 +24,7 @@ export function addAuthorizationHeader(access_token: string) {
     throw new Error("Invalid access token");
   }
   axiosInstance.defaults.headers["Authorization"] = `Bearer ${access_token}`;
+  console.log("axios: ", axiosInstance.defaults.headers["Authorization"]);
 }
 
 axiosInstance.interceptors.request.use(
@@ -37,6 +39,7 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
+    console.log("Iparxei periptosi na eskases pou8ena");
     const originalRequest = error.config;
 
     if (error?.response?.status === 401) {
@@ -45,6 +48,7 @@ axiosInstance.interceptors.response.use(
 
         try {
           const access_token = await renewTokens();
+          console.log("Kati pige la8os meta to renew");
           addAuthorizationHeader(access_token);
 
           // Resend original request
@@ -55,6 +59,7 @@ axiosInstance.interceptors.response.use(
         } catch (err) {
           // Handle token renewal error
           // For example, logout user
+          console.log("Se epiase ertror?");
           return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
         } finally {
           isRefreshing = false;
@@ -73,6 +78,7 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(errorMessage);
     }
 
+    console.log("Se epiase ertror?");
     return Promise.reject(error);
   }
 );

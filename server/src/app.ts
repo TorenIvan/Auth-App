@@ -4,12 +4,11 @@ import FastifyOverview from "fastify-overview";
 import { FastifyPluginAsync } from "fastify";
 import { config } from "dotenv";
 config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
-import { registerCredentialsSchema } from "./api/v1/user/user.schema";
 import cookie from "@fastify/cookie";
 import type { FastifyCookieOptions } from "@fastify/cookie";
 import cors from "@fastify/cors";
-import routes from "./config/routes";
-import userMiddleware from "./api/v1/user/user.middleware";
+import { userSchemas, userRoutes } from "./api/v1/user";
+import { authMiddleware } from "./config/middleware";
 
 export type AppOptions = {
   // Place your custom options for app below here.
@@ -31,9 +30,8 @@ const app: FastifyPluginAsync<AppOptions> = async (
     await fastify.register(FastifyOverview);
   }
 
-  console.log("env: ", process.env.CLIENT_URI);
   await fastify.register(cors, {
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URI,
     methods: ["GET", "PUT", "POST", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
@@ -64,12 +62,12 @@ const app: FastifyPluginAsync<AppOptions> = async (
     options: options,
   });
 
-  for (const schema of registerCredentialsSchema) {
+  for (const schema of userSchemas) {
     fastify.addSchema(schema);
   }
 
-  void fastify.register(userMiddleware);
-  void fastify.register(routes, options);
+  void fastify.register(authMiddleware);
+  void fastify.register(userRoutes, options);
 
   if (process.env.NODE_ENV === "development") {
     fastify.addHook("onReady", async function showStructure() {

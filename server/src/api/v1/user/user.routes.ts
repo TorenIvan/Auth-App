@@ -6,7 +6,6 @@ import UserController from "./user.controller";
  * Encapsulates all the routes belonging to user in version 1
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
-
 const userRoutes: FastifyPluginAsync = async (
   fastify: FastifyInstance,
   options: object
@@ -55,6 +54,9 @@ const userRoutes: FastifyPluginAsync = async (
   });
   fastify.register(resetPassword, {
     prefix: "/v1/auth/reset-password",
+  });
+  fastify.register(getUserDetails, {
+    prefix: "/v1/profile/details",
   });
 };
 
@@ -259,5 +261,26 @@ async function resetPassword(fastify: FastifyInstance): Promise<void> {
       },
     },
     new UserController(fastify).resetPasswordHandler
+  );
+}
+
+/**
+ * Encapsulates all the user profile details operation route
+ * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
+ */
+async function getUserDetails(fastify: FastifyInstance): Promise<void> {
+  fastify.addHook("preHandler", async (request, reply) => {
+    await fastify.verifyAccessTokenHeader(request, reply);
+  });
+  fastify.get(
+    "/",
+    {
+      schema: {
+        response: {
+          200: $ref("userDetailsResponseSchema"),
+        },
+      },
+    },
+    new UserController(fastify).retrieveUserDetails
   );
 }
