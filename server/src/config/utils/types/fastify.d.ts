@@ -26,6 +26,32 @@ declare module "fastify" {
   export interface FastifyRequest {
     userId: string;
     signInMethod: SignInMethod;
+    cookies: { [cookieName: string]: string | undefined };
+  }
+
+  export interface FastifyReply {
+    /**
+     * Set response cookie
+     * @name setCookie
+     * @param name Cookie name
+     * @param value Cookie value
+     * @param options Serialize options
+     */
+    setCookie(
+      name: string,
+      value: string,
+      options?: fastifyCookie.CookieSerializeOptions
+    ): this;
+
+    /**
+     * clear response cookie
+     * @param name Cookie name
+     * @param options Serialize options
+     */
+    clearCookie(
+      name: string,
+      options?: fastifyCookie.CookieSerializeOptions
+    ): this;
   }
 }
 
