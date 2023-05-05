@@ -1,7 +1,5 @@
 import axios from "axios";
-import { redirect } from "react-router-dom";
 import { renewTokens } from "../api";
-import { logoutUser } from "../routes/Profile/api";
 
 let isRefreshing = false;
 let failedQueue: Array<(() => void) | null> = [];
@@ -58,6 +56,7 @@ axiosInstance.interceptors.response.use(
 
           return axiosInstance(originalRequest);
         } catch (err) {
+          // For example, logout user
           window.location.replace(`${import.meta.env.VITE_CLIENT_URI}login`);
         } finally {
           isRefreshing = false;

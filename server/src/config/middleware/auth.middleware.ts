@@ -86,6 +86,38 @@ const authMiddleware: FastifyPluginAsync = fp(
     );
 
     fastify.decorate(
+      "checkIfUserIsAuthenticated",
+      async function (
+        request: FastifyRequest,
+        reply: FastifyReply
+      ): Promise<void> {
+        try {
+          const token = retrieveRefreshToken(request.cookies) ?? "";
+
+          const data = verifyJWT(
+            token,
+            EnvironmentVariables.Refresh_Token_Secret
+          );
+
+          const userIdExistsInJWTPayload: boolean = !!data?.userId === true;
+          const signInMethodExistsInJWTPayload: boolean =
+            !!data?.signInMethod === true;
+
+          if (userIdExistsInJWTPayload === false) {
+            throw "error";
+          }
+          if (signInMethodExistsInJWTPayload === false) {
+            throw "error";
+          }
+          reply.status(200).send({ success: true, isAuthed: true });
+        } catch (error) {
+          const errorMessage = fastify.httpErrors.unauthorized();
+          reply.send({ ...errorMessage, success: false, isAuthed: false });
+        }
+      }
+    );
+
+    fastify.decorate(
       "verifyResetPasswordCookie",
       async function (
         request: FastifyRequest,
@@ -115,81 +147,6 @@ const authMiddleware: FastifyPluginAsync = fp(
           }
         } catch (error) {
           const errorMessage = fastify.httpErrors.forbidden();
-          reply.send(errorMessage);
-        }
-      }
-    );
-
-    fastify.decorate(
-      "checkIfTokenAlreadyExists",
-      async function (
-        request: FastifyRequest,
-        reply: FastifyReply
-      ): Promise<void> {
-        try {
-          const accessToken: string | null = retrieveAccessToken(
-            request.headers?.authorization
-          );
-
-          const refreshToken: string | null = retrieveRefreshToken(
-            request.cookies
-          );
-
-          if (accessToken === null && refreshToken === null) {
-            const errorMessage = fastify.httpErrors.forbidden();
-            reply.send(errorMessage);
-            return;
-          }
-
-          if (accessToken !== null) {
-            try {
-              const data = verifyJWT(
-                accessToken,
-                EnvironmentVariables.Access_Token_Secret
-              );
-
-              const userIdExistsInJWTPayload: boolean = !!data?.userId === true;
-              const signInMethodExistsInJWTPayload: boolean =
-                !!data?.signInMethod === true;
-
-              if (
-                userIdExistsInJWTPayload === false ||
-                signInMethodExistsInJWTPayload === false
-              ) {
-                throw "error";
-              }
-            } catch (error) {
-              console.error(error);
-              const errorMessage = fastify.httpErrors.forbidden();
-              reply.send(errorMessage);
-            }
-          }
-
-          if (refreshToken !== null) {
-            try {
-              const data = verifyJWT(
-                refreshToken,
-                EnvironmentVariables.Refresh_Token_Secret
-              );
-
-              const userIdExistsInJWTPayload: boolean = !!data?.userId === true;
-              const signInMethodExistsInJWTPayload: boolean =
-                !!data?.signInMethod === true;
-
-              if (
-                userIdExistsInJWTPayload === false ||
-                signInMethodExistsInJWTPayload === false
-              ) {
-                throw "error";
-              }
-            } catch (error) {
-              console.error(error);
-              const errorMessage = fastify.httpErrors.forbidden();
-              reply.send(errorMessage);
-            }
-          }
-        } catch (error) {
-          const errorMessage = fastify.httpErrors.unauthorized();
           reply.send(errorMessage);
         }
       }
