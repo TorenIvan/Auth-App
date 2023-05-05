@@ -112,7 +112,7 @@ const authMiddleware: FastifyPluginAsync = fp(
           reply.status(200).send({ success: true, isAuthed: true });
         } catch (error) {
           const errorMessage = fastify.httpErrors.unauthorized();
-          reply.send({ ...errorMessage, success: false, isAuthed: false });
+          reply.send({ ...errorMessage, isAuthed: false });
         }
       }
     );
