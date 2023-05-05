@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { Form } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import "font-awesome/css/font-awesome.min.css";
 import { Constants } from "../../constants";
 import { Errors } from "../../errors";
 import { emailValidator, passwordValidator } from "../../helpers";
