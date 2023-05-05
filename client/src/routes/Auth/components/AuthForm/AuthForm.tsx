@@ -35,10 +35,9 @@ function AuthForm({ titleSlot, submitButtonText, navLinkSlot }: IProps) {
   }
 
   function togglePasswordVisibility() {
-    console.log("Im types");
     setHidePassword((prevHidePassword) => !prevHidePassword);
   }
-  const inputType = hidePassword === true ? "password" : "text";
+  const inputPasswordType = hidePassword === true ? "password" : "text";
 
   return (
     <div id={styles["main-container"]}>
@@ -69,7 +68,7 @@ function AuthForm({ titleSlot, submitButtonText, navLinkSlot }: IProps) {
               className={inputStyles.input}
               ref={passwordRef}
               id="password"
-              type={inputType}
+              type={inputPasswordType}
               name="password"
               placeholder="&#xf06e; Password"
               autoComplete="off"
