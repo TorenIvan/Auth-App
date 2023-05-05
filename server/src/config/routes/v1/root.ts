@@ -1,6 +1,5 @@
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
 import authRoutes from "./auth/root";
-import profileRoutes from "./profile/root";
 
 /**
  * Encapsulates all the routes belonging to api version 1
@@ -10,7 +9,7 @@ const v1Routes: FastifyPluginAsync = async (
   fastify: FastifyInstance
 ): Promise<void> => {
   fastify.register(authRoutes, { prefix: "/auth" });
-  fastify.register(profileRoutes, { prefix: "/profile" });
+  // fastify.register(profileRoutes, { prefix: "/profile" });
 };
 
 export default v1Routes;
