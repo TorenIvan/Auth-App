@@ -1,3 +1,4 @@
+$border: var(--text-primary);
 $placeholder-text: var(--border-primary);
 $input-focus: var(--input-border-focus);
 $input-focus-shadow: var(--input-border-focus-shadow);
@@ -5,23 +6,32 @@ $input-focus-shadow: var(--input-border-focus-shadow);
 .input {
   box-sizing: border-box;
   font-size: 15px;
-  border: 1px solid #828282;
+  border: 1px solid $border;
   border-radius: 12px;
   width: 100%;
   padding: 12px;
   resize: none;
   outline: none;
   height: 52px;
+  font-family: NotoSansRegular, FontAwesome;
 
   &::placeholder {
     font-weight: 500;
     font-size: 13px;
     line-height: 18px;
     color: $placeholder-text;
+    font-family: NotoSansRegular, FontAwesome;
   }
 
   &:focus {
     box-shadow: 0 0 5px $input-focus-shadow;
     border: 1px solid $input-focus;
   }
+}
+
+.fa-eye {
+  position: absolute;
+  right: 4%;
+  cursor: pointer;
+  color: lightgray;
 }

@@ -16,6 +16,7 @@
   justify-content: space-around;
   align-items: center;
   width: clamp(65%, 357px, 90%);
+  position: relative;
 }
 
 #submitBox {
@@ -30,7 +31,7 @@
 .auth-item > input,
 #submitBox > input {
   width: clamp(80%, 220vw, 100%);
-  font-family: NotoSansRegular, "FontAwesome";
+  font-family: NotoSansRegular;
   height: 40px;
   box-sizing: border-box;
   padding-left: 10px;

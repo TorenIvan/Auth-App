@@ -1,0 +1,263 @@
+import { FastifyInstance, FastifyPluginAsync } from "fastify";
+import { $ref } from "./user.schema";
+import UserController from "./user.controller";
+
+/**
+ * Encapsulates all the routes belonging to user in version 1
+ * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
+ */
+
+const userRoutes: FastifyPluginAsync = async (
+  fastify: FastifyInstance,
+  options: object
+): Promise<void> => {
+  fastify.register(refreshTokens, {
+    prefix: "/v1/auth/refresh",
+  });
+  fastify.register(loginWithCredentials, {
+    prefix: "/v1/auth/login/credentials",
+  });
+  fastify.register(loginWithFacebook, {
+    prefix: "/v1/auth/login/facebook",
+  });
+  fastify.register(loginWithGoogle, {
+    prefix: "/v1/auth/login/google",
+  });
+  fastify.register(loginWithGithub, {
+    prefix: "/v1/auth/login/github",
+  });
+  fastify.register(loginWithTwitter, {
+    prefix: "/v1/auth/login/twitter",
+  });
+  fastify.register(registerWithCredentials, {
+    prefix: "/v1/auth/register/credentials",
+  });
+  fastify.register(registerWithFacebook, {
+    prefix: "/v1/auth/register/facebook",
+  });
+  fastify.register(registerWithGoogle, {
+    prefix: "/v1/auth/register/google",
+  });
+  fastify.register(registerWithGithub, {
+    prefix: "/v1/auth/register/github",
+  });
+  fastify.register(registerWithTwitter, {
+    prefix: "/v1/auth/register/twitter",
+  });
+  fastify.register(logout, {
+    prefix: "/v1/auth/logout",
+  });
+  fastify.register(confirmEmail, {
+    prefix: "/v1/auth/verify",
+  });
+  fastify.register(forgotPassword, {
+    prefix: "/v1/auth/forgot-password",
+  });
+  fastify.register(resetPassword, {
+    prefix: "/v1/auth/reset-password",
+  });
+};
+
+export default userRoutes;
+
+/**
+ * Encapsulates the login with credentials route
+ * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
+ */
+async function loginWithCredentials(fastify: FastifyInstance): Promise<void> {
+  fastify.post(
+    "/",
+    {
+      schema: {
+        body: $ref("authCredsBodySchema"),
+        response: {
+          201: $ref("authCredsUserResponseSchema"),
+        },
+      },
+    },
+    new UserController(fastify).loginCredentialsHandler
+  );
+}
+
+/**
+ * Encapsulates the refresh token verification and renewing tokens
+ * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
+ */
+async function refreshTokens(fastify: FastifyInstance): Promise<void> {
+  fastify.addHook("onRequest", async (request, reply) => {
+    await fastify.verifyRefreshTokenCookie(request, reply);
+  });
+  fastify.get(
+    "/",
+    {
+      schema: {
+        response: { 200: $ref("authCredsUserResponseSchema") },
+      },
+    },
+    new UserController(fastify).renewTokens
+  );
+}
+
+/**
+ * Encapsulates the login with facebook route
+ * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
+ */
+async function loginWithFacebook(fastify: FastifyInstance): Promise<void> {
+  fastify.get("/", async function (request, reply) {
+    return "this is a login example route with facebook";
+  });
+}
+
+/**
+ * Encapsulates the login with google route
+ * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
+ */
+async function loginWithGoogle(fastify: FastifyInstance): Promise<void> {
+  fastify.get("/", async function (request, reply) {
+    return "this is a login example route with google";
+  });
+}
+
+/**
+ * Encapsulates the login with github route
+ * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
+ */
+async function loginWithGithub(fastify: FastifyInstance): Promise<void> {
+  fastify.get("/", async function (request, reply) {
+    return "this is a login example route with github";
+  });
+}
+
+/**
+ * Encapsulates the login with twitter route
+ * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
+ */
+async function loginWithTwitter(fastify: FastifyInstance): Promise<void> {
+  fastify.get("/", async function (request, reply) {
+    return "this is a login example route with twitter";
+  });
+}
+
+/**
+ * Encapsulates the register with credentials route
+ * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
+ */
+async function registerWithCredentials(
+  fastify: FastifyInstance
+): Promise<void> {
+  fastify.post(
+    "/",
+    {
+      schema: {
+        body: $ref("authCredsBodySchema"),
+      },
+    },
+    new UserController(fastify).registerCredentialsHandler
+  );
+}
+
+/**
+ * Encapsulates the register facebook route
+ * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
+ */
+async function registerWithFacebook(fastify: FastifyInstance): Promise<void> {
+  fastify.get("/", async function (request, reply) {
+    return "this is an example facebook";
+  });
+}
+
+/**
+ * Encapsulates the register google route
+ * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
+ */
+async function registerWithGoogle(fastify: FastifyInstance): Promise<void> {
+  fastify.get("/", async function (request, reply) {
+    return "this is an example google";
+  });
+}
+
+/**
+ * Encapsulates the register github route
+ * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
+ */
+async function registerWithGithub(fastify: FastifyInstance): Promise<void> {
+  fastify.get("/", async function (request, reply) {
+    return "this is an example github";
+  });
+}
+
+/**
+ * Encapsulates the register twitter route
+ * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
+ */
+async function registerWithTwitter(fastify: FastifyInstance): Promise<void> {
+  fastify.get("/", async function (request, reply) {
+    return "this is an example twitter";
+  });
+}
+
+/**
+ * Encapsulates the logout operation route
+ * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
+ */
+async function logout(fastify: FastifyInstance): Promise<void> {
+  fastify.addHook("preHandler", async (request, reply) => {
+    await fastify.verifyAccessTokenHeader(request, reply);
+  });
+  fastify.post("/", {}, new UserController(fastify).logout);
+}
+
+/**
+ * Encapsulates the email verification process route
+ * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
+ */
+async function confirmEmail(fastify: FastifyInstance): Promise<void> {
+  fastify.get(
+    "/",
+    {
+      schema: {
+        querystring: $ref("verifyEmailQueryStringSchema"),
+        response: {
+          200: $ref("verifyEmailResponseSchema"),
+        },
+      },
+    },
+    new UserController(fastify).confirmEmailHandler
+  );
+}
+
+/**
+ * Encapsulates the forgot password operation route
+ * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
+ */
+async function forgotPassword(fastify: FastifyInstance): Promise<void> {
+  fastify.post(
+    "/",
+    {
+      schema: {
+        body: $ref("forgotPasswordRequestSchema"),
+      },
+    },
+    new UserController(fastify).forgotPasswordHandler
+  );
+}
+
+/**
+ * Encapsulates the reset password operation route
+ * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
+ */
+async function resetPassword(fastify: FastifyInstance): Promise<void> {
+  fastify.addHook("onRequest", async (request, reply) => {
+    await fastify.verifyResetPasswordCookie(request, reply);
+  });
+  fastify.post(
+    "/",
+    {
+      schema: {
+        body: $ref("resetPasswordRequestSchema"),
+        querystring: $ref("verifyEmailQueryStringSchema"),
+      },
+    },
+    new UserController(fastify).resetPasswordHandler
+  );
+}

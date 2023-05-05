@@ -1,11 +1,10 @@
 import { PureComponent } from "react";
 import { ActionFunctionArgs, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { addAuthorizationHeader } from "../../../../config/Axios";
+import { addAuthorizationHeader } from "../../../../config";
 import { AuthForm, LoginTitle, LoginNavLink } from "../../components";
 import { loginUser } from "../../api";
 import { Constants } from "../../constants";
-import { QueryClient } from "@tanstack/react-query";
 
 class Login extends PureComponent {
   private readonly submitButtonText: string;
@@ -21,34 +20,32 @@ class Login extends PureComponent {
 
   render() {
     return (
-      <AuthForm>
-        <AuthForm.Header titleSlot={this.title} />
-        <AuthForm.Main submitButtonText={this.submitButtonText} />
-        <AuthForm.Footer navLinkSlot={this.navigateLink} />
-      </AuthForm>
+      <AuthForm
+        titleSlot={this.title}
+        submitButtonText={this.submitButtonText}
+        navLinkSlot={this.navigateLink}
+      />
     );
   }
 }
 
 export { Login as default, action };
 
-function action(queryClient: QueryClient) {
-  return async function ({ request }: ActionFunctionArgs) {
-    try {
-      const response = await request.formData();
-      const email = response.get("email") as string;
-      const password = response.get("password") as string;
+async function action({ request }: ActionFunctionArgs) {
+  try {
+    const response = await request.formData();
+    const email = response.get("email") as string;
+    const password = response.get("password") as string;
 
-      const access_token = await loginUser({
-        email: email,
-        password: password,
-      });
+    const access_token = await loginUser({
+      email: email,
+      password: password,
+    });
 
-      addAuthorizationHeader(access_token);
-      return redirect("../profile");
-    } catch (error: unknown) {
-      toast.error(error as string);
-      return redirect("");
-    }
-  };
+    addAuthorizationHeader(access_token);
+    return redirect("../profile");
+  } catch (error: unknown) {
+    toast.error(error as string);
+    return redirect("");
+  }
 }

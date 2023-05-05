@@ -1,6 +1,10 @@
 import { ObjectId } from "mongodb";
 import { Strings } from "../constants/Strings";
 
+declare module "@fastify/autoload";
+declare module "@fastify/cookie";
+declare module "@fastify/cors";
+
 declare global {
   type SignInMethod =
     | "credentials"

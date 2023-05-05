@@ -1,19 +1,118 @@
-import { ReactNode } from "react";
-import AuthFormFooter from "./AuthFormFooter";
-import AuthFormHeader from "./AuthFormHeader";
-import AuthFormMain from "./AuthFormMain";
-import styles from "./styles.module.scss";
+import { useRef, useState } from "react";
+import { Form } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import "font-awesome/css/font-awesome.min.css";
+import { Constants } from "../../constants";
+import { Errors } from "../../errors";
+import { emailValidator, passwordValidator } from "../../helpers";
+import { inputStyles } from "../../../../styles";
+import { headerStyles, mainStyles, footerStyles, styles } from "./styles";
+import {
+  FacebookIcon,
+  GithubIcon,
+  GoogleIcon,
+  TwitterIcon,
+} from "../../../../icons";
 
-function AuthForm({ children }: { children: ReactNode }) {
+function AuthForm({ titleSlot, submitButtonText, navLinkSlot }: IProps) {
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const [hidePassword, setHidePassword] = useState<boolean>(true);
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    if (emailValidator(emailRef.current?.value ?? "") === false) {
+      toast.error(Errors.InvalidEmail);
+      event.preventDefault();
+      return;
+    }
+    if (passwordValidator(passwordRef.current?.value ?? "") === false) {
+      toast.error(Errors.InvalidPassword);
+      event.preventDefault();
+      return;
+    }
+  }
+
+  function togglePasswordVisibility() {
+    setHidePassword((prevHidePassword) => !prevHidePassword);
+  }
+  const inputPasswordType = hidePassword === true ? "password" : "text";
+
   return (
     <div id={styles["main-container"]}>
-      <div className={styles["main-wrapper"]}>{children}</div>
+      <div className={styles["main-wrapper"]}>
+        <header className={headerStyles.header}>
+          <div>{titleSlot}</div>
+          <h4>{Constants.FormHeader}</h4>
+        </header>
+        <Form
+          method="post"
+          action=""
+          className={mainStyles["auth-container"]}
+          onSubmit={handleSubmit}
+        >
+          <div className={mainStyles["auth-item"]}>
+            <input
+              className={inputStyles.input}
+              ref={emailRef}
+              id="email"
+              type="text"
+              name="email"
+              placeholder="&#xf0e0; Email"
+              required
+            />
+          </div>
+          <div className={mainStyles["auth-item"]}>
+            <input
+              className={inputStyles.input}
+              ref={passwordRef}
+              id="password"
+              type={inputPasswordType}
+              name="password"
+              placeholder="&#xf06e; Password"
+              autoComplete="off"
+              required
+            />
+            <FontAwesomeIcon
+              icon={hidePassword === true ? faEye : faEyeSlash}
+              className={inputStyles["fa-eye"]}
+              onClick={togglePasswordVisibility}
+            />
+          </div>
+          <div id={mainStyles["submitBox"]}>
+            <input type="submit" value={submitButtonText}></input>
+          </div>
+        </Form>
+        <footer className={footerStyles.footer}>
+          <div className={footerStyles["social-profile-paragraph"]}>
+            <p>{Constants.SocialProfilesFormText}</p>
+          </div>
+          <ul id={footerStyles["social-profiles"]}>
+            <li className={footerStyles["social-item"]}>
+              <GoogleIcon />
+            </li>
+            <li className={footerStyles["social-item"]}>
+              <FacebookIcon />
+            </li>
+            <li className={footerStyles["social-item"]}>
+              <GithubIcon />
+            </li>
+            <li className={footerStyles["social-item"]}>
+              <TwitterIcon />
+            </li>
+          </ul>
+          <div className={footerStyles["social-item"]}>{navLinkSlot}</div>
+        </footer>
+      </div>
     </div>
   );
 }
 
-AuthForm.Header = AuthFormHeader;
-AuthForm.Footer = AuthFormFooter;
-AuthForm.Main = AuthFormMain;
-
 export default AuthForm;
+
+interface IProps {
+  titleSlot: JSX.Element;
+  submitButtonText: string;
+  navLinkSlot: JSX.Element;
+}

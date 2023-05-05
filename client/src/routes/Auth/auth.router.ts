@@ -11,12 +11,12 @@ function authRoutes(queryClient: QueryClient) {
         {
           path: "login",
           Component: Login,
-          action: loginAction(queryClient),
+          action: loginAction,
         },
         {
           path: "register",
           Component: Register,
-          action: registerAction(queryClient),
+          action: registerAction,
         },
       ],
     },
