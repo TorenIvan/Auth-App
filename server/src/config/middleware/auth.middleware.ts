@@ -86,38 +86,6 @@ const authMiddleware: FastifyPluginAsync = fp(
     );
 
     fastify.decorate(
-      "checkIfUserIsAuthenticated",
-      async function (
-        request: FastifyRequest,
-        reply: FastifyReply
-      ): Promise<void> {
-        try {
-          const token = retrieveRefreshToken(request.cookies) ?? "";
-
-          const data = verifyJWT(
-            token,
-            EnvironmentVariables.Refresh_Token_Secret
-          );
-
-          const userIdExistsInJWTPayload: boolean = !!data?.userId === true;
-          const signInMethodExistsInJWTPayload: boolean =
-            !!data?.signInMethod === true;
-
-          if (userIdExistsInJWTPayload === false) {
-            throw "error";
-          }
-          if (signInMethodExistsInJWTPayload === false) {
-            throw "error";
-          }
-          reply.status(200).send({ success: true, isAuthed: true });
-        } catch (error) {
-          const errorMessage = fastify.httpErrors.unauthorized();
-          reply.send({ ...errorMessage, isAuthed: false });
-        }
-      }
-    );
-
-    fastify.decorate(
       "verifyResetPasswordCookie",
       async function (
         request: FastifyRequest,
@@ -148,6 +116,42 @@ const authMiddleware: FastifyPluginAsync = fp(
         } catch (error) {
           const errorMessage = fastify.httpErrors.forbidden();
           reply.send(errorMessage);
+        }
+      }
+    );
+
+    fastify.decorate(
+      "checkIfUserIsAuthenticated",
+      async function (
+        request: FastifyRequest,
+        reply: FastifyReply
+      ): Promise<void> {
+        try {
+          const authHeader: string | undefined = request.headers?.authorization;
+          const access_token: string | null = retrieveAccessToken(authHeader);
+
+          if (access_token !== null) {
+            const access_token_data = verifyJWT(
+              access_token,
+              EnvironmentVariables.Access_Token_Secret
+            );
+            if (access_token_data?.userId && access_token_data?.signInMethod) {
+              return reply.status(200);
+            }
+          }
+
+          const refresh_token = retrieveRefreshToken(request.cookies) ?? "";
+
+          const refresh_token_data = verifyJWT(
+            refresh_token,
+            EnvironmentVariables.Refresh_Token_Secret
+          );
+
+          if (refresh_token_data?.userId && refresh_token_data?.signInMethod) {
+            return reply.status(200);
+          }
+        } catch {
+          reply.status(403);
         }
       }
     );

@@ -6,6 +6,7 @@ import { addAuthorizationHeader } from "../../../../config";
 import { AuthForm, LoginTitle, LoginNavLink } from "../../components";
 import { loginUser } from "../../api";
 import { Constants } from "../../constants";
+import { checkIfUserIsAuthenticated } from "../../api";
 
 class Login extends PureComponent {
   private readonly submitButtonText: string;
@@ -31,6 +32,17 @@ class Login extends PureComponent {
 }
 
 export { Login as default, action };
+
+function loader(queryClient: QueryClient) {
+  return async function () {
+    try {
+      await checkIfUserIsAuthenticated();
+      return redirect("profile");
+    } catch (error: unknown) {
+      toast.error(error as string);
+    }
+  };
+}
 
 function action(queryClient: QueryClient) {
   return async function ({ request }: ActionFunctionArgs) {

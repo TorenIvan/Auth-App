@@ -1,15 +1,13 @@
-import { QueryClient } from "@tanstack/react-query";
 import { AxiosError, isAxiosError } from "axios";
-import { addAuthorizationHeader, axiosInstance } from "../../../config";
+import { axiosInstance } from "../../../config";
 import { Errors } from "../errors";
 
-const logoutUri = "v1/auth/logout";
+const userDetailsUri = "v1/auth/check";
 
-export async function logoutUser(queryClient?: QueryClient): Promise<void> {
+export async function checkIfUserIsAuthenticated(): Promise<IResponse> {
   try {
-    await axiosInstance.post(logoutUri);
-    addAuthorizationHeader("");
-    queryClient?.clear();
+    const result: IResponse = await axiosInstance.get(userDetailsUri);
+    return result;
   } catch (error: unknown | AxiosError) {
     if (isAxiosError(error)) {
       const statusCode = (error as AxiosError)?.response?.status ?? 0;
@@ -22,4 +20,9 @@ export async function logoutUser(queryClient?: QueryClient): Promise<void> {
     }
     throw Errors.GenericError;
   }
+}
+
+interface IResponse {
+  success: boolean;
+  isAuthed: boolean;
 }

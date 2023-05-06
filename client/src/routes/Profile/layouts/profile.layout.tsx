@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { Outlet, redirect, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import {
   faCircleUser,
   faRightFromBracket,
