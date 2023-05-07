@@ -31,15 +31,18 @@ class Login extends PureComponent {
   }
 }
 
-export { Login as default, action };
+export { Login as default, action, loader };
 
 function loader(queryClient: QueryClient) {
   return async function () {
     try {
-      await checkIfUserIsAuthenticated();
-      return redirect("profile");
+      const isAuthenticated = await checkIfUserIsAuthenticated();
+      if (isAuthenticated === true) {
+        return redirect("../profile");
+      }
+      return true;
     } catch (error: unknown) {
-      toast.error(error as string);
+      return true;
     }
   };
 }
@@ -61,7 +64,7 @@ function action(queryClient: QueryClient) {
       return redirect(`${import.meta.env.VITE_CLIENT_URI}profile`);
     } catch (error: unknown) {
       toast.error(error as string);
-      return redirect("");
+      return true;
     }
   };
 }

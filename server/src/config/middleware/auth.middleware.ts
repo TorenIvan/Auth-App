@@ -136,7 +136,7 @@ const authMiddleware: FastifyPluginAsync = fp(
               EnvironmentVariables.Access_Token_Secret
             );
             if (access_token_data?.userId && access_token_data?.signInMethod) {
-              return reply.status(200);
+              reply.status(200).send();
             }
           }
 
@@ -148,10 +148,10 @@ const authMiddleware: FastifyPluginAsync = fp(
           );
 
           if (refresh_token_data?.userId && refresh_token_data?.signInMethod) {
-            return reply.status(200);
+            reply.status(200).send();
           }
         } catch {
-          reply.status(403);
+          reply.status(403).send();
         }
       }
     );

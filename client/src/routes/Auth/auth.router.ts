@@ -1,6 +1,12 @@
 import { QueryClient } from "@tanstack/react-query";
 import { Layout } from "./layouts";
-import { Login, loginAction, Register, registerAction } from "./pages";
+import {
+  Login,
+  loginAction,
+  loginLoader,
+  Register,
+  registerAction,
+} from "./pages";
 
 function authRoutes(queryClient: QueryClient) {
   return [
@@ -11,6 +17,7 @@ function authRoutes(queryClient: QueryClient) {
         {
           path: "login",
           Component: Login,
+          loader: loginLoader(queryClient),
           action: loginAction(queryClient),
         },
         {

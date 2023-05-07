@@ -13,6 +13,9 @@ const userRoutes: FastifyPluginAsync = async (
   fastify.register(refreshTokens, {
     prefix: "/v1/auth/refresh",
   });
+  fastify.register(checkIsAuthenticated, {
+    prefix: "/v1/auth/check",
+  });
   fastify.register(loginWithCredentials, {
     prefix: "/v1/auth/login/credentials",
   });
@@ -63,25 +66,6 @@ const userRoutes: FastifyPluginAsync = async (
 export default userRoutes;
 
 /**
- * Encapsulates the login with credentials route
- * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
- */
-async function loginWithCredentials(fastify: FastifyInstance): Promise<void> {
-  fastify.post(
-    "/",
-    {
-      schema: {
-        body: $ref("authCredsBodySchema"),
-        response: {
-          201: $ref("authCredsUserResponseSchema"),
-        },
-      },
-    },
-    new UserController(fastify).loginCredentialsHandler
-  );
-}
-
-/**
  * Encapsulates the refresh token verification and renewing tokens
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
@@ -97,6 +81,36 @@ async function refreshTokens(fastify: FastifyInstance): Promise<void> {
       },
     },
     new UserController(fastify).renewTokens
+  );
+}
+
+/**
+ * Encapsulates the checking operation of user authentication status
+ * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
+ */
+async function checkIsAuthenticated(fastify: FastifyInstance): Promise<void> {
+  fastify.addHook("preHandler", async (request, reply) => {
+    await fastify.checkIfUserIsAuthenticated(request, reply);
+  });
+  fastify.get("/", {}, new UserController(fastify).checkIfUserIsAuthenticated);
+}
+
+/**
+ * Encapsulates the login with credentials route
+ * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
+ */
+async function loginWithCredentials(fastify: FastifyInstance): Promise<void> {
+  fastify.post(
+    "/",
+    {
+      schema: {
+        body: $ref("authCredsBodySchema"),
+        response: {
+          201: $ref("authCredsUserResponseSchema"),
+        },
+      },
+    },
+    new UserController(fastify).loginCredentialsHandler
   );
 }
 

@@ -21,6 +21,10 @@ declare module "fastify" {
       request: FastifyRequest,
       reply: FastifyReply
     ) => Promise<void>;
+    checkIfUserIsAuthenticated: (
+      request: FastifyRequest,
+      reply: FastifyReply
+    ) => Promise<void>;
   }
 
   export interface FastifyRequest {

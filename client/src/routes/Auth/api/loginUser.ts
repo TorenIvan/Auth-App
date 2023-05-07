@@ -17,7 +17,6 @@ export async function loginUser(request: IRequest): Promise<string> {
       password: password,
     });
     const { data } = result;
-    console.log("Egine to poast");
     if (data?.access_token === undefined) throw "error";
     return data.access_token;
   } catch (error: unknown | AxiosError) {

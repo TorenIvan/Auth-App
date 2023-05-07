@@ -58,6 +58,7 @@ class UserController {
         default:
           error =
             UserController.fastifyInstance.httpErrors.badRequest(customError);
+          break;
       }
     } else {
       switch (errorCode) {
@@ -69,6 +70,7 @@ class UserController {
           break;
         default:
           error = UserController.fastifyInstance.httpErrors.badRequest();
+          break;
       }
     }
     reply.code(errorCode).send(error);
@@ -351,6 +353,13 @@ class UserController {
     reply.code(200).clearCookie(EnvironmentVariables.Cookie_Name, {
       path: "/",
     });
+  }
+
+  async checkIfUserIsAuthenticated(
+    request: FastifyRequest,
+    reply: FastifyReply
+  ) {
+    reply.code(403);
   }
 }
 
