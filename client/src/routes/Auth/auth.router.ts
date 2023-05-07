@@ -6,6 +6,7 @@ import {
   loginLoader,
   Register,
   registerAction,
+  registerLoader,
 } from "./pages";
 
 function authRoutes(queryClient: QueryClient) {
@@ -23,6 +24,7 @@ function authRoutes(queryClient: QueryClient) {
         {
           path: "register",
           Component: Register,
+          loader: registerLoader,
           action: registerAction,
         },
       ],

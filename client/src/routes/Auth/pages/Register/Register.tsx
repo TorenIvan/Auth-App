@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 import { AuthForm, RegisterTitle, RegisterNavLink } from "../../components";
 import { Constants } from "../../constants";
 import { registerUser } from "../../api/registerUser";
+import { checkIfUserIsAuthenticated } from "../../api";
 
 interface IRequest {
   email: string;
@@ -38,7 +39,19 @@ class Register extends PureComponent {
   }
 }
 
-export { Register as default, action };
+export { Register as default, action, loader };
+
+async function loader() {
+  try {
+    const isAuthenticated = await checkIfUserIsAuthenticated();
+    if (isAuthenticated === true) {
+      return redirect("../profile");
+    }
+    return true;
+  } catch (error: unknown) {
+    return true;
+  }
+}
 
 async function action({ request }: ActionFunctionArgs) {
   try {

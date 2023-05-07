@@ -1,4 +1,11 @@
 import Login, { loginAction, loginLoader } from "./Login";
-import Register, { registerAction } from "./Register";
+import Register, { registerAction, registerLoader } from "./Register";
 
-export { Login, loginAction, loginLoader, Register, registerAction };
+export {
+  Login,
+  loginAction,
+  loginLoader,
+  Register,
+  registerAction,
+  registerLoader,
+};

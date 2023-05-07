@@ -1,7 +1,8 @@
 import { QueryClient } from "@tanstack/react-query";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, redirect } from "react-router-dom";
 import { ErrorPage } from "../pages";
 import authRoutes from "./Auth";
+import { checkIfUserIsAuthenticated } from "./Auth/api";
 import profileRoutes from "./Profile";
 
 function indexRouter(queryClient: QueryClient) {
@@ -9,9 +10,28 @@ function indexRouter(queryClient: QueryClient) {
     {
       path: "/",
       ErrorBoundary: ErrorPage,
-      children: [...authRoutes(queryClient), ...profileRoutes(queryClient)],
+      children: [
+        {
+          index: true,
+          loader: loader,
+        },
+        ...authRoutes(queryClient),
+        ...profileRoutes(queryClient),
+      ],
     },
   ]);
 }
 
 export default indexRouter;
+
+async function loader() {
+  try {
+    const isAuthenticated = await checkIfUserIsAuthenticated();
+    if (isAuthenticated === true) {
+      return redirect("profile");
+    }
+    return redirect("login");
+  } catch (error: unknown) {
+    return redirect("login");
+  }
+}
