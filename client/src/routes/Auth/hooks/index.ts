@@ -1,0 +1,1 @@
+export { useHidePassword } from "./useHidePassword";

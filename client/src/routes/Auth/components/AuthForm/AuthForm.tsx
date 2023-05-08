@@ -1,9 +1,10 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { Form } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import "font-awesome/css/font-awesome.min.css";
+import { useHidePassword } from "../../hooks";
 import { Constants } from "../../constants";
 import { Errors } from "../../errors";
 import { emailValidator, passwordValidator } from "../../helpers";
@@ -19,7 +20,7 @@ import {
 function AuthForm({ titleSlot, submitButtonText, navLinkSlot }: IProps) {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
-  const [hidePassword, setHidePassword] = useState<boolean>(true);
+  const [hidePassword, togglePasswordVisibility] = useHidePassword();
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     if (emailValidator(emailRef.current?.value ?? "") === false) {
@@ -33,11 +34,6 @@ function AuthForm({ titleSlot, submitButtonText, navLinkSlot }: IProps) {
       return;
     }
   }
-
-  function togglePasswordVisibility() {
-    setHidePassword((prevHidePassword) => !prevHidePassword);
-  }
-  const inputPasswordType = hidePassword === true ? "password" : "text";
 
   return (
     <div id={styles["main-container"]}>
@@ -68,7 +64,7 @@ function AuthForm({ titleSlot, submitButtonText, navLinkSlot }: IProps) {
               className={inputStyles.input}
               ref={passwordRef}
               id="password"
-              type={inputPasswordType}
+              type={hidePassword === true ? "password" : "text"}
               name="password"
               placeholder="&#xf06e; Password"
               autoComplete="off"

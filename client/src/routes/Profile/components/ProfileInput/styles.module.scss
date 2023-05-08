@@ -9,6 +9,7 @@ $input-focus-shadow: var(--input-border-focus-shadow);
   flex-direction: column;
   margin-left: 5%;
   flex: 0.8;
+  position: relative;
 
   @media only screen and (max-width: 768px) {
     margin-left: 0;

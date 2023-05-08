@@ -14,6 +14,7 @@ $input-focus-shadow: var(--input-border-focus-shadow);
   outline: none;
   height: 52px;
   font-family: NotoSansRegular, FontAwesome;
+  padding-right: 50px;
 
   &::placeholder {
     font-weight: 500;
@@ -34,4 +35,9 @@ $input-focus-shadow: var(--input-border-focus-shadow);
   right: 4%;
   cursor: pointer;
   color: lightgray;
+}
+
+.fa-eye-middle {
+  @extend .fa-eye;
+  top: 50%;
 }
