@@ -57,14 +57,20 @@ function ProfileEdit() {
         <section className={styles["edit-item-container"]}>
           <Input
             label="Current Password"
-            attributes={{ placeholder: "Enter your current password..." }}
+            attributes={{
+              placeholder: "Enter your current password...",
+              autocomplete: "off",
+            }}
             isPassword
           />
         </section>
         <section className={styles["edit-item-container"]}>
           <Input
             label="New Password"
-            attributes={{ placeholder: "Enter your new password..." }}
+            attributes={{
+              placeholder: "Enter your new password...",
+              autocomplete: "off",
+            }}
             isPassword
           />
         </section>

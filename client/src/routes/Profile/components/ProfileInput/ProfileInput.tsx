@@ -8,6 +8,10 @@ export function ProfileInput(props: IProps): JSX.Element {
   const [hidePassword, togglePasswordVisibility] = useHidePassword();
   const { label, attributes, isPassword } = props;
 
+  function handleFocus(event: React.FocusEvent<HTMLInputElement>) {
+    event.target.removeAttribute("readOnly");
+  }
+
   let type: string = "text";
   let iconSlot: JSX.Element | null = null;
 
@@ -27,7 +31,13 @@ export function ProfileInput(props: IProps): JSX.Element {
   return (
     <section className={styles["input-container"]}>
       <label>{label}</label>
-      <input className={inputStyles.input} {...attributes} type={type} />
+      <input
+        className={inputStyles.input}
+        {...attributes}
+        type={type}
+        readOnly
+        onFocus={handleFocus}
+      />
       {iconSlot}
     </section>
   );
@@ -41,5 +51,6 @@ interface IProps {
 
 interface IAttributes {
   placeholder: string;
+  autocomplete?: string;
   value?: string;
 }
