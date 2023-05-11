@@ -9,6 +9,7 @@ import {
 } from "../../components";
 import { userDetailsQuery } from "../../api";
 import styles from "./styles.module.scss";
+import { Constants } from "../../constants";
 
 function ProfileEdit() {
   const queryClient = useQueryClient();
@@ -19,12 +20,12 @@ function ProfileEdit() {
     <div className={styles["page-container"]}>
       <NavLink className={styles["back-button"]} to="/profile" replace>
         <span className={styles["arrow-left"]} />
-        <span>Back</span>
+        <span>{Constants.Back}</span>
       </NavLink>
       <Form className={styles.form} autoComplete="off">
         <article>
-          <h3>Change Info</h3>
-          <span>Changes will be reflected to every service</span>
+          <h3>{Constants.ChangeInfo}</h3>
+          <span>{Constants.ChangeInfoSub}</span>
         </article>
         <EditItem>
           <section className={styles["edit-photo-item"]}>
@@ -34,52 +35,56 @@ function ProfileEdit() {
                 color="#ffffff"
                 className={styles["edit-photo-icon"]}
               />
-              <span id={styles["mobile-photo-text"]}>ADD PHOTO</span>
+              <span id={styles["mobile-photo-text"]}>
+                {Constants.AddPhoto.toUpperCase()}
+              </span>
             </section>
-            <span id={styles["default-photo-text"]}>ADD PHOTO</span>
+            <span id={styles["default-photo-text"]}>
+              {Constants.AddPhoto.toUpperCase()}
+            </span>
           </section>
         </EditItem>
         <EditItem>
           <Input
-            label="Name"
+            label={Constants.Name}
             attributes={{
-              placeholder: "Enter your name...",
+              placeholder: Constants.NamePlaceholder,
               defaultValue: userInfo?.username,
             }}
           />
         </EditItem>
         <EditItem>
           <Textarea
-            labelSlot={<label>Bio</label>}
+            labelSlot={<label>{Constants.Bio}</label>}
             attributes={{
-              placeholder: "Enter your bio...",
+              placeholder: Constants.BioPlaceholder,
               defaultValue: userInfo?.biography,
             }}
           />
         </EditItem>
         <EditItem>
           <Input
-            label="Phone"
+            label={Constants.Phone}
             attributes={{
-              placeholder: "Enter your phone...",
+              placeholder: Constants.PhonePlaceholder,
               defaultValue: userInfo?.phone,
             }}
           />
         </EditItem>
         <EditItem>
           <Input
-            label="Email"
+            label={Constants.Email}
             attributes={{
-              placeholder: "Enter your email...",
+              placeholder: Constants.EmailPlaceholder,
               defaultValue: userInfo?.email,
             }}
           />
         </EditItem>
         <EditItem>
           <Input
-            label="Current Password"
+            label={Constants.CurrentPassword}
             attributes={{
-              placeholder: "Enter your current password...",
+              placeholder: Constants.CurrentPasswordPlaceholder,
               autoComplete: "new-password",
             }}
             isPassword
@@ -87,9 +92,9 @@ function ProfileEdit() {
         </EditItem>
         <EditItem>
           <Input
-            label="New Password"
+            label={Constants.NewPassword}
             attributes={{
-              placeholder: "Enter your new password...",
+              placeholder: Constants.NewPasswordPlaceholder,
               autoComplete: "new-password",
             }}
             isPassword
@@ -98,7 +103,7 @@ function ProfileEdit() {
         <EditItem>
           <section className={styles["edit-item"]}>
             <div id={styles["save-button"]}>
-              <span id={styles["save-button-text"]}>Save</span>
+              <span id={styles["save-button-text"]}>{Constants.Save}</span>
             </div>
           </section>
         </EditItem>
