@@ -1,5 +1,5 @@
 import { Form, NavLink } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Textarea } from "../../../../components";
@@ -7,9 +7,10 @@ import {
   ProfileInput as Input,
   ProfileEditItem as EditItem,
 } from "../../components";
+import { Constants } from "../../constants";
+import { TUserInfo } from "../../types";
 import { userDetailsQuery } from "../../api";
 import styles from "./styles.module.scss";
-import { Constants } from "../../constants";
 
 function ProfileEdit() {
   const queryClient = useQueryClient();
@@ -112,14 +113,15 @@ function ProfileEdit() {
   );
 }
 
-export default ProfileEdit;
+export {ProfileEdit as default, action};
 
-type TUserInfo =
-  | {
-      username: string;
-      email: string;
-      phone: string;
-      biography: string;
-      signInMethod: string;
-    }
-  | undefined;
+function action(queryClient: QueryClient){
+ return async function (){
+   try {
+     const {queryKey} = userDetailsQuery();
+      queryClient.invalidateQueries(queryKey) 
+   } catch (e) {
+     /* handle error */
+   }
+ } 
+}

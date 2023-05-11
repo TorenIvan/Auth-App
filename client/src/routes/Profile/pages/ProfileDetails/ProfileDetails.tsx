@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { userDetailsQuery } from "../../api";
 import { ProfileDetail } from "../../components";
 import { Constants } from "../../constants";
+import {TUserInfo} from "../../types";
 import styles from "./styles.module.scss";
 
 //{ username, email, phone, biography }
@@ -67,13 +68,3 @@ function ProfileDetails() {
 }
 
 export default ProfileDetails;
-
-type TUserInfo =
-  | {
-      username: string;
-      email: string;
-      phone: string;
-      biography: string;
-      signInMethod: string;
-    }
-  | undefined;
