@@ -3,7 +3,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Textarea } from "../../../../components";
-import { ProfileInput as Input } from "../../components";
+import {
+  ProfileInput as Input,
+  ProfileEditItem as EditItem,
+} from "../../components";
 import { userDetailsQuery } from "../../api";
 import styles from "./styles.module.scss";
 
@@ -23,7 +26,7 @@ function ProfileEdit() {
           <h3>Change Info</h3>
           <span>Changes will be reflected to every service</span>
         </article>
-        <section className={styles["edit-item-container"]}>
+        <EditItem>
           <section className={styles["edit-photo-item"]}>
             <section id={styles["image-container"]}>
               <FontAwesomeIcon
@@ -35,8 +38,8 @@ function ProfileEdit() {
             </section>
             <span id={styles["default-photo-text"]}>ADD PHOTO</span>
           </section>
-        </section>
-        <section className={styles["edit-item-container"]}>
+        </EditItem>
+        <EditItem>
           <Input
             label="Name"
             attributes={{
@@ -44,8 +47,8 @@ function ProfileEdit() {
               defaultValue: userInfo?.username,
             }}
           />
-        </section>
-        <section className={styles["edit-item-container"]}>
+        </EditItem>
+        <EditItem>
           <Textarea
             labelSlot={<label>Bio</label>}
             attributes={{
@@ -53,8 +56,8 @@ function ProfileEdit() {
               defaultValue: userInfo?.biography,
             }}
           />
-        </section>
-        <section className={styles["edit-item-container"]}>
+        </EditItem>
+        <EditItem>
           <Input
             label="Phone"
             attributes={{
@@ -62,8 +65,8 @@ function ProfileEdit() {
               defaultValue: userInfo?.phone,
             }}
           />
-        </section>
-        <section className={styles["edit-item-container"]}>
+        </EditItem>
+        <EditItem>
           <Input
             label="Email"
             attributes={{
@@ -71,8 +74,8 @@ function ProfileEdit() {
               defaultValue: userInfo?.email,
             }}
           />
-        </section>
-        <section className={styles["edit-item-container"]}>
+        </EditItem>
+        <EditItem>
           <Input
             label="Current Password"
             attributes={{
@@ -81,8 +84,8 @@ function ProfileEdit() {
             }}
             isPassword
           />
-        </section>
-        <section className={styles["edit-item-container"]}>
+        </EditItem>
+        <EditItem>
           <Input
             label="New Password"
             attributes={{
@@ -91,14 +94,14 @@ function ProfileEdit() {
             }}
             isPassword
           />
-        </section>
-        <section className={styles["edit-item-container"]}>
+        </EditItem>
+        <EditItem>
           <section className={styles["edit-item"]}>
             <div id={styles["save-button"]}>
               <span id={styles["save-button-text"]}>Save</span>
             </div>
           </section>
-        </section>
+        </EditItem>
       </Form>
     </div>
   );

@@ -97,18 +97,6 @@ article {
   }
 }
 
-.edit-item-container {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-
-  @media only screen and (max-width: 768px) {
-    justify-content: center;
-  }
-}
-
 .edit-item {
   display: flex;
   flex-direction: column;
