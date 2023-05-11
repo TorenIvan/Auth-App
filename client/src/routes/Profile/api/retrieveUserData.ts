@@ -1,4 +1,4 @@
-import { AxiosError, isAxiosError } from "axios";
+import { AxiosError, AxiosResponse, isAxiosError } from "axios";
 import { axiosInstance } from "../../../config";
 import { Errors } from "../errors";
 
@@ -11,8 +11,10 @@ export const userDetailsQuery = () => ({
 
 async function retrieveUserData(): Promise<IResponse> {
   try {
-    const result: IResponse = await axiosInstance.get(userDetailsUri);
-    return result;
+    const result: AxiosResponse<IResponse> = await axiosInstance.get(
+      userDetailsUri
+    );
+    return result.data;
   } catch (error: unknown | AxiosError) {
     if (isAxiosError(error)) {
       const statusCode = (error as AxiosError)?.response?.status ?? 0;
@@ -30,7 +32,7 @@ async function retrieveUserData(): Promise<IResponse> {
 interface IResponse {
   username: string;
   email: string;
-  phone: string | undefined;
-  biography: string | undefined;
+  phone: string;
+  biography: string;
   signInMethod: string;
 }

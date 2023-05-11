@@ -35,6 +35,11 @@ function AuthForm({ titleSlot, submitButtonText, navLinkSlot }: IProps) {
     }
   }
 
+  function handlePasswordFocus(event: React.FocusEvent<HTMLInputElement>) {
+    event.preventDefault();
+    event.currentTarget.removeAttribute("readOnly");
+  }
+
   return (
     <div id={styles["main-container"]}>
       <div className={styles["main-wrapper"]}>
@@ -43,6 +48,7 @@ function AuthForm({ titleSlot, submitButtonText, navLinkSlot }: IProps) {
           <h4>{Constants.FormHeader}</h4>
         </header>
         <Form
+          autoComplete="off"
           method="post"
           action=""
           className={mainStyles["auth-container"]}
@@ -62,12 +68,14 @@ function AuthForm({ titleSlot, submitButtonText, navLinkSlot }: IProps) {
           <div className={mainStyles["auth-item"]}>
             <input
               className={inputStyles.input}
+              onFocus={handlePasswordFocus}
               ref={passwordRef}
               id="password"
               type={hidePassword === true ? "password" : "text"}
               name="password"
               placeholder="&#xf06e; Password"
-              autoComplete="off"
+              autoComplete="new-password"
+              readOnly
               required
             />
             <FontAwesomeIcon

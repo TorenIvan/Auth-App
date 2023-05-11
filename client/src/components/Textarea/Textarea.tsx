@@ -20,7 +20,7 @@ interface IProps {
 interface IAttributes {
   placeholder: string;
   label?: string;
-  value?: string;
+  defaultValue?: string;
   id?: string;
   type?: string;
   name?: string;

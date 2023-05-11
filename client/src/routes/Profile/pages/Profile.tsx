@@ -17,16 +17,12 @@ export { Profile as default, loader };
 function loader(queryClient: QueryClient) {
   return async function () {
     try {
-      console.log("Mpika re gmt");
       const query = userDetailsQuery();
-      console.log("se eida");
       const results = await queryClient.ensureQueryData(query);
-      console.log("results: ", results);
       return results;
     } catch (error: unknown) {
-      console.log("Mpika re gmt se error");
       toast.error(error as string);
-      return redirect("../login");
+      return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
     }
   };
 }

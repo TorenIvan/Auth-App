@@ -13,7 +13,6 @@ export const globalQueryClient = new QueryClient({
       refetchOnMount: false,
       refetchOnReconnect: false,
       retry: false,
-      staleTime: Infinity,
     },
   },
 });

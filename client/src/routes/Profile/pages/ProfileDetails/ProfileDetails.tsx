@@ -1,9 +1,16 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { NavLink } from "react-router-dom";
+import { userDetailsQuery } from "../../api";
 import { ProfileDetail } from "../../components";
 import { Constants } from "../../constants";
 import styles from "./styles.module.scss";
 
+//{ username, email, phone, biography }
 function ProfileDetails() {
+  const queryClient = useQueryClient();
+  const { queryKey } = userDetailsQuery();
+  const userInfo: TUserInfo = queryClient.getQueryData(queryKey);
+
   return (
     <div className={styles["page-container"]}>
       <article id={styles.header}>
@@ -32,24 +39,23 @@ function ProfileDetails() {
         />
         <ProfileDetail
           label={Constants.Name.toUpperCase()}
-          valueSlot={<span>Vaggelisshmos</span>}
+          valueSlot={<span>{userInfo!.username}</span>}
         />
         <ProfileDetail
           label={Constants.Bio.toUpperCase()}
           valueSlot={
-            <span>
-              Some BIO kai kati akoma pou i8ela dhudgfvods; hcuyh gt omos? ti
-              sou ekdjoihj;o
-            </span>
+            <span>{userInfo?.biography || <em>Not added yet...</em>}</span>
           }
         />
         <ProfileDetail
           label={Constants.Phone.toUpperCase()}
-          valueSlot={<span>+306912855623</span>}
+          valueSlot={
+            <span>{userInfo?.phone || <em>Not added yet...</em>}</span>
+          }
         />
         <ProfileDetail
           label={Constants.Email.toUpperCase()}
-          valueSlot={<span>Vaggelisshmos@gmail.com</span>}
+          valueSlot={<span>{userInfo!.email}</span>}
         />
         <ProfileDetail
           label={Constants.Password.toUpperCase()}
@@ -61,3 +67,13 @@ function ProfileDetails() {
 }
 
 export default ProfileDetails;
+
+type TUserInfo =
+  | {
+      username: string;
+      email: string;
+      phone: string;
+      biography: string;
+      signInMethod: string;
+    }
+  | undefined;
