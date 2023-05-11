@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { Form, NavLink } from "react-router-dom";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./styles.module.scss";
@@ -12,7 +12,7 @@ function ProfileEdit() {
         <span className={styles["arrow-left"]} />
         <span>Back</span>
       </NavLink>
-      <fieldset>
+      <Form className={styles.form}>
         <article>
           <h3>Change Info</h3>
           <span>Changes will be reflected to every service</span>
@@ -81,7 +81,7 @@ function ProfileEdit() {
             </div>
           </section>
         </section>
-      </fieldset>
+      </Form>
     </div>
   );
 }

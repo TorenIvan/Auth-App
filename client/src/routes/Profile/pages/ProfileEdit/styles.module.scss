@@ -53,8 +53,10 @@ $save-button-text: var(--white);
   transform: rotate(135deg);
 }
 
-fieldset {
+.form {
   margin: 0;
+  padding-left: 4%;
+  padding-right: 4%;
   box-sizing: border-box;
   border: 1px solid $border-fieldset;
   border-radius: 12px;
