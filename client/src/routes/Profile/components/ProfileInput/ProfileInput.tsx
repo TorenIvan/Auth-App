@@ -1,8 +1,8 @@
-import styles from "./styles.module.scss";
-import { inputStyles } from "../../../../styles";
-import { useHidePassword } from "../../../Auth/hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { useHidePassword } from "../../../../hooks";
+import { inputStyles } from "../../../../styles";
+import styles from "./styles.module.scss";
 
 export function ProfileInput(props: IProps): JSX.Element {
   const [hidePassword, togglePasswordVisibility] = useHidePassword();
