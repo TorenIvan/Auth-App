@@ -11,4 +11,7 @@ export const Constants = {
   Login: "Login",
   SignIn: "Sign In",
   DontHaveAnAccount: "Don't have an account yet?",
+  ForgotPassword: "Forgot Password",
+  EmailPlaceholder: "Enter your email address...",
+  Continue: "Continue",
 } as const;

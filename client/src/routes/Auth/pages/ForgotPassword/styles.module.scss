@@ -1,0 +1,31 @@
+.form-container {
+  border: 1px solid var(--border-primary);
+  box-sizing: border-box;
+  position: relative;
+  border-radius: 24px;
+  background: var(--background-screen);
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 1rem;
+  padding: 2rem;
+  font-family: NotoSans;
+
+  @media screen and (max-width: 500px) {
+    border-left: none;
+    border-right: none;
+  }
+
+  section {
+    font-size: large;
+  }
+
+  input {
+    min-width: 25rem;
+  }
+}
+
+#submit-box {
+  margin-top: 2rem;
+}

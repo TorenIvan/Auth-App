@@ -1,5 +1,6 @@
 import Login, { loginAction, loginLoader } from "./Login";
 import Register, { registerAction, registerLoader } from "./Register";
+import ForgotPassword from "./ForgotPassword";
 
 export {
   Login,
@@ -8,4 +9,5 @@ export {
   Register,
   registerAction,
   registerLoader,
+  ForgotPassword,
 };
