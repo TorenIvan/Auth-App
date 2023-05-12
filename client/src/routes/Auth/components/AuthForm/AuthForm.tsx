@@ -53,7 +53,8 @@ function AuthForm({ titleSlot, submitButtonText, navLinkSlot }: IProps) {
                 id: "email",
                 type: "text",
                 name: "email",
-                placeholder: "&#xf0e0; Email",
+                placeholder:
+                  String.fromCharCode(parseInt("f0e0", 16)) + " Email",
                 required: true,
               }}
             />
@@ -64,8 +65,9 @@ function AuthForm({ titleSlot, submitButtonText, navLinkSlot }: IProps) {
               attributes={{
                 id: "password",
                 name: "password",
-                placeholder: "&#xf06e; Password",
                 autoComplete: "new-password",
+                placeholder:
+                  String.fromCharCode(parseInt("f06e", 16)) + " Password",
                 readOnly: true,
                 required: true,
               }}
