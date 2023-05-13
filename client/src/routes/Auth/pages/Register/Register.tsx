@@ -1,6 +1,5 @@
 import { PureComponent } from "react";
 import { ActionFunctionArgs, redirect } from "react-router-dom";
-import { QueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import { AuthForm, RegisterTitle, RegisterNavLink } from "../../components";
 import { Constants } from "../../constants";

@@ -1,23 +1,27 @@
-import React from "react";
+import React, { ForwardedRef, forwardRef } from "react";
 import "font-awesome/css/font-awesome.min.css";
 import { inputStyles } from "../../styles";
 
-function Input({ attributes, label, ref }: IProps): JSX.Element {
-  const labelSlot: JSX.Element | null =
-    label !== undefined ? <label>{label}</label> : null;
+const Input = forwardRef<HTMLInputElement, IProps>(
+  (props, ref?: TRef): JSX.Element => {
+    const { attributes, label } = props;
+    const labelSlot: JSX.Element | null =
+      label !== undefined ? <label>{label}</label> : null;
 
-  return (
-    <>
-      {labelSlot}
-      <input className={inputStyles.input} ref={ref} {...attributes} />
-    </>
-  );
-}
+    return (
+      <>
+        {labelSlot}
+        <input className={inputStyles.input} ref={ref} {...attributes} />
+      </>
+    );
+  }
+);
 
 export default Input;
 
 interface IProps {
   attributes: React.InputHTMLAttributes<HTMLInputElement>;
   label?: string;
-  ref?: React.RefObject<HTMLInputElement>;
 }
+
+type TRef = ForwardedRef<HTMLInputElement>;
