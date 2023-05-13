@@ -3,10 +3,7 @@ import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Textarea } from "../../../../components";
-import {
-  ProfileInput as Input,
-  ProfileEditItem as EditItem,
-} from "../../components";
+import { ProfileInput, ProfileEditItem as EditItem } from "../../components";
 import { Constants } from "../../constants";
 import { TUserInfo } from "../../types";
 import { userDetailsQuery } from "../../api";
@@ -46,7 +43,7 @@ function ProfileEdit() {
           </section>
         </EditItem>
         <EditItem>
-          <Input
+          <ProfileInput
             label={Constants.Name}
             attributes={{
               placeholder: Constants.NamePlaceholder,
@@ -64,7 +61,7 @@ function ProfileEdit() {
           />
         </EditItem>
         <EditItem>
-          <Input
+          <ProfileInput
             label={Constants.Phone}
             attributes={{
               placeholder: Constants.PhonePlaceholder,
@@ -73,7 +70,7 @@ function ProfileEdit() {
           />
         </EditItem>
         <EditItem>
-          <Input
+          <ProfileInput
             label={Constants.Email}
             attributes={{
               placeholder: Constants.EmailPlaceholder,
@@ -82,7 +79,7 @@ function ProfileEdit() {
           />
         </EditItem>
         <EditItem>
-          <Input
+          <ProfileInput
             label={Constants.CurrentPassword}
             attributes={{
               placeholder: Constants.CurrentPasswordPlaceholder,
@@ -92,7 +89,7 @@ function ProfileEdit() {
           />
         </EditItem>
         <EditItem>
-          <Input
+          <ProfileInput
             label={Constants.NewPassword}
             attributes={{
               placeholder: Constants.NewPasswordPlaceholder,
@@ -113,15 +110,15 @@ function ProfileEdit() {
   );
 }
 
-export {ProfileEdit as default, action};
+export { ProfileEdit as default, action };
 
-function action(queryClient: QueryClient){
- return async function (){
-   try {
-     const {queryKey} = userDetailsQuery();
-      queryClient.invalidateQueries(queryKey) 
-   } catch (e) {
-     /* handle error */
-   }
- } 
+function action(queryClient: QueryClient) {
+  return async function () {
+    try {
+      const { queryKey } = userDetailsQuery();
+      queryClient.invalidateQueries(queryKey);
+    } catch (e) {
+      /* handle error */
+    }
+  };
 }
