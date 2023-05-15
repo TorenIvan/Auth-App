@@ -115,6 +115,42 @@ class UserService {
     }
   }
 
+  async ValidateUserPassword(
+    userId: string,
+    password: string
+  ): Promise<ServiceResponse> {
+    try {
+      const result = await UserService.users.findOne(
+        {
+          _id: new ObjectId(userId),
+        },
+        {
+          projection: {
+            password: 1,
+          },
+        }
+      );
+      if (result === null) {
+        throw {
+          customError: Errors.UserNotFoundWithTheseCreds,
+        };
+      }
+      const isCorrectPassword: boolean = await bcrypt.compare(
+        password,
+        result?.password || ""
+      );
+      if (isCorrectPassword === false) {
+        throw {
+          customError: Errors.UserNotFoundWithTheseCreds,
+        };
+      }
+
+      return { success: true };
+    } catch (error) {
+      return UserService.handleError(error);
+    }
+  }
+
   async CheckUserEmailConfirmation(email: string) {
     try {
       const isVerified: boolean = !!(await UserService.users.findOne({
@@ -253,6 +289,65 @@ class UserService {
         signInMethod: result.signInMethod as SignInMethod,
       };
       return { success: true, data: data };
+    } catch (error) {
+      return UserService.handleError(error);
+    }
+  }
+
+  async UpdateUserDetails(
+    userId: string,
+    username: string,
+    email: string,
+    phone: string,
+    biography: string,
+    newPassword: string
+  ): Promise<ServiceResponse> {
+    try {
+      let result;
+      const userAttemptToChangePasswordExists: boolean = newPassword !== "";
+      if (userAttemptToChangePasswordExists === true) {
+        const salt = await bcrypt.genSalt(
+          Number(EnvironmentVariables.Salt_Size)
+        );
+        const hash = await bcrypt.hash(newPassword, salt);
+
+        result = await UserService.users.updateOne(
+          {
+            _id: new ObjectId(userId),
+          },
+          {
+            $set: {
+              username: username,
+              email: email,
+              phone: phone,
+              biography: biography,
+              password: hash,
+            },
+          }
+        );
+      } else {
+        result = await UserService.users.updateOne(
+          {
+            _id: new ObjectId(userId),
+          },
+          {
+            $set: {
+              username: username,
+              email: email,
+              phone: phone,
+              biography: biography,
+            },
+          }
+        );
+      }
+
+      if (result === null) {
+        throw {
+          customError: Errors.GenericError,
+        };
+      }
+
+      return { success: true };
     } catch (error) {
       return UserService.handleError(error);
     }

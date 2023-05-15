@@ -14,4 +14,9 @@ export const Errors = {
     "A new validation email link will be sent to your email soon. Please, confirm it in order to proceed",
   PasswordsNotSame: "Passwords do not match. Please, try again",
   GenericError: "Something went wrong. Please, try again!",
+  IncorrectPassword:
+    "The current password you provided is not correct. Please, try again",
+  SignInMethodUpdatePassword:
+    "It is not possible to add or update password with the current sign in method",
+  FillInPassword: "Please, fill the current password before updating it",
 } as const;

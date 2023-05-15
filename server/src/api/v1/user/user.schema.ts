@@ -74,10 +74,49 @@ const userDetailsResponseSchema = z.object({
   signInMethod: z.string(),
 });
 
+const userEditRequestBodySchema = z.object({
+  username: z.string().nonempty(),
+  email: z.string().email(),
+  phone: z
+    .string()
+    .length(0)
+    .or(
+      z
+        .string()
+        .regex(
+          /(\+\d{1,3}\s?)?((\(\d{3}\)\s?)|(\d{3})(\s|-?))(\d{3}(\s|-?))(\d{4})(\s?(([E|e]xt[:|.|]?)|x|X)(\s?\d+))?/g
+        )
+    ),
+  currentPassword: z
+    .string()
+    .length(0)
+    .or(
+      z
+        .string({
+          required_error: Strings.PasswordRequired,
+          invalid_type_error: Strings.PasswordInvalid,
+        })
+        .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/)
+    ),
+  newPassword: z
+    .string()
+    .length(0)
+    .or(
+      z
+        .string({
+          required_error: Strings.PasswordRequired,
+          invalid_type_error: Strings.PasswordInvalid,
+        })
+        .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/)
+    ),
+  biography: z.string(),
+});
+
 export type credsUserInput = z.infer<typeof authCredsBodySchema>;
 export type forgotPasswordInput = z.infer<typeof forgotPasswordRequestSchema>;
 export type resetPasswordUserInput = z.infer<typeof resetPasswordRequestSchema>;
 export type queryConfirmEmail = z.infer<typeof verifyEmailQueryStringSchema>;
+export type editUserDetailsBody = z.infer<typeof userEditRequestBodySchema>;
 
 export const { schemas: userSchemas, $ref } = buildJsonSchemas({
   authCredsBodySchema,
@@ -88,4 +127,5 @@ export const { schemas: userSchemas, $ref } = buildJsonSchemas({
   forgotPasswordRequestSchema,
   resetPasswordRequestSchema,
   userDetailsResponseSchema,
+  userEditRequestBodySchema,
 });

@@ -61,6 +61,9 @@ const userRoutes: FastifyPluginAsync = async (
   fastify.register(getUserDetails, {
     prefix: "/v1/profile/details",
   });
+  fastify.register(editUserDetails, {
+    prefix: "/v1/profile/edit",
+  });
 };
 
 export default userRoutes;
@@ -296,5 +299,24 @@ async function getUserDetails(fastify: FastifyInstance): Promise<void> {
       },
     },
     new UserController(fastify).retrieveUserDetails
+  );
+}
+
+/**
+ * Encapsulates all the user profile editing operation route
+ * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
+ */
+async function editUserDetails(fastify: FastifyInstance): Promise<void> {
+  fastify.addHook("preHandler", async (request, reply) => {
+    await fastify.verifyAccessTokenHeader(request, reply);
+  });
+  fastify.put(
+    "/",
+    {
+      schema: {
+        body: $ref("userEditRequestBodySchema"),
+      },
+    },
+    new UserController(fastify).updateUserDetails
   );
 }

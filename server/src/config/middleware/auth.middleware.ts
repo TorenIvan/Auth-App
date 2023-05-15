@@ -44,6 +44,8 @@ const authMiddleware: FastifyPluginAsync = fp(
             throw "error";
           }
           request.userId = data.userId;
+          request.signInMethod = (data?.signInMethod ??
+            "credentials") as SignInMethod;
         } catch (error) {
           const errorMessage = fastify.httpErrors.unauthorized();
           reply.send(errorMessage);

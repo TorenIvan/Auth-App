@@ -14,6 +14,7 @@ import {
 import { sendEmail } from "../../../config/utils/helpers/general/sendEmail";
 import {
   credsUserInput,
+  editUserDetailsBody,
   forgotPasswordInput,
   queryConfirmEmail,
   resetPasswordUserInput,
@@ -347,6 +348,70 @@ class UserController {
       biography: biography,
       signInMethod: signInMethod,
     });
+  }
+
+  async updateUserDetails(
+    request: FastifyRequest<{
+      Body: editUserDetailsBody;
+    }>,
+    reply: FastifyReply
+  ) {
+    const { username, email, biography, phone, currentPassword, newPassword } =
+      request.body;
+
+    const userForgotCurrentPassword =
+      currentPassword === "" && newPassword !== "";
+
+    const atLeastOnePasswordFieldIsNotEmpty: boolean =
+      currentPassword !== "" || newPassword !== "";
+
+    if (userForgotCurrentPassword === true) {
+      if (request.signInMethod === "credentials") {
+        return UserController.handleError(reply, 400, Errors.FillInPassword);
+      }
+    }
+    if (atLeastOnePasswordFieldIsNotEmpty === true) {
+      if (request.signInMethod !== "credentials") {
+        return UserController.handleError(
+          reply,
+          400,
+          Errors.SignInMethodUpdatePassword
+        );
+      }
+    }
+
+    const userAttemptToChangePasswordExists: boolean = newPassword !== "";
+
+    if (userAttemptToChangePasswordExists === true) {
+      const verifyUserPassword =
+        await UserController.userService.ValidateUserPassword(
+          request.userId,
+          currentPassword
+        );
+
+      if (verifyUserPassword.success === false) {
+        return UserController.handleError(reply, 400, Errors.IncorrectPassword);
+      }
+    }
+    const updatedUserDetails: ServiceResponse =
+      await UserController.userService.UpdateUserDetails(
+        request.userId,
+        username,
+        email,
+        phone,
+        biography,
+        newPassword
+      );
+
+    if (updatedUserDetails.success === false) {
+      return UserController.handleError(
+        reply,
+        400,
+        updatedUserDetails?.customError
+      );
+    }
+
+    reply.code(200);
   }
 
   async logout(request: FastifyRequest, reply: FastifyReply) {
