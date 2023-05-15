@@ -1,19 +1,26 @@
+import { ForwardedRef, forwardRef } from "react";
 import { Input, PasswordInput } from "../../../../components";
 import { inputStyles } from "../../../../styles";
 import styles from "./styles.module.scss";
 
-export function ProfileInput(props: IProps): JSX.Element {
-  const { isPassword, ...restProps } = props;
+export const ProfileInput = forwardRef<HTMLInputElement, IProps>(
+  (props, ref?: TRef): JSX.Element => {
+    const { isPassword, ...restProps } = props;
 
-  const inputSlot =
-    isPassword === true ? (
-      <PasswordInput {...restProps} iconStyles={inputStyles["fa-eye-middle"]} />
-    ) : (
-      <Input {...restProps} />
-    );
+    const inputSlot =
+      isPassword === true ? (
+        <PasswordInput
+          {...restProps}
+          iconStyles={inputStyles["fa-eye-middle"]}
+          ref={ref}
+        />
+      ) : (
+        <Input {...restProps} ref={ref} />
+      );
 
-  return <section className={styles["input-container"]}>{inputSlot}</section>;
-}
+    return <section className={styles["input-container"]}>{inputSlot}</section>;
+  }
+);
 
 interface IProps {
   label: string;
@@ -26,3 +33,5 @@ interface IAttributes {
   autoComplete?: string;
   defaultValue?: string;
 }
+
+type TRef = ForwardedRef<HTMLInputElement>;

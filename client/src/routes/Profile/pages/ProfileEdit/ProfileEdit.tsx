@@ -8,8 +8,16 @@ import { Constants } from "../../constants";
 import { TUserInfo } from "../../types";
 import { userDetailsQuery } from "../../api";
 import styles from "./styles.module.scss";
+import { useRef } from "react";
 
 function ProfileEdit() {
+  const usernameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const phoneRef = useRef<HTMLInputElement>(null);
+  const biographyRef = useRef<HTMLTextAreaElement>(null);
+  const currentPasswordRef = useRef<HTMLInputElement>(null);
+  const newPasswordRef = useRef<HTMLInputElement>(null);
+
   const queryClient = useQueryClient();
   const { queryKey } = userDetailsQuery();
   const userInfo: TUserInfo = queryClient.getQueryData(queryKey);
@@ -44,6 +52,7 @@ function ProfileEdit() {
         </EditItem>
         <EditItem>
           <ProfileInput
+            ref={usernameRef}
             label={Constants.Name}
             attributes={{
               placeholder: Constants.NamePlaceholder,
@@ -53,6 +62,7 @@ function ProfileEdit() {
         </EditItem>
         <EditItem>
           <Textarea
+            ref={biographyRef}
             labelSlot={<label>{Constants.Bio}</label>}
             attributes={{
               placeholder: Constants.BioPlaceholder,
@@ -62,6 +72,7 @@ function ProfileEdit() {
         </EditItem>
         <EditItem>
           <ProfileInput
+            ref={phoneRef}
             label={Constants.Phone}
             attributes={{
               placeholder: Constants.PhonePlaceholder,
@@ -71,6 +82,7 @@ function ProfileEdit() {
         </EditItem>
         <EditItem>
           <ProfileInput
+            ref={emailRef}
             label={Constants.Email}
             attributes={{
               placeholder: Constants.EmailPlaceholder,
@@ -80,6 +92,7 @@ function ProfileEdit() {
         </EditItem>
         <EditItem>
           <ProfileInput
+            ref={currentPasswordRef}
             label={Constants.CurrentPassword}
             attributes={{
               placeholder: Constants.CurrentPasswordPlaceholder,
@@ -90,6 +103,7 @@ function ProfileEdit() {
         </EditItem>
         <EditItem>
           <ProfileInput
+            ref={newPasswordRef}
             label={Constants.NewPassword}
             attributes={{
               placeholder: Constants.NewPasswordPlaceholder,

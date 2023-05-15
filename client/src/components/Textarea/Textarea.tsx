@@ -1,16 +1,23 @@
+import { ForwardedRef, forwardRef } from "react";
 import styles from "./styles.module.scss";
 
-export function Textarea(props: IProps): JSX.Element {
-  const { labelSlot, attributes } = props;
-  const { placeholder, value } = attributes;
+export const Textarea = forwardRef<HTMLTextAreaElement, IProps>(
+  (props, ref: TRef): JSX.Element => {
+    const { labelSlot, attributes } = props;
+    const { placeholder, defaultValue } = attributes;
 
-  return (
-    <section className={styles["textarea-container"]}>
-      {labelSlot}
-      <textarea placeholder={placeholder} value={value} />
-    </section>
-  );
-}
+    return (
+      <section className={styles["textarea-container"]}>
+        {labelSlot}
+        <textarea
+          placeholder={placeholder}
+          defaultValue={defaultValue}
+          ref={ref}
+        />
+      </section>
+    );
+  }
+);
 
 interface IProps {
   labelSlot?: JSX.Element;
@@ -25,3 +32,5 @@ interface IAttributes {
   type?: string;
   name?: string;
 }
+
+type TRef = ForwardedRef<HTMLTextAreaElement>;
