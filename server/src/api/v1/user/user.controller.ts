@@ -351,68 +351,136 @@ class UserController {
   }
 
   async updateUserDetails(
-    request: FastifyRequest<{
-      Body: editUserDetailsBody;
-    }>,
+    request: FastifyRequest<{ Body: editUserDetailsBody }>,
     reply: FastifyReply
   ) {
-    const { username, email, biography, phone, currentPassword, newPassword } =
-      request.body;
+    try {
+      const {
+        username,
+        email,
+        biography,
+        phone,
+        currentPassword,
+        newPassword,
+      } = request.body;
 
-    const userForgotCurrentPassword =
-      currentPassword === "" && newPassword !== "";
+      const isChangingPassword = newPassword.trim() !== "";
 
-    const atLeastOnePasswordFieldIsNotEmpty: boolean =
-      currentPassword !== "" || newPassword !== "";
+      const signInMethod = request.signInMethod;
+      const canChangePassword = signInMethod === "credentials";
 
-    if (userForgotCurrentPassword === true) {
-      if (request.signInMethod === "credentials") {
-        return UserController.handleError(reply, 400, Errors.FillInPassword);
-      }
-    }
-    if (atLeastOnePasswordFieldIsNotEmpty === true) {
-      if (request.signInMethod !== "credentials") {
+      if (isChangingPassword === true && canChangePassword === false) {
         return UserController.handleError(
           reply,
           400,
           Errors.SignInMethodUpdatePassword
         );
       }
-    }
 
-    const userAttemptToChangePasswordExists: boolean = newPassword !== "";
+      if (isChangingPassword === true) {
+        const verifyUserPassword =
+          await UserController.userService.ValidateUserPassword(
+            request.userId,
+            currentPassword
+          );
 
-    if (userAttemptToChangePasswordExists === true) {
-      const verifyUserPassword =
-        await UserController.userService.ValidateUserPassword(
+        if (verifyUserPassword.success === false) {
+          return UserController.handleError(
+            reply,
+            400,
+            Errors.IncorrectPassword
+          );
+        }
+      }
+
+      const updatedUserDetails =
+        await UserController.userService.UpdateUserDetails(
           request.userId,
-          currentPassword
+          username,
+          email,
+          phone,
+          biography,
+          newPassword
         );
 
-      if (verifyUserPassword.success === false) {
-        return UserController.handleError(reply, 400, Errors.IncorrectPassword);
+      if (updatedUserDetails.success === false) {
+        return UserController.handleError(
+          reply,
+          400,
+          updatedUserDetails?.customError
+        );
       }
-    }
-    const updatedUserDetails: ServiceResponse =
-      await UserController.userService.UpdateUserDetails(
-        request.userId,
-        username,
-        email,
-        phone,
-        biography,
-        newPassword
-      );
 
-    if (updatedUserDetails.success === false) {
-      return UserController.handleError(
-        reply,
-        400,
-        updatedUserDetails?.customError
-      );
+      reply.code(200);
+    } catch (error) {
+      UserController.handleError(reply, 500, Errors.GenericError);
     }
-
-    reply.code(200);
   }
+
+  //async updateUserDetails(
+  //  request: FastifyRequest<{
+  //    Body: editUserDetailsBody;
+  //  }>,
+  //  reply: FastifyReply
+  //) {
+  //  const { username, email, biography, phone, currentPassword, newPassword } =
+  //    request.body;
+
+  //  const userForgotCurrentPassword =
+  //    currentPassword.trim() === "" && newPassword.trim() !== "";
+
+  //  const atLeastOnePasswordFieldIsNotEmpty: boolean =
+  //    currentPassword.trim() !== "" || newPassword.trim() !== "";
+
+  //  if (userForgotCurrentPassword === true) {
+  //    if (request.signInMethod === "credentials") {
+  //      return UserController.handleError(reply, 400, Errors.FillInPassword);
+  //    }
+  //  }
+  //  if (atLeastOnePasswordFieldIsNotEmpty === true) {
+  //    if (request.signInMethod !== "credentials") {
+  //      return UserController.handleError(
+  //        reply,
+  //        400,
+  //        Errors.SignInMethodUpdatePassword
+  //      );
+  //    }
+  //  }
+
+  //  const userAttemptToChangePasswordExists: boolean =
+  //    newPassword.trim() !== "";
+
+  //  if (userAttemptToChangePasswordExists === true) {
+  //    const verifyUserPassword =
+  //      await UserController.userService.ValidateUserPassword(
+  //        request.userId,
+  //        currentPassword
+  //      );
+
+  //    if (verifyUserPassword.success === false) {
+  //      return UserController.handleError(reply, 400, Errors.IncorrectPassword);
+  //    }
+  //  }
+  //  const updatedUserDetails: ServiceResponse =
+  //    await UserController.userService.UpdateUserDetails(
+  //      request.userId,
+  //      username,
+  //      email,
+  //      phone,
+  //      biography,
+  //      newPassword
+  //    );
+
+  //  if (updatedUserDetails.success === false) {
+  //    return UserController.handleError(
+  //      reply,
+  //      400,
+  //      updatedUserDetails?.customError
+  //    );
+  //  }
+
+  //  reply.code(200);
+  //}
 
   async logout(request: FastifyRequest, reply: FastifyReply) {
     reply.code(200).clearCookie(EnvironmentVariables.Cookie_Name, {

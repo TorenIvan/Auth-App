@@ -1,4 +1,4 @@
-import { Collection, ObjectId } from "mongodb";
+import { Collection, ObjectId, UpdateResult } from "mongodb";
 import { Errors } from "../../../config/utils/constants/Errors";
 import { objectAttributeExistsAndHasValue } from "../../../config/utils/helpers";
 import User from "./user.model";
@@ -303,45 +303,31 @@ class UserService {
     newPassword: string
   ): Promise<ServiceResponse> {
     try {
-      let result;
-      const userAttemptToChangePasswordExists: boolean = newPassword !== "";
-      if (userAttemptToChangePasswordExists === true) {
+      const updateFields: any = {
+        username,
+        email,
+        phone,
+        biography,
+      };
+
+      if (newPassword.trim() !== "") {
         const salt = await bcrypt.genSalt(
           Number(EnvironmentVariables.Salt_Size)
         );
-        const hash = await bcrypt.hash(newPassword, salt);
-
-        result = await UserService.users.updateOne(
-          {
-            _id: new ObjectId(userId),
-          },
-          {
-            $set: {
-              username: username,
-              email: email,
-              phone: phone,
-              biography: biography,
-              password: hash,
-            },
-          }
-        );
-      } else {
-        result = await UserService.users.updateOne(
-          {
-            _id: new ObjectId(userId),
-          },
-          {
-            $set: {
-              username: username,
-              email: email,
-              phone: phone,
-              biography: biography,
-            },
-          }
-        );
+        const hash = await bcrypt.hash(newPassword.trim(), salt);
+        updateFields.password = hash;
       }
 
-      if (result === null) {
+      const result: UpdateResult = await UserService.users.updateOne(
+        {
+          _id: new ObjectId(userId),
+        },
+        {
+          $set: updateFields,
+        }
+      );
+
+      if (result.modifiedCount !== 1) {
         throw {
           customError: Errors.GenericError,
         };
