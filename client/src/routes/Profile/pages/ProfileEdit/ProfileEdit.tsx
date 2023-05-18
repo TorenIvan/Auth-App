@@ -1,3 +1,4 @@
+import { Fragment, useRef } from "react";
 import { Form, NavLink } from "react-router-dom";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
@@ -8,7 +9,6 @@ import { Constants } from "../../constants";
 import { TUserInfo } from "../../types";
 import { userDetailsQuery } from "../../api";
 import styles from "./styles.module.scss";
-import { useRef } from "react";
 
 function ProfileEdit() {
   const usernameRef = useRef<HTMLInputElement>(null);
@@ -87,31 +87,36 @@ function ProfileEdit() {
             attributes={{
               placeholder: Constants.EmailPlaceholder,
               defaultValue: userInfo?.email,
+              disabled: true,
             }}
           />
         </EditItem>
-        <EditItem>
-          <ProfileInput
-            ref={currentPasswordRef}
-            label={Constants.CurrentPassword}
-            attributes={{
-              placeholder: Constants.CurrentPasswordPlaceholder,
-              autoComplete: "new-password",
-            }}
-            isPassword
-          />
-        </EditItem>
-        <EditItem>
-          <ProfileInput
-            ref={newPasswordRef}
-            label={Constants.NewPassword}
-            attributes={{
-              placeholder: Constants.NewPasswordPlaceholder,
-              autoComplete: "new-password",
-            }}
-            isPassword
-          />
-        </EditItem>
+        {userInfo?.signInMethod === "credentials" && (
+          <Fragment>
+            <EditItem>
+              <ProfileInput
+                ref={currentPasswordRef}
+                label={Constants.CurrentPassword}
+                attributes={{
+                  placeholder: Constants.CurrentPasswordPlaceholder,
+                  autoComplete: "new-password",
+                }}
+                isPassword
+              />
+            </EditItem>
+            <EditItem>
+              <ProfileInput
+                ref={newPasswordRef}
+                label={Constants.NewPassword}
+                attributes={{
+                  placeholder: Constants.NewPasswordPlaceholder,
+                  autoComplete: "new-password",
+                }}
+                isPassword
+              />
+            </EditItem>
+          </Fragment>
+        )}
         <EditItem>
           <section className={styles["edit-item"]}>
             <div id={styles["save-button"]}>

@@ -4,6 +4,8 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+  margin-top: 1%;
+  margin-bottom: 1%;
 
   @media only screen and (max-width: 768px) {
     justify-content: center;

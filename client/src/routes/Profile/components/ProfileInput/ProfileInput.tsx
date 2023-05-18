@@ -32,6 +32,7 @@ interface IAttributes {
   placeholder: string;
   autoComplete?: string;
   defaultValue?: string;
+  disabled?: boolean;
 }
 
 type TRef = ForwardedRef<HTMLInputElement>;
