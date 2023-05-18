@@ -56,6 +56,12 @@ class UserController {
           error =
             UserController.fastifyInstance.httpErrors.unauthorized(customError);
           break;
+        case 500:
+          error =
+            UserController.fastifyInstance.httpErrors.internalServerError(
+              customError
+            );
+          break;
         default:
           error =
             UserController.fastifyInstance.httpErrors.badRequest(customError);
@@ -69,6 +75,10 @@ class UserController {
         case 401:
           error = UserController.fastifyInstance.httpErrors.unauthorized();
           break;
+        case 500:
+          error =
+            UserController.fastifyInstance.httpErrors.internalServerError();
+          break;
         default:
           error = UserController.fastifyInstance.httpErrors.badRequest();
           break;
@@ -79,16 +89,15 @@ class UserController {
   }
 
   /**
-   * This could be made as an Auth Middleware*/
+   * This could be made as an Auth Middleware
+   **/
   static verifyQueryToken(query: { token?: string }): TokenInterface | null {
-    let data: TokenInterface | null = null;
     try {
-      let token = query.token;
-      if (!!token === false) throw "error";
+      const token = query.token;
+      if (!token) throw new Error("Invalid token");
 
-      data = verifyJWT(token!, EnvironmentVariables.Email_Secret);
-      if (!!data?.userId === false) throw "error";
-      if (!!data?.type === false) throw "error";
+      const data = verifyJWT(token!, EnvironmentVariables.Email_Secret);
+      if (!data?.userId || !data?.type) throw new Error("Invalid token data");
 
       return data;
     } catch (error) {
@@ -100,185 +109,213 @@ class UserController {
     request: FastifyRequest<{ Body: credsUserInput }>,
     reply: FastifyReply
   ) {
-    const { email, password } = request.body;
+    try {
+      const { email, password } = request.body;
 
-    const serviceResponse: ServiceResponse =
-      await UserController.userService.InsertUserWithCredentials(
-        email,
-        password
-      );
+      const serviceResponse: ServiceResponse =
+        await UserController.userService.InsertUserWithCredentials(
+          email,
+          password.trim()
+        );
 
-    const insertedCorrectly: boolean = serviceResponse.success;
-    if (insertedCorrectly === false) {
-      return UserController.handleError(
-        reply,
-        400,
-        serviceResponse?.customError
-      );
-    }
+      const insertedCorrectly: boolean = serviceResponse.success;
+      if (insertedCorrectly === false) {
+        return UserController.handleError(
+          reply,
+          400,
+          serviceResponse?.customError
+        );
+      }
 
-    const email_token = generateJWT(
-      {
-        userId: serviceResponse.data!.userId.toString(),
-        type: Strings.ConfirmEmailType,
-      },
-      EnvironmentVariables.Email_Secret,
-      EnvironmentVariables.Email_Token_Expiration_Time
-    );
-
-    sendEmail(email, email_token, Strings.ActionConfirmEmail);
-
-    reply.code(201);
-  }
-
-  async confirmEmailHandler(
-    request: FastifyRequest<{ Querystring: queryConfirmEmail }>,
-    reply: FastifyReply
-  ) {
-    const tokenVerifiedData = UserController.verifyQueryToken(request.query);
-    if (tokenVerifiedData === null) {
-      return UserController.handleError(reply, 401, Errors.TokenExpired);
-    }
-
-    const { userId, type } = tokenVerifiedData;
-    if (type !== Strings.ConfirmEmailType) {
-      return UserController.handleError(reply, 401, Errors.IncorrectToken);
-    }
-
-    const serviceResponse: ServiceResponse =
-      await UserController.userService.UpdateIsVerifiedWhenUserExists(userId);
-
-    const doneVerified: boolean = serviceResponse.success;
-    if (doneVerified === false) {
-      return UserController.handleError(
-        reply,
-        400,
-        serviceResponse?.customError
-      );
-    }
-    reply.code(200);
-  }
-
-  async loginCredentialsHandler(
-    request: FastifyRequest<{ Body: credsUserInput }>,
-    reply: FastifyReply
-  ) {
-    const { email, password } = request.body;
-
-    const userCredsResponse: ServiceResponse =
-      await UserController.userService.ValidateUserWithCredentials(
-        email,
-        password
-      );
-
-    const credentialsAuthenticated: boolean = userCredsResponse.success;
-    if (credentialsAuthenticated === false) {
-      return UserController.handleError(
-        reply,
-        400,
-        userCredsResponse?.customError
-      );
-    }
-
-    const hasConfirmedEmail: ServiceResponse =
-      await UserController.userService.CheckUserEmailConfirmation(email);
-
-    if (hasConfirmedEmail.success === false) {
-      const new_email_token = generateJWT(
+      const email_token = generateJWT(
         {
-          userId: userCredsResponse.data!.userId.toString(),
+          userId: serviceResponse.data!.userId.toString(),
           type: Strings.ConfirmEmailType,
         },
         EnvironmentVariables.Email_Secret,
         EnvironmentVariables.Email_Token_Expiration_Time
       );
 
-      sendEmail(email, new_email_token, Strings.ActionConfirmEmail);
+      sendEmail(email, email_token, Strings.ActionConfirmEmail);
 
-      return UserController.handleError(
-        reply,
-        403,
-        Errors.ConfirmEmailInOrderToContinue
-      );
+      reply.code(201);
+    } catch (error) {
+      UserController.handleError(reply, 500, Errors.GenericError);
     }
+  }
 
-    const { access_token, refresh_token } = generateAuthJWTs(
-      userCredsResponse.data!.userId.toString()
-    );
+  async confirmEmailHandler(
+    request: FastifyRequest<{ Querystring: queryConfirmEmail }>,
+    reply: FastifyReply
+  ) {
+    try {
+      const tokenVerifiedData = UserController.verifyQueryToken(request.query);
+      if (tokenVerifiedData === null) {
+        return UserController.handleError(reply, 401, Errors.TokenExpired);
+      }
 
-    const cookieOptions = generateCookieOptions();
+      const { userId, type } = tokenVerifiedData;
+      if (type !== Strings.ConfirmEmailType) {
+        return UserController.handleError(reply, 401, Errors.IncorrectToken);
+      }
 
-    reply
-      .code(200)
-      .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
-      .send({ access_token: access_token });
+      const serviceResponse: ServiceResponse =
+        await UserController.userService.UpdateIsVerifiedWhenUserExists(userId);
+
+      const doneVerified: boolean = serviceResponse.success;
+      if (doneVerified === false) {
+        return UserController.handleError(
+          reply,
+          400,
+          serviceResponse?.customError
+        );
+      }
+      reply.code(200);
+    } catch (error) {
+      UserController.handleError(reply, 500, Errors.GenericError);
+    }
+  }
+
+  async loginCredentialsHandler(
+    request: FastifyRequest<{ Body: credsUserInput }>,
+    reply: FastifyReply
+  ) {
+    try {
+      const { email, password } = request.body;
+
+      const userCredsResponse: ServiceResponse =
+        await UserController.userService.ValidateUserWithCredentials(
+          email,
+          password.trim()
+        );
+
+      const credentialsAuthenticated: boolean = userCredsResponse.success;
+      if (credentialsAuthenticated === false) {
+        return UserController.handleError(
+          reply,
+          400,
+          userCredsResponse?.customError
+        );
+      }
+
+      const hasConfirmedEmail: ServiceResponse =
+        await UserController.userService.CheckUserEmailConfirmation(email);
+
+      if (hasConfirmedEmail.success === false) {
+        const new_email_token = generateJWT(
+          {
+            userId: userCredsResponse.data!.userId.toString(),
+            type: Strings.ConfirmEmailType,
+          },
+          EnvironmentVariables.Email_Secret,
+          EnvironmentVariables.Email_Token_Expiration_Time
+        );
+
+        sendEmail(email, new_email_token, Strings.ActionConfirmEmail);
+
+        return UserController.handleError(
+          reply,
+          403,
+          Errors.ConfirmEmailInOrderToContinue
+        );
+      }
+
+      const { access_token, refresh_token } = generateAuthJWTs(
+        userCredsResponse.data!.userId.toString()
+      );
+
+      const cookieOptions = generateCookieOptions();
+
+      reply
+        .code(200)
+        .setCookie(
+          EnvironmentVariables.Cookie_Name,
+          refresh_token,
+          cookieOptions
+        )
+        .send({ access_token: access_token });
+    } catch (error) {
+      UserController.handleError(reply, 500, Errors.GenericError);
+    }
   }
 
   async forgotPasswordHandler(
     request: FastifyRequest<{ Body: forgotPasswordInput }>,
     reply: FastifyReply
   ) {
-    const { email } = request.body;
+    try {
+      const { email } = request.body;
 
-    const serviceResponse: ServiceResponse =
-      await UserController.userService.CheckEmailExistence(email);
+      const serviceResponse: ServiceResponse =
+        await UserController.userService.CheckEmailExistence(email);
 
-    const emailExists = serviceResponse.success;
+      const emailExists: boolean = serviceResponse.success;
 
-    const hasConfirmedEmail: ServiceResponse =
-      await UserController.userService.CheckUserEmailConfirmation(email);
+      const hasConfirmedEmail: ServiceResponse =
+        await UserController.userService.CheckUserEmailConfirmation(email);
 
-    const emailConfirmed: boolean = hasConfirmedEmail.success;
+      const emailConfirmed: boolean = hasConfirmedEmail.success;
 
-    if (emailExists === true && emailConfirmed === true) {
-      const new_email_token = generateJWT(
-        {
-          userId: serviceResponse.data!.userId.toString(),
-          type: Strings.ForgotPasswordType,
-        },
-        EnvironmentVariables.Email_Secret,
-        EnvironmentVariables.Email_Token_Expiration_Time
+      if (emailExists === true && emailConfirmed === true) {
+        const new_email_token = generateJWT(
+          {
+            userId: serviceResponse.data!.userId.toString(),
+            type: Strings.ForgotPasswordType,
+          },
+          EnvironmentVariables.Email_Secret,
+          EnvironmentVariables.Email_Token_Expiration_Time
+        );
+
+        sendEmail(email, new_email_token, Strings.ActionResetPassword);
+
+        const reset_password_cookie_token = generateJWT(
+          {
+            userId: serviceResponse.data!.userId.toString(),
+            type: Strings.ForgotPasswordType,
+          },
+          EnvironmentVariables.Reset_Pass_Cookie_Secret,
+          EnvironmentVariables.Reset_Pass_Cookie_Expiration_Time
+        );
+
+        const cookieOptions = generateResetCookieOptions();
+
+        reply
+          .code(200)
+          .setCookie(
+            EnvironmentVariables.Reset_Pass_Cookie_Name,
+            reset_password_cookie_token,
+            cookieOptions
+          );
+      }
+
+      reply.code(200);
+    } catch (error) {
+      UserController.handleError(reply, 500, Errors.GenericError);
+    }
+  }
+
+  async renewTokens(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const { userId, signInMethod } = request;
+
+      const { access_token, refresh_token } = generateAuthJWTs(
+        userId,
+        signInMethod
       );
 
-      sendEmail(email, new_email_token, Strings.ActionResetPassword);
-
-      const reset_password_cookie_token = generateJWT(
-        {
-          userId: serviceResponse.data!.userId.toString(),
-          type: Strings.ForgotPasswordType,
-        },
-        EnvironmentVariables.Reset_Pass_Cookie_Secret,
-        EnvironmentVariables.Reset_Pass_Cookie_Expiration_Time
-      );
-
-      const cookieOptions = generateResetCookieOptions();
+      const cookieOptions = generateCookieOptions();
 
       reply
         .code(200)
         .setCookie(
-          EnvironmentVariables.Reset_Pass_Cookie_Name,
-          reset_password_cookie_token,
+          EnvironmentVariables.Cookie_Name,
+          refresh_token,
           cookieOptions
-        );
+        )
+        .send({ access_token: access_token });
+    } catch (error) {
+      UserController.handleError(reply, 500, Errors.GenericError);
     }
-
-    reply.code(200);
-  }
-
-  async renewTokens(request: FastifyRequest, reply: FastifyReply) {
-    const { userId, signInMethod } = request;
-
-    const { access_token, refresh_token } = generateAuthJWTs(
-      userId,
-      signInMethod
-    );
-
-    const cookieOptions = generateCookieOptions();
-
-    reply
-      .code(200)
-      .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
-      .send({ access_token: access_token });
   }
 
   async resetPasswordHandler(
@@ -288,66 +325,74 @@ class UserController {
     }>,
     reply: FastifyReply
   ) {
-    const tokenVerifiedData = UserController.verifyQueryToken(request.query);
-    if (tokenVerifiedData === null) {
-      return UserController.handleError(reply, 401, Errors.TokenExpired);
-    }
+    try {
+      const tokenVerifiedData = UserController.verifyQueryToken(request.query);
+      if (tokenVerifiedData === null) {
+        return UserController.handleError(reply, 401, Errors.TokenExpired);
+      }
 
-    const { userId, type } = tokenVerifiedData;
-    if (type !== Strings.ForgotPasswordType) {
-      return UserController.handleError(reply, 401, Errors.IncorrectToken);
-    }
-    const userExistsResponse: ServiceResponse =
-      await UserController.userService.CheckUserIdExistence(userId);
+      const { userId, type } = tokenVerifiedData;
+      if (type !== Strings.ForgotPasswordType) {
+        return UserController.handleError(reply, 401, Errors.IncorrectToken);
+      }
+      const userExistsResponse: ServiceResponse =
+        await UserController.userService.CheckUserIdExistence(userId);
 
-    if (userExistsResponse.success === false) {
-      return UserController.handleError(
-        reply,
-        401,
-        Errors.GenericErrorResetPassword
-      );
-    }
+      if (userExistsResponse.success === false) {
+        return UserController.handleError(
+          reply,
+          401,
+          Errors.GenericErrorResetPassword
+        );
+      }
 
-    const { newPassword, confirmNewPassword } = request.body;
-    if (newPassword !== confirmNewPassword) {
-      return UserController.handleError(reply, 400, Errors.PasswordsNotSame);
-    }
-    const resetPasswordById: ServiceResponse =
-      await UserController.userService.ResetPassword(userId, newPassword);
+      const { newPassword, confirmNewPassword } = request.body;
+      if (newPassword !== confirmNewPassword) {
+        return UserController.handleError(reply, 400, Errors.PasswordsNotSame);
+      }
+      const resetPasswordById: ServiceResponse =
+        await UserController.userService.ResetPassword(userId, newPassword);
 
-    if (resetPasswordById.success === false) {
-      return UserController.handleError(
-        reply,
-        400,
-        Errors.GenericErrorResetPassword
-      );
-    }
+      if (resetPasswordById.success === false) {
+        return UserController.handleError(
+          reply,
+          400,
+          Errors.GenericErrorResetPassword
+        );
+      }
 
-    reply.code(200).clearCookie(EnvironmentVariables.Reset_Pass_Cookie_Name, {
-      path: "/v1/auth",
-    });
+      reply.code(200).clearCookie(EnvironmentVariables.Reset_Pass_Cookie_Name, {
+        path: "/v1/auth",
+      });
+    } catch (error) {
+      UserController.handleError(reply, 500, Errors.GenericError);
+    }
   }
 
   async retrieveUserDetails(request: FastifyRequest, reply: FastifyReply) {
-    const userDetails: ServiceResponse =
-      await UserController.userService.RetrieveUserDetails(
-        request.userId ?? ""
-      );
+    try {
+      const userDetails: ServiceResponse =
+        await UserController.userService.RetrieveUserDetails(
+          request.userId ?? ""
+        );
 
-    if (userDetails.success === false) {
-      return UserController.handleError(reply, 400, userDetails?.customError);
+      if (userDetails.success === false) {
+        return UserController.handleError(reply, 400, userDetails?.customError);
+      }
+
+      const { username, email, phone, biography, signInMethod } =
+        userDetails.data as ServiceInsertedData;
+
+      reply.code(200).send({
+        username: username,
+        email: email,
+        phone: phone,
+        biography: biography,
+        signInMethod: signInMethod,
+      });
+    } catch (error) {
+      UserController.handleError(reply, 500, Errors.GenericError);
     }
-
-    const { username, email, phone, biography, signInMethod } =
-      userDetails.data as ServiceInsertedData;
-
-    reply.code(200).send({
-      username: username,
-      email: email,
-      phone: phone,
-      biography: biography,
-      signInMethod: signInMethod,
-    });
   }
 
   async updateUserDetails(
@@ -355,19 +400,13 @@ class UserController {
     reply: FastifyReply
   ) {
     try {
-      const {
-        username,
-        email,
-        biography,
-        phone,
-        currentPassword,
-        newPassword,
-      } = request.body;
+      const { username, biography, phone, currentPassword, newPassword } =
+        request.body;
 
-      const isChangingPassword = newPassword.trim() !== "";
+      const isChangingPassword: boolean = newPassword.trim() !== "";
 
       const signInMethod = request.signInMethod;
-      const canChangePassword = signInMethod === "credentials";
+      const canChangePassword: boolean = signInMethod === "credentials";
 
       if (isChangingPassword === true && canChangePassword === false) {
         return UserController.handleError(
@@ -396,11 +435,10 @@ class UserController {
       const updatedUserDetails =
         await UserController.userService.UpdateUserDetails(
           request.userId,
-          username,
-          email,
-          phone,
-          biography,
-          newPassword
+          username.trim(),
+          phone.trim(),
+          biography.trim(),
+          newPassword.trim()
         );
 
       if (updatedUserDetails.success === false) {
@@ -417,81 +455,13 @@ class UserController {
     }
   }
 
-  //async updateUserDetails(
-  //  request: FastifyRequest<{
-  //    Body: editUserDetailsBody;
-  //  }>,
-  //  reply: FastifyReply
-  //) {
-  //  const { username, email, biography, phone, currentPassword, newPassword } =
-  //    request.body;
-
-  //  const userForgotCurrentPassword =
-  //    currentPassword.trim() === "" && newPassword.trim() !== "";
-
-  //  const atLeastOnePasswordFieldIsNotEmpty: boolean =
-  //    currentPassword.trim() !== "" || newPassword.trim() !== "";
-
-  //  if (userForgotCurrentPassword === true) {
-  //    if (request.signInMethod === "credentials") {
-  //      return UserController.handleError(reply, 400, Errors.FillInPassword);
-  //    }
-  //  }
-  //  if (atLeastOnePasswordFieldIsNotEmpty === true) {
-  //    if (request.signInMethod !== "credentials") {
-  //      return UserController.handleError(
-  //        reply,
-  //        400,
-  //        Errors.SignInMethodUpdatePassword
-  //      );
-  //    }
-  //  }
-
-  //  const userAttemptToChangePasswordExists: boolean =
-  //    newPassword.trim() !== "";
-
-  //  if (userAttemptToChangePasswordExists === true) {
-  //    const verifyUserPassword =
-  //      await UserController.userService.ValidateUserPassword(
-  //        request.userId,
-  //        currentPassword
-  //      );
-
-  //    if (verifyUserPassword.success === false) {
-  //      return UserController.handleError(reply, 400, Errors.IncorrectPassword);
-  //    }
-  //  }
-  //  const updatedUserDetails: ServiceResponse =
-  //    await UserController.userService.UpdateUserDetails(
-  //      request.userId,
-  //      username,
-  //      email,
-  //      phone,
-  //      biography,
-  //      newPassword
-  //    );
-
-  //  if (updatedUserDetails.success === false) {
-  //    return UserController.handleError(
-  //      reply,
-  //      400,
-  //      updatedUserDetails?.customError
-  //    );
-  //  }
-
-  //  reply.code(200);
-  //}
-
-  async logout(request: FastifyRequest, reply: FastifyReply) {
+  async logout(_: FastifyRequest, reply: FastifyReply) {
     reply.code(200).clearCookie(EnvironmentVariables.Cookie_Name, {
       path: "/",
     });
   }
 
-  async checkIfUserIsAuthenticated(
-    request: FastifyRequest,
-    reply: FastifyReply
-  ) {
+  async checkIfUserIsAuthenticated(_: FastifyRequest, reply: FastifyReply) {
     reply.code(403);
   }
 }

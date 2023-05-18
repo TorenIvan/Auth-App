@@ -297,7 +297,6 @@ class UserService {
   async UpdateUserDetails(
     userId: string,
     username: string,
-    email: string,
     phone: string,
     biography: string,
     newPassword: string
@@ -305,12 +304,11 @@ class UserService {
     try {
       const updateFields: any = {
         username,
-        email,
         phone,
         biography,
       };
 
-      if (newPassword.trim() !== "") {
+      if (newPassword !== "") {
         const salt = await bcrypt.genSalt(
           Number(EnvironmentVariables.Salt_Size)
         );
@@ -327,7 +325,7 @@ class UserService {
         }
       );
 
-      if (result.modifiedCount !== 1) {
+      if (result.acknowledged === false) {
         throw {
           customError: Errors.GenericError,
         };

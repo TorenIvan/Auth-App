@@ -76,7 +76,7 @@ const userDetailsResponseSchema = z.object({
 
 const userEditRequestBodySchema = z.object({
   username: z.string().nonempty(),
-  email: z.string().email(),
+  biography: z.string(),
   phone: z
     .string()
     .length(0)
@@ -109,7 +109,6 @@ const userEditRequestBodySchema = z.object({
         })
         .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/)
     ),
-  biography: z.string(),
 });
 
 export type credsUserInput = z.infer<typeof authCredsBodySchema>;
