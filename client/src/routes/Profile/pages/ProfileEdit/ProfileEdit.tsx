@@ -1,5 +1,6 @@
 import { Fragment, useRef } from "react";
-import { Form, NavLink } from "react-router-dom";
+import { ActionFunctionArgs, Form, NavLink } from "react-router-dom";
+import { toast } from "react-hot-toast";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,12 +8,11 @@ import { Textarea } from "../../../../components";
 import { ProfileInput, ProfileEditItem as EditItem } from "../../components";
 import { Constants } from "../../constants";
 import { TUserInfo } from "../../types";
-import { userDetailsQuery } from "../../api";
+import { editUserData, userDetailsQuery } from "../../api";
 import styles from "./styles.module.scss";
 
 function ProfileEdit() {
   const usernameRef = useRef<HTMLInputElement>(null);
-  const emailRef = useRef<HTMLInputElement>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
   const biographyRef = useRef<HTMLTextAreaElement>(null);
   const currentPasswordRef = useRef<HTMLInputElement>(null);
@@ -28,7 +28,12 @@ function ProfileEdit() {
         <span className={styles["arrow-left"]} />
         <span>{Constants.Back}</span>
       </NavLink>
-      <Form className={styles.form} autoComplete="off">
+      <Form
+        className={styles.form}
+        autoComplete="off"
+        method="put"
+        action="/profile"
+      >
         <article>
           <h3>{Constants.ChangeInfo}</h3>
           <span>{Constants.ChangeInfoSub}</span>
@@ -55,6 +60,7 @@ function ProfileEdit() {
             ref={usernameRef}
             label={Constants.Name}
             attributes={{
+              name: "username",
               placeholder: Constants.NamePlaceholder,
               defaultValue: userInfo?.username,
             }}
@@ -65,6 +71,7 @@ function ProfileEdit() {
             ref={biographyRef}
             labelSlot={<label>{Constants.Bio}</label>}
             attributes={{
+              name: "biography",
               placeholder: Constants.BioPlaceholder,
               defaultValue: userInfo?.biography,
             }}
@@ -75,6 +82,7 @@ function ProfileEdit() {
             ref={phoneRef}
             label={Constants.Phone}
             attributes={{
+              name: "phone",
               placeholder: Constants.PhonePlaceholder,
               defaultValue: userInfo?.phone,
             }}
@@ -82,7 +90,6 @@ function ProfileEdit() {
         </EditItem>
         <EditItem>
           <ProfileInput
-            ref={emailRef}
             label={Constants.Email}
             attributes={{
               placeholder: Constants.EmailPlaceholder,
@@ -98,6 +105,7 @@ function ProfileEdit() {
                 ref={currentPasswordRef}
                 label={Constants.CurrentPassword}
                 attributes={{
+                  name: "currentPassword",
                   placeholder: Constants.CurrentPasswordPlaceholder,
                   autoComplete: "new-password",
                 }}
@@ -109,6 +117,7 @@ function ProfileEdit() {
                 ref={newPasswordRef}
                 label={Constants.NewPassword}
                 attributes={{
+                  name: "newPassword",
                   placeholder: Constants.NewPasswordPlaceholder,
                   autoComplete: "new-password",
                 }}
@@ -132,12 +141,22 @@ function ProfileEdit() {
 export { ProfileEdit as default, action };
 
 function action(queryClient: QueryClient) {
-  return async function () {
+  return async function ({ request }: ActionFunctionArgs) {
     try {
-      const { queryKey } = userDetailsQuery();
-      queryClient.invalidateQueries(queryKey);
-    } catch (e) {
-      /* handle error */
+      const formData = await request.formData();
+
+      // Cast value to string
+      const formDataArray = Array.from(formData.entries()).map(
+        ([key, value]) => [key, value as string]
+      );
+
+      const userData = Object.fromEntries(formDataArray);
+      await editUserData(userData);
+
+      queryClient.invalidateQueries(userDetailsQuery().queryKey);
+    } catch (error) {
+      toast.error(error as string);
+      return true;
     }
   };
 }

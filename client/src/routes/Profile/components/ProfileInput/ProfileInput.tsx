@@ -30,6 +30,7 @@ interface IProps {
 
 interface IAttributes {
   placeholder: string;
+  name?: string;
   autoComplete?: string;
   defaultValue?: string;
   disabled?: boolean;

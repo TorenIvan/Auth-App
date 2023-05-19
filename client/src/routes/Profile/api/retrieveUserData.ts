@@ -6,7 +6,7 @@ const userDetailsUri = "v1/profile/details";
 
 export const userDetailsQuery = () => ({
   queryKey: ["user", "details"],
-  queryFn: async () => await retrieveUserData(),
+  queryFn: () => retrieveUserData(),
 });
 
 async function retrieveUserData(): Promise<IResponse> {

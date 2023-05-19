@@ -1,3 +1,3 @@
-import ProfileEdit from "./ProfileEdit";
+import ProfileEdit, { action } from "./ProfileEdit";
 
-export default ProfileEdit;
+export { ProfileEdit as default, action };

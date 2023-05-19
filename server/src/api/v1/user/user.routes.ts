@@ -8,7 +8,7 @@ import UserController from "./user.controller";
  */
 const userRoutes: FastifyPluginAsync = async (
   fastify: FastifyInstance,
-  options: object
+  _: object
 ): Promise<void> => {
   fastify.register(refreshTokens, {
     prefix: "/v1/auth/refresh",
