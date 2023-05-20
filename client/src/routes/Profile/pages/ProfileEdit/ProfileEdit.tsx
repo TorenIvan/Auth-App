@@ -1,5 +1,5 @@
-import { Fragment, useRef } from "react";
-import { ActionFunctionArgs, Form, NavLink } from "react-router-dom";
+import { Fragment } from "react";
+import { ActionFunctionArgs, Form, NavLink, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
@@ -12,12 +12,6 @@ import { editUserData, userDetailsQuery } from "../../api";
 import styles from "./styles.module.scss";
 
 function ProfileEdit() {
-  const usernameRef = useRef<HTMLInputElement>(null);
-  const phoneRef = useRef<HTMLInputElement>(null);
-  const biographyRef = useRef<HTMLTextAreaElement>(null);
-  const currentPasswordRef = useRef<HTMLInputElement>(null);
-  const newPasswordRef = useRef<HTMLInputElement>(null);
-
   const queryClient = useQueryClient();
   const { queryKey } = userDetailsQuery();
   const userInfo: TUserInfo = queryClient.getQueryData(queryKey);
@@ -28,12 +22,7 @@ function ProfileEdit() {
         <span className={styles["arrow-left"]} />
         <span>{Constants.Back}</span>
       </NavLink>
-      <Form
-        className={styles.form}
-        autoComplete="off"
-        method="put"
-        action="/profile"
-      >
+      <Form className={styles.form} autoComplete="off" method="put" action="">
         <article>
           <h3>{Constants.ChangeInfo}</h3>
           <span>{Constants.ChangeInfoSub}</span>
@@ -57,7 +46,6 @@ function ProfileEdit() {
         </EditItem>
         <EditItem>
           <ProfileInput
-            ref={usernameRef}
             label={Constants.Name}
             attributes={{
               name: "username",
@@ -68,7 +56,6 @@ function ProfileEdit() {
         </EditItem>
         <EditItem>
           <Textarea
-            ref={biographyRef}
             labelSlot={<label>{Constants.Bio}</label>}
             attributes={{
               name: "biography",
@@ -79,7 +66,6 @@ function ProfileEdit() {
         </EditItem>
         <EditItem>
           <ProfileInput
-            ref={phoneRef}
             label={Constants.Phone}
             attributes={{
               name: "phone",
@@ -102,7 +88,6 @@ function ProfileEdit() {
           <Fragment>
             <EditItem>
               <ProfileInput
-                ref={currentPasswordRef}
                 label={Constants.CurrentPassword}
                 attributes={{
                   name: "currentPassword",
@@ -114,7 +99,6 @@ function ProfileEdit() {
             </EditItem>
             <EditItem>
               <ProfileInput
-                ref={newPasswordRef}
                 label={Constants.NewPassword}
                 attributes={{
                   name: "newPassword",
@@ -128,9 +112,9 @@ function ProfileEdit() {
         )}
         <EditItem>
           <section className={styles["edit-item"]}>
-            <div id={styles["save-button"]}>
+            <button id={styles["save-button"]} type="submit">
               <span id={styles["save-button-text"]}>{Constants.Save}</span>
-            </div>
+            </button>
           </section>
         </EditItem>
       </Form>
@@ -145,18 +129,19 @@ function action(queryClient: QueryClient) {
     try {
       const formData = await request.formData();
 
-      // Cast value to string
       const formDataArray = Array.from(formData.entries()).map(
         ([key, value]) => [key, value as string]
       );
 
       const userData = Object.fromEntries(formDataArray);
+
       await editUserData(userData);
 
-      queryClient.invalidateQueries(userDetailsQuery().queryKey);
+      await queryClient.refetchQueries(userDetailsQuery().queryKey);
+      return redirect(`${import.meta.env.VITE_CLIENT_URI}profile`);
     } catch (error) {
       toast.error(error as string);
-      return true;
+      return false;
     }
   };
 }

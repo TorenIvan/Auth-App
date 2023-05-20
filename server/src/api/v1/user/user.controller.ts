@@ -403,6 +403,8 @@ class UserController {
       const { username, biography, phone, currentPassword, newPassword } =
         request.body;
 
+      console.log("kai omos mpika controller me bio: ", biography);
+
       const isChangingPassword: boolean = newPassword.trim() !== "";
 
       const signInMethod = request.signInMethod;

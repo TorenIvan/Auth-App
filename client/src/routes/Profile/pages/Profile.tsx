@@ -18,8 +18,8 @@ function loader(queryClient: QueryClient) {
   return async function () {
     try {
       const query = userDetailsQuery();
-      const results = await queryClient.ensureQueryData(query);
-      return results;
+      await queryClient.ensureQueryData(query);
+      return true;
     } catch (error: unknown) {
       toast.error(error as string);
       return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);

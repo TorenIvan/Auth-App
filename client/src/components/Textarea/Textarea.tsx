@@ -4,16 +4,11 @@ import styles from "./styles.module.scss";
 export const Textarea = forwardRef<HTMLTextAreaElement, IProps>(
   (props, ref: TRef): JSX.Element => {
     const { labelSlot, attributes } = props;
-    const { placeholder, defaultValue } = attributes;
 
     return (
       <section className={styles["textarea-container"]}>
         {labelSlot}
-        <textarea
-          placeholder={placeholder}
-          defaultValue={defaultValue}
-          ref={ref}
-        />
+        <textarea {...attributes} ref={ref} />
       </section>
     );
   }

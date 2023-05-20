@@ -3,15 +3,15 @@ import { NavLink } from "react-router-dom";
 import { userDetailsQuery } from "../../api";
 import { ProfileDetail } from "../../components";
 import { Constants } from "../../constants";
-import {TUserInfo} from "../../types";
+import { TUserInfo } from "../../types";
 import styles from "./styles.module.scss";
 
-//{ username, email, phone, biography }
-function ProfileDetails() {
+function ProfileDetails(): JSX.Element | null {
   const queryClient = useQueryClient();
   const { queryKey } = userDetailsQuery();
   const userInfo: TUserInfo = queryClient.getQueryData(queryKey);
 
+  if (userInfo === undefined) return null;
   return (
     <div className={styles["page-container"]}>
       <article id={styles.header}>
@@ -45,14 +45,12 @@ function ProfileDetails() {
         <ProfileDetail
           label={Constants.Bio.toUpperCase()}
           valueSlot={
-            <span>{userInfo?.biography || <em>Not added yet...</em>}</span>
+            <span>{userInfo?.biography || <em>Not added...</em>}</span>
           }
         />
         <ProfileDetail
           label={Constants.Phone.toUpperCase()}
-          valueSlot={
-            <span>{userInfo?.phone || <em>Not added yet...</em>}</span>
-          }
+          valueSlot={<span>{userInfo?.phone || <em>Not added...</em>}</span>}
         />
         <ProfileDetail
           label={Constants.Email.toUpperCase()}

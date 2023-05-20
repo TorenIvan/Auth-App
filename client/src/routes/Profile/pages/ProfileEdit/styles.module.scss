@@ -190,6 +190,8 @@ article {
 
 #save-button {
   background: $button-save-background;
+  border: none;
+  outline: none;
   border-radius: 8px;
   user-select: none;
   cursor: pointer;
