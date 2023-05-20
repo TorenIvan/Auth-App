@@ -89,22 +89,19 @@ const userEditRequestBodySchema = z.object({
     ),
   currentPassword: z
     .string()
-    .length(0)
-    .or(
-      z
-        .string({
-          required_error: Strings.PasswordRequired,
-          invalid_type_error: Strings.PasswordInvalid,
-        })
-        .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/)
-    ),
+    //.length(0)
+    .or(z.string().regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/))
+    .refine((value) => value.length >= 8, {
+      message:
+        "A valid password must be at least 8 characters long and contain at least one capital letter, one small letter, and one number",
+      path: ["currentPassword"],
+    }),
   newPassword: z
     .string()
     .length(0)
     .or(
       z
         .string({
-          required_error: Strings.PasswordRequired,
           invalid_type_error: Strings.PasswordInvalid,
         })
         .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/)
