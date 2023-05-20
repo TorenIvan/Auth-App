@@ -1,11 +1,15 @@
-import { Fragment } from "react";
+import { ChangeEvent, Fragment, useRef, useState } from "react";
 import { ActionFunctionArgs, Form, NavLink, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Textarea } from "../../../../components";
-import { ProfileInput, ProfileEditItem as EditItem } from "../../components";
+import {
+  ProfileInput,
+  ProfileEditItem as EditItem,
+  UserAvatar,
+} from "../../components";
 import { Constants } from "../../constants";
 import { TUserInfo } from "../../types";
 import { editUserData, userDetailsQuery } from "../../api";
@@ -13,8 +17,27 @@ import styles from "./styles.module.scss";
 
 function ProfileEdit() {
   const queryClient = useQueryClient();
+  const [image, setImage] = useState<string | null>(null);
+  const inputFileRef = useRef<HTMLInputElement>(null);
+
   const { queryKey } = userDetailsQuery();
   const userInfo: TUserInfo = queryClient.getQueryData(queryKey);
+
+  function onFileChange(event: ChangeEvent<HTMLInputElement>) {
+    event.stopPropagation();
+
+    const files = event.currentTarget.files;
+    if (files === null || files === undefined || files.length === 0) {
+      return;
+    }
+    console.log(files[0]);
+    const imageUrl = URL.createObjectURL(files[0]);
+    setImage(imageUrl);
+  }
+
+  function handleImage(_: unknown) {
+    inputFileRef?.current?.click();
+  }
 
   return (
     <div className={styles["page-container"]}>
@@ -29,19 +52,54 @@ function ProfileEdit() {
         </article>
         <EditItem>
           <section className={styles["edit-photo-item"]}>
-            <section id={styles["image-container"]}>
-              <FontAwesomeIcon
-                icon={faCamera}
-                color="#ffffff"
-                className={styles["edit-photo-icon"]}
-              />
-              <span id={styles["mobile-photo-text"]}>
-                {Constants.AddPhoto.toUpperCase()}
-              </span>
-            </section>
-            <span id={styles["default-photo-text"]}>
-              {Constants.AddPhoto.toUpperCase()}
-            </span>
+            {image === null ? (
+              <Fragment>
+                <section id={styles["image-container"]} onClick={handleImage}>
+                  <FontAwesomeIcon
+                    icon={faCamera}
+                    color="#ffffff"
+                    className={styles["edit-photo-icon"]}
+                  />
+                  <input
+                    type="file"
+                    name="file"
+                    accept=".png, .jpg, .jpeg"
+                    ref={inputFileRef}
+                    onChange={onFileChange}
+                    style={{ display: "none" }}
+                  />
+                  <span id={styles["mobile-photo-text"]}>
+                    {Constants.AddPhoto.toUpperCase()}
+                  </span>
+                </section>
+                <span id={styles["default-photo-text"]} onClick={handleImage}>
+                  {Constants.AddPhoto.toUpperCase()}
+                </span>
+              </Fragment>
+            ) : (
+              <Fragment>
+                <section
+                  id={styles["image-container-pic"]}
+                  onClick={handleImage}
+                >
+                  <UserAvatar userAvatar={image} />
+                  <input
+                    type="file"
+                    name="file"
+                    accept=".png, .jpg, .jpeg"
+                    ref={inputFileRef}
+                    onChange={onFileChange}
+                    style={{ display: "none" }}
+                  />
+                  <span id={styles["mobile-photo-text"]}>
+                    {Constants.ChangePhoto.toUpperCase()}
+                  </span>
+                </section>
+                <span id={styles["default-photo-text"]} onClick={handleImage}>
+                  {Constants.ChangePhoto.toUpperCase()}
+                </span>
+              </Fragment>
+            )}
           </section>
         </EditItem>
         <EditItem>

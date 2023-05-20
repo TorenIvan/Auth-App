@@ -26,5 +26,6 @@ export const Constants = {
   ChangeInfo: "Change Info",
   ChangeInfoSub: "Changes will be reflected to every service",
   AddPhoto: "Add Photo",
+  ChangePhoto: "Change Photo",
   Save: "Save",
 } as const;

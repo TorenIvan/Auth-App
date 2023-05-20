@@ -18,7 +18,7 @@ function UserAvatar({ userAvatar }: IProps): JSX.Element {
       />
     );
   }
-  return <></>;
+  return <img src={userAvatar} alt="ProfileImage" className={styles.avatar} />;
 }
 
 export default UserAvatar;

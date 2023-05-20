@@ -160,6 +160,25 @@ article {
     }
   }
 
+  #image-container-pic {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    .edit-photo-icon {
+      height: 50%;
+    }
+
+    @media only screen and (max-width: 600px) {
+      width: 10rem;
+      text-align: center;
+      gap: 1rem;
+    }
+  }
+
   #mobile-photo-text {
     display: none;
     color: $border-fieldset;
