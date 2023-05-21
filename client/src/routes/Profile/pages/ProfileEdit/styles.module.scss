@@ -142,38 +142,26 @@ article {
   #image-container {
     background: $border-item;
     border-radius: 8px;
-    width: 3rem;
-    height: 3rem;
+    width: 72px;
+    height: 72px;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
 
     .edit-photo-icon {
-      height: 50%;
+      height: 30%;
+    }
+
+    input {
+      display: none;
     }
 
     @media only screen and (max-width: 600px) {
-      width: 10rem;
-      text-align: center;
-      gap: 1rem;
-    }
-  }
-
-  #image-container-pic {
-    width: 3rem;
-    height: 3rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-
-    .edit-photo-icon {
-      height: 50%;
-    }
-
-    @media only screen and (max-width: 600px) {
-      width: 10rem;
+      width: 100%;
       text-align: center;
       gap: 1rem;
     }

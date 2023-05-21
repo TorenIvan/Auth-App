@@ -52,54 +52,36 @@ function ProfileEdit() {
         </article>
         <EditItem>
           <section className={styles["edit-photo-item"]}>
-            {image === null ? (
-              <Fragment>
-                <section id={styles["image-container"]} onClick={handleImage}>
-                  <FontAwesomeIcon
-                    icon={faCamera}
-                    color="#ffffff"
-                    className={styles["edit-photo-icon"]}
-                  />
-                  <input
-                    type="file"
-                    name="file"
-                    accept=".png, .jpg, .jpeg"
-                    ref={inputFileRef}
-                    onChange={onFileChange}
-                    style={{ display: "none" }}
-                  />
-                  <span id={styles["mobile-photo-text"]}>
-                    {Constants.AddPhoto.toUpperCase()}
-                  </span>
-                </section>
-                <span id={styles["default-photo-text"]} onClick={handleImage}>
-                  {Constants.AddPhoto.toUpperCase()}
-                </span>
-              </Fragment>
-            ) : (
-              <Fragment>
-                <section
-                  id={styles["image-container-pic"]}
-                  onClick={handleImage}
-                >
-                  <UserAvatar userAvatar={image} />
-                  <input
-                    type="file"
-                    name="file"
-                    accept=".png, .jpg, .jpeg"
-                    ref={inputFileRef}
-                    onChange={onFileChange}
-                    style={{ display: "none" }}
-                  />
-                  <span id={styles["mobile-photo-text"]}>
-                    {Constants.ChangePhoto.toUpperCase()}
-                  </span>
-                </section>
-                <span id={styles["default-photo-text"]} onClick={handleImage}>
-                  {Constants.ChangePhoto.toUpperCase()}
-                </span>
-              </Fragment>
-            )}
+            <section
+              id={styles["image-container"]}
+              onClick={handleImage}
+              style={{
+                backgroundImage: `url(${image})`,
+              }}
+            >
+              <FontAwesomeIcon
+                icon={faCamera}
+                color="#ffffff"
+                className={styles["edit-photo-icon"]}
+              />
+              <input
+                type="file"
+                name="file"
+                accept=".png, .jpg, .jpeg"
+                ref={inputFileRef}
+                onChange={onFileChange}
+              />
+              <span id={styles["mobile-photo-text"]}>
+                {image === null
+                  ? Constants.AddPhoto.toUpperCase()
+                  : Constants.ChangePhoto.toUpperCase()}
+              </span>
+            </section>
+            <span id={styles["default-photo-text"]} onClick={handleImage}>
+              {image === null
+                ? Constants.AddPhoto.toUpperCase()
+                : Constants.ChangePhoto.toUpperCase()}
+            </span>
           </section>
         </EditItem>
         <EditItem>
