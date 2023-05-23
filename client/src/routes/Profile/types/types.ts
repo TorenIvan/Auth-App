@@ -1,5 +1,6 @@
 export type TUserInfo =
   | {
+      image?: string;
       username: string;
       email: string;
       phone: string;
@@ -7,4 +8,3 @@ export type TUserInfo =
       signInMethod: string;
     }
   | undefined;
-

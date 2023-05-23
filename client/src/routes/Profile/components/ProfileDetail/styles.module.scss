@@ -29,8 +29,7 @@ $value-text: var(--text-secondary);
   }
 }
 
-.details-value-column {
-  margin-left: 5%;
+.details-value-column-image {
   flex: 3;
   overflow: hidden;
   white-space: nowrap;
@@ -43,4 +42,11 @@ $value-text: var(--text-secondary);
     font-size: 18px;
     line-height: 25px;
   }
+}
+
+
+
+.details-value-column {
+  @extend .details-value-column-image;
+  margin-left: 5%;
 }

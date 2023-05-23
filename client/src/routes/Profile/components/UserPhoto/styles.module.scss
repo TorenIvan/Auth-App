@@ -1,0 +1,55 @@
+$border-item: var(--text-primary);
+
+.edit-photo-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-left: 5%;
+  margin-top: 1%;
+  margin-bottom: 1%;
+  flex: 0.8;
+  gap: 1.5rem;
+  opacity: 0.8;
+}
+
+.edit-photo-item.responsive {
+  @media only screen and (max-width: 768px) {
+    flex: 0.9;
+    margin: 0 auto;
+  }
+
+  @media only screen and (max-width: 600px) {
+    flex: 1;
+    background-color: $border-item;
+    border-radius: 8px;
+    justify-content: center;
+  }
+}
+
+
+.image-container {
+  background: $border-item;
+  border-radius: 8px;
+  width: 72px;
+  height: 72px;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  input {
+    display: none;
+  }
+}
+
+.image-container.responsive {
+  @media only screen and (max-width: 600px) {
+    width: 100%;
+    text-align: center;
+    gap: 1rem;
+  }
+}
