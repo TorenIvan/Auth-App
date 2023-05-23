@@ -8,6 +8,7 @@ import {
   Register,
   registerAction,
   registerLoader,
+  ResetPassword,
 } from "./pages";
 
 function authRoutes(queryClient: QueryClient) {
@@ -37,6 +38,7 @@ function authRoutes(queryClient: QueryClient) {
         },
         {
           path: "reset-password",
+          Component: ResetPassword,
         },
       ],
     },
