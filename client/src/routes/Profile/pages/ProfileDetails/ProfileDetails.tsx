@@ -6,7 +6,7 @@ import { Constants } from "../../constants";
 import { TUserInfo } from "../../types";
 import styles from "./styles.module.scss";
 
-const notAddedSlot: JSX.Element = <em>Not added...</em>;
+const notAddedSlot: JSX.Element = <em>{Constants.NotAdded}</em>;
 
 function ProfileDetails(): JSX.Element | null {
   const queryClient = useQueryClient();

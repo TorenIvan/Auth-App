@@ -28,4 +28,5 @@ export const Constants = {
   AddPhoto: "Add Photo",
   ChangePhoto: "Change Photo",
   Save: "Save",
+  NotAdded: "Not added...",
 } as const;
