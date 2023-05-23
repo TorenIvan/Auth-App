@@ -43,6 +43,18 @@ function ResetPassword() {
           }}
           iconStyles={inputStyles["fa-eye"]}
         />
+        <PasswordInput
+          ref={passwordRef}
+          attributes={{
+            id: "password",
+            name: "password",
+            autoComplete: "new-password",
+            placeholder: "Confirm your new password",
+            readOnly: true,
+            required: true,
+          }}
+          iconStyles={inputStyles["fa-eye"]}
+        />
         <div id={styles["submitBox"]}>
           <input type="submit" value={Constants.ResetPassword}></input>
         </div>
