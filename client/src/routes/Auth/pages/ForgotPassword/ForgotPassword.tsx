@@ -25,10 +25,11 @@ function ForgotPassword() {
       className={styles["form-container"]}
       onSubmit={handleSubmit}
     >
-      <section>
-        <p>{Constants.ForgotPassword}</p>
+      <section id={styles.header}>
+        <h2>{Constants.ForgotPassword}</h2>
+        <p>{Constants.ForgotPasswordParagraph}</p>
       </section>
-      <section>
+      <section id={styles.main}>
         <Input
           ref={emailRef}
           attributes={{

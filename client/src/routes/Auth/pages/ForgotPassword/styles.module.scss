@@ -3,13 +3,11 @@
   box-sizing: border-box;
   position: relative;
   border-radius: 24px;
+  margin: 0 auto;
   background: var(--background-screen);
+  width: 100%;
   max-width: 500px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  gap: 1rem;
-  padding: 2rem;
+  padding: 30px;
   font-family: NotoSans;
 
   @media screen and (max-width: 500px) {
@@ -17,15 +15,58 @@
     border-right: none;
   }
 
-  section {
-    font-size: large;
+  #header {
+    margin-bottom: 30px;
   }
 
-  input {
-    min-width: 25rem;
+  #main {
+    margin-bottom: 10px;
+  }
+
+  h2,
+  p {
+    margin-bottom: 5px;
+    font-family: NotoSansRegular;
+    color: var(--text-secondary);
+    font-style: normal;
+    text-align: center;
+    font-size: 16px;
+  }
+
+  h2 {
+    font-weight: 600;
+    line-height: 24px;
+  }
+
+  p {
+    font-weight: 400;
+    line-height: 22px;
+  }
+
+  input[type="submit"] {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 16px;
+    background-color: var(--background-button);
+    opacity: 0.8;
+    color: var(--text-buttonWithBackground);
+    border: none;
+    font-family: NotoSansRegular;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 21px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 100%;
+  }
+
+  input[type="submit"]:hover {
+    opacity: 1;
   }
 }
 
-#submit-box {
-  margin-top: 2rem;
+#submitBox {
+  margin-top: 30px;
+  text-align: center;
 }
