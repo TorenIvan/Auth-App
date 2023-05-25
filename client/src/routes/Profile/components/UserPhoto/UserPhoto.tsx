@@ -6,20 +6,13 @@ export function UserPhoto(props: IProps): JSX.Element {
 
   const imageStyle = setImageStyle(image);
   return (
-    <section
-      className={`${styles["edit-photo-item"]} ${
-        image === undefined ? styles["responsive"] : ""
-      }`}
-    >
+    <section className={styles["edit-photo-item"]}>
       <section
-        className={`${styles["image-container"]} ${
-          image === undefined ? styles["responsive"] : ""
-        }`}
+        className={styles["image-container"]}
         onClick={handleImage}
         style={imageStyle}
       >
         {inputSlot}
-        {paragraphSlot}
       </section>
       {paragraphSlot}
     </section>
@@ -27,13 +20,13 @@ export function UserPhoto(props: IProps): JSX.Element {
 }
 
 interface IProps {
-  image?: string;
+  image: string | null;
   handleImage?: (_: unknown) => void;
   inputSlot?: JSX.Element;
   paragraphSlot?: JSX.Element;
 }
 
-function setImageStyle(image?: string | null): CSSProperties | undefined {
+function setImageStyle(image: string | null): CSSProperties | undefined {
   let imageStyle: CSSProperties | undefined = undefined;
   if (image !== null && image !== undefined) {
     imageStyle = {

@@ -9,6 +9,22 @@ $value-text: var(--text-secondary);
   align-items: center;
 }
 
+@mixin value-column {
+  flex: 3;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: "Noto Sans";
+  color: $value-text;
+
+  span {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 25px;
+  }
+}
+
 .details-row {
   @include flex-row;
   justify-content: flex-start;
@@ -30,23 +46,13 @@ $value-text: var(--text-secondary);
 }
 
 .details-value-column-image {
-  flex: 3;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  font-family: "Noto Sans";
-  color: $value-text;
-  span {
-    font-style: normal;
-    font-weight: 500;
-    font-size: 18px;
-    line-height: 25px;
+  @include value-column;
+  @media only screen and (max-width: 600px) {
+    margin-left: 5%;
   }
 }
 
-
-
 .details-value-column {
-  @extend .details-value-column-image;
+  @include value-column;
   margin-left: 5%;
 }

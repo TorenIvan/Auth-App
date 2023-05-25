@@ -8,7 +8,7 @@ import { Textarea } from "../../../../components";
 import {
   ProfileInput,
   ProfileEditItem as EditItem,
-  UserAvatar,
+  UserPhoto,
 } from "../../components";
 import { Constants } from "../../constants";
 import { TUserInfo } from "../../types";
@@ -50,15 +50,11 @@ function ProfileEdit() {
           <h3>{Constants.ChangeInfo}</h3>
           <span>{Constants.ChangeInfoSub}</span>
         </article>
-        <EditItem>
-          <section className={styles["edit-photo-item"]}>
-            <section
-              id={styles["image-container"]}
-              onClick={handleImage}
-              style={{
-                backgroundImage: `url(${image})`,
-              }}
-            >
+        <UserPhoto
+          image={image}
+          handleImage={handleImage}
+          inputSlot={
+            <>
               <FontAwesomeIcon
                 icon={faCamera}
                 color="#ffffff"
@@ -71,19 +67,16 @@ function ProfileEdit() {
                 ref={inputFileRef}
                 onChange={onFileChange}
               />
-              <span id={styles["mobile-photo-text"]}>
-                {image === null
-                  ? Constants.AddPhoto.toUpperCase()
-                  : Constants.ChangePhoto.toUpperCase()}
-              </span>
-            </section>
+            </>
+          }
+          paragraphSlot={
             <span id={styles["default-photo-text"]} onClick={handleImage}>
               {image === null
                 ? Constants.AddPhoto.toUpperCase()
                 : Constants.ChangePhoto.toUpperCase()}
             </span>
-          </section>
-        </EditItem>
+          }
+        />
         <EditItem>
           <ProfileInput
             label={Constants.Name}

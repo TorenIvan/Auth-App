@@ -1,4 +1,4 @@
-import { CSSProperties, memo } from "react";
+import { memo } from "react";
 import styles from "./styles.module.scss";
 
 function ProfileDetail({ label, valueSlot, isImage }: IProps): JSX.Element {
