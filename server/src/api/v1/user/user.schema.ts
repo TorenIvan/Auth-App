@@ -22,7 +22,7 @@ const authCredsUserResponseSchema = z.object({
 });
 
 const verifyEmailQueryStringSchema = z.object({
-  token: z.string().min(1, { message: "token is required" }),
+  token: z.string().min(1, { message: "Token is required" }),
 });
 
 const verifyEmailResponseSchema = z.object({
@@ -61,8 +61,8 @@ const userDetailsResponseSchema = z.object({
   username: z
     .string()
     .trim()
-    .min(2, { message: "must be 2 or more characters long" })
-    .max(18, { message: "must be 18 or fewer characters long" }),
+    .min(2, { message: "Name must be 2 or more characters long" })
+    .max(18, { message: "Name must be 18 or fewer characters long" }),
   email: z.string().email(),
   phone: z
     .string()
@@ -78,12 +78,12 @@ const userDetailsResponseSchema = z.object({
   signInMethod: z.string(),
 });
 
-const userEditRequestBodySchema = z.object({
+export const userEditRequestBodySchema = z.object({
   username: z
     .string()
     .trim()
-    .min(2, { message: "must be 2 or more characters long" })
-    .max(18, { message: "must be 18 or fewer characters long" }),
+    .min(2, { message: "Name must be 2 or more characters long" })
+    .max(18, { message: "Name must be 18 or fewer characters long" }),
   biography: z.string().trim(),
   phone: z
     .string()
@@ -98,18 +98,14 @@ const userEditRequestBodySchema = z.object({
   currentPassword: z
     .string()
     .trim()
-    //.length(0)
+    .length(0)
     .or(
       z
-        .string()
-        .trim()
+        .string({
+          invalid_type_error: Strings.PasswordInvalid,
+        })
         .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/)
-    )
-    .refine((value) => value.length >= 8, {
-      message:
-        "A valid password must be at least 8 characters long and contain at least one capital letter, one small letter, and one number",
-      path: ["currentPassword"],
-    }),
+    ),
   newPassword: z
     .string()
     .trim()

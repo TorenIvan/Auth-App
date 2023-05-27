@@ -1,6 +1,13 @@
-import { FastifyInstance, FastifyPluginAsync } from "fastify";
+import {
+  FastifyInstance,
+  FastifyPluginAsync,
+  FastifyReply,
+  FastifyRequest,
+} from "fastify";
 import { $ref } from "./user.schema";
+import { userEditRequestBodySchema } from "./user.schema";
 import UserController from "./user.controller";
+import { ZodError } from "zod";
 
 /**
  * Encapsulates all the routes belonging to user in version 1
@@ -308,15 +315,24 @@ async function getUserDetails(fastify: FastifyInstance): Promise<void> {
  */
 async function editUserDetails(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("preHandler", async (request, reply) => {
+    validateRequestBody(request, reply, userEditRequestBodySchema);
     await fastify.verifyAccessTokenHeader(request, reply);
   });
-  fastify.put(
-    "/",
-    {
-      schema: {
-        body: $ref("userEditRequestBodySchema"),
-      },
-    },
-    new UserController(fastify).updateUserDetails
-  );
+  fastify.put("/", new UserController(fastify).updateUserDetails);
+}
+
+async function validateRequestBody<T>(
+  request: FastifyRequest,
+  reply: FastifyReply,
+  schema: import("zod").Schema<T>
+): Promise<void> {
+  try {
+    request.body = await schema.parseAsync(request.body);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      const firstError = error.errors[0];
+      return reply.status(400).send(firstError);
+    }
+    return reply.status(400).send(error);
+  }
 }
