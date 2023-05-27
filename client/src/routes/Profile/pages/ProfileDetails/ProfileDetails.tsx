@@ -16,6 +16,7 @@ function ProfileDetails(): JSX.Element | null {
   if (userInfo === undefined) return null;
   const photoSlot: JSX.Element = findPhotoSlot(userInfo?.image);
   const imageExists: boolean = !!userInfo?.image;
+
   return (
     <div className={styles["page-container"]}>
       <article id={styles.header}>
@@ -74,7 +75,8 @@ function findPhotoSlot(image?: string) {
   let photoSlot: JSX.Element = <span>{notAddedSlot}</span>;
   if (image !== undefined && image?.trim() !== "") {
     photoSlot = (
-      <UserPhoto image="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80" />
+      // <UserPhoto image="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80" />
+      <UserPhoto image={image} />
     );
   }
   return photoSlot;

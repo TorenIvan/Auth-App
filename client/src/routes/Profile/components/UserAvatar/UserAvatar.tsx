@@ -1,13 +1,13 @@
 import { useAtom } from "jotai";
 import { themeAtom } from "../../../../store";
-import Assets from "../../../../assets";
 import { Theme, GlobalConstants } from "../../../../utils";
+import Assets from "../../../../assets";
 import styles from "./styles.module.scss";
 
-function UserAvatar({ userAvatar }: IProps): JSX.Element {
+function UserAvatar({ userImage }: IProps): JSX.Element {
   const [theme, _] = useAtom<Theme>(themeAtom);
 
-  if (userAvatar === undefined) {
+  if (userImage === undefined) {
     return (
       <img
         src={Assets.GenericAvatar}
@@ -18,11 +18,13 @@ function UserAvatar({ userAvatar }: IProps): JSX.Element {
       />
     );
   }
-  return <img src={userAvatar} alt="ProfileImage" className={styles.avatar} />;
+  return (
+    <img src={userImage} alt="ProfileImage" className={styles.genericAvatar} />
+  );
 }
 
 export default UserAvatar;
 
 interface IProps {
-  userAvatar?: string;
+  userImage?: string;
 }

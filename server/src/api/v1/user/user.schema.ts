@@ -58,7 +58,11 @@ const resetPasswordRequestSchema = z.object({
 });
 
 const userDetailsResponseSchema = z.object({
-  username: z.string(),
+  username: z
+    .string()
+    .trim()
+    .min(2, { message: "must be 2 or more characters long" })
+    .max(18, { message: "must be 18 or fewer characters long" }),
   email: z.string().email(),
   phone: z
     .string()
@@ -75,8 +79,12 @@ const userDetailsResponseSchema = z.object({
 });
 
 const userEditRequestBodySchema = z.object({
-  username: z.string().nonempty(),
-  biography: z.string(),
+  username: z
+    .string()
+    .trim()
+    .min(2, { message: "must be 2 or more characters long" })
+    .max(18, { message: "must be 18 or fewer characters long" }),
+  biography: z.string().trim(),
   phone: z
     .string()
     .length(0)
@@ -89,8 +97,14 @@ const userEditRequestBodySchema = z.object({
     ),
   currentPassword: z
     .string()
+    .trim()
     //.length(0)
-    .or(z.string().regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/))
+    .or(
+      z
+        .string()
+        .trim()
+        .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/)
+    )
     .refine((value) => value.length >= 8, {
       message:
         "A valid password must be at least 8 characters long and contain at least one capital letter, one small letter, and one number",
@@ -98,6 +112,7 @@ const userEditRequestBodySchema = z.object({
     }),
   newPassword: z
     .string()
+    .trim()
     .length(0)
     .or(
       z

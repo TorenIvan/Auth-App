@@ -17,6 +17,11 @@ $limit-font-mobile-width: 600px;
   padding-right: 0.5em;
   cursor: pointer;
 
+  span {
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
   span:nth-child(2) {
     margin-right: 0.5em;
     color: var(--text-secondary);
