@@ -20,14 +20,16 @@ export async function loginUser(request: IRequest): Promise<string> {
     if (data?.access_token === undefined) throw "error";
     return data.access_token;
   } catch (error: unknown | AxiosError) {
+    console.log("eeeeeee: ", error);
     if (isAxiosError(error)) {
-      const statusCode = (error as AxiosError)?.response?.status ?? 0;
-      const message = ((error as AxiosError)?.response?.data as any)?.message;
+      const { response } = error;
+      console.log("response obj: ", response?.data);
+      const statusCode = response?.status ?? 0;
+      const message = response?.data?.message;
 
       if (statusCode < 500) {
         throw message ?? Errors.GenericError;
       }
-      throw Errors.GenericError;
     }
     throw Errors.GenericError;
   }

@@ -6,11 +6,12 @@ import {
 } from "fastify";
 import { ZodError, Schema as ZodSchema } from "zod";
 import {
-  $ref,
   authCredsBodySchema,
-  authCredsUserResponseSchema,
+  userEditRequestBodySchema,
+  forgotPasswordRequestSchema,
+  resetPasswordRequestSchema,
+  verifyEmailQueryStringSchema,
 } from "./user.schema";
-import { userEditRequestBodySchema } from "./user.schema";
 import UserController from "./user.controller";
 
 /**
@@ -87,15 +88,7 @@ async function refreshTokens(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("onRequest", async (request, reply) => {
     await fastify.verifyRefreshTokenCookie(request, reply);
   });
-  fastify.get(
-    "/",
-    {
-      schema: {
-        response: { 200: $ref("authCredsUserResponseSchema") },
-      },
-    },
-    new UserController(fastify).renewTokens
-  );
+  fastify.get("/", new UserController(fastify).renewTokens);
 }
 
 /**
@@ -115,10 +108,7 @@ async function checkIsAuthenticated(fastify: FastifyInstance): Promise<void> {
  */
 async function loginWithCredentials(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("preHandler", async (request, reply) => {
-    validateRequestBody(request, reply, authCredsBodySchema);
-  });
-  fastify.addHook("onSend", async (request, reply) => {
-    validateResponseMessage(request, reply, authCredsUserResponseSchema);
+    await validateRequestBody(request, reply, authCredsBodySchema);
   });
   fastify.post("/", new UserController(fastify).loginCredentialsHandler);
 }
@@ -171,7 +161,7 @@ async function registerWithCredentials(
   fastify: FastifyInstance
 ): Promise<void> {
   fastify.addHook("preHandler", async (request, reply) => {
-    validateRequestBody(request, reply, authCredsBodySchema);
+    await validateRequestBody(request, reply, authCredsBodySchema);
   });
   fastify.post("/", new UserController(fastify).registerCredentialsHandler);
 }
@@ -232,18 +222,10 @@ async function logout(fastify: FastifyInstance): Promise<void> {
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function confirmEmail(fastify: FastifyInstance): Promise<void> {
-  fastify.get(
-    "/",
-    {
-      schema: {
-        querystring: $ref("verifyEmailQueryStringSchema"),
-        response: {
-          200: $ref("verifyEmailResponseSchema"),
-        },
-      },
-    },
-    new UserController(fastify).confirmEmailHandler
-  );
+  fastify.addHook("preHandler", async (request, reply) => {
+    await validateRequestQuery(request, reply, verifyEmailQueryStringSchema);
+  });
+  fastify.get("/", new UserController(fastify).confirmEmailHandler);
 }
 
 /**
@@ -251,15 +233,10 @@ async function confirmEmail(fastify: FastifyInstance): Promise<void> {
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function forgotPassword(fastify: FastifyInstance): Promise<void> {
-  fastify.post(
-    "/",
-    {
-      schema: {
-        body: $ref("forgotPasswordRequestSchema"),
-      },
-    },
-    new UserController(fastify).forgotPasswordHandler
-  );
+  fastify.addHook("preHandler", async (request, reply) => {
+    await validateRequestBody(request, reply, forgotPasswordRequestSchema);
+  });
+  fastify.post("/", new UserController(fastify).forgotPasswordHandler);
 }
 
 /**
@@ -270,16 +247,11 @@ async function resetPassword(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("onRequest", async (request, reply) => {
     await fastify.verifyResetPasswordCookie(request, reply);
   });
-  fastify.post(
-    "/",
-    {
-      schema: {
-        body: $ref("resetPasswordRequestSchema"),
-        querystring: $ref("verifyEmailQueryStringSchema"),
-      },
-    },
-    new UserController(fastify).resetPasswordHandler
-  );
+  fastify.addHook("preHandler", async (request, reply) => {
+    await validateRequestQuery(request, reply, verifyEmailQueryStringSchema);
+    await validateRequestBody(request, reply, resetPasswordRequestSchema);
+  });
+  fastify.post("/", new UserController(fastify).resetPasswordHandler);
 }
 
 /**
@@ -290,17 +262,7 @@ async function getUserDetails(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("preHandler", async (request, reply) => {
     await fastify.verifyAccessTokenHeader(request, reply);
   });
-  fastify.get(
-    "/",
-    {
-      schema: {
-        response: {
-          200: $ref("userDetailsResponseSchema"),
-        },
-      },
-    },
-    new UserController(fastify).retrieveUserDetails
-  );
+  fastify.get("/", new UserController(fastify).retrieveUserDetails);
 }
 
 /**
@@ -309,7 +271,7 @@ async function getUserDetails(fastify: FastifyInstance): Promise<void> {
  */
 async function editUserDetails(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("preHandler", async (request, reply) => {
-    validateRequestBody(request, reply, userEditRequestBodySchema);
+    await validateRequestBody(request, reply, userEditRequestBodySchema);
     await fastify.verifyAccessTokenHeader(request, reply);
   });
   fastify.put("/", new UserController(fastify).updateUserDetails);
@@ -331,14 +293,18 @@ async function validateRequestBody<T>(
   }
 }
 
-async function validateResponseMessage<T>(
-  _: unknown,
+async function validateRequestQuery<T>(
+  request: FastifyRequest,
   reply: FastifyReply,
   schema: ZodSchema<T>
 ): Promise<void> {
   try {
-    await schema.parseAsync(reply.sent);
+    request.query = await schema.parseAsync(request.query);
   } catch (error) {
-    return reply.status(500);
+    if (error instanceof ZodError) {
+      const firstError = error.errors[0];
+      return reply.status(400).send(firstError);
+    }
+    return reply.status(400).send(error);
   }
 }

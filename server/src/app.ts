@@ -7,7 +7,7 @@ config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
 import cookie from "@fastify/cookie";
 import type { FastifyCookieOptions } from "@fastify/cookie";
 import cors from "@fastify/cors";
-import { userSchemas, userRoutes } from "./api/v1/user";
+import { userRoutes } from "./api/v1/user";
 import { authMiddleware } from "./config/middleware";
 
 export type AppOptions = {
@@ -61,10 +61,6 @@ const app: FastifyPluginAsync<AppOptions> = async (
     dir: join(__dirname, "./config/plugins"),
     options: options,
   });
-
-  for (const schema of userSchemas) {
-    fastify.addSchema(schema);
-  }
 
   void fastify.register(authMiddleware);
   void fastify.register(userRoutes, options);

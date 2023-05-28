@@ -11,7 +11,6 @@ export const userEditQuery = () => ({
 
 export async function editUserData(request: IRequest): Promise<void> {
   try {
-    console.log("kli8ika: ", request);
     const { username, biography, phone, currentPassword, newPassword } =
       request;
 

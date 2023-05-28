@@ -66,11 +66,6 @@ axiosInstance.interceptors.response.use(
     }
 
     // Handle non-authentication errors
-    if (error?.response?.status === 403) {
-      const errorMessage = error?.response?.data;
-      return Promise.reject(errorMessage);
-    }
-
     return Promise.reject(error);
   }
 );
