@@ -68,7 +68,6 @@ const app: FastifyPluginAsync<AppOptions> = async (
   if (process.env.NODE_ENV === "development") {
     fastify.addHook("onReady", async function showStructure() {
       // const fastifyStructure = fastify.overview({ hideEmpty: true });
-      // console.log(JSON.stringify(fastifyStructure));
     });
   }
 };

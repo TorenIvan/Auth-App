@@ -15,7 +15,6 @@ const refreshUri = "v1/auth/refresh";
 
 export async function renewTokens(): Promise<string> {
   try {
-    console.log("Kati pige la8os mesa sto renew");
     const result = await axiosRenewInstance.get(refreshUri);
     const data = result.data;
     if (data?.access_token === undefined) {

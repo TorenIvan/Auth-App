@@ -20,10 +20,8 @@ export async function loginUser(request: IRequest): Promise<string> {
     if (data?.access_token === undefined) throw "error";
     return data.access_token;
   } catch (error: unknown | AxiosError) {
-    console.log("eeeeeee: ", error);
     if (isAxiosError(error)) {
       const { response } = error;
-      console.log("response obj: ", response?.data);
       const statusCode = response?.status ?? 0;
       const message = response?.data?.message;
 

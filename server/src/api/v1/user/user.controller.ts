@@ -383,8 +383,6 @@ class UserController {
       const { username, email, phone, biography, signInMethod } =
         userDetails.data as ServiceInsertedData;
 
-      console.log("controllerudfhvl;udhfl;vhjsdfl: username: ", username);
-
       reply.code(200).send({
         username: username,
         email: email,
@@ -404,8 +402,6 @@ class UserController {
     try {
       const { username, biography, phone, currentPassword, newPassword } =
         request.body;
-
-      console.log("kai omos mpika controller me bio: ", biography);
 
       const isChangingPassword: boolean = newPassword.trim() !== "";
 

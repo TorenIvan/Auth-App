@@ -280,10 +280,6 @@ class UserService {
         };
       }
 
-      console.log(
-        "serviceeeeeeeeeeeeeeeee: result username: ",
-        result.username
-      );
       const data: ServiceInsertedData = {
         userId: result._id,
         username: result.username,
