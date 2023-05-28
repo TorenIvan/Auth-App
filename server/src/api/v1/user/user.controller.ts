@@ -383,6 +383,8 @@ class UserController {
       const { username, email, phone, biography, signInMethod } =
         userDetails.data as ServiceInsertedData;
 
+      console.log("controllerudfhvl;udhfl;vhjsdfl: username: ", username);
+
       reply.code(200).send({
         username: username,
         email: email,

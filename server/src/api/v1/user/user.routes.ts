@@ -4,10 +4,14 @@ import {
   FastifyReply,
   FastifyRequest,
 } from "fastify";
-import { $ref } from "./user.schema";
+import { ZodError, Schema as ZodSchema } from "zod";
+import {
+  $ref,
+  authCredsBodySchema,
+  authCredsUserResponseSchema,
+} from "./user.schema";
 import { userEditRequestBodySchema } from "./user.schema";
 import UserController from "./user.controller";
-import { ZodError } from "zod";
 
 /**
  * Encapsulates all the routes belonging to user in version 1
@@ -110,18 +114,13 @@ async function checkIsAuthenticated(fastify: FastifyInstance): Promise<void> {
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function loginWithCredentials(fastify: FastifyInstance): Promise<void> {
-  fastify.post(
-    "/",
-    {
-      schema: {
-        body: $ref("authCredsBodySchema"),
-        response: {
-          201: $ref("authCredsUserResponseSchema"),
-        },
-      },
-    },
-    new UserController(fastify).loginCredentialsHandler
-  );
+  fastify.addHook("preHandler", async (request, reply) => {
+    validateRequestBody(request, reply, authCredsBodySchema);
+  });
+  fastify.addHook("onSend", async (request, reply) => {
+    validateResponseMessage(request, reply, authCredsUserResponseSchema);
+  });
+  fastify.post("/", new UserController(fastify).loginCredentialsHandler);
 }
 
 /**
@@ -171,15 +170,10 @@ async function loginWithTwitter(fastify: FastifyInstance): Promise<void> {
 async function registerWithCredentials(
   fastify: FastifyInstance
 ): Promise<void> {
-  fastify.post(
-    "/",
-    {
-      schema: {
-        body: $ref("authCredsBodySchema"),
-      },
-    },
-    new UserController(fastify).registerCredentialsHandler
-  );
+  fastify.addHook("preHandler", async (request, reply) => {
+    validateRequestBody(request, reply, authCredsBodySchema);
+  });
+  fastify.post("/", new UserController(fastify).registerCredentialsHandler);
 }
 
 /**
@@ -324,7 +318,7 @@ async function editUserDetails(fastify: FastifyInstance): Promise<void> {
 async function validateRequestBody<T>(
   request: FastifyRequest,
   reply: FastifyReply,
-  schema: import("zod").Schema<T>
+  schema: ZodSchema<T>
 ): Promise<void> {
   try {
     request.body = await schema.parseAsync(request.body);
@@ -334,5 +328,17 @@ async function validateRequestBody<T>(
       return reply.status(400).send(firstError);
     }
     return reply.status(400).send(error);
+  }
+}
+
+async function validateResponseMessage<T>(
+  _: unknown,
+  reply: FastifyReply,
+  schema: ZodSchema<T>
+): Promise<void> {
+  try {
+    await schema.parseAsync(reply.sent);
+  } catch (error) {
+    return reply.status(500);
   }
 }

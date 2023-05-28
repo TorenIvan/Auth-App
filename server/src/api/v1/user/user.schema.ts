@@ -1,28 +1,33 @@
 import * as z from "zod";
 import { buildJsonSchemas } from "fastify-zod";
-import { Strings } from "../../../config/utils/constants/Strings";
+import { Errors } from "../../../config/utils/constants/Errors";
 
-const authCredsBodySchema = z.object({
+export const authCredsBodySchema = z.object({
   email: z
     .string({
-      required_error: Strings.EmailRequired,
-      invalid_type_error: Strings.EmailInvalid,
+      required_error: Errors.EmailRequired,
+      invalid_type_error: Errors.EmailInvalid,
     })
     .email(),
   password: z
     .string({
-      required_error: Strings.PasswordRequired,
-      invalid_type_error: Strings.PasswordInvalid,
+      required_error: Errors.PasswordRequired,
+      invalid_type_error: Errors.PasswordInvalid,
     })
-    .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/),
+    .refine(
+      (value) => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/.test(value),
+      {
+        message: Errors.PasswordInvalid,
+      }
+    ),
 });
 
-const authCredsUserResponseSchema = z.object({
+export const authCredsUserResponseSchema = z.object({
   access_token: z.string(),
 });
 
 const verifyEmailQueryStringSchema = z.object({
-  token: z.string().min(1, { message: "Token is required" }),
+  token: z.string().min(1, { message: Errors.TokenRequired }),
 });
 
 const verifyEmailResponseSchema = z.object({
@@ -36,8 +41,8 @@ const verifyEmailErrorSchema = z.object({
 const forgotPasswordRequestSchema = z.object({
   email: z
     .string({
-      required_error: Strings.EmailRequired,
-      invalid_type_error: Strings.EmailInvalid,
+      required_error: Errors.EmailRequired,
+      invalid_type_error: Errors.EmailInvalid,
     })
     .email(),
 });
@@ -45,24 +50,34 @@ const forgotPasswordRequestSchema = z.object({
 const resetPasswordRequestSchema = z.object({
   newPassword: z
     .string({
-      required_error: Strings.PasswordRequired,
-      invalid_type_error: Strings.PasswordInvalid,
+      required_error: Errors.PasswordRequired,
+      invalid_type_error: Errors.PasswordInvalid,
     })
-    .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/),
+    .refine(
+      (value) => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/.test(value),
+      {
+        message: Errors.PasswordInvalid,
+      }
+    ),
   confirmNewPassword: z
     .string({
-      required_error: Strings.PasswordRequired,
-      invalid_type_error: Strings.PasswordInvalid,
+      required_error: Errors.PasswordRequired,
+      invalid_type_error: Errors.PasswordInvalid,
     })
-    .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/),
+    .refine(
+      (value) => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/.test(value),
+      {
+        message: Errors.PasswordInvalid,
+      }
+    ),
 });
 
 const userDetailsResponseSchema = z.object({
   username: z
     .string()
     .trim()
-    .min(2, { message: "Name must be 2 or more characters long" })
-    .max(18, { message: "Name must be 18 or fewer characters long" }),
+    .min(2, { message: Errors.UsernameMinimum })
+    .max(18, { message: Errors.UsernameMaximum }),
   email: z.string().email(),
   phone: z
     .string()
@@ -82,8 +97,8 @@ export const userEditRequestBodySchema = z.object({
   username: z
     .string()
     .trim()
-    .min(2, { message: "Name must be 2 or more characters long" })
-    .max(18, { message: "Name must be 18 or fewer characters long" }),
+    .min(2, { message: Errors.UsernameMinimum })
+    .max(18, { message: Errors.UsernameMaximum }),
   biography: z.string().trim(),
   phone: z
     .string()
@@ -96,26 +111,24 @@ export const userEditRequestBodySchema = z.object({
         )
     ),
   currentPassword: z
-    .string()
-    .trim()
-    .length(0)
-    .or(
-      z
-        .string({
-          invalid_type_error: Strings.PasswordInvalid,
-        })
-        .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/)
+    .string({
+      invalid_type_error: Errors.PasswordInvalid,
+    })
+    .refine(
+      (value) => /^(?=.?[A-Z])(?=.?[a-z])(?=.*?[0-9]).{8,36}$|^$/.test(value),
+      {
+        message: Errors.PasswordInvalid,
+      }
     ),
   newPassword: z
-    .string()
-    .trim()
-    .length(0)
-    .or(
-      z
-        .string({
-          invalid_type_error: Strings.PasswordInvalid,
-        })
-        .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/)
+    .string({
+      invalid_type_error: Errors.PasswordInvalid,
+    })
+    .refine(
+      (value) => /^(?=.?[A-Z])(?=.?[a-z])(?=.*?[0-9]).{8,36}$|^$/.test(value),
+      {
+        message: Errors.PasswordInvalid,
+      }
     ),
 });
 

@@ -1,4 +1,12 @@
 export const Errors = {
+  EmailRequired: "Email is required",
+  EmailInvalid: "Please enter a valid email address",
+  PasswordRequired: "Password is required",
+  PasswordInvalid:
+    "Invalid password. Password must contain at least one uppercase letter, one lowercase letter, one digit, and be 8-36 characters long",
+  TokenRequired: "Token is required",
+  UsernameMinimum: "Name must be 2 or more characters long",
+  UsernameMaximum: "Name must be 18 or fewer characters long",
   UserAlreadyExists: "Email address already exists",
   UserNotFoundWithTheseCreds:
     "The specified email address could not be authenticated. Please, try registering again",
