@@ -32,7 +32,6 @@
     "fastify-cli": "^5.7.1",
     "fastify-overview": "^3.3.0",
     "fastify-plugin": "^4.5.0",
-    "fastify-zod": "^1.2.0",
     "install": "^0.13.0",
     "jsonwebtoken": "^9.0.0",
     "mongodb": "^4.13.0",
