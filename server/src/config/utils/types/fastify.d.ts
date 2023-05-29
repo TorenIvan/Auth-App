@@ -27,10 +27,22 @@ declare module "fastify" {
     ) => Promise<void>;
   }
 
+  export interface FastifyMultipartFile {
+    name: string;
+    data: Buffer;
+    encoding: string;
+    mimetype: string;
+    filename: string;
+    limit: number;
+    fields: object;
+    size: number;
+  }
+
   export interface FastifyRequest {
     userId: string;
     signInMethod: SignInMethod;
     cookies: { [cookieName: string]: string | undefined };
+    file: FastifyMultipartFile;
   }
 
   export interface FastifyReply {

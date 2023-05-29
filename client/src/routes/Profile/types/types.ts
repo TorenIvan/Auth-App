@@ -1,6 +1,6 @@
 export type TUserInfo =
   | {
-      image?: string;
+      image?: Buffer;
       username: string;
       email: string;
       phone: string;

@@ -396,12 +396,26 @@ class UserController {
   }
 
   async updateUserDetails(
-    request: FastifyRequest<{ Body: editUserDetailsBody }>,
+    request: FastifyRequest<{
+      Body: editUserDetailsBody;
+    }>,
     reply: FastifyReply
   ) {
     try {
       const { username, biography, phone, currentPassword, newPassword } =
         request.body;
+      const image = request.file;
+      console.log(request.body);
+      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee image: ", image);
+
+      // const maxSize = 16 * 1024 * 1024; // 16MB
+      // if (image === undefined) {
+      //   return UserController.handleError(
+      //     reply,
+      //     400,
+      //     Errors.MaxFileSizeExceeded
+      //   );
+      // }
 
       const isChangingPassword: boolean = newPassword.trim() !== "";
 
@@ -435,10 +449,11 @@ class UserController {
       const updatedUserDetails =
         await UserController.userService.UpdateUserDetails(
           request.userId,
-          username.trim(),
-          phone.trim(),
-          biography.trim(),
-          newPassword.trim()
+          username,
+          phone,
+          biography,
+          newPassword
+          // image !== undefined ? image.data : undefined
         );
 
       if (updatedUserDetails.success === false) {

@@ -271,10 +271,11 @@ async function getUserDetails(fastify: FastifyInstance): Promise<void> {
  */
 async function editUserDetails(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("preHandler", async (request, reply) => {
+    console.log("eeeeeeeeeehfvlhbud;hvp;df: ", request.file);
     await validateRequestBody(request, reply, userEditRequestBodySchema);
     await fastify.verifyAccessTokenHeader(request, reply);
   });
-  fastify.put("/", new UserController(fastify).updateUserDetails);
+  fastify.post("/", new UserController(fastify).updateUserDetails);
 }
 
 async function validateRequestBody<T>(

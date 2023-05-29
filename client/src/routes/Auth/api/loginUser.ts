@@ -33,7 +33,7 @@ export async function loginUser(request: IRequest): Promise<string> {
   }
 }
 
-interface IRequest {
+export interface IRequest {
   email: string;
   password: string;
 }

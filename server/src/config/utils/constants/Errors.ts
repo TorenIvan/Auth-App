@@ -28,4 +28,5 @@ export const Errors = {
   SignInMethodUpdatePassword:
     "It is not possible to add or update password with the current sign in method",
   FillInPassword: "Please, fill the current password before updating it",
+  MaxFileSizeExceeded: "File size exceeds the maximum allowed limit",
 } as const;

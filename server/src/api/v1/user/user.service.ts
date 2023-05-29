@@ -299,7 +299,8 @@ class UserService {
     username: string,
     phone: string,
     biography: string,
-    newPassword: string
+    newPassword: string,
+    imageBuffer?: Buffer
   ): Promise<ServiceResponse> {
     try {
       const updateFields: any = {
@@ -314,6 +315,10 @@ class UserService {
         );
         const hash = await bcrypt.hash(newPassword.trim(), salt);
         updateFields.password = hash;
+      }
+
+      if (imageBuffer !== undefined) {
+        updateFields.image = imageBuffer;
       }
 
       const result: UpdateResult = await UserService.users.updateOne(

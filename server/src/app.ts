@@ -7,6 +7,7 @@ config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
 import cookie from "@fastify/cookie";
 import type { FastifyCookieOptions } from "@fastify/cookie";
 import cors from "@fastify/cors";
+import multipart from "@fastify/multipart";
 import { userRoutes } from "./api/v1/user";
 import { authMiddleware } from "./config/middleware";
 
@@ -30,6 +31,9 @@ const app: FastifyPluginAsync<AppOptions> = async (
     await fastify.register(FastifyOverview);
   }
 
+  await fastify.register(multipart, {
+    addToBody: true,
+  });
   await fastify.register(cors, {
     origin: process.env.CLIENT_URI,
     methods: ["GET", "PUT", "POST", "OPTIONS"],

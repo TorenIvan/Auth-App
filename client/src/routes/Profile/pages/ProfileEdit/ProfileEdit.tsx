@@ -162,11 +162,21 @@ function action(queryClient: QueryClient) {
     try {
       const formData = await request.formData();
 
-      const formDataArray = Array.from(formData.entries()).map(
-        ([key, value]) => [key, value as string]
-      );
+      const file = formData.get("file") as File;
+      const updatedFormData = new FormData();
+      updatedFormData.append("file", file);
 
-      const userData = Object.fromEntries(formDataArray);
+      for (const [key, value] of formData.entries()) {
+        if (key !== "file") {
+          updatedFormData.append(key, value);
+        }
+      }
+
+      const userData: IRequest = Object.fromEntries(
+        updatedFormData.entries()
+      ) as unknown as IRequest;
+
+      console.dir(userData);
 
       await editUserData(userData);
 
@@ -177,4 +187,13 @@ function action(queryClient: QueryClient) {
       return false;
     }
   };
+}
+
+interface IRequest {
+  username: string;
+  biography: string;
+  phone: string;
+  currentPassword: string;
+  newPassword: string;
+  file?: File;
 }

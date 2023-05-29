@@ -1,22 +1,23 @@
 import * as z from "zod";
+import { Errors } from "../../../config/utils/constants/Errors";
 
 const UserSchema = z.object({
   username: z.string(),
   email: z.string().email(),
   phone: z
     .string()
-    .length(0)
-    .or(
-      z
-        .string()
-        .regex(
-          /(\+\d{1,3}\s?)?((\(\d{3}\)\s?)|(\d{3})(\s|-?))(\d{3}(\s|-?))(\d{4})(\s?(([E|e]xt[:|.|]?)|x|X)(\s?\d+))?/g
-        )
+    .refine(
+      (value) =>
+        /^(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$|^$/.test(value),
+      {
+        message: Errors.InvalidPhoneNumber,
+      }
     ),
   biography: z.string(),
   password: z.string().optional(),
   signInMethod: z.string(),
   isVerified: z.boolean(),
+  image: z.unknown().optional(),
 });
 
 type User = z.infer<typeof UserSchema>;
