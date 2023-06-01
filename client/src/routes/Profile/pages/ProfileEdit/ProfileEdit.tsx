@@ -1,5 +1,5 @@
 import { ChangeEvent, Fragment, useRef, useState } from "react";
-import { ActionFunctionArgs, Form, NavLink, redirect } from "react-router-dom";
+import { Form, NavLink, redirect, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
@@ -17,6 +17,7 @@ import styles from "./styles.module.scss";
 
 function ProfileEdit() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [image, setImage] = useState<string | null>(null);
   const inputFileRef = useRef<HTMLInputElement>(null);
 
@@ -39,13 +40,43 @@ function ProfileEdit() {
     inputFileRef?.current?.click();
   }
 
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const file = inputFileRef.current?.files?.[0];
+
+    if (file !== undefined) {
+      formData.set("file", file);
+    }
+
+    try {
+      const updated = await action(queryClient, formData)();
+      console.log("updated: ", updated);
+      if (updated === false) {
+        return;
+      }
+      navigate("../");
+    } catch (error) {
+      console.error(error);
+      return;
+      // Handle error
+    }
+  };
+
   return (
     <div className={styles["page-container"]}>
       <NavLink className={styles["back-button"]} to="/profile" replace>
         <span className={styles["arrow-left"]} />
         <span>{Constants.Back}</span>
       </NavLink>
-      <Form className={styles.form} autoComplete="off" method="put" action="">
+      <Form
+        className={styles.form}
+        autoComplete="off"
+        method="post"
+        action=""
+        onSubmit={handleSubmit}
+      >
         <article>
           <h3>{Constants.ChangeInfo}</h3>
           <span>{Constants.ChangeInfoSub}</span>
@@ -157,14 +188,13 @@ function ProfileEdit() {
 
 export { ProfileEdit as default, action };
 
-function action(queryClient: QueryClient) {
-  return async function ({ request }: ActionFunctionArgs) {
+function action(queryClient: QueryClient, formData: FormData) {
+  return async function () {
     try {
-      const formData = await request.formData();
-
-      const file = formData.get("file") as File;
+      const file = formData.get("file");
+      console.log("file inside action: ", file);
       const updatedFormData = new FormData();
-      updatedFormData.append("file", file);
+      updatedFormData.append("file", file as File);
 
       for (const [key, value] of formData.entries()) {
         if (key !== "file") {
@@ -176,12 +206,16 @@ function action(queryClient: QueryClient) {
         updatedFormData.entries()
       ) as unknown as IRequest;
 
+      console.log("userData: ", userData);
+
       console.dir(userData);
 
       await editUserData(userData);
 
+      console.log("Perasa edo");
       await queryClient.refetchQueries(userDetailsQuery().queryKey);
-      return redirect(`${import.meta.env.VITE_CLIENT_URI}profile`);
+      console.log("Perasa kai edo");
+      return true;
     } catch (error) {
       toast.error(error as string);
       return false;

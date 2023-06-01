@@ -100,6 +100,7 @@ export const userEditRequestBodySchema = z.object({
         message: Errors.PasswordInvalid,
       }
     ),
+  file: z.unknown().optional(),
 });
 
 export type credsUserInput = z.infer<typeof authCredsBodySchema>;

@@ -269,6 +269,7 @@ class UserService {
             email: 1,
             signInMethod: 1,
             biography: 1,
+            image: 1,
             phone: 1,
             _id: 1,
           },
@@ -278,6 +279,14 @@ class UserService {
         throw {
           customError: Errors.UserNotFoundWithTheseCreds,
         };
+      }
+
+      if (result.image) {
+        console.log(
+          "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr: ",
+          //@ts-ignore
+          result.image
+        );
       }
 
       const data: ServiceInsertedData = {
@@ -309,6 +318,7 @@ class UserService {
         biography,
       };
 
+      console.log("imageBuffer: ", imageBuffer);
       if (newPassword !== "") {
         const salt = await bcrypt.genSalt(
           Number(EnvironmentVariables.Salt_Size)
@@ -330,6 +340,7 @@ class UserService {
         }
       );
 
+      console.log("result: ", result);
       if (result.acknowledged === false) {
         throw {
           customError: Errors.GenericError,

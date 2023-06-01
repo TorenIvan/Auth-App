@@ -11,19 +11,6 @@ export const userEditQuery = () => ({
 
 export async function editUserData(request: IRequest): Promise<void> {
   try {
-    // const { username, biography, phone, currentPassword, newPassword, file } =
-    //   request;
-
-    // const formData = new FormData();
-    // formData.append("username", username.trim());
-    // formData.append("biography", biography.trim());
-    // formData.append("phone", phone.trim());
-    // formData.append("currentPassword", currentPassword.trim());
-    // formData.append("newPassword", newPassword.trim());
-    // if (file !== undefined) {
-    //   formData.append("file", file);
-    // }
-
     const result: AxiosResponse<void> = await axiosInstance.post(
       userEditUri,
       request,

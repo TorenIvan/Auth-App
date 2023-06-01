@@ -7,7 +7,7 @@ import {
 import { ZodError, Schema as ZodSchema } from "zod";
 import {
   authCredsBodySchema,
-  userEditRequestBodySchema,
+  // userEditRequestBodySchema,
   forgotPasswordRequestSchema,
   resetPasswordRequestSchema,
   verifyEmailQueryStringSchema,
@@ -271,9 +271,8 @@ async function getUserDetails(fastify: FastifyInstance): Promise<void> {
  */
 async function editUserDetails(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("preHandler", async (request, reply) => {
-    console.log("eeeeeeeeeehfvlhbud;hvp;df: ", request.file);
-    await validateRequestBody(request, reply, userEditRequestBodySchema);
     await fastify.verifyAccessTokenHeader(request, reply);
+    // await validateRequestBody(request, reply, userEditRequestBodySchema);
   });
   fastify.post("/", new UserController(fastify).updateUserDetails);
 }

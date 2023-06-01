@@ -404,18 +404,20 @@ class UserController {
     try {
       const { username, biography, phone, currentPassword, newPassword } =
         request.body;
-      const image = request.file;
+      console.log("eeeeeeeeeeeeee perasa");
       console.log(request.body);
-      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeee image: ", image);
 
+      console.log("eeee: ", request.body.file);
+
+      const image = request.body.file;
       // const maxSize = 16 * 1024 * 1024; // 16MB
-      // if (image === undefined) {
-      //   return UserController.handleError(
-      //     reply,
-      //     400,
-      //     Errors.MaxFileSizeExceeded
-      //   );
-      // }
+      if (image === undefined) {
+        return UserController.handleError(
+          reply,
+          400,
+          Errors.MaxFileSizeExceeded
+        );
+      }
 
       const isChangingPassword: boolean = newPassword.trim() !== "";
 
@@ -452,8 +454,9 @@ class UserController {
           username,
           phone,
           biography,
-          newPassword
-          // image !== undefined ? image.data : undefined
+          newPassword,
+          // @ts-ignore
+          image[0]?.data
         );
 
       if (updatedUserDetails.success === false) {
