@@ -31,7 +31,7 @@ function ProfileEdit() {
     if (files === null || files === undefined || files.length === 0) {
       return;
     }
-    console.log(files[0]);
+    // console.log(files[0]);
     const imageUrl = URL.createObjectURL(files[0]);
     setImage(imageUrl);
   }
@@ -52,7 +52,7 @@ function ProfileEdit() {
 
     try {
       const updated = await action(queryClient, formData)();
-      console.log("updated: ", updated);
+      // console.log("updated: ", updated);
       if (updated === false) {
         return;
       }
@@ -192,7 +192,7 @@ function action(queryClient: QueryClient, formData: FormData) {
   return async function () {
     try {
       const file = formData.get("file");
-      console.log("file inside action: ", file);
+      // console.log("file inside action: ", file);
       const updatedFormData = new FormData();
       updatedFormData.append("file", file as File);
 
@@ -206,15 +206,15 @@ function action(queryClient: QueryClient, formData: FormData) {
         updatedFormData.entries()
       ) as unknown as IRequest;
 
-      console.log("userData: ", userData);
+      // console.log("userData: ", userData);
 
-      console.dir(userData);
+      // console.dir(userData);
 
       await editUserData(userData);
 
-      console.log("Perasa edo");
+      // console.log("Perasa edo");
       await queryClient.refetchQueries(userDetailsQuery().queryKey);
-      console.log("Perasa kai edo");
+      // console.log("Perasa kai edo");
       return true;
     } catch (error) {
       toast.error(error as string);

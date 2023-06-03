@@ -19,7 +19,7 @@ function ProfileLayout() {
 
   async function logout() {
     await logoutUser(queryClient);
-    navigate("login");
+    return navigate("login");
   }
 
   return (

@@ -1,9 +1,6 @@
 import axios from "axios";
 import { renewTokens } from "../api";
 
-let isRefreshing = false;
-let failedQueue: Array<(() => void) | null> = [];
-
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_SERVER_URI,
   headers: {
@@ -11,18 +8,6 @@ const axiosInstance = axios.create({
   },
   withCredentials: true,
 });
-
-export function addAuthorizationHeader(access_token: string) {
-  const isTokenInvalid: boolean =
-    access_token === null ||
-    access_token === undefined ||
-    typeof access_token !== "string";
-
-  if (isTokenInvalid === true) {
-    throw new Error("Invalid access token");
-  }
-  axiosInstance.defaults.headers["Authorization"] = `Bearer ${access_token}`;
-}
 
 axiosInstance.interceptors.request.use(
   (config) => {
@@ -39,30 +24,25 @@ axiosInstance.interceptors.response.use(
     const originalRequest = error.config;
 
     if (error?.response?.status === 401) {
-      if (isRefreshing === false) {
-        isRefreshing = true;
+      if (!originalRequest._retry) {
+        originalRequest._retry = true;
 
         try {
           const access_token = await renewTokens();
-          addAuthorizationHeader(access_token);
+          const authorizationHeader = addAuthorizationHeader(access_token);
 
-          // Resend original request
-          failedQueue?.forEach((promise) => promise && promise());
-          failedQueue = [];
-
+          originalRequest.headers["Authorization"] = authorizationHeader;
           return axiosInstance(originalRequest);
         } catch (err) {
-          // For example, logout user
+          // Refresh token expired; or something went wrongh with renewal
           window.location.replace(`${import.meta.env.VITE_CLIENT_URI}login`);
-        } finally {
-          isRefreshing = false;
+          return Promise.reject(err);
         }
+      } else {
+        // Refresh token request has already been attempted
+        window.location.replace(`${import.meta.env.VITE_CLIENT_URI}login`);
+        return Promise.reject(error);
       }
-
-      // Add original request to failedQueue
-      return new Promise((resolve) => {
-        failedQueue?.push(() => resolve(axiosInstance(originalRequest)));
-      });
     }
 
     // Handle non-authentication errors
@@ -71,3 +51,16 @@ axiosInstance.interceptors.response.use(
 );
 
 export default axiosInstance;
+
+export function addAuthorizationHeader(access_token: string) {
+  const isTokenInvalid: boolean =
+    access_token === null ||
+    access_token === undefined ||
+    typeof access_token !== "string";
+
+  if (isTokenInvalid === true) {
+    throw new Error("Invalid access token");
+  }
+  const authorizationHeader = `Bearer ${access_token}`;
+  axiosInstance.defaults.headers["Authorization"] = authorizationHeader;
+}
