@@ -281,14 +281,6 @@ class UserService {
         };
       }
 
-      if (result.image) {
-        console.log(
-          "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr: ",
-          //@ts-ignore
-          result.image
-        );
-      }
-
       const data: ServiceInsertedData = {
         userId: result._id,
         username: result.username,
@@ -309,7 +301,7 @@ class UserService {
     phone: string,
     biography: string,
     newPassword: string,
-    imageBuffer?: Buffer
+    image: UploadedFile | null
   ): Promise<ServiceResponse> {
     try {
       const updateFields: any = {
@@ -318,7 +310,6 @@ class UserService {
         biography,
       };
 
-      console.log("imageBuffer: ", imageBuffer);
       if (newPassword !== "") {
         const salt = await bcrypt.genSalt(
           Number(EnvironmentVariables.Salt_Size)
@@ -327,8 +318,8 @@ class UserService {
         updateFields.password = hash;
       }
 
-      if (imageBuffer !== undefined) {
-        updateFields.image = imageBuffer;
+      if (image !== null) {
+        updateFields.image = image.data;
       }
 
       const result: UpdateResult = await UserService.users.updateOne(
@@ -340,7 +331,6 @@ class UserService {
         }
       );
 
-      console.log("result: ", result);
       if (result.acknowledged === false) {
         throw {
           customError: Errors.GenericError,

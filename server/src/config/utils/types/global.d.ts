@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb";
 import { Strings } from "../constants/Strings";
+import { Multipart } from "@fastify/multipart";
 
 declare module "@fastify/autoload";
 declare module "@fastify/cookie";
@@ -39,6 +40,14 @@ declare global {
   type SendEmailAction =
     | Strings.ActionConfirmEmail
     | Strings.ActionResetPassword;
+
+  type UploadedFile = {
+    data: Buffer;
+    filename: string;
+    encoding: string;
+    mimetype: string;
+    limit: boolean;
+  };
 }
 
 /* Just to make the file a module */

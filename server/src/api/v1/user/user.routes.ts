@@ -10,6 +10,7 @@ import {
   // userEditRequestBodySchema,
   forgotPasswordRequestSchema,
   resetPasswordRequestSchema,
+  userEditRequestBodySchema,
   verifyEmailQueryStringSchema,
 } from "./user.schema";
 import UserController from "./user.controller";
@@ -272,7 +273,7 @@ async function getUserDetails(fastify: FastifyInstance): Promise<void> {
 async function editUserDetails(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("preHandler", async (request, reply) => {
     await fastify.verifyAccessTokenHeader(request, reply);
-    // await validateRequestBody(request, reply, userEditRequestBodySchema);
+    await validateRequestBody(request, reply, userEditRequestBodySchema);
   });
   fastify.post("/", new UserController(fastify).updateUserDetails);
 }

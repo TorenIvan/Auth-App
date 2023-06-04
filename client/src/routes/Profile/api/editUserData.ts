@@ -22,7 +22,6 @@ export async function editUserData(request: IRequest): Promise<void> {
     );
     return result.data;
   } catch (error: unknown | AxiosError) {
-    console.log("Error inside userEditData: ", error);
     if (isAxiosError(error)) {
       const { response } = error;
       const statusCode = response?.status ?? 0;

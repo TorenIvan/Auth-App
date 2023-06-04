@@ -1,5 +1,6 @@
 import axios from "axios";
 import { renewTokens } from "../api";
+import { toast } from "react-hot-toast";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_SERVER_URI,
@@ -32,16 +33,23 @@ axiosInstance.interceptors.response.use(
           const authorizationHeader = addAuthorizationHeader(access_token);
 
           originalRequest.headers["Authorization"] = authorizationHeader;
+
           return axiosInstance(originalRequest);
         } catch (err) {
-          // Refresh token expired; or something went wrongh with renewal
-          window.location.replace(`${import.meta.env.VITE_CLIENT_URI}login`);
-          return Promise.reject(err);
+          // Refresh token expired; or something went wrong with renewal
+          toast.error("Session expired. Redirecting to login...");
+          setTimeout(function () {
+            window.location.replace(`${import.meta.env.VITE_CLIENT_URI}login`);
+            return Promise.reject(error);
+          }, 3000);
         }
       } else {
         // Refresh token request has already been attempted
-        window.location.replace(`${import.meta.env.VITE_CLIENT_URI}login`);
-        return Promise.reject(error);
+        toast.error("Session expired. Redirecting to login...");
+        setTimeout(function () {
+          window.location.replace(`${import.meta.env.VITE_CLIENT_URI}login`);
+          return Promise.reject(error);
+        }, 3000);
       }
     }
 

@@ -20,6 +20,7 @@ import {
   resetPasswordUserInput,
 } from "./user.schema";
 import UserService from "./user.service";
+import { isFileSizeExceeded } from "../../../config/utils/helpers";
 
 /**
  * Keeps all the "bussiness" logic of User Collection
@@ -404,19 +405,22 @@ class UserController {
     try {
       const { username, biography, phone, currentPassword, newPassword } =
         request.body;
-      console.log("eeeeeeeeeeeeee perasa");
-      console.log(request.body);
 
-      console.log("eeee: ", request.body.file);
+      const images = request.body.file as Array<UploadedFile>;
 
-      const image = request.body.file;
-      // const maxSize = 16 * 1024 * 1024; // 16MB
-      if (image === undefined) {
-        return UserController.handleError(
-          reply,
-          400,
-          Errors.MaxFileSizeExceeded
-        );
+      let image: UploadedFile | null = (images[0] as UploadedFile) || null;
+
+      if (image !== null) {
+        if (image.data.length === 0) {
+          image = null;
+        }
+        if (image !== null && isFileSizeExceeded(image) === true) {
+          return UserController.handleError(
+            reply,
+            400,
+            Errors.MaxFileSizeExceeded
+          );
+        }
       }
 
       const isChangingPassword: boolean = newPassword.trim() !== "";
@@ -455,8 +459,7 @@ class UserController {
           phone,
           biography,
           newPassword,
-          // @ts-ignore
-          image[0]?.data
+          image
         );
 
       if (updatedUserDetails.success === false) {
