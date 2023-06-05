@@ -1,5 +1,5 @@
 import { ChangeEvent, Fragment, useRef, useState } from "react";
-import { Form, NavLink, redirect, useNavigate } from "react-router-dom";
+import { Form, NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";

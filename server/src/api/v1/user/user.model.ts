@@ -1,5 +1,6 @@
 import * as z from "zod";
 import { Errors } from "../../../config/utils/constants/Errors";
+import { ImageSchema } from "../image/image.model";
 
 const UserSchema = z.object({
   username: z.string(),
@@ -17,7 +18,7 @@ const UserSchema = z.object({
   password: z.string().optional(),
   signInMethod: z.string(),
   isVerified: z.boolean(),
-  image: z.unknown().optional(),
+  image: ImageSchema.optional(),
 });
 
 type User = z.infer<typeof UserSchema>;

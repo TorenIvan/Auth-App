@@ -1,6 +1,7 @@
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
 import { MongoClient, Db, Collection } from "mongodb";
+import Image from "../../api/v1/image/image.model";
 import User from "../../api/v1/user/user.model";
 import { EnvironmentVariables } from "../utils/constants/EnvironmentVariables";
 import { Strings } from "../utils/constants/Strings";
@@ -20,10 +21,12 @@ const databasePlugin: FastifyPluginAsync = fp(
 
       const db: Db = client.db(EnvironmentVariables.DatabaseName);
       const users: Collection<User> = db.collection<User>("users");
+      const images: Collection<Image> = db.collection<Image>("images");
 
       fastify
         .decorate("MongoDB", db)
         .decorate("User", users)
+        .decorate("Image", images)
         .addHook("onClose", () => {
           console.error(Strings.CloseDB);
         });
