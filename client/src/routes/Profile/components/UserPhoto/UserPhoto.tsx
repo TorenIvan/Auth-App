@@ -4,7 +4,7 @@ import styles from "./styles.module.scss";
 export function UserPhoto(props: IProps): JSX.Element {
   const { image, handleImage, inputSlot, paragraphSlot } = props;
 
-  const imageStyle = setImageStyle(image);
+  const imageStyle = setImageStyle(image, handleImage !== undefined);
   return (
     <section className={styles["edit-photo-item"]}>
       <section
@@ -26,12 +26,30 @@ interface IProps {
   paragraphSlot?: JSX.Element;
 }
 
-function setImageStyle(image: string | null): CSSProperties | undefined {
+function setImageStyle(
+  image: string | null,
+  canEdit: boolean
+): CSSProperties | undefined {
   let imageStyle: CSSProperties | undefined = undefined;
-  if (image !== null) {
-    imageStyle = {
-      backgroundImage: `url(${image})`,
-    };
+  switch (true) {
+    case canEdit && image !== null:
+      imageStyle = {
+        backgroundImage: `url(${image})`,
+        cursor: "pointer",
+      };
+      break;
+    case canEdit:
+      imageStyle = {
+        cursor: "pointer",
+      };
+      break;
+    case image !== null:
+      imageStyle = {
+        backgroundImage: `url(${image})`,
+      };
+      break;
+    default:
+      break;
   }
   return imageStyle;
 }
