@@ -1,10 +1,37 @@
 .toast {
   border-radius: 8px;
-  background-color: var(--text-secondary);
-  color: var(--background-screen);
+  background-color: #f8f8f8;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  font-size: 14px;
+  color: #333333;
+}
+
+.toast-icon {
+  margin-right: 8px;
 }
 
 .toast-button {
   transition-duration: 150ms;
   cursor: pointer;
+  background-color: transparent;
+  border: none;
+  color: #999999;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.button-label {
+  margin-right: 8px;
+}
+
+.button-icon {
+  font-size: 18px;
+}
+
+.toast-button:hover {
+  color: #333333;
 }

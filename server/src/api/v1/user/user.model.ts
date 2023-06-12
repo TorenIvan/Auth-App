@@ -18,7 +18,7 @@ const UserSchema = z.object({
   password: z.string().optional(),
   signInMethod: z.string(),
   isVerified: z.boolean(),
-  image: ImageSchema.optional(),
+  image: z.union([ImageSchema, z.undefined()]),
 });
 
 type User = z.infer<typeof UserSchema>;

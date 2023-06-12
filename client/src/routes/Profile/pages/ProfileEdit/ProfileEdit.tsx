@@ -16,13 +16,13 @@ import { editUserData, userDetailsQuery } from "../../api";
 import styles from "./styles.module.scss";
 
 function ProfileEdit() {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const [image, setImage] = useState<string | null>(null);
+  const queryClient = useQueryClient();
   const inputFileRef = useRef<HTMLInputElement>(null);
-
-  const { queryKey } = userDetailsQuery();
-  const userInfo: TUserInfo = queryClient.getQueryData(queryKey);
+  const userInfo: TUserInfo = queryClient.getQueryData(
+    userDetailsQuery().queryKey
+  );
+  const [image, setImage] = useState<string | null>(findPhoto(userInfo?.image));
 
   function onFileChange(event: ChangeEvent<HTMLInputElement>) {
     event.stopPropagation();
@@ -221,4 +221,11 @@ interface IRequest {
   currentPassword: string;
   newPassword: string;
   file?: File;
+}
+
+function findPhoto(image?: string) {
+  if (image === undefined) {
+    return null;
+  }
+  return image;
 }

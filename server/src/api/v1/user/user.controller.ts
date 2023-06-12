@@ -22,11 +22,6 @@ import {
 import UserService from "./user.service";
 import { isFileSizeExceeded } from "../../../config/utils/helpers";
 
-/**
- * Keeps all the "bussiness" logic of User Collection
- * ToDos:
- * 1) Add a way  to check access and refresh tokens
- */
 class UserController {
   private static instance: InstanceType<typeof UserController>;
   private static userService: InstanceType<typeof UserService>;
@@ -381,8 +376,14 @@ class UserController {
         return UserController.handleError(reply, 400, userDetails?.customError);
       }
 
-      const { username, email, phone, biography, signInMethod } =
+      const { username, email, phone, biography, signInMethod, image } =
         userDetails.data as ServiceInsertedData;
+
+      let imageString: string | undefined = undefined;
+      if (image?.data !== undefined) {
+        const bufferToBase64String: string = (image?.data).toString("base64");
+        imageString = `data:${image?.mimetype};base64,${bufferToBase64String}`;
+      }
 
       reply.code(200).send({
         username: username,
@@ -390,6 +391,7 @@ class UserController {
         phone: phone,
         biography: biography,
         signInMethod: signInMethod,
+        image: imageString,
       });
     } catch (error) {
       UserController.handleError(reply, 500, Errors.GenericError);
@@ -411,10 +413,10 @@ class UserController {
       let image: UploadedFile | null = (images[0] as UploadedFile) || null;
 
       if (image !== null) {
-        if (image.data.length === 0) {
+        if (!image.data) {
           image = null;
         }
-        if (image !== null && isFileSizeExceeded(image) === true) {
+        if (isFileSizeExceeded(image) === true) {
           return UserController.handleError(
             reply,
             400,

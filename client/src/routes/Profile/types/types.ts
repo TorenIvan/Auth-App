@@ -1,6 +1,6 @@
 export type TUserInfo =
   | {
-      image?: Buffer;
+      image?: string;
       username: string;
       email: string;
       phone: string;
@@ -8,11 +8,3 @@ export type TUserInfo =
       signInMethod: string;
     }
   | undefined;
-
-export type UploadedFile = {
-  data: Buffer;
-  filename: string;
-  encoding: string;
-  mimetype: string;
-  limit: boolean;
-};

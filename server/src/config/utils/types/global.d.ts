@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { Binary, ObjectId } from "mongodb";
 import { Strings } from "../constants/Strings";
 import { Multipart } from "@fastify/multipart";
 
@@ -13,20 +13,24 @@ declare global {
     | "twitter"
     | "google"
     | "github";
+
   type ServiceResponse = {
     success: boolean;
     customError?: string;
     data?: ServiceInsertedData | ServiceFoundData;
   };
+
   type ServiceFoundData = {
     userId: ObjectId;
   };
+
   type ServiceInsertedData = ServiceFoundData & {
     username: string;
     email: string;
     biography: string;
     phone: string;
     signInMethod: SignInMethod;
+    image?: InsertedFile;
   };
 
   interface TokenInterface {
@@ -41,11 +45,14 @@ declare global {
     | Strings.ActionConfirmEmail
     | Strings.ActionResetPassword;
 
-  type UploadedFile = {
+  type InsertedFile = {
     data: Buffer;
     filename: string;
     encoding: string;
     mimetype: string;
+  };
+
+  type UploadedFile = InsertedFile & {
     limit: boolean;
   };
 }

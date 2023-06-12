@@ -35,4 +35,5 @@ interface IResponse {
   phone: string;
   biography: string;
   signInMethod: string;
+  image?: string;
 }

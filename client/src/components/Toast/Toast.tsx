@@ -9,7 +9,7 @@ export default function Toast() {
       position="bottom-right"
       toastOptions={{
         success: {
-          duration: 3000,
+          duration: 2000,
         },
         error: {
           duration: 9000,
@@ -20,14 +20,15 @@ export default function Toast() {
         <ToastBar toast={t}>
           {({ icon, message }) => (
             <Fragment>
-              {icon}
-              {message}
+              <div className={styles["toast-icon"]}>{icon}</div>
+              <div className={styles["toast-message"]}>{message}</div>
               {isDismissable(t.type) === true && (
                 <button
                   className={styles["toast-button"]}
                   onClick={() => toast.dismiss(t.id)}
                 >
-                  x
+                  <span className={styles["button-label"]}>Dismiss</span>
+                  <span className={styles["button-icon"]}>&times;</span>
                 </button>
               )}
             </Fragment>

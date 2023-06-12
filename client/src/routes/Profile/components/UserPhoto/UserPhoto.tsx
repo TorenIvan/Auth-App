@@ -28,7 +28,7 @@ interface IProps {
 
 function setImageStyle(image: string | null): CSSProperties | undefined {
   let imageStyle: CSSProperties | undefined = undefined;
-  if (image !== null && image !== undefined) {
+  if (image !== null) {
     imageStyle = {
       backgroundImage: `url(${image})`,
     };

@@ -101,12 +101,17 @@ class UserService {
         };
       }
 
+      if (result.image) {
+        result.image.data = result.image.data;
+      }
+
       const data: ServiceInsertedData = {
         userId: result._id,
         username: result.username,
         email: email,
         biography: result.biography,
         phone: result.phone,
+        image: result.image,
         signInMethod: result.signInMethod as SignInMethod,
       };
       return { success: true, data: data };
@@ -287,6 +292,7 @@ class UserService {
         email: result.email,
         biography: result.biography,
         phone: result.phone,
+        image: result.image,
         signInMethod: result.signInMethod as SignInMethod,
       };
       return { success: true, data: data };
@@ -318,8 +324,12 @@ class UserService {
         updateFields.password = hash;
       }
 
+      if (image === null) {
+        updateFields.image = null;
+      }
       if (image !== null) {
-        updateFields.image = image.data;
+        const { limit, ...restImageProperties } = image;
+        updateFields.image = restImageProperties;
       }
 
       const result: UpdateResult = await UserService.users.updateOne(
