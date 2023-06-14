@@ -413,7 +413,7 @@ class UserController {
       let image: UploadedFile | null = (images[0] as UploadedFile) || null;
 
       if (image !== null) {
-        if (!image.data) {
+        if (!image.data || image.data.length === 0) {
           image = null;
         }
         if (isFileSizeExceeded(image) === true) {

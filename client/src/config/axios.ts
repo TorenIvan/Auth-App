@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_SERVER_URI,
   headers: {
-    "Content-Type": "application/json",
+    "Content-Type": "multipart/form-data",
   },
   withCredentials: true,
 });

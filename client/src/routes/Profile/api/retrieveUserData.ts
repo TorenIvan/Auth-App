@@ -14,6 +14,7 @@ async function retrieveUserData(): Promise<IResponse> {
     const result: AxiosResponse<IResponse> = await axiosInstance.get(
       userDetailsUri
     );
+
     return result.data;
   } catch (error: unknown | AxiosError) {
     if (isAxiosError(error)) {

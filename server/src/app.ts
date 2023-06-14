@@ -44,7 +44,12 @@ const app: FastifyPluginAsync<AppOptions> = async (
       process.env.RESET_PASS_COOKIE_NAME!,
     ],
     credentials: true,
-    exposedHeaders: ["*", "Authorization"],
+    exposedHeaders: [
+      "Content-Type",
+      "Authorization",
+      process.env.COOKIE_NAME!,
+      process.env.RESET_PASS_COOKIE_NAME!,
+    ],
   });
 
   void fastify.register(cookie, {

@@ -324,9 +324,6 @@ class UserService {
         updateFields.password = hash;
       }
 
-      if (image === null) {
-        updateFields.image = null;
-      }
       if (image !== null) {
         const { limit, ...restImageProperties } = image;
         updateFields.image = restImageProperties;
