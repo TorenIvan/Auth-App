@@ -37,6 +37,7 @@ function loader(queryClient: QueryClient) {
   return async function () {
     try {
       const isAuthenticated = await checkIfUserIsAuthenticated();
+
       if (isAuthenticated === true) {
         return redirect("../profile");
       }

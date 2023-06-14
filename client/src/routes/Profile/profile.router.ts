@@ -1,12 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
 import { Layout } from "./layouts";
-import {
-  Profile,
-  profileLoader,
-  ProfileDetails,
-  ProfileEdit,
-  editProfileAction,
-} from "./pages";
+import { Profile, profileLoader, ProfileDetails, ProfileEdit } from "./pages";
 
 function profileRoutes(queryClient: QueryClient) {
   return [
@@ -26,7 +20,6 @@ function profileRoutes(queryClient: QueryClient) {
             {
               path: "edit",
               Component: ProfileEdit,
-              action: editProfileAction(queryClient),
             },
           ],
         },
