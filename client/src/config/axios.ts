@@ -1,17 +1,22 @@
 import axios from "axios";
-import { renewTokens } from "../api";
 import { toast } from "react-hot-toast";
+import { renewTokens } from "../api";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_SERVER_URI,
   headers: {
-    "Content-Type": "multipart/form-data",
+    "Content-Type": "application/json",
   },
   withCredentials: true,
 });
 
+let lastAxiosContentTypeHeader: string | undefined = "application/json";
+
 axiosInstance.interceptors.request.use(
   (config) => {
+    lastAxiosContentTypeHeader = config.headers["Content-Type"] as
+      | string
+      | undefined;
     return config;
   },
   (error) => {
@@ -33,6 +38,7 @@ axiosInstance.interceptors.response.use(
           const authorizationHeader = addAuthorizationHeader(access_token);
 
           originalRequest.headers["Authorization"] = authorizationHeader;
+          originalRequest.headers["Content-Type"] = lastAxiosContentTypeHeader;
 
           return axiosInstance(originalRequest);
         } catch (err) {
