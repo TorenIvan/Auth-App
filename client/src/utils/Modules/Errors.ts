@@ -4,3 +4,7 @@ export const DefaultError = {
   title: "I have bad news for you",
   body: "Something went wrong with this page. Please, try again. Thank you!!!",
 } as const;
+
+export const Errors = {
+  GenericError: "Something went wrong. Please, try again later!",
+} as const;

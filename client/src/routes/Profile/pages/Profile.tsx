@@ -3,7 +3,7 @@ import { Fragment } from "react";
 import { toast } from "react-hot-toast";
 import { Outlet, redirect } from "react-router-dom";
 import { userDetailsQuery } from "../api";
-import { checkIfUserIsAuthenticated } from "../../Auth/api";
+import { checkIfUserIsAuthenticated } from "../../../api";
 
 function Profile() {
   return (

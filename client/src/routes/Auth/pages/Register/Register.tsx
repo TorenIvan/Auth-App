@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import { AuthForm, RegisterTitle, RegisterNavLink } from "../../components";
 import { Constants } from "../../constants";
 import { registerUser } from "../../api/registerUser";
-import { checkIfUserIsAuthenticated } from "../../api";
+import { checkIfUserIsAuthenticated } from "../../../../api";
 
 interface IRequest {
   email: string;

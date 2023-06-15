@@ -2,7 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { createBrowserRouter, redirect } from "react-router-dom";
 import { ErrorPage } from "../pages";
 import authRoutes from "./Auth";
-import { checkIfUserIsAuthenticated } from "./Auth/api";
+import { checkIfUserIsAuthenticated } from "../api";
 import profileRoutes from "./Profile";
 
 function indexRouter(queryClient: QueryClient) {

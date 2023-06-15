@@ -6,7 +6,7 @@ import { addAuthorizationHeader } from "../../../../config";
 import { AuthForm, LoginTitle, LoginNavLink } from "../../components";
 import { loginUser } from "../../api";
 import { Constants } from "../../constants";
-import { checkIfUserIsAuthenticated } from "../../api";
+import { checkIfUserIsAuthenticated } from "../../../../api";
 
 class Login extends PureComponent {
   private readonly submitButtonText: string;

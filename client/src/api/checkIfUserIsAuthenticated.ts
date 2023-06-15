@@ -1,6 +1,6 @@
 import { AxiosError, isAxiosError } from "axios";
-import { axiosInstance } from "../../../config";
-import { Errors } from "../errors";
+import { axiosInstance } from "../config";
+import { Errors } from "../utils";
 
 const uri = "v1/auth/check";
 
