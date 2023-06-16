@@ -9,6 +9,7 @@ import {
   registerAction,
   registerLoader,
   ResetPassword,
+  ConfirmEmail,
 } from "./pages";
 
 function authRoutes(queryClient: QueryClient) {
@@ -30,7 +31,8 @@ function authRoutes(queryClient: QueryClient) {
           action: registerAction,
         },
         {
-          path: "confirm-email",
+          path: "verify",
+          Component: ConfirmEmail,
         },
         {
           path: "forgot-password",

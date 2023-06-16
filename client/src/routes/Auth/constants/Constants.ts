@@ -17,4 +17,7 @@ export const Constants = {
   EmailPlaceholder: "Enter your email address...",
   Continue: "Continue",
   ResetPassword: "Reset Password",
+  ConfirmHeader: "Sorry! We couldn't confirm your email address.",
+  ConfirmParagraph: "Sign In to send you a new confirmation link",
+  BackToSignIn: "Back to Sign In",
 } as const;
