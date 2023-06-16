@@ -3,4 +3,5 @@ export const Errors = {
   InvalidEmail: "Email is not valid. Please try again!",
   InvalidPassword:
     "Password must contain at least 1 upper case, numeric, and special character.\n Please try again!",
+  NoConfirmationToken: "No email confirmation token was provided",
 } as const;

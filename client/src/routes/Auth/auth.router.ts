@@ -1,6 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import { Layout } from "./layouts";
 import {
+  ConfirmEmail,
   ForgotPassword,
   Login,
   loginAction,
@@ -30,7 +31,8 @@ function authRoutes(queryClient: QueryClient) {
           action: registerAction,
         },
         {
-          path: "confirm-email",
+          path: "verify",
+          Component: ConfirmEmail,
         },
         {
           path: "forgot-password",

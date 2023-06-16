@@ -1,6 +1,7 @@
 import Login, { loginAction, loginLoader } from "./Login";
 import Register, { registerAction, registerLoader } from "./Register";
 import { ResetPassword } from "./ResetPassword";
+import { ConfirmEmail } from "./ConfirmEmail";
 import ForgotPassword from "./ForgotPassword";
 
 export {
@@ -12,4 +13,5 @@ export {
   registerLoader,
   ForgotPassword,
   ResetPassword,
+  ConfirmEmail,
 };
