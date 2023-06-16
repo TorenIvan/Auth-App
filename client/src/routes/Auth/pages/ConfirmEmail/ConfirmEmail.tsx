@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleXmark,
   faEnvelopeCircleCheck,
+  faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./styles.module.scss";
 import { Constants } from "../../constants";
@@ -12,6 +13,22 @@ export function ConfirmEmail() {
 
   function goBackToLogin() {
     return navigate("../login");
+  }
+
+  if (false) {
+    return (
+      <div id={styles.container}>
+        <h2 id={styles.header}>{Constants.ConfirmHeaderLoading}</h2>
+        <FontAwesomeIcon
+          icon={faSpinner}
+          className={styles.fontIcon}
+          spinPulse
+        />
+        <p id={styles.content}>
+          <em>{Constants.ConfirmParagraphLoading}</em>
+        </p>
+      </div>
+    );
   }
 
   if (false) {
@@ -32,6 +49,7 @@ export function ConfirmEmail() {
       </div>
     );
   }
+
   return (
     <div id={styles.container}>
       <h2 id={styles.header}>{Constants.ConfirmHeader}</h2>

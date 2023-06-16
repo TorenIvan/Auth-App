@@ -18,9 +18,11 @@ export const Constants = {
   Continue: "Continue",
   ResetPassword: "Reset Password",
   ConfirmHeader: "Congratulations!",
+  ConfirmHeaderLoading: "Confirmation in progress",
   ConfirmHeaderError: "Sorry! We couldn't confirm your email address.",
   ConfirmParagraph:
     "Your email has been confirmed. You can now sign in to the application.",
+  ConfirmParagraphLoading: "This might take a few seconds...",
   ConfirmParagraphError: "Sign In to send you a new confirmation link",
   BackToSignIn: "Back to Sign In",
 } as const;
