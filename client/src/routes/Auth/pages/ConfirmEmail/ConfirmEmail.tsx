@@ -1,29 +1,68 @@
-import { useQuery } from "@tanstack/react-query";
-import { redirect } from "react-router-dom";
-import { confirmEmailQuery } from "../../api/confirmEmail";
+import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCircleXmark,
+  faEnvelopeCircleCheck,
+  faSpinner,
+} from "@fortawesome/free-solid-svg-icons";
+import styles from "./styles.module.scss";
+import { Constants } from "../../constants";
 
 export function ConfirmEmail() {
-  const params = new URLSearchParams(window.location.pathname);
-  const verification_token = params.get("token");
-  const { queryKey, queryFn } = confirmEmailQuery();
+  const navigate = useNavigate();
 
-  const { status } = useQuery(queryKey, () => queryFn(verification_token));
+  function goBackToLogin() {
+    return navigate("../login");
+  }
 
-  if (status === "loading") {
-    <p>Confirmation is in progress...</p>;
+  if (false) {
+    return (
+      <div id={styles.container}>
+        <h2 id={styles.header}>{Constants.ConfirmHeaderLoading}</h2>
+        <FontAwesomeIcon
+          icon={faSpinner}
+          className={styles.fontIcon}
+          spinPulse
+        />
+        <p id={styles.content}>
+          <em>{Constants.ConfirmParagraphLoading}</em>
+        </p>
+      </div>
+    );
   }
-  if (status === "error") {
-    redirect("../login");
-  }
-  if (status === "success") {
-    redirect("../login");
+
+  if (false) {
+    return (
+      <div id={styles.container}>
+        <h2 id={styles.header}>{Constants.ConfirmHeaderError}</h2>
+        <FontAwesomeIcon
+          icon={faCircleXmark}
+          className={styles.fontIconError}
+          beatFade
+        />
+        <p id={styles.content}>
+          <em>{Constants.ConfirmParagraphError}</em>
+        </p>
+        <button id={styles.button} onClick={goBackToLogin}>
+          <span>{Constants.BackToSignIn}</span>
+        </button>
+      </div>
+    );
   }
 
   return (
-    <>
-      {status === "error" && <p>Error fetching data</p>}
-      {status === "loading" && <p>Fetching data...</p>}
-      {status === "success" && <div></div>}
-    </>
+    <div id={styles.container}>
+      <h2 id={styles.header}>{Constants.ConfirmHeader}</h2>
+      <FontAwesomeIcon
+        icon={faEnvelopeCircleCheck}
+        className={styles.fontIcon}
+      />
+      <p id={styles.content}>
+        <em>{Constants.ConfirmParagraph}</em>
+      </p>
+      <button id={styles.button} onClick={goBackToLogin}>
+        <span>{Constants.BackToSignIn}</span>
+      </button>
+    </div>
   );
 }
