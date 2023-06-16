@@ -48,8 +48,14 @@
   }
 }
 
-.fontIcon {
+.fontIconError {
   width: 100px;
   height: 80px;
   color: var(--red);
+}
+
+.fontIcon {
+  width: 100px;
+  height: 80px;
+  color: var(--sub-icon);
 }
