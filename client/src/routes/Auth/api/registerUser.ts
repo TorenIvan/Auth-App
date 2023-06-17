@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, isAxiosError } from "axios";
 import { Errors } from "../errors";
 
 const registerUri = `${
@@ -12,15 +12,16 @@ export async function registerUser(request: IRequest): Promise<void> {
       email: email,
       password: password,
     });
+    return;
   } catch (error: unknown | AxiosError) {
-    if (axios.isAxiosError(error)) {
-      const statusCode = (error as AxiosError)?.response?.status ?? 0;
-      const message = ((error as AxiosError)?.response?.data as any)?.message;
+    if (isAxiosError(error)) {
+      const { response } = error;
+      const statusCode = response?.status ?? 0;
+      const message = response?.data?.message;
 
       if (statusCode < 500) {
         throw message ?? Errors.GenericError;
       }
-      throw Errors.GenericError;
     }
     throw Errors.GenericError;
   }

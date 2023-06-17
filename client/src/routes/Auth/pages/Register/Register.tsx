@@ -58,14 +58,15 @@ async function action({ request }: ActionFunctionArgs) {
     const email = response.get("email") as string;
     const password = response.get("password") as string;
 
-    const access_token = await registerUser({
+    await registerUser({
       email: email,
       password: password,
     });
 
-    return redirect("../profile");
+    toast.success(Constants.ConfirmEmailMessage);
+    return redirect("../login");
   } catch (error: unknown) {
     toast.error(error as string);
-    return redirect("");
+    return true;
   }
 }

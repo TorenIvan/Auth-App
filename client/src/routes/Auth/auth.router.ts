@@ -31,7 +31,7 @@ function authRoutes(queryClient: QueryClient) {
           action: registerAction,
         },
         {
-          path: "verify",
+          path: "verify/:token",
           Component: ConfirmEmail,
         },
         {

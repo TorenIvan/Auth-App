@@ -9,7 +9,7 @@ export default function Toast() {
       position="bottom-right"
       toastOptions={{
         success: {
-          duration: 2000,
+          duration: 10000,
         },
         error: {
           duration: 9000,
