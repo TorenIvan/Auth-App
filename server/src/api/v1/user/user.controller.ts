@@ -111,7 +111,7 @@ class UserController {
       const serviceResponse: ServiceResponse =
         await UserController.userService.InsertUserWithCredentials(
           email,
-          password.trim()
+          password
         );
 
       const insertedCorrectly: boolean = serviceResponse.success;
@@ -191,7 +191,7 @@ class UserController {
       const userCredsResponse: ServiceResponse =
         await UserController.userService.ValidateUserWithCredentials(
           email,
-          password.trim()
+          password
         );
 
       const credentialsAuthenticated: boolean = userCredsResponse.success;
@@ -434,7 +434,7 @@ class UserController {
         }
       }
 
-      const isChangingPassword: boolean = newPassword.trim() !== "";
+      const isChangingPassword: boolean = newPassword !== "";
 
       const signInMethod = request.signInMethod;
       const canChangePassword: boolean = signInMethod === "credentials";
