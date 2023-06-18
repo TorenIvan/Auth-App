@@ -1,3 +1,3 @@
-import Login, { action, loader } from "./Login";
+import Login, { action } from "./Login";
 
-export { Login as default, action as loginAction, loader as loginLoader };
+export { Login as default, action as loginAction };

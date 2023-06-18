@@ -24,7 +24,6 @@ async function retrieveUserData(): Promise<IResponse> {
       if (statusCode < 500) {
         throw message ?? Errors.GenericError;
       }
-      throw Errors.GenericError;
     }
     throw Errors.GenericError;
   }

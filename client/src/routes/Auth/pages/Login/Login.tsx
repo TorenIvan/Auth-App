@@ -1,12 +1,10 @@
 import { PureComponent } from "react";
 import { ActionFunctionArgs, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { QueryClient } from "@tanstack/react-query";
 import { addAuthorizationHeader } from "../../../../config";
 import { AuthForm, LoginTitle, LoginNavLink } from "../../components";
 import { loginUser } from "../../api";
 import { Constants } from "../../constants";
-import { checkIfUserIsAuthenticated } from "../../../../api";
 
 class Login extends PureComponent {
   private readonly submitButtonText: string;
@@ -31,20 +29,7 @@ class Login extends PureComponent {
   }
 }
 
-export { Login as default, action, loader };
-
-async function loader() {
-  try {
-    const isAuthenticated = await checkIfUserIsAuthenticated();
-
-    if (isAuthenticated === true) {
-      return redirect("../profile");
-    }
-    return true;
-  } catch (error: unknown) {
-    return true;
-  }
-}
+export { Login as default, action };
 
 async function action({ request }: ActionFunctionArgs) {
   try {

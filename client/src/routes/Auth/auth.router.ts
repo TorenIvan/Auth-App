@@ -4,31 +4,30 @@ import {
   ForgotPassword,
   Login,
   loginAction,
-  loginLoader,
   Register,
   registerAction,
-  registerLoader,
   ResetPassword,
   ConfirmEmail,
   confirmEmailLoader,
 } from "./pages";
+import { checkIfUserIsAuthenticated } from "../../api";
+import { redirect } from "react-router-dom";
 
 function authRoutes(queryClient: QueryClient) {
   return [
     {
       path: "",
       Component: Layout,
+      loader: loader,
       children: [
         {
           path: "login",
           Component: Login,
-          loader: loginLoader,
           action: loginAction,
         },
         {
           path: "register",
           Component: Register,
-          loader: registerLoader,
           action: registerAction,
         },
         {
@@ -48,4 +47,18 @@ function authRoutes(queryClient: QueryClient) {
     },
   ];
 }
+
 export default authRoutes;
+
+async function loader() {
+  try {
+    const isAuthenticated = await checkIfUserIsAuthenticated();
+
+    if (isAuthenticated === true) {
+      return redirect(`${import.meta.env.VITE_CLIENT_URI}profile`);
+    }
+    return true;
+  } catch (error: unknown) {
+    return true;
+  }
+}
