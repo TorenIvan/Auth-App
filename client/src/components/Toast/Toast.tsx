@@ -12,7 +12,7 @@ export default function Toast() {
           duration: 10000,
         },
         error: {
-          duration: 9000,
+          duration: 18000,
         },
       }}
     >

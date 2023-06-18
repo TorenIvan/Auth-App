@@ -18,16 +18,17 @@ function authRoutes(queryClient: QueryClient) {
     {
       path: "",
       Component: Layout,
-      loader: loader,
       children: [
         {
           path: "login",
           Component: Login,
+          loader: loader,
           action: loginAction,
         },
         {
           path: "register",
           Component: Register,
+          loader: loader,
           action: registerAction,
         },
         {

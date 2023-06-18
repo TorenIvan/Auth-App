@@ -73,6 +73,7 @@ export async function loader() {
     const isAuthenticated = await checkIfUserIsAuthenticated();
 
     if (isAuthenticated === true) {
+      toast.error(Errors.AlreadyAuthenticated);
       return redirect(`${import.meta.env.VITE_CLIENT_URI}profile`);
     }
 
