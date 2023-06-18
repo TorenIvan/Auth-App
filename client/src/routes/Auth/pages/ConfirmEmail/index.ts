@@ -1,1 +1,4 @@
-export { ConfirmEmail } from "./ConfirmEmail";
+export {
+  ConfirmEmail as default,
+  loader as confirmEmailLoader,
+} from "./ConfirmEmail";

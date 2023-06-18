@@ -23,6 +23,7 @@ export const authCredsBodySchema = z.object({
 });
 
 export const verifyEmailQueryStringSchema = z.object({
+  email: z.string().email(),
   token: z.string().min(1, { message: Errors.TokenRequired }),
 });
 

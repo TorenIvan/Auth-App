@@ -34,7 +34,7 @@ export async function sendEmail(
     to: email,
     subject: Strings.VerificationEmailSubject,
     text: Strings.VerificationEmailText,
-    html: `<p>Please, click <a href=${emailLink}token=${token}>here</a> to ${action}</p>`,
+    html: `<p>Please, click <a href=${emailLink}?email=${email}&token=${token}>here</a> to ${action}</p>`,
   };
 
   try {

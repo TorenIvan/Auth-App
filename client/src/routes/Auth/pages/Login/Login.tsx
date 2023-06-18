@@ -33,39 +33,35 @@ class Login extends PureComponent {
 
 export { Login as default, action, loader };
 
-function loader(queryClient: QueryClient) {
-  return async function () {
-    try {
-      const isAuthenticated = await checkIfUserIsAuthenticated();
+async function loader() {
+  try {
+    const isAuthenticated = await checkIfUserIsAuthenticated();
 
-      if (isAuthenticated === true) {
-        return redirect("../profile");
-      }
-      return true;
-    } catch (error: unknown) {
-      return true;
+    if (isAuthenticated === true) {
+      return redirect("../profile");
     }
-  };
+    return true;
+  } catch (error: unknown) {
+    return true;
+  }
 }
 
-function action(queryClient: QueryClient) {
-  return async function ({ request }: ActionFunctionArgs) {
-    try {
-      const response = await request.formData();
-      const email = response.get("email") as string;
-      const password = response.get("password") as string;
+async function action({ request }: ActionFunctionArgs) {
+  try {
+    const response = await request.formData();
+    const email = response.get("email") as string;
+    const password = response.get("password") as string;
 
-      const access_token = await loginUser({
-        email: email,
-        password: password,
-      });
+    const access_token = await loginUser({
+      email: email,
+      password: password,
+    });
 
-      addAuthorizationHeader(access_token);
+    addAuthorizationHeader(access_token);
 
-      return redirect(`${import.meta.env.VITE_CLIENT_URI}profile`);
-    } catch (error: unknown) {
-      toast.error(error as string);
-      return true;
-    }
-  };
+    return redirect(`${import.meta.env.VITE_CLIENT_URI}profile`);
+  } catch (error: unknown) {
+    toast.error(error as string);
+    return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
+  }
 }

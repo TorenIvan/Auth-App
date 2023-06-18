@@ -14,13 +14,13 @@ export const Errors = {
   UserNotFoundInConfirmation:
     "Something went wrong with this link. Please register again!",
   TokenExpired:
-    "Oops, your confirmation link is no longer valid. Try login in to send a new one!",
+    "Oops, your confirmation link is not valid or expired. Sign in again to send you a new one!",
   IncorrectToken:
     "Oops, seems like the confirmation link is not correct. Make sure to press the correct link",
   GenericErrorResetPassword:
     "Oops, something went wrong. Please, try reseting your password",
   ConfirmEmailInOrderToContinue:
-    "A new validation email link will be sent to your email soon. Please, confirm it in order to proceed",
+    "A new confirmation link will be sent to your email soon. Please, follow the instructions to complete your registration",
   PasswordsNotSame: "Passwords do not match. Please, try again",
   GenericError: "Something went wrong. Please, try again!",
   IncorrectPassword:

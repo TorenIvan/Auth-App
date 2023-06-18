@@ -10,6 +10,7 @@ import {
   registerLoader,
   ResetPassword,
   ConfirmEmail,
+  confirmEmailLoader,
 } from "./pages";
 
 function authRoutes(queryClient: QueryClient) {
@@ -21,8 +22,8 @@ function authRoutes(queryClient: QueryClient) {
         {
           path: "login",
           Component: Login,
-          loader: loginLoader(queryClient),
-          action: loginAction(queryClient),
+          loader: loginLoader,
+          action: loginAction,
         },
         {
           path: "register",
@@ -31,8 +32,9 @@ function authRoutes(queryClient: QueryClient) {
           action: registerAction,
         },
         {
-          path: "verify/:token",
+          path: "verify",
           Component: ConfirmEmail,
+          loader: confirmEmailLoader,
         },
         {
           path: "forgot-password",

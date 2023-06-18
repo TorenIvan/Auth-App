@@ -147,24 +147,33 @@ class UserController {
     try {
       const tokenVerifiedData = UserController.verifyQueryToken(request.query);
       if (tokenVerifiedData === null) {
-        return UserController.handleError(reply, 401, Errors.TokenExpired);
+        return UserController.handleError(reply, 400, Errors.TokenExpired);
       }
 
-      const { userId, type } = tokenVerifiedData;
-      if (type !== Strings.ConfirmEmailType) {
-        return UserController.handleError(reply, 401, Errors.IncorrectToken);
-      }
-
-      const serviceResponse: ServiceResponse =
-        await UserController.userService.UpdateIsVerifiedWhenUserExists(userId);
-
-      const doneVerified: boolean = serviceResponse.success;
-      if (doneVerified === false) {
-        return UserController.handleError(
-          reply,
-          400,
-          serviceResponse?.customError
+      const hasConfirmedEmail: ServiceResponse =
+        await UserController.userService.CheckUserEmailConfirmation(
+          request.query.email
         );
+
+      if (hasConfirmedEmail.success === false) {
+        const { userId, type } = tokenVerifiedData;
+        if (type !== Strings.ConfirmEmailType) {
+          return UserController.handleError(reply, 400, Errors.IncorrectToken);
+        }
+
+        const serviceResponse: ServiceResponse =
+          await UserController.userService.UpdateIsVerifiedWhenUserExists(
+            userId
+          );
+
+        const doneVerified: boolean = serviceResponse.success;
+        if (doneVerified === false) {
+          return UserController.handleError(
+            reply,
+            400,
+            serviceResponse?.customError
+          );
+        }
       }
       reply.code(200);
     } catch (error) {

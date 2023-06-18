@@ -1,22 +1,24 @@
 import { AxiosError, isAxiosError } from "axios";
 import { axiosInstance } from "../../../config";
 import { Errors } from "../errors";
-import { toast } from "react-hot-toast";
 
 const confirmBaseUri = "v1/auth/verify";
 
 export const confirmEmailQuery = () => ({
   queryKey: ["confirm", "email"],
-  queryFn: async (token: string | null) => confirmUserEmail(token),
+  queryFn: async (email: string, token: string) =>
+    confirmUserEmail(email, token),
 });
 
-export async function confirmUserEmail(token: string | null): Promise<boolean> {
+export async function confirmUserEmail(
+  email: string,
+  token: string
+): Promise<boolean> {
   if (!token) {
-    toast.error(Errors.NoConfirmationToken);
-    throw "error";
+    throw new AxiosError(Errors.NoConfirmationToken);
   }
   try {
-    const confirmUri = `${confirmBaseUri}?token=${token}`;
+    const confirmUri = `${confirmBaseUri}?email=${email}&token=${token}`;
     await axiosInstance.get(confirmUri);
     return true;
   } catch (error: unknown | AxiosError) {
@@ -26,11 +28,9 @@ export async function confirmUserEmail(token: string | null): Promise<boolean> {
       const message = response?.data?.message;
 
       if (statusCode < 500 && message) {
-        toast.error(message);
-        throw "error";
+        throw message;
       }
     }
-    toast.error(Errors.GenericError);
-    throw "error";
+    throw Errors.GenericError;
   }
 }
