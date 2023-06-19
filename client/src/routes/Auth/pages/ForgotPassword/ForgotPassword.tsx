@@ -32,6 +32,7 @@ function ForgotPassword() {
       <section id={styles.main}>
         <Input
           ref={emailRef}
+          preventCopyPasteEnabled
           attributes={{
             id: "email",
             type: "text",
