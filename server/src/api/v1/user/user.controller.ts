@@ -84,9 +84,6 @@ class UserController {
     return;
   }
 
-  /**
-   * This could be made as an Auth Middleware
-   **/
   static verifyQueryToken(query: { token?: string }): TokenInterface | null {
     try {
       const token = query.token;

@@ -10,7 +10,7 @@ export const Errors = {
   InvalidPhoneNumber: "Please enter a valid phone number",
   UserAlreadyExists: "Email address already exists",
   UserNotFoundWithTheseCreds:
-    "The specified email address could not be authenticated. Please, try registering again",
+    "The specified email address could not be authenticated. Please, try again",
   UserNotFoundInConfirmation:
     "Something went wrong with this link. Please register again!",
   TokenExpired:
