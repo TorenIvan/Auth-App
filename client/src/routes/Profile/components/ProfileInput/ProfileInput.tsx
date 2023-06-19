@@ -13,6 +13,7 @@ export const ProfileInput = forwardRef<HTMLInputElement, IProps>(
           {...restProps}
           iconStyles={inputStyles["fa-eye-middle"]}
           ref={ref}
+          preventCopyPasteEnabled
         />
       ) : (
         <Input {...restProps} ref={ref} />
