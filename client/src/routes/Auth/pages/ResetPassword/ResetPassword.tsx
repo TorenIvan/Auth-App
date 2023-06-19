@@ -31,30 +31,36 @@ function ResetPassword() {
         <p>{Constants.ForgotPasswordParagraph}</p>
       </section>
       <section id={styles.main}>
-        <PasswordInput
-          ref={passwordRef}
-          attributes={{
-            id: "password",
-            name: "password",
-            autoComplete: "new-password",
-            placeholder: "Enter your new password",
-            readOnly: true,
-            required: true,
-          }}
-          iconStyles={inputStyles["fa-eye"]}
-        />
-        <PasswordInput
-          ref={passwordRef}
-          attributes={{
-            id: "password",
-            name: "password",
-            autoComplete: "new-password",
-            placeholder: "Confirm your new password",
-            readOnly: true,
-            required: true,
-          }}
-          iconStyles={inputStyles["fa-eye"]}
-        />
+        <div className={styles["auth-item"]}>
+          <PasswordInput
+            ref={passwordRef}
+            attributes={{
+              id: "password",
+              name: "password",
+              autoComplete: "new-password",
+              placeholder: "Enter your new password",
+              readOnly: true,
+              required: true,
+            }}
+            preventCopyPasteEnabled
+            iconStyles={inputStyles["fa-eye"]}
+          />
+        </div>
+        <div className={styles["auth-item"]}>
+          <PasswordInput
+            ref={passwordRef}
+            attributes={{
+              id: "password",
+              name: "password",
+              autoComplete: "new-password",
+              placeholder: "Confirm your new password",
+              readOnly: true,
+              required: true,
+            }}
+            preventCopyPasteEnabled
+            iconStyles={inputStyles["fa-eye"]}
+          />
+        </div>
         <div id={styles["submitBox"]}>
           <input type="submit" value={Constants.ResetPassword}></input>
         </div>

@@ -66,6 +66,16 @@
   }
 }
 
+.auth-item {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  position: relative;
+  margin-bottom: 20px;
+}
+
 #submitBox {
   margin-top: 30px;
   margin-bottom: 10px;
