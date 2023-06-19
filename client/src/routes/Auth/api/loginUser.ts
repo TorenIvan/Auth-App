@@ -4,11 +4,6 @@ import { Errors } from "../errors";
 
 const loginUri = "v1/auth/login/credentials";
 
-export const loginQuery = () => ({
-  queryKey: ["access_token"],
-  queryFn: async (request: IRequest) => loginUser(request),
-});
-
 export async function loginUser(request: IRequest): Promise<string> {
   const { email, password } = request;
   try {

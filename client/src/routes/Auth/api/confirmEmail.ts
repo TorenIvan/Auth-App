@@ -4,12 +4,6 @@ import { Errors } from "../errors";
 
 const confirmBaseUri = "v1/auth/verify";
 
-export const confirmEmailQuery = () => ({
-  queryKey: ["confirm", "email"],
-  queryFn: async (email: string, token: string) =>
-    confirmUserEmail(email, token),
-});
-
 export async function confirmUserEmail(
   email: string,
   token: string

@@ -1,2 +1,2 @@
-export { loginQuery, loginUser } from "./loginUser";
+export { loginUser } from "./loginUser";
 export { registerUser } from "./registerUser";
