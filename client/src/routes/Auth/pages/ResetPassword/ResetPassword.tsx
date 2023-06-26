@@ -16,10 +16,7 @@ function ResetPassword() {
     const password = passwordRef.current?.value ?? "";
     const passwordConfirm = passwordConfirmRef.current?.value ?? "";
 
-    if (
-      validatePassword(password) === false ||
-      validatePassword(passwordConfirm) === false
-    ) {
+    if (!validatePassword(password) || !validatePassword(passwordConfirm)) {
       toast.error(Errors.InvalidPassword);
       event.preventDefault();
       return;

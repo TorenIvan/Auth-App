@@ -1,14 +1,15 @@
 import { QueryClient } from "@tanstack/react-query";
 import { Layout } from "./layouts";
 import {
-  ForgotPassword,
   Login,
   loginAction,
   Register,
   registerAction,
-  ResetPassword,
   ConfirmEmail,
   confirmEmailLoader,
+  ForgotPassword,
+  forgotPasswordAction,
+  ResetPassword,
 } from "./pages";
 import { checkIfUserIsAuthenticated } from "../../api";
 import { redirect } from "react-router-dom";
@@ -39,6 +40,8 @@ function authRoutes(queryClient: QueryClient) {
         {
           path: "forgot-password",
           Component: ForgotPassword,
+          loader: loader,
+          action: forgotPasswordAction,
         },
         {
           path: "reset-password",

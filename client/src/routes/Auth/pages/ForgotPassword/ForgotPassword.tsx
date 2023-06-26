@@ -1,10 +1,11 @@
 import React, { useRef } from "react";
-import { Input } from "../../../../components";
-import { validateEmail } from "../../helpers";
-import { Errors } from "../../errors";
+import { ActionFunctionArgs, Form, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { Form } from "react-router-dom";
+import { Input } from "../../../../components";
+import { Errors } from "../../errors";
 import { Constants } from "../../constants";
+import { validateEmail } from "../../helpers";
+import { forgotPassword } from "../../api";
 import styles from "./styles.module.scss";
 
 function ForgotPassword() {
@@ -21,7 +22,7 @@ function ForgotPassword() {
     <Form
       autoComplete="off"
       method="post"
-      action="login"
+      action=""
       className={styles["form-container"]}
       onSubmit={handleSubmit}
     >
@@ -50,6 +51,22 @@ function ForgotPassword() {
   );
 }
 
-export { ForgotPassword as default, action };
+export { ForgotPassword, action };
 
-async function action() {}
+async function action({ request }: ActionFunctionArgs) {
+  try {
+    const response = await request.formData();
+    const email = response.get("email") as string;
+
+    const isOperationSuccessful: boolean = await forgotPassword(email.trim());
+    if (isOperationSuccessful === false) {
+      toast.error(Errors.GenericError);
+      return true;
+    }
+    toast.success(Constants.ConfirmEmailMessage);
+    return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
+  } catch (error: unknown) {
+    toast.error(error instanceof Error ? error.message : (error as string));
+    return false;
+  }
+}

@@ -1,3 +1,4 @@
-import ForgotPassword from "./ForgotPassword";
-
-export default ForgotPassword;
+export {
+  ForgotPassword as default,
+  action as forgotPasswordAction,
+} from "./ForgotPassword";

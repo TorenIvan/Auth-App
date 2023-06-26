@@ -9,7 +9,7 @@ import styles from "./styles.module.scss";
 import { Constants } from "../../constants";
 import { checkIfUserIsAuthenticated } from "../../../../api";
 import { toast } from "react-hot-toast";
-import { confirmUserEmail } from "../../api/confirmEmail";
+import { confirmEmail } from "../../api";
 import { Errors } from "../../errors";
 
 export function ConfirmEmail() {
@@ -70,9 +70,9 @@ export function ConfirmEmail() {
 
 export async function loader() {
   try {
-    const isAuthenticated = await checkIfUserIsAuthenticated();
+    const isAuthenticated: boolean = await checkIfUserIsAuthenticated();
 
-    if (isAuthenticated === true) {
+    if (isAuthenticated) {
       toast.error(Errors.AlreadyAuthenticated);
       return redirect(`${import.meta.env.VITE_CLIENT_URI}profile`);
     }
@@ -82,23 +82,20 @@ export async function loader() {
       toast.error(Errors.NoConfirmationToken);
       return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
     }
-    const queryStringTokenArray = search.split("token=");
-    if (queryStringTokenArray.length !== 2) {
-      toast.error(Errors.InvalidConfirmationToken);
-      return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
-    }
-    const queryStringEmailArray = queryStringTokenArray[0].split("email=");
-    if (queryStringEmailArray.length !== 2) {
-      toast.error(Errors.InvalidConfirmationToken);
-      return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
-    }
-    const token: string = queryStringTokenArray[1];
-    const email: string = queryStringEmailArray[1].split("&")[0];
 
-    await confirmUserEmail(email, token);
+    const urlParams = new URLSearchParams(search);
+    const token = urlParams.get("token");
+    const email = urlParams.get("email");
+
+    if (!token || !email) {
+      toast.error(Errors.InvalidConfirmationToken);
+      return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
+    }
+
+    await confirmEmail(email, token);
     return true;
   } catch (error: unknown) {
-    toast.error(error as string);
+    toast.error(error instanceof Error ? error.message : (error as string));
     return false;
   }
 }

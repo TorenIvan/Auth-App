@@ -4,7 +4,7 @@ import { Errors } from "../errors";
 
 const confirmBaseUri = "v1/auth/verify";
 
-export async function confirmUserEmail(
+export async function confirmEmail(
   email: string,
   token: string
 ): Promise<boolean> {
