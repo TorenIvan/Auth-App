@@ -330,12 +330,20 @@ class UserController {
     try {
       const tokenVerifiedData = UserController.verifyQueryToken(request.query);
       if (tokenVerifiedData === null) {
-        return UserController.handleError(reply, 401, Errors.TokenExpired);
+        return UserController.handleError(
+          reply,
+          403,
+          Errors.GenericErrorResetPassword
+        );
       }
 
       const { userId, type } = tokenVerifiedData;
       if (type !== Strings.ForgotPasswordType) {
-        return UserController.handleError(reply, 401, Errors.IncorrectToken);
+        return UserController.handleError(
+          reply,
+          403,
+          Errors.IncorrectResetToken
+        );
       }
       const userExistsResponse: ServiceResponse =
         await UserController.userService.CheckUserIdExistence(userId);
@@ -343,7 +351,7 @@ class UserController {
       if (userExistsResponse.success === false) {
         return UserController.handleError(
           reply,
-          401,
+          403,
           Errors.GenericErrorResetPassword
         );
       }

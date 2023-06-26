@@ -3,10 +3,11 @@ import { PasswordInput } from "../../../../components";
 import { validatePassword } from "../../helpers";
 import { Errors } from "../../errors";
 import { toast } from "react-hot-toast";
-import { Form } from "react-router-dom";
+import { Form, redirect } from "react-router-dom";
 import { Constants } from "../../constants";
 import styles from "./styles.module.scss";
 import { inputStyles } from "../../../../styles";
+import { checkIfUserIsAuthenticated } from "../../../../api";
 
 function ResetPassword() {
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -27,7 +28,7 @@ function ResetPassword() {
     <Form
       autoComplete="off"
       method="post"
-      action="login"
+      action=""
       className={styles["form-container"]}
       onSubmit={handleSubmit}
     >
@@ -74,6 +75,37 @@ function ResetPassword() {
   );
 }
 
-export { ResetPassword as default, action };
+export { ResetPassword, loader, action };
+
+async function loader() {
+  try {
+    const isAuthenticated: boolean = await checkIfUserIsAuthenticated();
+
+    if (isAuthenticated) {
+      toast.error(Errors.AlreadyAuthenticated);
+      return redirect(`${import.meta.env.VITE_CLIENT_URI}profile`);
+    }
+
+    const { search } = window.location;
+    if (!search) {
+      toast.error(Errors.NoConfirmationToken);
+      return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
+    }
+
+    const urlParams = new URLSearchParams(search);
+    const token = urlParams.get("token");
+    const email = urlParams.get("email");
+
+    if (!token || !email) {
+      toast.error(Errors.InvalidConfirmationToken);
+      return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
+    }
+
+    return true;
+  } catch (error: unknown) {
+    toast.error(error instanceof Error ? error.message : (error as string));
+    return false;
+  }
+}
 
 async function action() {}

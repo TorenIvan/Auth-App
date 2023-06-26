@@ -18,6 +18,10 @@ export const Errors = {
     "Oops, your confirmation link is not valid or expired. Sign in again to send you a new one!",
   IncorrectToken:
     "Oops, seems like the confirmation link is not correct. Make sure to press the correct link",
+  IncorrectResetToken:
+    "Oops, seems like the reset password link is not correct. Make sure to press the correct link",
+  InvalidResetPasswordCookie:
+    "It appears that the password reset time has expired or something went wrong. Try repeating the password reset procedure.",
   GenericErrorResetPassword:
     "Oops, something went wrong. Please, try reseting your password",
   ConfirmEmailInOrderToContinue:

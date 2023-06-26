@@ -9,6 +9,7 @@ import { verifyJWT } from "../utils/helpers/auth/generateJWTs";
 import { EnvironmentVariables } from "../utils/constants/EnvironmentVariables";
 import { Strings } from "../utils/constants/Strings";
 import { retrieveAccessToken, retrieveRefreshToken } from "../utils/helpers";
+import { Errors } from "../utils/constants/Errors";
 
 const authMiddleware: FastifyPluginAsync = fp(
   async (fastify: FastifyInstance): Promise<void> => {
@@ -116,7 +117,9 @@ const authMiddleware: FastifyPluginAsync = fp(
             throw "error";
           }
         } catch (error) {
-          const errorMessage = fastify.httpErrors.forbidden();
+          const errorMessage = fastify.httpErrors.forbidden(
+            Errors.InvalidResetPasswordCookie
+          );
           reply.send(errorMessage);
         }
       }

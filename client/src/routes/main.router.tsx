@@ -15,7 +15,7 @@ function indexRouter(queryClient: QueryClient) {
           index: true,
           loader: loader,
         },
-        ...authRoutes(queryClient),
+        ...authRoutes(),
         ...profileRoutes(queryClient),
       ],
     },

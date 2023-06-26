@@ -1,6 +1,5 @@
 import { useAtom } from "jotai";
-import { GlobalConstants } from "../../utils";
-import { Theme } from "../../utils/Types";
+import { GlobalConstants, Theme } from "../../utils";
 import { themeAtom } from "../../store";
 
 type ReturnType = [theme: Theme, toggleTheme: () => void];
