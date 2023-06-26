@@ -12,7 +12,7 @@ import { Input, PasswordInput } from "../../../../components";
 import { inputStyles } from "../../../../styles";
 import { Constants } from "../../constants";
 import { Errors } from "../../errors";
-import { emailValidator, passwordValidator } from "../../helpers";
+import { validateEmail, validatePassword } from "../../helpers";
 import { headerStyles, mainStyles, footerStyles, styles } from "./styles";
 
 function AuthForm({ titleSlot, submitButtonText, navLinkSlot }: IProps) {
@@ -20,12 +20,12 @@ function AuthForm({ titleSlot, submitButtonText, navLinkSlot }: IProps) {
   const passwordRef = useRef<HTMLInputElement>(null);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    if (emailValidator(emailRef.current?.value ?? "") === false) {
+    if (validateEmail(emailRef.current?.value ?? "") === false) {
       toast.error(Errors.InvalidEmail);
       event.preventDefault();
       return;
     }
-    if (passwordValidator(passwordRef.current?.value ?? "") === false) {
+    if (validatePassword(passwordRef.current?.value ?? "") === false) {
       toast.error(Errors.InvalidPassword);
       event.preventDefault();
       return;

@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { Input } from "../../../../components";
-import { emailValidator } from "../../helpers";
+import { validateEmail } from "../../helpers";
 import { Errors } from "../../errors";
 import { toast } from "react-hot-toast";
 import { Form } from "react-router-dom";
@@ -11,7 +11,7 @@ function ForgotPassword() {
   const emailRef = useRef<HTMLInputElement>(null);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    if (emailValidator(emailRef.current?.value ?? "") === false) {
+    if (validateEmail(emailRef.current?.value ?? "") === false) {
       toast.error(Errors.InvalidEmail);
       event.preventDefault();
       return;

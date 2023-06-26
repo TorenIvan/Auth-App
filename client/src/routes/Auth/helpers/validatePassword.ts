@@ -4,11 +4,15 @@ const passwordSchema = z
   .string()
   .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/);
 
-export function passwordValidator(password: string): boolean {
+function passwordValidator(password: string): boolean {
   try {
     passwordSchema.parse(password);
     return true;
   } catch (error) {
     return false;
   }
+}
+
+export function validatePassword(password: string): boolean {
+  return passwordValidator(password);
 }

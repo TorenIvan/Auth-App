@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { PasswordInput } from "../../../../components";
-import { passwordValidator } from "../../helpers";
+import { validatePassword } from "../../helpers";
 import { Errors } from "../../errors";
 import { toast } from "react-hot-toast";
 import { Form } from "react-router-dom";
@@ -10,14 +10,22 @@ import { inputStyles } from "../../../../styles";
 
 function ResetPassword() {
   const passwordRef = useRef<HTMLInputElement>(null);
+  const passwordConfirmRef = useRef<HTMLInputElement>(null);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    if (passwordValidator(passwordRef.current?.value ?? "") === false) {
+    const password = passwordRef.current?.value ?? "";
+    const passwordConfirm = passwordConfirmRef.current?.value ?? "";
+
+    if (
+      validatePassword(password) === false ||
+      validatePassword(passwordConfirm) === false
+    ) {
       toast.error(Errors.InvalidPassword);
       event.preventDefault();
       return;
     }
   }
+
   return (
     <Form
       autoComplete="off"
@@ -48,10 +56,10 @@ function ResetPassword() {
         </div>
         <div className={styles["auth-item"]}>
           <PasswordInput
-            ref={passwordRef}
+            ref={passwordConfirmRef}
             attributes={{
-              id: "password",
-              name: "password",
+              id: "confirm-password",
+              name: "confirm-password",
               autoComplete: "new-password",
               placeholder: "Confirm your new password",
               readOnly: true,

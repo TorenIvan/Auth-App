@@ -1,2 +1,2 @@
-export { emailValidator } from "./emailValidator";
-export { passwordValidator } from "./passwordValidator";
+export { validateEmail } from "./validateEmail";
+export { validatePassword } from "./validatePassword";
