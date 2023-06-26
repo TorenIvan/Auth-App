@@ -8,7 +8,8 @@ export const Errors = {
   UsernameMinimum: "Name must be 2 or more characters long",
   UsernameMaximum: "Name must be 18 or fewer characters long",
   InvalidPhoneNumber: "Please enter a valid phone number",
-  UserAlreadyExists: "Email address already exists",
+  UserAlreadyExists:
+    "Sorry, registration failed. The email address you provided is already associated with an existing account. Please try using a different email address.",
   UserNotFoundWithTheseCreds:
     "The specified email address could not be authenticated. Please, try again",
   UserNotFoundInConfirmation:

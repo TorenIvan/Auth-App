@@ -86,6 +86,7 @@ class UserService {
           },
         }
       );
+
       if (result === null) {
         throw {
           customError: Errors.UserNotFoundWithTheseCreds,

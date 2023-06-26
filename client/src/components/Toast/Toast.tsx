@@ -13,6 +13,9 @@ export default function Toast() {
         },
         error: {
           duration: 18000,
+          style: {
+            maxWidth: 500,
+          },
         },
       }}
     >
