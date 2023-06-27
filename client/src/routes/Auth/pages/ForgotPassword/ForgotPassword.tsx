@@ -63,7 +63,7 @@ async function action({ request }: ActionFunctionArgs) {
       toast.error(Errors.GenericError);
       return true;
     }
-    toast.success(Constants.ConfirmEmailMessage);
+    toast.success(Constants.ResetPasswordEmailMessage);
     return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
   } catch (error: unknown) {
     toast.error(error instanceof Error ? error.message : (error as string));

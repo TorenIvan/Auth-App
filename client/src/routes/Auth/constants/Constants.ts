@@ -26,7 +26,9 @@ export const Constants = {
   ConfirmParagraphError: "Sign In to send you a new confirmation link",
   BackToSignIn: "Back to Sign In",
   ConfirmEmailMessage:
-    "Almost done! An email will be sent to your account soon. Follow the instructions to verify your account",
+    "Almost done! An email will be sent to your account soon. Follow the instructions to verify your account.",
+  ResetPasswordEmailMessage:
+    "Almost done! An email will be sent to your account soon. Follow the instructions to reset your password.",
   PasswordResetedMessage:
     "Congratulations! Your password has been reset. You can now sign in with your new password.",
 } as const;
