@@ -5,11 +5,6 @@ import { AuthForm, RegisterTitle, RegisterNavLink } from "../../components";
 import { Constants } from "../../constants";
 import { registerUser } from "../../api/registerUser";
 
-interface IRequest {
-  email: string;
-  password: string;
-}
-
 class Register extends PureComponent {
   private readonly submitButtonText: string;
   private readonly title: JSX.Element;
@@ -21,10 +16,6 @@ class Register extends PureComponent {
     this.title = RegisterTitle();
     this.navigateLink = RegisterNavLink();
   }
-
-  handleRegisterSubmit = (reqObject: IRequest) => {
-    console.log("Now send the request: ", reqObject);
-  };
 
   render() {
     return (

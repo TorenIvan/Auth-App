@@ -3,11 +3,12 @@ import { PasswordInput } from "../../../../components";
 import { validatePassword } from "../../helpers";
 import { Errors } from "../../errors";
 import { toast } from "react-hot-toast";
-import { Form, redirect } from "react-router-dom";
+import { ActionFunctionArgs, Form, redirect } from "react-router-dom";
 import { Constants } from "../../constants";
 import styles from "./styles.module.scss";
 import { inputStyles } from "../../../../styles";
 import { checkIfUserIsAuthenticated } from "../../../../api";
+import { resetPassword } from "../../api";
 
 function ResetPassword() {
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -82,10 +83,32 @@ async function loader() {
     const isAuthenticated: boolean = await checkIfUserIsAuthenticated();
 
     if (isAuthenticated) {
-      toast.error(Errors.AlreadyAuthenticated);
+      toast.error(Errors.AlreadyAuthenticatedOnReset);
       return redirect(`${import.meta.env.VITE_CLIENT_URI}profile`);
     }
 
+    const { search } = window.location;
+    if (!search) {
+      return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
+    }
+
+    const urlParams = new URLSearchParams(search);
+    const token = urlParams.get("token");
+    const email = urlParams.get("email");
+
+    if (!token || !email) {
+      return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
+    }
+
+    return true;
+  } catch (error: unknown) {
+    toast.error(error instanceof Error ? error.message : (error as string));
+    return false;
+  }
+}
+
+async function action({ request }: ActionFunctionArgs) {
+  try {
     const { search } = window.location;
     if (!search) {
       toast.error(Errors.NoConfirmationToken);
@@ -101,11 +124,34 @@ async function loader() {
       return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
     }
 
-    return true;
+    const response = await request.formData();
+    const password = (response.get("password") as string).trim();
+    const confirmPassword = (response.get("confirm-password") as string).trim();
+
+    const isOperationSuccessful: boolean = await resetPassword(
+      email,
+      token,
+      password,
+      confirmPassword
+    );
+    if (isOperationSuccessful === false) {
+      toast.error(Errors.GenericError);
+      return true;
+    }
+    toast.success(Constants.PasswordResetedMessage);
+    return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
   } catch (error: unknown) {
+    if ((error as ForbiddenError)?.isForbidden === true) {
+      const errorMessage = (error as ForbiddenError)?.message ?? null;
+      if (errorMessage !== null) toast.error(errorMessage);
+      return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
+    }
     toast.error(error instanceof Error ? error.message : (error as string));
     return false;
   }
 }
 
-async function action() {}
+interface ForbiddenError {
+  isForbidden?: boolean;
+  message: string;
+}
