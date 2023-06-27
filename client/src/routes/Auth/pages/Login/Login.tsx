@@ -10,12 +10,19 @@ class Login extends PureComponent {
   private readonly submitButtonText: string;
   private readonly title: JSX.Element;
   private readonly navigateLink: JSX.Element;
+  private readonly forgotPasswordLink: JSX.Element;
 
   constructor(props: object) {
     super(props);
     this.submitButtonText = Constants.SignInButtonText;
     this.title = LoginTitle();
-    this.navigateLink = LoginNavLink();
+    this.navigateLink = LoginNavLink({
+      note: Constants.Register,
+      sidenote: Constants.DontHaveAnAccount,
+    });
+    this.forgotPasswordLink = LoginNavLink({
+      note: Constants.DontHaveAnAccount,
+    });
   }
 
   render() {
@@ -24,6 +31,7 @@ class Login extends PureComponent {
         titleSlot={this.title}
         submitButtonText={this.submitButtonText}
         navLinkSlot={this.navigateLink}
+        forgotPasswordSlot={this.forgotPasswordLink}
       />
     );
   }

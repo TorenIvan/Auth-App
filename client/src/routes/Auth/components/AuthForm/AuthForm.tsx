@@ -15,9 +15,11 @@ import { Errors } from "../../errors";
 import { validateEmail, validatePassword } from "../../helpers";
 import { headerStyles, mainStyles, footerStyles, styles } from "./styles";
 
-function AuthForm({ titleSlot, submitButtonText, navLinkSlot }: IProps) {
+function AuthForm(props: IProps) {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const { titleSlot, submitButtonText, navLinkSlot, forgotPasswordSlot } =
+    props;
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     if (validateEmail(emailRef.current?.value ?? "") === false) {
@@ -78,6 +80,7 @@ function AuthForm({ titleSlot, submitButtonText, navLinkSlot }: IProps) {
             <input type="submit" value={submitButtonText}></input>
           </div>
         </Form>
+
         <footer className={footerStyles.footer}>
           <div className={footerStyles["social-profile-paragraph"]}>
             <p>{Constants.SocialProfilesFormText}</p>
@@ -109,4 +112,5 @@ interface IProps {
   titleSlot: JSX.Element;
   submitButtonText: string;
   navLinkSlot: JSX.Element;
+  forgotPasswordSlot?: JSX.Element;
 }
