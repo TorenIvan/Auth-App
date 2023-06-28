@@ -69,7 +69,7 @@ export const userEditRequestBodySchema = z.object({
     .trim()
     .min(2, { message: Errors.UsernameMinimum })
     .max(18, { message: Errors.UsernameMaximum }),
-  biography: z.string().trim(),
+  biography: z.string().trim().max(500, { message: Errors.biographyMaximum }),
   phone: z
     .string()
     .refine(

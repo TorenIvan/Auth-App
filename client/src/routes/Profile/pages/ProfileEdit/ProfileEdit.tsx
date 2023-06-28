@@ -14,6 +14,7 @@ import { Constants } from "../../constants";
 import { TUserInfo } from "../../types";
 import { editUserData, userDetailsQuery } from "../../api";
 import styles from "./styles.module.scss";
+import { isFormValid } from "../../helpers";
 
 function ProfileEdit() {
   const navigate = useNavigate();
@@ -39,10 +40,14 @@ function ProfileEdit() {
     inputFileRef?.current?.click();
   }
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
+    if (isFormValid(formData) === false) {
+      return;
+    }
+
     const file = inputFileRef.current?.files?.[0];
 
     if (file !== undefined) {
@@ -59,7 +64,7 @@ function ProfileEdit() {
       console.error(error);
       return;
     }
-  };
+  }
 
   return (
     <div className={styles["page-container"]}>

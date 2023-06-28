@@ -7,6 +7,7 @@ export const Errors = {
   TokenRequired: "Token is required",
   UsernameMinimum: "Name must be 2 or more characters long",
   UsernameMaximum: "Name must be 18 or fewer characters long",
+  biographyMaximum: "Biography must be 100 or fewer characters long",
   InvalidPhoneNumber: "Please enter a valid phone number",
   UserAlreadyExists:
     "Sorry, registration failed. The email address you provided is already associated with an existing account. Please try using a different email address.",

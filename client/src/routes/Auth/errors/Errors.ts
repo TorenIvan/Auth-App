@@ -2,7 +2,7 @@ export const Errors = {
   GenericError: "Something went wrong. Please, try again later!",
   InvalidEmail: "Email is not valid. Please try again!",
   InvalidPassword:
-    "Password must contain at least 1 upper case, numeric, and special character. Please, try again!",
+    "Password password must contain at least 1 upper case, numeric, and special character. Please, try again!",
   NoConfirmationToken: "No email confirmation token was provided",
   NoResetToken: "No email reset token was provided",
   InvalidConfirmationToken: "Invalid confirmation link provided",
