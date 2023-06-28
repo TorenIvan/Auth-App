@@ -79,6 +79,7 @@ function AuthForm(props: IProps) {
           <div id={mainStyles["submitBox"]}>
             <input type="submit" value={submitButtonText}></input>
           </div>
+          {forgotPasswordSlot}
         </Form>
 
         <footer className={footerStyles.footer}>

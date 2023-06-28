@@ -1,0 +1,14 @@
+#link-container {
+  margin-top: 15px;
+}
+
+.link {
+  color: var(--text-primary);
+  text-decoration: none;
+  font-style: italic;
+}
+
+.link:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}

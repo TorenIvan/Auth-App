@@ -1,30 +1,22 @@
 import { NavLink } from "react-router-dom";
+import { Constants } from "../../constants";
 import styles from "./styles.module.css";
 
-const LoginNavLink = (props: IProps): JSX.Element => {
-  const { note, sidenote } = props;
-  let sidenoteSlot: JSX.Element | null = null;
-  if (sidenote !== undefined) {
-    sidenoteSlot = <span>{sidenote}&nbsp;&nbsp;&nbsp;</span>;
-  }
+const LoginNavLink = (): JSX.Element => {
   return (
     <p id={styles["social-profiles-text"]}>
-      {sidenoteSlot}
+      <span>{Constants.DontHaveAnAccount}&nbsp;&nbsp;&nbsp;</span>
       <NavLink
         to="/register"
+        end
         style={{
           color: "#545e6f",
         }}
       >
-        {note}
+        {Constants.Register}
       </NavLink>
     </p>
   );
 };
 
 export default LoginNavLink;
-
-interface IProps {
-  note: string;
-  sidenote?: string;
-}

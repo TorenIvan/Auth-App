@@ -63,7 +63,7 @@ function ProfileEdit() {
 
   return (
     <div className={styles["page-container"]}>
-      <NavLink className={styles["back-button"]} to="/profile" replace>
+      <NavLink className={styles["back-button"]} to="/profile" end replace>
         <span className={styles["arrow-left"]} />
         <span>{Constants.Back}</span>
       </NavLink>

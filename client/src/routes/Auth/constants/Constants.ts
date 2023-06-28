@@ -12,6 +12,7 @@ export const Constants = {
   SignIn: "Sign In",
   DontHaveAnAccount: "Don't have an account yet?",
   ForgotPassword: "Forgot Password",
+  ForgotPasswordLink: "Forgot your password?",
   ForgotPasswordParagraph:
     "Please provide your email address that you used when you signed up for your account",
   EmailPlaceholder: "Enter your email address...",

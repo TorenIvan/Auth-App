@@ -33,6 +33,7 @@ function ProfileDetails(): JSX.Element | null {
           </div>
           <NavLink
             className={styles["details-first-row-value-column"]}
+            end
             to="/profile/edit"
             replace
           >

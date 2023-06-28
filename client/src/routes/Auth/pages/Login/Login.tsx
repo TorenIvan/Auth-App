@@ -2,9 +2,14 @@ import { PureComponent } from "react";
 import { ActionFunctionArgs, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { addAuthorizationHeader } from "../../../../config";
-import { AuthForm, LoginTitle, LoginNavLink } from "../../components";
 import { loginUser } from "../../api";
 import { Constants } from "../../constants";
+import {
+  AuthForm,
+  LoginTitle,
+  LoginNavLink,
+  ForgotPasswordLink,
+} from "../../components";
 
 class Login extends PureComponent {
   private readonly submitButtonText: string;
@@ -16,13 +21,8 @@ class Login extends PureComponent {
     super(props);
     this.submitButtonText = Constants.SignInButtonText;
     this.title = LoginTitle();
-    this.navigateLink = LoginNavLink({
-      note: Constants.Register,
-      sidenote: Constants.DontHaveAnAccount,
-    });
-    this.forgotPasswordLink = LoginNavLink({
-      note: Constants.DontHaveAnAccount,
-    });
+    this.navigateLink = LoginNavLink();
+    this.forgotPasswordLink = ForgotPasswordLink();
   }
 
   render() {

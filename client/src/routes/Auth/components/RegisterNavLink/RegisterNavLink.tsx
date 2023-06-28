@@ -8,6 +8,7 @@ const RegisterNavLink = (): JSX.Element => {
       <span>{Constants.AlreadyAMember}&nbsp;&nbsp;&nbsp;</span>
       <NavLink
         to="/login"
+        end
         style={{
           color: "#545e6f",
         }}
