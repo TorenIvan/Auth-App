@@ -13,8 +13,8 @@ import {
 import { Constants } from "../../constants";
 import { TUserInfo } from "../../types";
 import { editUserData, userDetailsQuery } from "../../api";
+import { isEditFormValid as isFormValid } from "../../helpers";
 import styles from "./styles.module.scss";
-import { isFormValid } from "../../helpers";
 
 function ProfileEdit() {
   const navigate = useNavigate();

@@ -9,10 +9,10 @@ import {
   TwitterIcon,
 } from "../../../../icons";
 import { Input, PasswordInput } from "../../../../components";
+import { isEmailValid, isPasswordValid } from "../../../../helpers";
 import { inputStyles } from "../../../../styles";
 import { Constants } from "../../constants";
 import { Errors } from "../../errors";
-import { validateEmail, validatePassword } from "../../helpers";
 import { headerStyles, mainStyles, footerStyles, styles } from "./styles";
 
 function AuthForm(props: IProps) {
@@ -22,12 +22,12 @@ function AuthForm(props: IProps) {
     props;
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    if (validateEmail(emailRef.current?.value ?? "") === false) {
+    if (isEmailValid(emailRef.current?.value ?? "") === false) {
       toast.error(Errors.InvalidEmail);
       event.preventDefault();
       return;
     }
-    if (validatePassword(passwordRef.current?.value ?? "") === false) {
+    if (isPasswordValid(passwordRef.current?.value ?? "") === false) {
       toast.error(Errors.InvalidPassword);
       event.preventDefault();
       return;

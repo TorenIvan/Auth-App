@@ -1,14 +1,14 @@
+import { toast } from "react-hot-toast";
+import { isPasswordValid } from "../../../../helpers";
+import { Errors } from "../../errors";
 import { isUsernameValid } from "./isUsernameValid";
-import { isPasswordValid } from "./isPasswordValid";
 import { isBiographyValid } from "./isBiographyValid";
 import { isPhoneValid } from "./isPhoneValid";
-import { toast } from "react-hot-toast";
-import { Errors } from "../errors";
 
-export function isFormValid(formData: FormData): boolean {
+export function isEditFormValid(formData: FormData): boolean {
   for (const [key, value] of formData.entries()) {
     const keyString = key as string;
-    const valueString = (value as string).trim();
+    const valueString = value as string;
 
     switch (keyString) {
       case "username":
@@ -34,7 +34,7 @@ export function isFormValid(formData: FormData): boolean {
 
       case "currentPassword":
       case "newPassword":
-        const isPasswordEmpty: boolean = valueString.length === 0;
+        const isPasswordEmpty: boolean = valueString.trim().length === 0;
         if (!isPasswordEmpty && isPasswordValid(valueString) === false) {
           if (keyString === "currentPassword") {
             toast.error(Errors.InvalidCurrentPassword);

@@ -2,9 +2,9 @@ import React, { useRef } from "react";
 import { ActionFunctionArgs, Form, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { Input } from "../../../../components";
+import { isEmailValid } from "../../../../helpers";
 import { Errors } from "../../errors";
 import { Constants } from "../../constants";
-import { validateEmail } from "../../helpers";
 import { forgotPassword } from "../../api";
 import styles from "./styles.module.scss";
 
@@ -12,7 +12,7 @@ function ForgotPassword() {
   const emailRef = useRef<HTMLInputElement>(null);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    if (validateEmail(emailRef.current?.value ?? "") === false) {
+    if (isEmailValid(emailRef.current?.value ?? "") === false) {
       toast.error(Errors.InvalidEmail);
       event.preventDefault();
       return;

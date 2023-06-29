@@ -1,14 +1,14 @@
 import React, { useRef } from "react";
-import { PasswordInput } from "../../../../components";
-import { validatePassword } from "../../helpers";
-import { Errors } from "../../errors";
-import { toast } from "react-hot-toast";
 import { ActionFunctionArgs, Form, redirect } from "react-router-dom";
-import { Constants } from "../../constants";
-import styles from "./styles.module.scss";
-import { inputStyles } from "../../../../styles";
+import { toast } from "react-hot-toast";
+import { PasswordInput } from "../../../../components";
+import { isPasswordValid } from "../../../../helpers";
 import { checkIfUserIsAuthenticated } from "../../../../api";
+import { inputStyles } from "../../../../styles";
+import { Errors } from "../../errors";
+import { Constants } from "../../constants";
 import { resetPassword } from "../../api";
+import styles from "./styles.module.scss";
 
 function ResetPassword() {
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -18,7 +18,7 @@ function ResetPassword() {
     const password = passwordRef.current?.value ?? "";
     const passwordConfirm = passwordConfirmRef.current?.value ?? "";
 
-    if (!validatePassword(password) || !validatePassword(passwordConfirm)) {
+    if (!isPasswordValid(password) || !isPasswordValid(passwordConfirm)) {
       toast.error(Errors.InvalidPassword);
       event.preventDefault();
       return;
