@@ -20,6 +20,7 @@
   --text-contrast: #fdfdfd;
   --input-border-focus: #ae3411;
   --input-border-focus-shadow: #fdfdfd;
+  --svg-contrast: aliceblue;
 }
 
 .light-theme {
@@ -31,4 +32,5 @@
   --text-contrast: #020202;
   --input-border-focus: #51cbee;
   --input-border-focus-shadow: #51cbee;
+  --svg-contrast: #d3d3d3;
 }

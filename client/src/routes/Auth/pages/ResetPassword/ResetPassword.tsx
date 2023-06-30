@@ -50,7 +50,7 @@ function ResetPassword() {
               required: true,
             }}
             preventCopyPasteEnabled
-            iconStyles={inputStyles["fa-eye"]}
+            rightIconStyles={inputStyles["fa-eye"]}
           />
         </div>
         <div className={styles["auth-item"]}>
@@ -65,7 +65,7 @@ function ResetPassword() {
               required: true,
             }}
             preventCopyPasteEnabled
-            iconStyles={inputStyles["fa-eye"]}
+            rightIconStyles={inputStyles["fa-eye"]}
           />
         </div>
         <div id={styles["submitBox"]}>

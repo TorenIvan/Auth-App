@@ -9,9 +9,11 @@ $input-focus-shadow: var(--input-border-focus-shadow);
   border: 1px solid $border;
   border-radius: 12px;
   width: 100%;
-  padding: 12px;
+  padding: 0px 35px;
   resize: none;
   outline: none;
+  background-color: inherit;
+  color: var(--text-secondary);
   height: 52px;
   font-family: NotoSansRegular, FontAwesome;
   padding-right: 50px;
@@ -20,12 +22,18 @@ $input-focus-shadow: var(--input-border-focus-shadow);
     font-weight: 500;
     font-size: 13px;
     line-height: 18px;
-    color: $placeholder-text;
+    color: var(--text-secondary);
     font-family: NotoSansRegular, FontAwesome;
   }
 
   &:focus {
-    box-shadow: 0 0 5px $input-focus-shadow;
+    box-shadow: 0 0 2px $input-focus-shadow;
+  }
+}
+
+.input.lightBorder {
+  &:focus {
+    box-shadow: 0 0 2px $input-focus-shadow;
     border: 1px solid $input-focus;
   }
 }
@@ -34,10 +42,28 @@ $input-focus-shadow: var(--input-border-focus-shadow);
   position: absolute;
   right: 4%;
   cursor: pointer;
-  color: lightgray;
+  color: var(--text-primary);
 }
 
 .fa-eye-middle {
   @extend .fa-eye;
   top: 50%;
+}
+
+.fa-lock {
+  position: absolute;
+  left: 3%;
+  color: var(--text-primary);
+}
+
+.fa-lock-middle {
+  @extend .fa-lock;
+  top: 50%;
+}
+
+.fa-lock-forgot {
+  position: absolute;
+  left: 3%;
+  top: 15%;
+  color: var(--text-primary);
 }

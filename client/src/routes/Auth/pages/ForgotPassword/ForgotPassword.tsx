@@ -1,8 +1,11 @@
 import React, { useRef } from "react";
 import { ActionFunctionArgs, Form, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { Input } from "../../../../components";
 import { isEmailValid } from "../../../../helpers";
+import { inputStyles } from "../../../../styles";
 import { Errors } from "../../errors";
 import { Constants } from "../../constants";
 import { forgotPassword } from "../../api";
@@ -42,6 +45,12 @@ function ForgotPassword() {
             autoComplete: "off",
             required: true,
           }}
+          leftIconSlot={
+            <FontAwesomeIcon
+              icon={faEnvelope}
+              className={inputStyles["fa-lock-forgot"]}
+            />
+          }
         />
         <div id={styles["submitBox"]}>
           <input type="submit" value={Constants.Continue}></input>
