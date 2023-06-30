@@ -19,10 +19,12 @@
   font-size: 14px;
   line-height: 19px;
   color: var(--text-primary);
+  cursor: default;
 }
 
 #social-profiles {
-  width: 90%;
+  cursor: default;
+  width: 70%;
   padding-right: 8%;
   flex: 1;
   display: flex;
@@ -30,8 +32,16 @@
   align-items: center;
   justify-content: space-evenly;
   list-style-type: none;
-}
 
-#social-profiles > li:hover {
-  cursor: pointer;
+  li {
+    cursor: default;
+
+    svg {
+      cursor: pointer;
+
+      &:hover {
+        fill: var(--svg-contrast);
+      }
+    }
+  }
 }
