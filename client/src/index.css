@@ -21,6 +21,7 @@
   --input-border-focus: #ae3411;
   --input-border-focus-shadow: #fdfdfd;
   --svg-contrast: aliceblue;
+
 }
 
 .light-theme {
@@ -33,4 +34,12 @@
   --input-border-focus: #51cbee;
   --input-border-focus-shadow: #51cbee;
   --svg-contrast: #d3d3d3;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--background-color);
+  -webkit-box-shadow: 0 0 0px 1000px var(--background-screen) inset;
+  transition: background-color 5000s ease-in-out 0s;
 }

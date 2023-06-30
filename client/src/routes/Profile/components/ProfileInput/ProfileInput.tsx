@@ -1,11 +1,13 @@
 import { ForwardedRef, forwardRef } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { Input, PasswordInput } from "../../../../components";
 import { inputStyles } from "../../../../styles";
 import styles from "./styles.module.scss";
 
 export const ProfileInput = forwardRef<HTMLInputElement, IProps>(
   (props, ref?: TRef): JSX.Element => {
-    const { isPassword, ...restProps } = props;
+    const { isPassword, leftIconSlot, ...restProps } = props;
 
     const inputSlot =
       isPassword === true ? (
@@ -14,9 +16,15 @@ export const ProfileInput = forwardRef<HTMLInputElement, IProps>(
           rightIconStyles={inputStyles["fa-eye-middle"]}
           ref={ref}
           preventCopyPasteEnabled
+          leftIconSlot={
+            <FontAwesomeIcon
+              icon={faLock}
+              className={inputStyles["fa-lock-middle"]}
+            />
+          }
         />
       ) : (
-        <Input {...restProps} ref={ref} />
+        <Input {...restProps} ref={ref} leftIconSlot={leftIconSlot} />
       );
 
     return <section className={styles["input-container"]}>{inputSlot}</section>;
@@ -26,6 +34,7 @@ export const ProfileInput = forwardRef<HTMLInputElement, IProps>(
 interface IProps {
   label: string;
   attributes: IAttributes;
+  leftIconSlot?: JSX.Element;
   isPassword?: boolean;
 }
 

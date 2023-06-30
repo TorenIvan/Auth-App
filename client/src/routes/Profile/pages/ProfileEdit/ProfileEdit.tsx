@@ -2,7 +2,13 @@ import { ChangeEvent, Fragment, useRef, useState } from "react";
 import { Form, NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
-import { faCamera } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCamera,
+  faEnvelope,
+  faLock,
+  faPhone,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Textarea } from "../../../../components";
 import {
@@ -15,6 +21,7 @@ import { TUserInfo } from "../../types";
 import { editUserData, userDetailsQuery } from "../../api";
 import { isEditFormValid as isFormValid } from "../../helpers";
 import styles from "./styles.module.scss";
+import { inputStyles } from "../../../../styles";
 
 function ProfileEdit() {
   const navigate = useNavigate();
@@ -118,6 +125,12 @@ function ProfileEdit() {
               placeholder: Constants.NamePlaceholder,
               defaultValue: userInfo?.username,
             }}
+            leftIconSlot={
+              <FontAwesomeIcon
+                icon={faUser}
+                className={inputStyles["fa-lock-middle"]}
+              />
+            }
           />
         </EditItem>
         <EditItem>
@@ -138,6 +151,12 @@ function ProfileEdit() {
               placeholder: Constants.PhonePlaceholder,
               defaultValue: userInfo?.phone,
             }}
+            leftIconSlot={
+              <FontAwesomeIcon
+                icon={faPhone}
+                className={inputStyles["fa-lock-middle"]}
+              />
+            }
           />
         </EditItem>
         <EditItem>
@@ -148,6 +167,12 @@ function ProfileEdit() {
               defaultValue: userInfo?.email,
               disabled: true,
             }}
+            leftIconSlot={
+              <FontAwesomeIcon
+                icon={faEnvelope}
+                className={inputStyles["fa-lock-middle"]}
+              />
+            }
           />
         </EditItem>
         {userInfo?.signInMethod === "credentials" && (

@@ -13,8 +13,13 @@ const PasswordInput = forwardRef<HTMLInputElement, IProps>(
   (props, ref?: TRef) => {
     const [theme, _] = useAtom<Theme>(themeAtom);
     const [hidePassword, togglePasswordVisibility] = useHidePassword();
-    const { attributes, rightIconStyles, preventCopyPasteEnabled, label } =
-      props;
+    const {
+      attributes,
+      rightIconStyles,
+      leftIconSlot,
+      preventCopyPasteEnabled,
+      label,
+    } = props;
 
     function handleFocus(event: React.FocusEvent<HTMLInputElement>) {
       event.preventDefault();
@@ -26,10 +31,6 @@ const PasswordInput = forwardRef<HTMLInputElement, IProps>(
         event.preventDefault();
       }
     }
-
-    const leftIconSlot = (
-      <FontAwesomeIcon icon={faLock} className={inputStyles["fa-lock"]} />
-    );
 
     const rightIconSlot = (
       <FontAwesomeIcon
@@ -70,6 +71,7 @@ export default PasswordInput;
 interface IProps {
   attributes: React.InputHTMLAttributes<HTMLInputElement>;
   rightIconStyles: string;
+  leftIconSlot: JSX.Element;
   preventCopyPasteEnabled?: boolean;
   label?: string;
 }

@@ -9,7 +9,7 @@ $input-focus-shadow: var(--input-border-focus-shadow);
   border: 1px solid $border;
   border-radius: 12px;
   width: 100%;
-  padding: 0px 35px;
+  padding: 0px 40px;
   resize: none;
   outline: none;
   background-color: inherit;
@@ -32,6 +32,7 @@ $input-focus-shadow: var(--input-border-focus-shadow);
 }
 
 .input.lightBorder {
+
   &:focus {
     box-shadow: 0 0 2px $input-focus-shadow;
     border: 1px solid $input-focus;

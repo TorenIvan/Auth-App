@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { Form } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import "font-awesome/css/font-awesome.min.css";
-import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   FacebookIcon,
@@ -79,6 +79,12 @@ function AuthForm(props: IProps) {
                 readOnly: true,
                 required: true,
               }}
+              leftIconSlot={
+                <FontAwesomeIcon
+                  icon={faLock}
+                  className={inputStyles["fa-lock"]}
+                />
+              }
               rightIconStyles={inputStyles["fa-eye"]}
             />
           </div>

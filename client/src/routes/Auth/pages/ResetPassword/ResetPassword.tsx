@@ -1,6 +1,8 @@
 import React, { useRef } from "react";
 import { ActionFunctionArgs, Form, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { PasswordInput } from "../../../../components";
 import { isPasswordValid } from "../../../../helpers";
 import { checkIfUserIsAuthenticated } from "../../../../api";
@@ -51,6 +53,12 @@ function ResetPassword() {
             }}
             preventCopyPasteEnabled
             rightIconStyles={inputStyles["fa-eye"]}
+            leftIconSlot={
+              <FontAwesomeIcon
+                icon={faLock}
+                className={inputStyles["fa-lock"]}
+              />
+            }
           />
         </div>
         <div className={styles["auth-item"]}>
@@ -66,6 +74,12 @@ function ResetPassword() {
             }}
             preventCopyPasteEnabled
             rightIconStyles={inputStyles["fa-eye"]}
+            leftIconSlot={
+              <FontAwesomeIcon
+                icon={faLock}
+                className={inputStyles["fa-lock"]}
+              />
+            }
           />
         </div>
         <div id={styles["submitBox"]}>
