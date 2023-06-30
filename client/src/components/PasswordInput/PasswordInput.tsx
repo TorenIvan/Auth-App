@@ -1,14 +1,20 @@
 import React, { ClipboardEvent, ForwardedRef, forwardRef } from "react";
+import { useAtom } from "jotai";
 import "font-awesome/css/font-awesome.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash, faLock } from "@fortawesome/free-solid-svg-icons";
+import { Constants } from "../../utils/Modules/Constants";
+import { Theme } from "../../utils";
+import { themeAtom } from "../../store";
 import { useHidePassword } from "../../hooks";
 import { inputStyles } from "../../styles";
 
 const PasswordInput = forwardRef<HTMLInputElement, IProps>(
   (props, ref?: TRef) => {
+    const [theme, _] = useAtom<Theme>(themeAtom);
     const [hidePassword, togglePasswordVisibility] = useHidePassword();
-    const { attributes, iconStyles, preventCopyPasteEnabled, label } = props;
+    const { attributes, rightIconStyles, preventCopyPasteEnabled, label } =
+      props;
 
     function handleFocus(event: React.FocusEvent<HTMLInputElement>) {
       event.preventDefault();
@@ -21,22 +27,30 @@ const PasswordInput = forwardRef<HTMLInputElement, IProps>(
       }
     }
 
-    const iconSlot = (
+    const leftIconSlot = (
+      <FontAwesomeIcon icon={faLock} className={inputStyles["fa-lock"]} />
+    );
+
+    const rightIconSlot = (
       <FontAwesomeIcon
         icon={hidePassword === true ? faEye : faEyeSlash}
-        className={iconStyles}
+        className={rightIconStyles}
         onClick={togglePasswordVisibility}
       />
     );
+
     const labelSlot: JSX.Element | null =
       label !== undefined ? <label>{label}</label> : null;
     const type: string = hidePassword === true ? "password" : "text";
 
     return (
       <>
+        {leftIconSlot}
         {labelSlot}
         <input
-          className={inputStyles.input}
+          className={`${inputStyles.input} ${
+            theme === Constants.LightPalette ? inputStyles.lightBorder : ""
+          }`}
           ref={ref}
           {...attributes}
           onFocus={handleFocus}
@@ -45,7 +59,7 @@ const PasswordInput = forwardRef<HTMLInputElement, IProps>(
           onPaste={preventCopyPaste}
           onCut={preventCopyPaste}
         />
-        {iconSlot}
+        {rightIconSlot}
       </>
     );
   }
@@ -55,7 +69,7 @@ export default PasswordInput;
 
 interface IProps {
   attributes: React.InputHTMLAttributes<HTMLInputElement>;
-  iconStyles: string;
+  rightIconStyles: string;
   preventCopyPasteEnabled?: boolean;
   label?: string;
 }

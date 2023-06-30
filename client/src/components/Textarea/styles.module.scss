@@ -26,7 +26,8 @@ $input-focus-shadow: var(--input-border-focus-shadow);
     color: $label-text;
     margin-left: 0.3rem;
   }
-  textarea {
+
+  .textarea {
     box-sizing: border-box;
     font-size: 15px;
     border: 1px solid #828282;
@@ -45,8 +46,14 @@ $input-focus-shadow: var(--input-border-focus-shadow);
     }
 
     &:focus {
-      box-shadow: 0 0 5px $input-focus-shadow;
-      border: 1px solid $input-focus;
+      box-shadow: 0 0 2px $input-focus-shadow;
     }
+  }
+}
+
+.textarea.lightBorder {
+  &:focus {
+    box-shadow: 0 0 2px $input-focus-shadow;
+    border: 1px solid $input-focus;
   }
 }

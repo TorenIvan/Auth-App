@@ -11,7 +11,7 @@ export const ProfileInput = forwardRef<HTMLInputElement, IProps>(
       isPassword === true ? (
         <PasswordInput
           {...restProps}
-          iconStyles={inputStyles["fa-eye-middle"]}
+          rightIconStyles={inputStyles["fa-eye-middle"]}
           ref={ref}
           preventCopyPasteEnabled
         />

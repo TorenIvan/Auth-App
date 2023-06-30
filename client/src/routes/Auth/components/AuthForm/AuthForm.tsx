@@ -2,6 +2,8 @@ import { useRef } from "react";
 import { Form } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import "font-awesome/css/font-awesome.min.css";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   FacebookIcon,
   GithubIcon,
@@ -55,10 +57,15 @@ function AuthForm(props: IProps) {
                 id: "email",
                 type: "text",
                 name: "email",
-                placeholder:
-                  String.fromCharCode(parseInt("f0e0", 16)) + " Email",
+                placeholder: "Email",
                 required: true,
               }}
+              leftIconSlot={
+                <FontAwesomeIcon
+                  icon={faEnvelope}
+                  className={inputStyles["fa-lock"]}
+                />
+              }
             />
           </div>
           <div className={mainStyles["auth-item"]}>
@@ -68,12 +75,11 @@ function AuthForm(props: IProps) {
                 id: "password",
                 name: "password",
                 autoComplete: "new-password",
-                placeholder:
-                  String.fromCharCode(parseInt("f06e", 16)) + " Password",
+                placeholder: "Password",
                 readOnly: true,
                 required: true,
               }}
-              iconStyles={inputStyles["fa-eye"]}
+              rightIconStyles={inputStyles["fa-eye"]}
             />
           </div>
           <div id={mainStyles["submitBox"]}>
