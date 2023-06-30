@@ -20,7 +20,7 @@ class UserService {
     return UserService.instance;
   }
 
-  static handleError(error: any): ServiceResponse {
+  private static handleError(error: any): ServiceResponse {
     console.error(error);
     if (objectAttributeExistsAndHasValue(error, "customError") === true) {
       return { success: false, customError: error.customError };

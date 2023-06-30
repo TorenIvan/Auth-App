@@ -1,9 +1,5 @@
 import axios from "axios";
 
-/**
- * New instance; because if a new request was made using the same axiosInstance with the same interceptors
- * it will trigger the same interceptors causing infinite loop
- */
 const axiosRenewInstance = axios.create({
   baseURL: import.meta.env.VITE_SERVER_URI,
   headers: {

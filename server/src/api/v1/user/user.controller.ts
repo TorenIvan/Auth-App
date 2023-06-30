@@ -36,7 +36,7 @@ class UserController {
     return UserController.instance;
   }
 
-  static handleError(
+  private static handleError(
     reply: FastifyReply,
     errorCode: number,
     customError?: string
@@ -84,7 +84,9 @@ class UserController {
     return;
   }
 
-  static verifyQueryToken(query: { token?: string }): TokenInterface | null {
+  private static verifyQueryToken(query: {
+    token?: string;
+  }): TokenInterface | null {
     try {
       const token = query.token;
       if (!token) throw new Error("Invalid token");
