@@ -6,6 +6,7 @@ $input-focus-shadow: var(--input-border-focus-shadow);
 .input {
   box-sizing: border-box;
   font-size: 15px;
+  line-height: 15px;
   border: 1px solid $border;
   border-radius: 12px;
   width: 100%;
@@ -17,6 +18,11 @@ $input-focus-shadow: var(--input-border-focus-shadow);
   height: 52px;
   font-family: NotoSansRegular, FontAwesome;
   padding-right: 50px;
+  text-align: left;
+
+  &:disabled {
+    opacity: 0.5;
+  }
 
   &::placeholder {
     font-weight: 500;
@@ -48,7 +54,7 @@ $input-focus-shadow: var(--input-border-focus-shadow);
 
 .fa-eye-middle {
   @extend .fa-eye;
-  top: 50%;
+  top: 51%;
 }
 
 .fa-lock {
@@ -59,7 +65,7 @@ $input-focus-shadow: var(--input-border-focus-shadow);
 
 .fa-lock-middle {
   @extend .fa-lock;
-  top: 50%;
+  top: 51%;
 }
 
 .fa-lock-forgot {
