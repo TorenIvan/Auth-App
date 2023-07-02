@@ -1,9 +1,8 @@
-import React, { useRef } from "react";
+import { Fragment } from "react";
 import { ActionFunctionArgs, Form, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLock } from "@fortawesome/free-solid-svg-icons";
-import { PasswordInput } from "../../../../components";
+import { faEye, faEyeSlash, faLock } from "@fortawesome/free-solid-svg-icons";
+import { InputGroup } from "../../../../components";
 import { isPasswordValid } from "../../../../helpers";
 import { checkIfUserIsAuthenticated } from "../../../../api";
 import { inputStyles } from "../../../../styles";
@@ -13,27 +12,12 @@ import { resetPassword } from "../../api";
 import styles from "./styles.module.scss";
 
 function ResetPassword() {
-  const passwordRef = useRef<HTMLInputElement>(null);
-  const passwordConfirmRef = useRef<HTMLInputElement>(null);
-
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    const password = passwordRef.current?.value ?? "";
-    const passwordConfirm = passwordConfirmRef.current?.value ?? "";
-
-    if (!isPasswordValid(password) || !isPasswordValid(passwordConfirm)) {
-      toast.error(Errors.InvalidPassword);
-      event.preventDefault();
-      return;
-    }
-  }
-
   return (
     <Form
       autoComplete="off"
       method="post"
-      action=""
+      action={window.location.search}
       className={styles["form-container"]}
-      onSubmit={handleSubmit}
     >
       <section id={styles.header}>
         <h2>{Constants.ForgotPassword}</h2>
@@ -41,46 +25,64 @@ function ResetPassword() {
       </section>
       <section id={styles.main}>
         <div className={styles["auth-item"]}>
-          <PasswordInput
-            ref={passwordRef}
-            attributes={{
-              id: "password",
-              name: "password",
-              autoComplete: "new-password",
-              placeholder: "Enter your new password",
-              readOnly: true,
-              required: true,
-            }}
-            preventCopyPasteEnabled
-            rightIconStyles={inputStyles["fa-eye"]}
-            leftIconSlot={
-              <FontAwesomeIcon
-                icon={faLock}
-                className={inputStyles["fa-lock"]}
-              />
-            }
-          />
+          <InputGroup>
+            {({ hidePassword, togglePasswordVisibility }) => (
+              <Fragment>
+                <InputGroup.LeftIcon
+                  icon={faLock}
+                  styles={inputStyles["fa-lock-reset"]}
+                />
+                <InputGroup.Input
+                  attributes={{
+                    id: "password",
+                    name: "password",
+                    autoComplete: "new-password",
+                    placeholder: "Enter your new password",
+                    readOnly: true,
+                    required: true,
+                    type: hidePassword === true ? "password" : "text",
+                  }}
+                  readonlyFocusEnabled
+                  preventCopyPasteEnabled
+                />
+                <InputGroup.RightIcon
+                  icon={hidePassword === true ? faEye : faEyeSlash}
+                  styles={inputStyles["fa-eye-reset"]}
+                  handleClick={togglePasswordVisibility}
+                />
+              </Fragment>
+            )}
+          </InputGroup>
         </div>
         <div className={styles["auth-item"]}>
-          <PasswordInput
-            ref={passwordConfirmRef}
-            attributes={{
-              id: "confirm-password",
-              name: "confirm-password",
-              autoComplete: "new-password",
-              placeholder: "Confirm your new password",
-              readOnly: true,
-              required: true,
-            }}
-            preventCopyPasteEnabled
-            rightIconStyles={inputStyles["fa-eye"]}
-            leftIconSlot={
-              <FontAwesomeIcon
-                icon={faLock}
-                className={inputStyles["fa-lock"]}
-              />
-            }
-          />
+          <InputGroup>
+            {({ hidePassword, togglePasswordVisibility }) => (
+              <Fragment>
+                <InputGroup.LeftIcon
+                  icon={faLock}
+                  styles={inputStyles["fa-lock-reset"]}
+                />
+                <InputGroup.Input
+                  attributes={{
+                    id: "confirm-password",
+                    name: "confirm-password",
+                    autoComplete: "new-password",
+                    placeholder: "Confirm your new password",
+                    readOnly: true,
+                    required: true,
+                    type: hidePassword === true ? "password" : "text",
+                  }}
+                  readonlyFocusEnabled
+                  preventCopyPasteEnabled
+                />
+                <InputGroup.RightIcon
+                  icon={hidePassword === true ? faEye : faEyeSlash}
+                  styles={inputStyles["fa-eye-reset"]}
+                  handleClick={togglePasswordVisibility}
+                />
+              </Fragment>
+            )}
+          </InputGroup>
         </div>
         <div id={styles["submitBox"]}>
           <input type="submit" value={Constants.ResetPassword}></input>
@@ -141,6 +143,11 @@ async function action({ request }: ActionFunctionArgs) {
     const response = await request.formData();
     const password = (response.get("password") as string).trim();
     const confirmPassword = (response.get("confirm-password") as string).trim();
+
+    if (!isPasswordValid(password) || !isPasswordValid(confirmPassword)) {
+      toast.error(Errors.InvalidPassword);
+      return false;
+    }
 
     const isOperationSuccessful: boolean = await resetPassword(
       email,

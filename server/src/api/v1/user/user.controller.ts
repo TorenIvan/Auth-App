@@ -109,7 +109,7 @@ class UserController {
 
       const serviceResponse: ServiceResponse =
         await UserController.userService.InsertUserWithCredentials(
-          email,
+          email.toLowerCase(),
           password
         );
 
@@ -151,7 +151,7 @@ class UserController {
 
       const hasConfirmedEmail: ServiceResponse =
         await UserController.userService.CheckUserEmailConfirmation(
-          request.query.email
+          request.query.email.toLowerCase()
         );
 
       if (hasConfirmedEmail.success === false) {
@@ -189,7 +189,7 @@ class UserController {
 
       const userCredsResponse: ServiceResponse =
         await UserController.userService.ValidateUserWithCredentials(
-          email,
+          email.toLowerCase(),
           password
         );
 
@@ -203,7 +203,9 @@ class UserController {
       }
 
       const hasConfirmedEmail: ServiceResponse =
-        await UserController.userService.CheckUserEmailConfirmation(email);
+        await UserController.userService.CheckUserEmailConfirmation(
+          email.toLowerCase()
+        );
 
       if (hasConfirmedEmail.success === false) {
         const new_email_token = generateJWT(
@@ -251,12 +253,16 @@ class UserController {
       const { email } = request.body;
 
       const serviceResponse: ServiceResponse =
-        await UserController.userService.CheckEmailExistence(email);
+        await UserController.userService.CheckEmailExistence(
+          email.toLowerCase()
+        );
 
       const emailExists: boolean = serviceResponse.success;
 
       const hasConfirmedEmail: ServiceResponse =
-        await UserController.userService.CheckUserEmailConfirmation(email);
+        await UserController.userService.CheckUserEmailConfirmation(
+          email.toLowerCase()
+        );
 
       const emailConfirmed: boolean = hasConfirmedEmail.success;
 
