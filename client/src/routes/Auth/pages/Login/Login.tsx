@@ -2,6 +2,7 @@ import { PureComponent } from "react";
 import { ActionFunctionArgs, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { addAuthorizationHeader } from "../../../../config";
+import { isEmailValid, isPasswordValid } from "../../../../helpers";
 import { loginUser } from "../../api";
 import { Constants } from "../../constants";
 import {
@@ -10,6 +11,7 @@ import {
   LoginNavLink,
   ForgotPasswordLink,
 } from "../../components";
+import { Errors } from "../../errors";
 
 class Login extends PureComponent {
   private readonly submitButtonText: string;
@@ -44,6 +46,15 @@ async function action({ request }: ActionFunctionArgs) {
     const response = await request.formData();
     const email = response.get("email") as string;
     const password = response.get("password") as string;
+
+    if (isEmailValid(email) === false) {
+      toast.error(Errors.InvalidEmail);
+      return false;
+    }
+    if (isPasswordValid(password) === false) {
+      toast.error(Errors.InvalidPassword);
+      return false;
+    }
 
     const access_token = await loginUser({
       email: email,

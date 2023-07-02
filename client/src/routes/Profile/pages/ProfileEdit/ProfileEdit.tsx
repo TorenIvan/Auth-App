@@ -14,11 +14,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GlobalConstants } from "../../../../utils";
 import { InputGroup, Textarea } from "../../../../components";
-import {
-  ProfileInput,
-  ProfileEditItem as EditItem,
-  UserPhoto,
-} from "../../components";
+import { ProfileEditItem as EditItem, UserPhoto } from "../../components";
 import { Constants } from "../../constants";
 import { TUserInfo } from "../../types";
 import { editUserData, userDetailsQuery } from "../../api";
@@ -220,7 +216,7 @@ function ProfileEdit() {
                   <Fragment>
                     <InputGroup.LeftIcon
                       icon={faLock}
-                      styles={inputStyles["fa-lock-middle"]}
+                      styles={inputStyles["fa-lock"]}
                     />
                     <InputGroup.Label value={Constants.NewPassword} />
                     <InputGroup.Input
@@ -235,7 +231,7 @@ function ProfileEdit() {
                     />
                     <InputGroup.RightIcon
                       icon={hidePassword === true ? faEye : faEyeSlash}
-                      styles={inputStyles["fa-eye-middle"]}
+                      styles={inputStyles["fa-eye"]}
                       handleClick={togglePasswordVisibility}
                     />
                   </Fragment>

@@ -1,9 +1,8 @@
-import React, { useRef } from "react";
+import { Fragment } from "react";
 import { ActionFunctionArgs, Form, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import { Input } from "../../../../components";
+import { InputGroup } from "../../../../components";
 import { isEmailValid } from "../../../../helpers";
 import { inputStyles } from "../../../../styles";
 import { Errors } from "../../errors";
@@ -12,46 +11,37 @@ import { forgotPassword } from "../../api";
 import styles from "./styles.module.scss";
 
 function ForgotPassword() {
-  const emailRef = useRef<HTMLInputElement>(null);
-
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    if (isEmailValid(emailRef.current?.value ?? "") === false) {
-      toast.error(Errors.InvalidEmail);
-      event.preventDefault();
-      return;
-    }
-  }
   return (
     <Form
       autoComplete="off"
       method="post"
       action=""
       className={styles["form-container"]}
-      onSubmit={handleSubmit}
     >
       <section id={styles.header}>
         <h2>{Constants.ForgotPassword}</h2>
         <p>{Constants.ForgotPasswordParagraph}</p>
       </section>
       <section id={styles.main}>
-        <Input
-          ref={emailRef}
-          preventCopyPasteEnabled
-          attributes={{
-            id: "email",
-            type: "text",
-            name: "email",
-            placeholder: Constants.EmailPlaceholder,
-            autoComplete: "off",
-            required: true,
-          }}
-          leftIconSlot={
-            <FontAwesomeIcon
+        <InputGroup>
+          <Fragment>
+            <InputGroup.LeftIcon
               icon={faEnvelope}
-              className={inputStyles["fa-lock-forgot"]}
+              styles={inputStyles["fa-lock-forgot"]}
             />
-          }
-        />
+            <InputGroup.Input
+              attributes={{
+                id: "email",
+                type: "text",
+                name: "email",
+                placeholder: Constants.EmailPlaceholder,
+                autoComplete: "off",
+                required: true,
+              }}
+              preventCopyPasteEnabled
+            />
+          </Fragment>
+        </InputGroup>
         <div id={styles["submitBox"]}>
           <input type="submit" value={Constants.Continue}></input>
         </div>
@@ -67,10 +57,15 @@ async function action({ request }: ActionFunctionArgs) {
     const response = await request.formData();
     const email = response.get("email") as string;
 
+    if (isEmailValid(email) === false) {
+      toast.error(Errors.InvalidEmail);
+      return false;
+    }
+
     const isOperationSuccessful: boolean = await forgotPassword(email.trim());
     if (isOperationSuccessful === false) {
       toast.error(Errors.GenericError);
-      return true;
+      return false;
     }
     toast.success(Constants.ResetPasswordEmailMessage);
     return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);

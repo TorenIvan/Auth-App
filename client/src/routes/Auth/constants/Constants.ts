@@ -15,6 +15,8 @@ export const Constants = {
   ForgotPasswordLink: "Forgot your password?",
   ForgotPasswordParagraph:
     "Please provide your email address that you used when you signed up for your account",
+  Email: "Email",
+  Password: "Password",
   EmailPlaceholder: "Enter your email address...",
   Continue: "Continue",
   ResetPassword: "Reset Password",

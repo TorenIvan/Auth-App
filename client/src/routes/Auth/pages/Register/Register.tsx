@@ -1,9 +1,11 @@
 import { PureComponent } from "react";
 import { ActionFunctionArgs, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { isEmailValid, isPasswordValid } from "../../../../helpers";
 import { AuthForm, RegisterTitle, RegisterNavLink } from "../../components";
 import { Constants } from "../../constants";
-import { registerUser } from "../../api/registerUser";
+import { registerUser } from "../../api";
+import { Errors } from "../../errors";
 
 class Register extends PureComponent {
   private readonly submitButtonText: string;
@@ -35,6 +37,15 @@ async function action({ request }: ActionFunctionArgs) {
     const response = await request.formData();
     const email = response.get("email") as string;
     const password = response.get("password") as string;
+
+    if (isEmailValid(email) === false) {
+      toast.error(Errors.InvalidEmail);
+      return false;
+    }
+    if (isPasswordValid(password) === false) {
+      toast.error(Errors.InvalidPassword);
+      return false;
+    }
 
     await registerUser({
       email: email,

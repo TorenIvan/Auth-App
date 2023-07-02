@@ -1,40 +1,26 @@
-import { useRef } from "react";
+import { Fragment } from "react";
 import { Form } from "react-router-dom";
-import { toast } from "react-hot-toast";
 import "font-awesome/css/font-awesome.min.css";
-import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faEnvelope,
+  faEye,
+  faEyeSlash,
+  faLock,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   FacebookIcon,
   GithubIcon,
   GoogleIcon,
   TwitterIcon,
 } from "../../../../icons";
-import { Input, PasswordInput } from "../../../../components";
-import { isEmailValid, isPasswordValid } from "../../../../helpers";
+import { InputGroup } from "../../../../components";
 import { inputStyles } from "../../../../styles";
 import { Constants } from "../../constants";
-import { Errors } from "../../errors";
 import { headerStyles, mainStyles, footerStyles, styles } from "./styles";
 
 function AuthForm(props: IProps) {
-  const emailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
   const { titleSlot, submitButtonText, navLinkSlot, forgotPasswordSlot } =
     props;
-
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    if (isEmailValid(emailRef.current?.value ?? "") === false) {
-      toast.error(Errors.InvalidEmail);
-      event.preventDefault();
-      return;
-    }
-    if (isPasswordValid(passwordRef.current?.value ?? "") === false) {
-      toast.error(Errors.InvalidPassword);
-      event.preventDefault();
-      return;
-    }
-  }
 
   return (
     <div id={styles["main-container"]}>
@@ -48,45 +34,56 @@ function AuthForm(props: IProps) {
           method="post"
           action=""
           className={mainStyles["auth-container"]}
-          onSubmit={handleSubmit}
         >
           <div className={mainStyles["auth-item"]}>
-            <Input
-              ref={emailRef}
-              attributes={{
-                id: "email",
-                type: "text",
-                name: "email",
-                placeholder: "Email",
-                required: true,
-              }}
-              leftIconSlot={
-                <FontAwesomeIcon
+            <InputGroup stylesContainer="auth-form">
+              <Fragment>
+                <InputGroup.LeftIcon
                   icon={faEnvelope}
-                  className={inputStyles["fa-lock"]}
+                  styles={inputStyles["fa-lock-form"]}
                 />
-              }
-            />
+                <InputGroup.Input
+                  attributes={{
+                    id: "email",
+                    type: "text",
+                    name: "email",
+                    placeholder: Constants.Email,
+                    autoComplete: "off",
+                    required: true,
+                  }}
+                />
+              </Fragment>
+            </InputGroup>
           </div>
           <div className={mainStyles["auth-item"]}>
-            <PasswordInput
-              ref={passwordRef}
-              attributes={{
-                id: "password",
-                name: "password",
-                autoComplete: "new-password",
-                placeholder: "Password",
-                readOnly: true,
-                required: true,
-              }}
-              leftIconSlot={
-                <FontAwesomeIcon
-                  icon={faLock}
-                  className={inputStyles["fa-lock"]}
-                />
-              }
-              rightIconStyles={inputStyles["fa-eye"]}
-            />
+            <InputGroup stylesContainer="auth-form">
+              {({ hidePassword, togglePasswordVisibility }) => (
+                <Fragment>
+                  <InputGroup.LeftIcon
+                    icon={faLock}
+                    styles={inputStyles["fa-lock-form"]}
+                  />
+                  <InputGroup.Input
+                    attributes={{
+                      id: "password",
+                      name: "password",
+                      autoComplete: "new-password",
+                      placeholder: "Password",
+                      readOnly: true,
+                      required: true,
+                      type: hidePassword === true ? "password" : "text",
+                    }}
+                    readonlyFocusEnabled
+                    preventCopyPasteEnabled
+                  />
+                  <InputGroup.RightIcon
+                    icon={hidePassword === true ? faEye : faEyeSlash}
+                    styles={inputStyles["fa-eye-middle"]}
+                    handleClick={togglePasswordVisibility}
+                  />
+                </Fragment>
+              )}
+            </InputGroup>
           </div>
           <div id={mainStyles["submitBox"]}>
             <input type="submit" value={submitButtonText}></input>

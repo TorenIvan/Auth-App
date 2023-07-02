@@ -1,5 +1,4 @@
 .auth-container {
-  flex: 1.2;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -10,11 +9,7 @@
 }
 
 .auth-item {
-  flex: 1;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
+  margin-bottom: 1em;
   width: clamp(65%, 357px, 90%);
   position: relative;
 }
@@ -28,19 +23,19 @@
   align-items: center;
 }
 
-.auth-item > input,
-#submitBox > input {
+.auth-item input,
+#submitBox input {
   width: clamp(80%, 220vw, 100%);
   height: 40px;
   box-sizing: border-box;
 }
 
-#submitBox > input {
+#submitBox input {
   border-radius: 8px;
 }
 
-.auth-item > input[type="password"]::placeholder,
-.auth-item > input[type="email"]::placeholder {
+.auth-item input[type="password"]::placeholder,
+.auth-item input[type="email"]::placeholder {
   padding-left: 10px;
 }
 
