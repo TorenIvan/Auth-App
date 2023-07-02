@@ -6,4 +6,5 @@ export const Constants = {
   LightPalette: "light-theme",
   DarkPalette: "dark-theme",
   Theme: "theme",
+  Credentials: "credentials",
 } as const;

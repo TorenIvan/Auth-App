@@ -2,7 +2,7 @@ import React, { ClipboardEvent, ForwardedRef, forwardRef } from "react";
 import { useAtom } from "jotai";
 import "font-awesome/css/font-awesome.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash, faLock } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { Constants } from "../../utils/Modules/Constants";
 import { Theme } from "../../utils";
 import { themeAtom } from "../../store";

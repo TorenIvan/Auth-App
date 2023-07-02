@@ -5,12 +5,15 @@ import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import {
   faCamera,
   faEnvelope,
+  faEye,
+  faEyeSlash,
   faLock,
   faPhone,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Textarea } from "../../../../components";
+import { GlobalConstants } from "../../../../utils";
+import { InputGroup, Textarea } from "../../../../components";
 import {
   ProfileInput,
   ProfileEditItem as EditItem,
@@ -118,20 +121,22 @@ function ProfileEdit() {
           }
         />
         <EditItem>
-          <ProfileInput
-            label={Constants.Name}
-            attributes={{
-              name: "username",
-              placeholder: Constants.NamePlaceholder,
-              defaultValue: userInfo?.username,
-            }}
-            leftIconSlot={
-              <FontAwesomeIcon
+          <InputGroup stylesContainer="profile-input-container">
+            <Fragment>
+              <InputGroup.LeftIcon
                 icon={faUser}
-                className={inputStyles["fa-lock-middle"]}
+                styles={inputStyles["fa-lock-middle"]}
               />
-            }
-          />
+              <InputGroup.Label value={Constants.Name} />
+              <InputGroup.Input
+                attributes={{
+                  name: "username",
+                  placeholder: Constants.NamePlaceholder,
+                  defaultValue: userInfo?.username,
+                }}
+              />
+            </Fragment>
+          </InputGroup>
         </EditItem>
         <EditItem>
           <Textarea
@@ -144,60 +149,98 @@ function ProfileEdit() {
           />
         </EditItem>
         <EditItem>
-          <ProfileInput
-            label={Constants.Phone}
-            attributes={{
-              name: "phone",
-              placeholder: Constants.PhonePlaceholder,
-              defaultValue: userInfo?.phone,
-            }}
-            leftIconSlot={
-              <FontAwesomeIcon
+          <InputGroup stylesContainer="profile-input-container">
+            <Fragment>
+              <InputGroup.LeftIcon
                 icon={faPhone}
-                className={inputStyles["fa-lock-middle"]}
+                styles={inputStyles["fa-lock-middle"]}
               />
-            }
-          />
+              <InputGroup.Label value={Constants.Phone} />
+              <InputGroup.Input
+                attributes={{
+                  name: "phone",
+                  placeholder: Constants.PhonePlaceholder,
+                  defaultValue: userInfo?.phone,
+                }}
+              />
+            </Fragment>
+          </InputGroup>
         </EditItem>
         <EditItem>
-          <ProfileInput
-            label={Constants.Email}
-            attributes={{
-              placeholder: Constants.EmailPlaceholder,
-              defaultValue: userInfo?.email,
-              disabled: true,
-            }}
-            leftIconSlot={
-              <FontAwesomeIcon
+          <InputGroup stylesContainer="profile-input-container">
+            <Fragment>
+              <InputGroup.LeftIcon
                 icon={faEnvelope}
-                className={inputStyles["fa-lock-middle"]}
+                styles={inputStyles["fa-lock-middle"]}
               />
-            }
-          />
+              <InputGroup.Label value={Constants.Email} />
+              <InputGroup.Input
+                attributes={{
+                  placeholder: Constants.EmailPlaceholder,
+                  defaultValue: userInfo?.email,
+                  disabled: true,
+                }}
+              />
+            </Fragment>
+          </InputGroup>
         </EditItem>
-        {userInfo?.signInMethod === "credentials" && (
+        {userInfo?.signInMethod === GlobalConstants.Credentials && (
           <Fragment>
             <EditItem>
-              <ProfileInput
-                label={Constants.CurrentPassword}
-                attributes={{
-                  name: "currentPassword",
-                  placeholder: Constants.CurrentPasswordPlaceholder,
-                  autoComplete: "new-password",
-                }}
-                isPassword
-              />
+              <InputGroup stylesContainer="profile-input-container">
+                {({ hidePassword, togglePasswordVisibility }) => (
+                  <Fragment>
+                    <InputGroup.LeftIcon
+                      icon={faLock}
+                      styles={inputStyles["fa-lock-middle"]}
+                    />
+                    <InputGroup.Label value={Constants.CurrentPassword} />
+                    <InputGroup.Input
+                      attributes={{
+                        name: "currentPassword",
+                        placeholder: Constants.CurrentPasswordPlaceholder,
+                        autoComplete: "new-password",
+                        type: hidePassword === true ? "password" : "text",
+                      }}
+                      readonlyFocusEnabled
+                      preventCopyPasteEnabled
+                    />
+                    <InputGroup.RightIcon
+                      icon={hidePassword === true ? faEye : faEyeSlash}
+                      styles={inputStyles["fa-eye-middle"]}
+                      handleClick={togglePasswordVisibility}
+                    />
+                  </Fragment>
+                )}
+              </InputGroup>
             </EditItem>
             <EditItem>
-              <ProfileInput
-                label={Constants.NewPassword}
-                attributes={{
-                  name: "newPassword",
-                  placeholder: Constants.NewPasswordPlaceholder,
-                  autoComplete: "new-password",
-                }}
-                isPassword
-              />
+              <InputGroup stylesContainer="profile-input-container">
+                {({ hidePassword, togglePasswordVisibility }) => (
+                  <Fragment>
+                    <InputGroup.LeftIcon
+                      icon={faLock}
+                      styles={inputStyles["fa-lock-middle"]}
+                    />
+                    <InputGroup.Label value={Constants.NewPassword} />
+                    <InputGroup.Input
+                      attributes={{
+                        name: "newPassword",
+                        placeholder: Constants.NewPasswordPlaceholder,
+                        autoComplete: "new-password",
+                        type: hidePassword === true ? "password" : "text",
+                      }}
+                      readonlyFocusEnabled
+                      preventCopyPasteEnabled
+                    />
+                    <InputGroup.RightIcon
+                      icon={hidePassword === true ? faEye : faEyeSlash}
+                      styles={inputStyles["fa-eye-middle"]}
+                      handleClick={togglePasswordVisibility}
+                    />
+                  </Fragment>
+                )}
+              </InputGroup>
             </EditItem>
           </Fragment>
         )}
