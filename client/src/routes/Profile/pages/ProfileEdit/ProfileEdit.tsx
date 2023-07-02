@@ -14,13 +14,14 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GlobalConstants } from "../../../../utils";
 import { InputGroup, Textarea } from "../../../../components";
+import { inputStyles } from "../../../../styles";
 import { ProfileEditItem as EditItem, UserPhoto } from "../../components";
 import { Constants } from "../../constants";
 import { TUserInfo } from "../../types";
+import { useImageChange } from "../../hooks";
 import { editUserData, userDetailsQuery } from "../../api";
 import { isEditFormValid as isFormValid } from "../../helpers";
 import styles from "./styles.module.scss";
-import { inputStyles } from "../../../../styles";
 
 function ProfileEdit() {
   const navigate = useNavigate();
@@ -29,20 +30,9 @@ function ProfileEdit() {
   const userInfo: TUserInfo = queryClient.getQueryData(
     userDetailsQuery().queryKey
   );
-  const [image, setImage] = useState<string | null>(findPhoto(userInfo?.image));
+  const [image, handleImageChange] = useImageChange(userInfo?.image);
 
-  function onFileChange(event: ChangeEvent<HTMLInputElement>) {
-    event.stopPropagation();
-
-    const files = event.currentTarget.files;
-    if (files === null || files === undefined || files.length === 0) {
-      return;
-    }
-    const imageUrl = URL.createObjectURL(files[0]);
-    setImage(imageUrl);
-  }
-
-  function handleImage(_: unknown) {
+  function triggerImageChange(_: unknown) {
     inputFileRef?.current?.click();
   }
 
@@ -91,7 +81,7 @@ function ProfileEdit() {
         </article>
         <UserPhoto
           image={image}
-          handleImage={handleImage}
+          handleImage={triggerImageChange}
           inputSlot={
             <>
               <FontAwesomeIcon
@@ -104,12 +94,15 @@ function ProfileEdit() {
                 name="file"
                 accept=".png, .jpg, .jpeg"
                 ref={inputFileRef}
-                onChange={onFileChange}
+                onChange={handleImageChange}
               />
             </>
           }
           paragraphSlot={
-            <span id={styles["default-photo-text"]} onClick={handleImage}>
+            <span
+              id={styles["default-photo-text"]}
+              onClick={triggerImageChange}
+            >
               {image === null
                 ? Constants.AddPhoto.toUpperCase()
                 : Constants.ChangePhoto.toUpperCase()}
@@ -216,7 +209,7 @@ function ProfileEdit() {
                   <Fragment>
                     <InputGroup.LeftIcon
                       icon={faLock}
-                      styles={inputStyles["fa-lock"]}
+                      styles={inputStyles["fa-lock-middle"]}
                     />
                     <InputGroup.Label value={Constants.NewPassword} />
                     <InputGroup.Input
@@ -231,7 +224,7 @@ function ProfileEdit() {
                     />
                     <InputGroup.RightIcon
                       icon={hidePassword === true ? faEye : faEyeSlash}
-                      styles={inputStyles["fa-eye"]}
+                      styles={inputStyles["fa-eye-middle"]}
                       handleClick={togglePasswordVisibility}
                     />
                   </Fragment>
