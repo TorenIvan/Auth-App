@@ -1,4 +1,4 @@
-import { ChangeEvent, Fragment, useRef, useState } from "react";
+import { Fragment, useRef } from "react";
 import { Form, NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
@@ -45,7 +45,6 @@ function ProfileEdit() {
     }
 
     const file = inputFileRef.current?.files?.[0];
-
     if (file !== undefined) {
       formData.set("file", file);
     }
@@ -283,11 +282,4 @@ interface IRequest {
   currentPassword: string;
   newPassword: string;
   file?: File;
-}
-
-function findPhoto(image?: string) {
-  if (image === undefined) {
-    return null;
-  }
-  return image;
 }
