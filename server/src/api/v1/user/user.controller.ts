@@ -180,6 +180,37 @@ class UserController {
     }
   }
 
+  async loginFacebookHandler(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const tokenResponse =
+        await UserController.fastifyInstance.oauth2OptionsFacebook?.getAccessTokenFromAuthorizationCodeFlow(
+          request
+        );
+
+      if (!tokenResponse?.token) {
+        return UserController.handleError(reply, 400, Errors.GenericError);
+      }
+
+      const { access_token, refresh_token } = tokenResponse.token;
+      if (!access_token || !refresh_token) {
+        return UserController.handleError(reply, 400, Errors.GenericError);
+      }
+
+      const cookieOptions = generateCookieOptions();
+
+      reply
+        .code(200)
+        .setCookie(
+          EnvironmentVariables.Cookie_Name,
+          refresh_token,
+          cookieOptions
+        )
+        .send({ access_token: access_token });
+    } catch (error) {
+      UserController.handleError(reply, 500, Errors.GenericError);
+    }
+  }
+
   async loginCredentialsHandler(
     request: FastifyRequest<{ Body: credsUserInput }>,
     reply: FastifyReply

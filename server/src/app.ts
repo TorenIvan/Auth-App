@@ -8,6 +8,7 @@ import cookie from "@fastify/cookie";
 import type { FastifyCookieOptions } from "@fastify/cookie";
 import cors from "@fastify/cors";
 import multipart from "@fastify/multipart";
+import fastifyOAuth2, { FastifyOAuth2Options } from "@fastify/oauth2";
 import { userRoutes } from "./api/v1/user";
 import { authMiddleware } from "./config/middleware";
 
@@ -56,6 +57,24 @@ const app: FastifyPluginAsync<AppOptions> = async (
     hook: "onRequest",
     parseOptions: {},
   } as FastifyCookieOptions);
+
+  // Define the OAuth2 options
+  const oauth2OptionsFacebook: FastifyOAuth2Options = {
+    name: "facebookOAuth2",
+    credentials: {
+      client: {
+        id: process.env.FACEBOOK_APP_ID!,
+        secret: process.env.FACEBOOK_APP_SECRET!,
+      },
+      auth: fastifyOAuth2.FACEBOOK_CONFIGURATION,
+    },
+    // Register a Fastify URL to start the redirect flow
+    startRedirectPath: "/login/facebook",
+    // facebook redirect here after the user login
+    callbackUri: "http://localhost:3000/v1/auth/login/facebook",
+  };
+
+  void fastify.register(fastifyOAuth2, oauth2OptionsFacebook);
 
   void fastify.register(AutoLoad, {
     dir: join(__dirname, "./config/database"),
