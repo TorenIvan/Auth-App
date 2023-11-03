@@ -1,0 +1,61 @@
+#container {
+  box-sizing: border-box;
+  position: relative;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 600px;
+  padding: 10px;
+  min-height: 400px;
+  font-family: NotoSans;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#header {
+  color: var(--text-secondary);
+  font-family: NotoSansRegular;
+}
+
+#content {
+  color: var(--text-contrast);
+  font-family: NotoSansRegular;
+}
+
+#button {
+  background-color: var(--background-button);
+  opacity: 0.8;
+  width: 100%;
+  max-width: 200px;
+  height: 50px;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  span {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 21px;
+    color: var(--text-buttonWithBackground);
+    font-family: NotoSansRegular;
+  }
+}
+
+.fontIconError {
+  width: 100px;
+  height: 80px;
+  color: var(--red);
+}
+
+.fontIcon {
+  width: 100px;
+  height: 80px;
+  color: var(--sub-icon);
+}

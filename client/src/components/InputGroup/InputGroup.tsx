@@ -10,7 +10,6 @@ function InputGroup(props: IProps): JSX.Element {
   const { stylesContainer, children } = props;
   const containerClassName = stylesContainer ? styles[stylesContainer] : "";
 
-  console.log(containerClassName);
   if (typeof children === "function") {
     return (
       <section className={containerClassName}>

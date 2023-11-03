@@ -25,6 +25,10 @@ declare module "fastify" {
       request: FastifyRequest,
       reply: FastifyReply
     ) => Promise<void>;
+    actionForbiddenToAuthenticatedUser: (
+      request: FastifyRequest,
+      reply: FastifyReply
+    ) => Promise<void>;
   }
 
   export interface FastifyMultipartFile {
@@ -71,4 +75,4 @@ declare module "fastify" {
   }
 }
 
-export {};
+export { };

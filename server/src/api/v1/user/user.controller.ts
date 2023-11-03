@@ -5,6 +5,7 @@ import { Strings } from "../../../config/utils/constants/Strings";
 import {
   generateCookieOptions,
   generateResetCookieOptions,
+  generateSocialCookieOptions,
 } from "../../../config/utils/helpers/auth/generateCookieOptions";
 import {
   generateAuthJWTs,
@@ -21,6 +22,7 @@ import {
 } from "./user.schema";
 import UserService from "./user.service";
 import { isFileSizeExceeded } from "../../../config/utils/helpers";
+import axios from "axios";
 
 class UserController {
   private static instance: InstanceType<typeof UserController>;
@@ -180,23 +182,68 @@ class UserController {
     }
   }
 
-  async loginFacebookHandler(request: FastifyRequest, reply: FastifyReply) {
+  async loginFacebookHandler(request: FastifyRequest<{ Body: { code: string } }>, reply: FastifyReply) {
     try {
-      const tokenResponse =
-        await UserController.fastifyInstance.oauth2OptionsFacebook?.getAccessTokenFromAuthorizationCodeFlow(
-          request
-        );
+      const { code } = request.body;
 
-      if (!tokenResponse?.token) {
+      if (!code) {
         return UserController.handleError(reply, 400, Errors.GenericError);
       }
 
-      const { access_token, refresh_token } = tokenResponse.token;
-      if (!access_token || !refresh_token) {
+
+      const fbRetrieveTokenUri = `https://graph.facebook.com/v18.0/oauth/access_token?client_id=${EnvironmentVariables.Facebook_App_Id}&redirect_uri=${EnvironmentVariables.Facebook_App_Redirect_Uri}&client_secret=${EnvironmentVariables.Facebook_App_Secret}&code=${code}`;
+
+      const tokenResponse = await axios.get('http://localhost:8080/' + fbRetrieveTokenUri, {
+        headers: { "Origin": "http://localhost:3000" }
+      });
+
+      /* @ts-ignore */
+      if (!tokenResponse?.data?.access_token) {
         return UserController.handleError(reply, 400, Errors.GenericError);
       }
 
-      const cookieOptions = generateCookieOptions();
+      const userResponse = await axios.get(`http://localhost:8080/https://graph.facebook.com/me?fields=id,email,name,about&access_token=${tokenResponse.data.access_token}`, {
+        headers: { "Origin": "http://localhost:3000" }
+      });
+
+      if (!userResponse?.data?.email || !userResponse?.data?.name) {
+        return UserController.handleError(reply, 400, Errors.NotRetrievedFacebook);
+      }
+
+      let userId: string | undefined = undefined;
+      const checkIfEmailWithGivenSocialPlatformExists: ServiceResponse =
+        await UserController.userService.CheckGivenSocialPlatformEmailExistence(userResponse.data.email, "facebook");
+
+      const givenSocialPlatformEmailExist: boolean = checkIfEmailWithGivenSocialPlatformExists.success;
+      if (givenSocialPlatformEmailExist === true) {
+        userId = checkIfEmailWithGivenSocialPlatformExists.data!.userId.toString();
+      }
+      if (givenSocialPlatformEmailExist === false) {
+        const userSocialLoginResponse: ServiceResponse =
+          await UserController.userService.InsertUserWithSocialAccount(
+            userResponse.data.name,
+            userResponse.data.email.toLowerCase(),
+            userResponse.data.about ?? "",
+            "facebook"
+          );
+
+        const inserted: boolean = userSocialLoginResponse.success;
+        if (inserted === false) {
+          return UserController.handleError(
+            reply,
+            400,
+            userSocialLoginResponse?.customError
+          );
+        }
+        userId = userSocialLoginResponse.data!.userId.toString();
+      }
+
+      const { access_token, refresh_token } = generateAuthJWTs(
+        userId!,
+        "facebook"
+      );
+
+      const cookieOptions = generateSocialCookieOptions();
 
       reply
         .code(200)

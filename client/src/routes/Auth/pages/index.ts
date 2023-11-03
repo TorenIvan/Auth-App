@@ -2,6 +2,7 @@ import Login, { loginAction } from "./Login";
 import Register, { registerAction } from "./Register";
 import ConfirmEmail, { confirmEmailLoader } from "./ConfirmEmail";
 import ForgotPassword, { forgotPasswordAction } from "./ForgotPassword";
+import LoginFacebook, { loginFacebookLoader } from "./LoginFacebook";
 import ResetPassword, {
   resetPasswordLoader,
   resetPasswordAction,
@@ -19,4 +20,6 @@ export {
   ResetPassword,
   resetPasswordLoader,
   resetPasswordAction,
+  LoginFacebook,
+  loginFacebookLoader
 };

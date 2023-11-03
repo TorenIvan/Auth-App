@@ -13,7 +13,7 @@ import {
   AuthFormGroup,
 } from "../../components";
 
-class Login extends PureComponent {
+class Login extends PureComponent<object, { socialItem: SocialItem | null }> {
   private readonly submitButtonText: string;
   private readonly title: JSX.Element;
   private readonly navigateLink: JSX.Element;
@@ -73,3 +73,5 @@ async function action({ request }: ActionFunctionArgs) {
     return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
   }
 }
+
+type SocialItem = "facebook" | "google" | "twitter" | "github";

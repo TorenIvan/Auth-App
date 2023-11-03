@@ -24,9 +24,8 @@ function InputGroupInput(props: IProps) {
 
   return (
     <input
-      className={`${inputStyles.input} ${
-        theme === Constants.LightPalette ? inputStyles.lightBorder : ""
-      }`}
+      className={`${inputStyles.input} ${theme === Constants.LightPalette ? inputStyles.lightBorder : ""
+        }`}
       {...attributes}
       onFocus={handleFocus}
       onCopy={preventCopyPaste}

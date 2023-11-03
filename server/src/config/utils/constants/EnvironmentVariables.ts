@@ -24,4 +24,7 @@ export const EnvironmentVariables = {
   Email_Host: process.env.EMAIL_HOST!,
   Email_Port: process.env.EMAIL_PORT!,
   Reset_Pass_Uri: process.env.RESET_PASS_URI!,
+  Facebook_App_Id: process.env.FACEBOOK_APP_ID!,
+  Facebook_App_Secret: process.env.FACEBOOK_APP_SECRET!,
+  Facebook_App_Redirect_Uri: process.env.FACEBOOK_APP_REDIRECT_URI!,
 } as const;

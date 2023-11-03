@@ -1,9 +1,8 @@
-import axios, { AxiosError, isAxiosError } from "axios";
+import axios, { isAxiosError } from "axios";
 import { Errors } from "../errors";
 
-const registerUri = `${
-  import.meta.env.VITE_SERVER_URI
-}v1/auth/register/credentials`;
+const registerUri = `${import.meta.env.VITE_SERVER_URI
+  }v1/auth/register/credentials`;
 
 export async function registerUser(request: IRequest): Promise<void> {
   const { email, password } = request;
@@ -13,7 +12,7 @@ export async function registerUser(request: IRequest): Promise<void> {
       password: password,
     });
     return;
-  } catch (error: unknown | AxiosError) {
+  } catch (error: unknown) {
     if (isAxiosError(error)) {
       const { response } = error;
       const statusCode = response?.status ?? 0;

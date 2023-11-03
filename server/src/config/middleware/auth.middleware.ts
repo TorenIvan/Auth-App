@@ -17,7 +17,7 @@ const authMiddleware: FastifyPluginAsync = fp(
     fastify.decorateRequest("signInMethod", "credentials");
     fastify.decorate(
       "verifyAccessTokenHeader",
-      async function (
+      async function(
         request: FastifyRequest,
         reply: FastifyReply
       ): Promise<void> {
@@ -56,7 +56,7 @@ const authMiddleware: FastifyPluginAsync = fp(
 
     fastify.decorate(
       "verifyRefreshTokenCookie",
-      async function (
+      async function(
         request: FastifyRequest,
         reply: FastifyReply
       ): Promise<void> {
@@ -90,7 +90,7 @@ const authMiddleware: FastifyPluginAsync = fp(
 
     fastify.decorate(
       "verifyResetPasswordCookie",
-      async function (
+      async function(
         request: FastifyRequest,
         reply: FastifyReply
       ): Promise<void> {
@@ -125,9 +125,10 @@ const authMiddleware: FastifyPluginAsync = fp(
       }
     );
 
+
     fastify.decorate(
-      "checkIfUserIsAuthenticated",
-      async function (
+      "actionForbiddenToAuthenticatedUser",
+      async function(
         request: FastifyRequest,
         reply: FastifyReply
       ): Promise<void> {
@@ -141,11 +142,49 @@ const authMiddleware: FastifyPluginAsync = fp(
               EnvironmentVariables.Access_Token_Secret
             );
             if (access_token_data?.userId && access_token_data?.signInMethod) {
+              reply.status(403).send();
+            }
+          }
+
+          const refresh_token: string | null = retrieveRefreshToken(request.cookies);
+
+          if (refresh_token !== null) {
+            const refresh_token_data = verifyJWT(
+              refresh_token,
+              EnvironmentVariables.Refresh_Token_Secret
+            );
+
+            if (refresh_token_data?.userId && refresh_token_data?.signInMethod) {
+              reply.status(403).send();
+            }
+          }
+        } catch {
+          reply.status(400).send();
+        }
+      }
+    );
+
+    fastify.decorate(
+      "checkIfUserIsAuthenticated",
+      async function(
+        request: FastifyRequest,
+        reply: FastifyReply
+      ): Promise<void> {
+        try {
+          const authHeader: string | undefined = request.headers?.authorization;
+          const access_token: string | null = retrieveAccessToken(authHeader);
+          const refresh_token = retrieveRefreshToken(request.cookies) ?? "";
+
+          if (access_token !== null) {
+            const access_token_data = verifyJWT(
+              access_token,
+              EnvironmentVariables.Access_Token_Secret
+            );
+            if (access_token_data?.userId && access_token_data?.signInMethod) {
               reply.status(200).send();
             }
           }
 
-          const refresh_token = retrieveRefreshToken(request.cookies) ?? "";
 
           const refresh_token_data = verifyJWT(
             refresh_token,

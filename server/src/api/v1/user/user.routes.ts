@@ -20,7 +20,6 @@ import UserController from "./user.controller";
  */
 const userRoutes: FastifyPluginAsync = async (
   fastify: FastifyInstance,
-  _: object
 ): Promise<void> => {
   fastify.register(refreshTokens, {
     prefix: "/v1/auth/refresh",
@@ -118,7 +117,10 @@ async function loginWithCredentials(fastify: FastifyInstance): Promise<void> {
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function loginWithFacebook(fastify: FastifyInstance): Promise<void> {
-  fastify.get("/", new UserController(fastify).loginFacebookHandler);
+  fastify.addHook("preHandler", async (request, reply) => {
+    await fastify.actionForbiddenToAuthenticatedUser(request, reply);
+  });
+  fastify.post("/", new UserController(fastify).loginFacebookHandler);
 }
 
 /**
@@ -126,7 +128,7 @@ async function loginWithFacebook(fastify: FastifyInstance): Promise<void> {
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function loginWithGoogle(fastify: FastifyInstance): Promise<void> {
-  fastify.get("/", async function (request, reply) {
+  fastify.get("/", async function(request, reply) {
     return "this is a login example route with google";
   });
 }
@@ -136,7 +138,7 @@ async function loginWithGoogle(fastify: FastifyInstance): Promise<void> {
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function loginWithGithub(fastify: FastifyInstance): Promise<void> {
-  fastify.get("/", async function (request, reply) {
+  fastify.get("/", async function(request, reply) {
     return "this is a login example route with github";
   });
 }
@@ -146,7 +148,7 @@ async function loginWithGithub(fastify: FastifyInstance): Promise<void> {
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function loginWithTwitter(fastify: FastifyInstance): Promise<void> {
-  fastify.get("/", async function (request, reply) {
+  fastify.get("/", async function(request, reply) {
     return "this is a login example route with twitter";
   });
 }
@@ -169,7 +171,7 @@ async function registerWithCredentials(
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function registerWithFacebook(fastify: FastifyInstance): Promise<void> {
-  fastify.get("/", async function (request, reply) {
+  fastify.get("/", async function(request, reply) {
     return "this is an example facebook";
   });
 }
@@ -179,7 +181,7 @@ async function registerWithFacebook(fastify: FastifyInstance): Promise<void> {
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function registerWithGoogle(fastify: FastifyInstance): Promise<void> {
-  fastify.get("/", async function (request, reply) {
+  fastify.get("/", async function(request, reply) {
     return "this is an example google";
   });
 }
@@ -189,7 +191,7 @@ async function registerWithGoogle(fastify: FastifyInstance): Promise<void> {
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function registerWithGithub(fastify: FastifyInstance): Promise<void> {
-  fastify.get("/", async function (request, reply) {
+  fastify.get("/", async function(request, reply) {
     return "this is an example github";
   });
 }
@@ -199,7 +201,7 @@ async function registerWithGithub(fastify: FastifyInstance): Promise<void> {
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function registerWithTwitter(fastify: FastifyInstance): Promise<void> {
-  fastify.get("/", async function (request, reply) {
+  fastify.get("/", async function(request, reply) {
     return "this is an example twitter";
   });
 }

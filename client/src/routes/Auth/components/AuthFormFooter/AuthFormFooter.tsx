@@ -4,11 +4,16 @@ import {
   GoogleIcon,
   TwitterIcon,
 } from "../../../../icons";
+import { facebookInitLoginFlow } from "../../api";
 import { Constants } from "../../constants";
 import footerStyles from "./AuthFormFooter.module.scss";
 
 function AuthFormFooter(props: IProps): JSX.Element {
   const { navLinkSlot } = props;
+
+  const responseFacebook = async () => {
+    facebookInitLoginFlow();
+  };
 
   return (
     <footer className={footerStyles.footer}>
@@ -19,7 +24,7 @@ function AuthFormFooter(props: IProps): JSX.Element {
         <li className={footerStyles["social-item"]}>
           <GoogleIcon />
         </li>
-        <li className={footerStyles["social-item"]}>
+        <li className={footerStyles["social-item"]} onClick={responseFacebook}>
           <FacebookIcon />
         </li>
         <li className={footerStyles["social-item"]}>
@@ -39,3 +44,5 @@ export default AuthFormFooter;
 interface IProps {
   navLinkSlot: JSX.Element;
 }
+
+type SocialItem = "facebook" | "google" | "twitter" | "github";

@@ -68,6 +68,72 @@ class UserService {
     }
   }
 
+  async InsertUserWithSocialAccount(
+    username: string,
+    email: string,
+    biography: string,
+    signInMethod: SignInMethod
+  ) {
+    try {
+      const userExists: boolean = !!(await UserService.users.findOne({
+        email: email,
+      }));
+      if (userExists === true) {
+        throw {
+          customError: Errors.UserAlreadyExists,
+        };
+      }
+      const result = await UserService.users.insertOne({
+        username: username,
+        email: email,
+        biography: biography,
+        phone: "",
+        password: "",
+        signInMethod: signInMethod,
+        isVerified: true,
+      });
+      const data: ServiceInsertedData = {
+        userId: result.insertedId,
+        username: username,
+        email: email,
+        biography: biography,
+        phone: "",
+        signInMethod: signInMethod,
+      };
+      return { success: true, data: data };
+    } catch (error) {
+      return UserService.handleError(error);
+    }
+  }
+
+  async CheckGivenSocialPlatformEmailExistence(
+    email: string,
+    signInMethod: SignInMethod
+  ): Promise<ServiceResponse> {
+    try {
+      const result = await UserService.users.findOne(
+        {
+          email: email,
+          signInMethod: signInMethod
+        },
+        {
+          projection: {
+            _id: 1,
+          },
+        }
+      );
+      if (result === null) {
+        throw "";
+      }
+      const data: ServiceFoundData = {
+        userId: result._id
+      };
+      return { success: true, data: data };
+    } catch (error) {
+      return UserService.handleError(error);
+    }
+  }
+
   async ValidateUserWithCredentials(
     email: string,
     password: string

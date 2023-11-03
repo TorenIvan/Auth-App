@@ -247,7 +247,7 @@ function ProfileEdit() {
 export { ProfileEdit as default, action };
 
 function action(queryClient: QueryClient, formData: FormData) {
-  return async function () {
+  return async function() {
     try {
       const file = formData.get("file");
 
@@ -263,6 +263,11 @@ function action(queryClient: QueryClient, formData: FormData) {
       const userData: IRequest = Object.fromEntries(
         updatedFormData.entries()
       ) as unknown as IRequest;
+
+      if (userData.currentPassword == null && userData.newPassword == null) {
+        userData.currentPassword = "";
+        userData.newPassword = "";
+      }
 
       await editUserData(userData);
 

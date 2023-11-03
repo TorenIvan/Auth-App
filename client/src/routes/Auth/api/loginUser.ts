@@ -1,4 +1,4 @@
-import { AxiosError, AxiosResponse, isAxiosError } from "axios";
+import { AxiosResponse, isAxiosError } from "axios";
 import { axiosInstance } from "../../../config";
 import { Errors } from "../errors";
 
@@ -18,7 +18,7 @@ export async function loginUser(request: IRequest): Promise<string> {
     if (data?.access_token === undefined) throw "error";
 
     return data.access_token;
-  } catch (error: unknown | AxiosError) {
+  } catch (error: unknown) {
     if (isAxiosError(error)) {
       const { response } = error;
       const statusCode = response?.status ?? 0;

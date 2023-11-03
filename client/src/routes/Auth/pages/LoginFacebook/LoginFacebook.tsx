@@ -1,0 +1,137 @@
+import { redirect, useLoaderData, useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { useEffect, useRef, useState } from "react";
+import { faCircleXmark, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { checkIfUserIsAuthenticated } from "../../../../api";
+import { Errors } from "../../errors";
+import { retrieveToken } from "../../api";
+import { Constants } from "../../constants";
+import styles from "./styles.module.scss"
+import { addAuthorizationHeader } from "../../../../config";
+
+export function LoginFacebook() {
+  const code = useLoaderData();
+  const navigate = useNavigate();
+  const isMounted = useRef(true);
+  const [isSocialLoginSuccessfull, setIsSocialLoginSuccessfull] = useState<boolean | undefined>(undefined);
+
+  function goBackToLogin() {
+    return navigate("../../login");
+  }
+
+  useEffect(() => {
+    isMounted.current = true;
+    if (typeof code === "string") {
+      retrieveToken(code)
+        .then((token: string) => {
+          if (isMounted.current === true) {
+            addAuthorizationHeader(token);
+            navigate("../../profile");
+          }
+        })
+        .catch((error: string | unknown) => {
+          if (isMounted.current === true) {
+            toast.error(typeof error === "string" ? error : Errors.GenericError);
+            if (error === Errors.UserAlreadyAuthenticated) {
+              return navigate("../../profile");
+            }
+            setIsSocialLoginSuccessfull(false);
+          }
+        })
+    }
+    return () => {
+      isMounted.current = false;
+    };
+  }, [code]);
+
+
+  if (code === false || isSocialLoginSuccessfull === false) {
+    return (
+      <div id={styles.container}>
+        <h2 id={styles.header}>{Constants.LoginHeaderError}</h2>
+        <FontAwesomeIcon
+          icon={faCircleXmark}
+          className={styles.fontIconError}
+          beatFade
+        />
+        <p id={styles.content}>
+          <em>{Constants.LoginParagraphError}</em>
+        </p>
+        <button id={styles.button} onClick={goBackToLogin}>
+          <span>{Constants.BackToSignIn}</span>
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div id={styles.container}>
+      <h2 id={styles.header}>{Constants.LoginHeaderLoading}</h2>
+      <FontAwesomeIcon icon={faSpinner} className={styles.fontIcon} spinPulse />
+      <p id={styles.content}>
+        <em>{Constants.ConfirmParagraphLoading}</em>
+      </p>
+    </div>
+  );
+}
+
+export async function loader() {
+  try {
+    const { search } = window.location;
+    if (!search) {
+      setTimeout(() => {
+        toast.error(Errors.InvalidQueryParameters);
+      }, 500);
+      localStorage.removeItem("auth_app_csrf_token");
+      return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
+    }
+
+    const urlParams = new URLSearchParams(search);
+    const code = urlParams.get("code");
+    const state = urlParams.get("state");
+
+    if (!code || !state) {
+      setTimeout(() => {
+        toast.error(Errors.InvalidQueryParameters);
+      }, 500);
+      localStorage.removeItem("auth_app_csrf_token");
+      return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
+    }
+    const csrf_token = extractCSRFToken(state);
+    if (csrf_token !== localStorage.getItem("auth_app_csrf_token")) {
+      setTimeout(() => {
+        toast.error(Errors.InvalidCSRFToken);
+      }, 500);
+      localStorage.removeItem("auth_app_csrf_token");
+      return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
+    }
+    localStorage.removeItem("auth_app_csrf_token");
+    return code;
+  } catch (error: string | unknown) {
+    setTimeout(() => {
+      toast.error(typeof error === "string" ? error : Errors.GenericError);
+    }, 500);
+    localStorage.removeItem("auth_app_csrf_token");
+    return false;
+  }
+}
+
+function extractCSRFToken(inputString: string): string | undefined {
+  const start = "csrf_token=";
+  const end = "}";
+  const startIndex = inputString.indexOf(start);
+
+  if (startIndex !== -1) {
+    const endIndex = inputString.indexOf(end, startIndex);
+    if (endIndex !== -1) {
+      const csrfToken = inputString.substring(startIndex + start.length, endIndex);
+      return csrfToken;
+    } else {
+      return undefined;
+    }
+  } else {
+    return undefined;
+  }
+}
+

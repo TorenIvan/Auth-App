@@ -13,6 +13,8 @@ import {
   ResetPassword,
   resetPasswordLoader,
   resetPasswordAction,
+  LoginFacebook,
+  loginFacebookLoader,
 } from "./pages";
 
 function authRoutes() {
@@ -50,6 +52,11 @@ function authRoutes() {
           loader: resetPasswordLoader,
           action: resetPasswordAction,
         },
+        {
+          path: "oauth2/facebook",
+          Component: LoginFacebook,
+          loader: loginFacebookLoader
+        }
       ],
     },
   ];

@@ -1,5 +1,6 @@
 import { memo } from "react";
 
+/* eslint-disable react/display-name */
 const TwitterIcon = memo(() => {
   return (
     <svg
