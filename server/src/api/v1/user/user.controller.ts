@@ -182,6 +182,10 @@ class UserController {
     }
   }
 
+  /**
+    * @todo Check if email changed by user on facebook; if yes, cheange it.
+    * @todo Inside initial insert; if you retrieve user image, insert it as well.
+  */
   async loginFacebookHandler(request: FastifyRequest<{ Body: { code: string } }>, reply: FastifyReply) {
     try {
       const { code } = request.body;
@@ -193,16 +197,15 @@ class UserController {
 
       const fbRetrieveTokenUri = `https://graph.facebook.com/v18.0/oauth/access_token?client_id=${EnvironmentVariables.Facebook_App_Id}&redirect_uri=${EnvironmentVariables.Facebook_App_Redirect_Uri}&client_secret=${EnvironmentVariables.Facebook_App_Secret}&code=${code}`;
 
-      const tokenResponse = await axios.get('http://localhost:8080/' + fbRetrieveTokenUri, {
+      const tokenResponse = await axios.get(fbRetrieveTokenUri, {
         headers: { "Origin": "http://localhost:3000" }
       });
 
-      /* @ts-ignore */
       if (!tokenResponse?.data?.access_token) {
         return UserController.handleError(reply, 400, Errors.GenericError);
       }
 
-      const userResponse = await axios.get(`http://localhost:8080/https://graph.facebook.com/me?fields=id,email,name,about&access_token=${tokenResponse.data.access_token}`, {
+      const userResponse = await axios.get(`https://graph.facebook.com/me?fields=id,email,name,about&access_token=${tokenResponse.data.access_token}`, {
         headers: { "Origin": "http://localhost:3000" }
       });
 

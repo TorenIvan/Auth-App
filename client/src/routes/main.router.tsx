@@ -11,13 +11,18 @@ function indexRouter(queryClient: QueryClient) {
       path: "/",
       ErrorBoundary: ErrorPage,
       children: [
+        ...authRoutes(),
+        ...profileRoutes(queryClient),
         {
           index: true,
           loader: loader,
         },
-        ...authRoutes(),
-        ...profileRoutes(queryClient),
       ],
+    },
+    {
+      path: "*",
+      loader: loader,
+      ErrorBoundary: ErrorPage,
     },
   ]);
 }
