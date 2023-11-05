@@ -1,52 +1,39 @@
 import { redirect, useLoaderData, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { useEffect, useRef, useState } from "react";
 import { faCircleXmark, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { checkIfUserIsAuthenticated } from "../../../../api";
 import { Errors } from "../../errors";
-import { retrieveToken } from "../../api";
 import { Constants } from "../../constants";
 import styles from "./styles.module.scss"
+import { useFacebookLogin } from "../../hooks";
+import { useEffect } from "react";
 import { addAuthorizationHeader } from "../../../../config";
 
 export function LoginFacebook() {
   const code = useLoaderData();
   const navigate = useNavigate();
-  const isMounted = useRef(true);
-  const [isSocialLoginSuccessfull, setIsSocialLoginSuccessfull] = useState<boolean | undefined>(undefined);
+  const { data, error, isLoading } = useFacebookLogin({ code: code as string | boolean });
 
   function goBackToLogin() {
     return navigate("../../login");
   }
 
   useEffect(() => {
-    isMounted.current = true;
-    if (typeof code === "string") {
-      retrieveToken(code)
-        .then((token: string) => {
-          if (isMounted.current === true) {
-            addAuthorizationHeader(token);
-            navigate("../../profile");
-          }
-        })
-        .catch((error: string | unknown) => {
-          if (isMounted.current === true) {
-            toast.error(typeof error === "string" ? error : Errors.GenericError);
-            if (error === Errors.UserAlreadyAuthenticated) {
-              return navigate("../../profile");
-            }
-            setIsSocialLoginSuccessfull(false);
-          }
-        })
+    if (data) {
+      addAuthorizationHeader(data);
+      navigate("../../profile");
     }
-    return () => {
-      isMounted.current = false;
-    };
-  }, [code]);
+
+    if (error) {
+      toast.error(typeof error === "string" ? error : Errors.GenericError);
+      if (error === Errors.UserAlreadyAuthenticated) {
+        navigate("../../profile");
+      }
+    }
+  }, [data, error, isLoading])
 
 
-  if (code === false || isSocialLoginSuccessfull === false) {
+  if (code === false || error) {
     return (
       <div id={styles.container}>
         <h2 id={styles.header}>{Constants.LoginHeaderError}</h2>
@@ -64,6 +51,7 @@ export function LoginFacebook() {
       </div>
     );
   }
+
 
   return (
     <div id={styles.container}>

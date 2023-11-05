@@ -70,6 +70,10 @@ export function ConfirmEmail() {
 
 export async function loader() {
   try {
+    /**
+     * @todo Implementation of isAuthenticated must be deleted here; and just call actionForbiddenToAuthenticatedUser
+     * middleware on confirmEmail route on backend as preHandler
+     */
     const isAuthenticated: boolean = await checkIfUserIsAuthenticated();
 
     if (isAuthenticated) {

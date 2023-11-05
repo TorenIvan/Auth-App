@@ -11,8 +11,9 @@ export function facebookInitLoginFlow(): void {
   window.location.replace(`${fbLoginUri}&state={csrf_token=${csrf_token}}`);
 }
 
-export async function retrieveToken(code: string): Promise<string> {
+export async function retrieveToken(code: string | boolean): Promise<string | void> {
   try {
+    if (typeof code === "boolean") return;
     const headers = {
       "Content-Type": "application/json",
     };

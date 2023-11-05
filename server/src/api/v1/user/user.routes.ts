@@ -106,7 +106,7 @@ async function checkIsAuthenticated(fastify: FastifyInstance): Promise<void> {
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function loginWithCredentials(fastify: FastifyInstance): Promise<void> {
-  fastify.addHook("preHandler", async (request, reply) => {
+  fastify.addHook("preHandler", async (request: FastifyRequest, reply: FastifyReply) => {
     await validateRequestBody(request, reply, authCredsBodySchema);
   });
   fastify.post("/", new UserController(fastify).loginCredentialsHandler);

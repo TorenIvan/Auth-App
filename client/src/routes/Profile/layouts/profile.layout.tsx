@@ -28,11 +28,11 @@ function ProfileLayout() {
         rightSlot={
           <SideMenu isOpen={isSubMenuOpen} onPressingOpenButton={toggleSubMenu}>
             <SideMenu.SubMenu isOpen={isSubMenuOpen}>
-              <SideMenu.SubMenu.Item isUsed onClick={() => {}}>
+              <SideMenu.SubMenu.Item isUsed onClick={() => { }}>
                 <SideMenu.SubMenu.Item.Image icon={faCircleUser} size="xl" />
                 <SideMenu.SubMenu.Item.Text value={Constants.MyProfile} />
               </SideMenu.SubMenu.Item>
-              <SideMenu.SubMenu.Item isUsed={false} onClick={() => {}}>
+              <SideMenu.SubMenu.Item isUsed={false} onClick={() => { }}>
                 <SideMenu.SubMenu.Item.Image icon={faUserGroup} size="lg" />
                 <SideMenu.SubMenu.Item.Text value={Constants.GroupChat} />
               </SideMenu.SubMenu.Item>
