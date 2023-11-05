@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import {
   faCircleUser,
@@ -11,16 +11,29 @@ import { Constants } from "../constants";
 import { useToggleSubMenu } from "../hooks";
 import { logoutUser } from "../api";
 import { useQueryClient } from "@tanstack/react-query";
+import { BroadcastChannel } from 'broadcast-channel';
 
 function ProfileLayout() {
   const [isSubMenuOpen, toggleSubMenu] = useToggleSubMenu();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const logoutChannel = new BroadcastChannel('logout');
 
   async function logout() {
-    await logoutUser(queryClient);
-    return navigate("login");
+    logoutChannel.postMessage('logout');
   }
+
+  const logoutAllTabs = () => {
+    logoutChannel.onmessage = async () => {
+      await logoutUser(queryClient);
+      logoutChannel.close();
+      return navigate("login");
+    }
+  }
+
+  useEffect(() => {
+    logoutAllTabs()
+  }, [])
 
   return (
     <Fragment>
