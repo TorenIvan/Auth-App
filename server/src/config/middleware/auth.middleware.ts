@@ -44,9 +44,8 @@ const authMiddleware: FastifyPluginAsync = fp(
           if (signInMethodExistsInJWTPayload === false) {
             throw "error";
           }
-          request.userId = data.userId;
-          request.signInMethod = (data?.signInMethod ??
-            "credentials") as SignInMethod;
+          request.userId = data.userId.toString();
+          request.signInMethod = <SignInMethod>data.signInMethod ?? "credentials";
         } catch (error) {
           const errorMessage = fastify.httpErrors.unauthorized();
           reply.send(errorMessage);
@@ -80,7 +79,7 @@ const authMiddleware: FastifyPluginAsync = fp(
           }
 
           request.userId = data.userId.toString();
-          request.signInMethod = data.signInMethod ?? "credentials";
+          request.signInMethod = <SignInMethod>data.signInMethod ?? "credentials";
         } catch (error) {
           const errorMessage = fastify.httpErrors.unauthorized();
           reply.send(errorMessage);
@@ -158,6 +157,7 @@ const authMiddleware: FastifyPluginAsync = fp(
               reply.status(403).send();
             }
           }
+
         } catch {
           reply.status(400).send();
         }

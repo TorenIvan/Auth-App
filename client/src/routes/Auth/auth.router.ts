@@ -26,13 +26,11 @@ function authRoutes() {
         {
           path: "login",
           Component: Login,
-          loader: loader,
           action: loginAction,
         },
         {
           path: "register",
           Component: Register,
-          loader: loader,
           action: registerAction,
         },
         {
@@ -43,7 +41,6 @@ function authRoutes() {
         {
           path: "forgot-password",
           Component: ForgotPassword,
-          loader: loader,
           action: forgotPasswordAction,
         },
         {
@@ -64,15 +61,15 @@ function authRoutes() {
 
 export default authRoutes;
 
-async function loader() {
-  try {
-    const isAuthenticated = await checkIfUserIsAuthenticated();
-
-    if (isAuthenticated === true) {
-      return redirect(`${import.meta.env.VITE_CLIENT_URI}profile`);
-    }
-    return true;
-  } catch (error: unknown) {
-    return true;
-  }
-}
+//async function loader() {
+//  try {
+//    const isAuthenticated = await checkIfUserIsAuthenticated();
+//
+//    if (isAuthenticated === true) {
+//      return redirect(`${import.meta.env.VITE_CLIENT_URI}profile`);
+//    }
+//    return true;
+//  } catch (error: unknown) {
+//    return true;
+//  }
+//}

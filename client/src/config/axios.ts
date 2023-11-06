@@ -42,19 +42,24 @@ axiosInstance.interceptors.response.use(
 
           return axiosInstance(originalRequest);
         } catch (err) {
-          // Refresh token expired; or something went wrong with renewal
-          toast.error("Session expired. Redirecting to login...");
-          //setTimeout(function() {
-          //window.location.replace(`${import.meta.env.VITE_CLIENT_URI}login`);
-          return Promise.reject(err);
-          //}, 3000);
+          toast.error("Session not exists or expired. Redirecting to login...");
+          setTimeout(function() {
+            const isAlreadyInPublicRoute: boolean = publicRoutes.some(element => window.location.href.indexOf(element) > -1);
+            if (isAlreadyInPublicRoute === false) {
+              window.location.replace(`${import.meta.env.VITE_CLIENT_URI}login`);
+              return Promise.reject(error);
+            }
+          }, 3000);
         }
       } else {
         // Refresh token request has already been attempted
-        toast.error("Session expired. Redirecting to login...");
+        toast.error("Session not exists or expired. Redirecting to login...");
         setTimeout(function() {
-          window.location.replace(`${import.meta.env.VITE_CLIENT_URI}login`);
-          return Promise.reject(error);
+          const isAlreadyInPublicRoute: boolean = publicRoutes.some(element => window.location.href.indexOf(element) > -1);
+          if (isAlreadyInPublicRoute === false) {
+            window.location.replace(`${import.meta.env.VITE_CLIENT_URI}login`);
+            return Promise.reject(error);
+          }
         }, 3000);
       }
     }
@@ -78,3 +83,12 @@ export function addAuthorizationHeader(access_token: string) {
   const authorizationHeader = `Bearer ${access_token}`;
   axiosInstance.defaults.headers["Authorization"] = authorizationHeader;
 }
+
+const publicRoutes = [
+  "login",
+  "register",
+  "verify",
+  "forgot-password",
+  "reset-password",
+  "oauth2"
+] as const;

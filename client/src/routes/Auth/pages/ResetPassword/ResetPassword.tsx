@@ -96,12 +96,12 @@ export { ResetPassword, loader, action };
 
 async function loader() {
   try {
-    const isAuthenticated: boolean = await checkIfUserIsAuthenticated();
+    //const isAuthenticated: boolean = await checkIfUserIsAuthenticated();
 
-    if (isAuthenticated) {
-      toast.error(Errors.AlreadyAuthenticatedOnReset);
-      return redirect(`${import.meta.env.VITE_CLIENT_URI}profile`);
-    }
+    //if (isAuthenticated) {
+    //  toast.error(Errors.AlreadyAuthenticatedOnReset);
+    //  return redirect(`${import.meta.env.VITE_CLIENT_URI}profile`);
+    //}
 
     const { search } = window.location;
     if (!search) {
