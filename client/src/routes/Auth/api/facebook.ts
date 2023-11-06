@@ -34,7 +34,7 @@ export async function retrieveToken(code: string | boolean): Promise<string | vo
       const message = response?.data?.message;
 
       if (statusCode === 403) {
-        throw Errors.UserAlreadyAuthenticated;
+        throw Errors.AUserAlreadyAuthenticated;
       }
       if (statusCode < 500 && message) {
         throw message;

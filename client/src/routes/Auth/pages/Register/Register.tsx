@@ -62,6 +62,9 @@ async function action({ request }: ActionFunctionArgs) {
     return redirect("../login");
   } catch (error: unknown) {
     toast.error(error as string);
+    if (error === Errors.AUserAlreadyAuthenticated) {
+      return redirect('../profile');
+    }
     return true;
   }
 }

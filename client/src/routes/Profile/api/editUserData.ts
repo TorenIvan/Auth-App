@@ -1,6 +1,7 @@
 import { AxiosResponse, isAxiosError } from "axios";
 import { axiosInstance } from "../../../config";
 import { Errors } from "../errors";
+import toast from "react-hot-toast";
 
 const userEditUri = "v1/profile/edit";
 
@@ -27,10 +28,19 @@ export async function editUserData(request: IRequest): Promise<void> {
       const statusCode = response?.status ?? 0;
       const message = response?.data?.message;
 
+      if (statusCode === 401) {
+        setTimeout(function() {
+          window.location.replace(`${import.meta.env.VITE_CLIENT_URI}login`);
+        }, 3000);
+        return Promise.reject(error);
+      }
+
       if (statusCode < 500) {
-        throw message ?? Errors.GenericError;
+        toast.error(message ?? Errors.GenericError);
+        window.location.replace(`${import.meta.env.VITE_CLIENT_URI}login`);
       }
     }
+    toast.error(Errors.GenericError);
     throw Errors.GenericError;
   }
 }

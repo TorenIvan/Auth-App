@@ -18,6 +18,10 @@ export async function registerUser(request: IRequest): Promise<void> {
       const statusCode = response?.status ?? 0;
       const message = response?.data?.message;
 
+      if (statusCode === 403) {
+        throw Errors.AUserAlreadyAuthenticated;
+      }
+
       if (statusCode < 500) {
         throw message ?? Errors.GenericError;
       }

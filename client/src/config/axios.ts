@@ -44,10 +44,10 @@ axiosInstance.interceptors.response.use(
         } catch (err) {
           // Refresh token expired; or something went wrong with renewal
           toast.error("Session expired. Redirecting to login...");
-          setTimeout(function() {
-            window.location.replace(`${import.meta.env.VITE_CLIENT_URI}login`);
-            return Promise.reject(error);
-          }, 3000);
+          //setTimeout(function() {
+          //window.location.replace(`${import.meta.env.VITE_CLIENT_URI}login`);
+          return Promise.reject(err);
+          //}, 3000);
         }
       } else {
         // Refresh token request has already been attempted

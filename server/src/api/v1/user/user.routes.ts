@@ -107,6 +107,7 @@ async function checkIsAuthenticated(fastify: FastifyInstance): Promise<void> {
  */
 async function loginWithCredentials(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("preHandler", async (request: FastifyRequest, reply: FastifyReply) => {
+    await fastify.actionForbiddenToAuthenticatedUser(request, reply);
     await validateRequestBody(request, reply, authCredsBodySchema);
   });
   fastify.post("/", new UserController(fastify).loginCredentialsHandler);
@@ -161,6 +162,7 @@ async function registerWithCredentials(
   fastify: FastifyInstance
 ): Promise<void> {
   fastify.addHook("preHandler", async (request, reply) => {
+    await fastify.actionForbiddenToAuthenticatedUser(request, reply);
     await validateRequestBody(request, reply, authCredsBodySchema);
   });
   fastify.post("/", new UserController(fastify).registerCredentialsHandler);

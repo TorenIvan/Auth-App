@@ -1,5 +1,5 @@
 import { Fragment, useRef } from "react";
-import { Form, NavLink, useNavigate } from "react-router-dom";
+import { Form, NavLink, redirect, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import {
@@ -274,7 +274,7 @@ function action(queryClient: QueryClient, formData: FormData) {
       await queryClient.refetchQueries(userDetailsQuery().queryKey);
       return true;
     } catch (error) {
-      toast.error(error as string);
+      console.error(error)
       return false;
     }
   };

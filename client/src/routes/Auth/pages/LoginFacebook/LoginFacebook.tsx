@@ -4,10 +4,10 @@ import { faCircleXmark, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Errors } from "../../errors";
 import { Constants } from "../../constants";
-import styles from "./styles.module.scss"
 import { useFacebookLogin } from "../../hooks";
 import { useEffect } from "react";
 import { addAuthorizationHeader } from "../../../../config";
+import styles from "./styles.module.scss"
 
 export function LoginFacebook() {
   const code = useLoaderData();
@@ -26,7 +26,7 @@ export function LoginFacebook() {
 
     if (error) {
       toast.error(typeof error === "string" ? error : Errors.GenericError);
-      if (error === Errors.UserAlreadyAuthenticated) {
+      if (error === Errors.AUserAlreadyAuthenticated) {
         navigate("../../profile");
       }
     }

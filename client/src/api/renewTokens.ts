@@ -19,6 +19,7 @@ export async function renewTokens(): Promise<string> {
     }
     return data.access_token;
   } catch (error) {
-    throw new Error("Failed to renew access token");
+    console.error("Failed to renew tokens");
+    throw error;
   }
 }
