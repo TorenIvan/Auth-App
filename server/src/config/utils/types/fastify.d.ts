@@ -9,6 +9,10 @@ declare module "fastify" {
       request: FastifyRequest,
       reply: FastifyReply
     ) => Promise<void>;
+    verifySocialProfileTokenCookie: (
+      request: FastifyRequest,
+      reply: FastifyReply
+    ) => Promise<void>;
     verifyRefreshTokenCookie: (
       request: FastifyRequest,
       reply: FastifyReply

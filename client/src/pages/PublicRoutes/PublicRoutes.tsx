@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from "react";
 import { Outlet, useLoaderData, useNavigate } from "react-router-dom";
 
-function PublicRoutes() {
+function Component() {
   const navigate = useNavigate();
   const isAuthenticated = useLoaderData();
   const [showChildren, setShowChildren] = useState<boolean>(false);
@@ -26,5 +26,5 @@ function PublicRoutes() {
   return null;
 }
 
-export { PublicRoutes as default };
+export { Component as default };
 

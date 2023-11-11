@@ -45,18 +45,6 @@ const userRoutes: FastifyPluginAsync = async (
   fastify.register(registerWithCredentials, {
     prefix: "/v1/auth/register/credentials",
   });
-  fastify.register(registerWithFacebook, {
-    prefix: "/v1/auth/register/facebook",
-  });
-  fastify.register(registerWithGoogle, {
-    prefix: "/v1/auth/register/google",
-  });
-  fastify.register(registerWithGithub, {
-    prefix: "/v1/auth/register/github",
-  });
-  fastify.register(registerWithTwitter, {
-    prefix: "/v1/auth/register/twitter",
-  });
   fastify.register(logout, {
     prefix: "/v1/auth/logout",
   });
@@ -86,6 +74,7 @@ export default userRoutes;
 async function refreshTokens(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("onRequest", async (request, reply) => {
     await fastify.verifyRefreshTokenCookie(request, reply);
+    await fastify.verifySocialProfileTokenCookie(request, reply);
   });
   fastify.get("/", new UserController(fastify).renewTokens);
 }
@@ -169,52 +158,13 @@ async function registerWithCredentials(
 }
 
 /**
- * Encapsulates the register facebook route
- * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
- */
-async function registerWithFacebook(fastify: FastifyInstance): Promise<void> {
-  fastify.get("/", async function(request, reply) {
-    return "this is an example facebook";
-  });
-}
-
-/**
- * Encapsulates the register google route
- * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
- */
-async function registerWithGoogle(fastify: FastifyInstance): Promise<void> {
-  fastify.get("/", async function(request, reply) {
-    return "this is an example google";
-  });
-}
-
-/**
- * Encapsulates the register github route
- * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
- */
-async function registerWithGithub(fastify: FastifyInstance): Promise<void> {
-  fastify.get("/", async function(request, reply) {
-    return "this is an example github";
-  });
-}
-
-/**
- * Encapsulates the register twitter route
- * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
- */
-async function registerWithTwitter(fastify: FastifyInstance): Promise<void> {
-  fastify.get("/", async function(request, reply) {
-    return "this is an example twitter";
-  });
-}
-
-/**
  * Encapsulates the logout operation route
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function logout(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("preHandler", async (request, reply) => {
     await fastify.verifyAccessTokenHeader(request, reply);
+    await fastify.verifySocialProfileTokenCookie(request, reply);
   });
   fastify.post("/", {}, new UserController(fastify).logout);
 }
@@ -263,6 +213,7 @@ async function resetPassword(fastify: FastifyInstance): Promise<void> {
 async function getUserDetails(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("preHandler", async (request, reply) => {
     await fastify.verifyAccessTokenHeader(request, reply);
+    await fastify.verifySocialProfileTokenCookie(request, reply);
   });
   fastify.get("/", new UserController(fastify).retrieveUserDetails);
 }
@@ -274,6 +225,7 @@ async function getUserDetails(fastify: FastifyInstance): Promise<void> {
 async function editUserDetails(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("preHandler", async (request, reply) => {
     await fastify.verifyAccessTokenHeader(request, reply);
+    await fastify.verifySocialProfileTokenCookie(request, reply);
     await validateRequestBody(request, reply, userEditRequestBodySchema);
   });
   fastify.post("/", new UserController(fastify).updateUserDetails);

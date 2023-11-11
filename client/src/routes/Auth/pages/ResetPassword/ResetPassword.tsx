@@ -4,7 +4,6 @@ import { toast } from "react-hot-toast";
 import { faEye, faEyeSlash, faLock } from "@fortawesome/free-solid-svg-icons";
 import { InputGroup } from "../../../../components";
 import { isPasswordValid } from "../../../../helpers";
-import { checkIfUserIsAuthenticated } from "../../../../api";
 import { inputStyles } from "../../../../styles";
 import { Errors } from "../../errors";
 import { Constants } from "../../constants";

@@ -5,13 +5,15 @@ import {
   faRightFromBracket,
   faUserGroup,
 } from "@fortawesome/free-solid-svg-icons";
-import { Footer, Header, Main } from "../../../layouts";
-import { SideMenu } from "../components";
-import { Constants } from "../constants";
-import { useToggleSubMenu } from "../hooks";
-import { logoutUser, userDetailsQuery } from "../api";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { BroadcastChannel } from 'broadcast-channel';
+import Header from "../Header";
+import Main from "../Main";
+import Footer from "../Footer";
+import { useToggleSubMenu } from "../../routes/Profile/hooks";
+import { logoutUser, userDetailsQuery } from "../../routes/Profile/api";
+import { SideMenu } from "../../routes/Profile/components";
+import { Constants } from "../../routes/Profile/constants";
 
 function ProfileLayout() {
   const [isSubMenuOpen, toggleSubMenu] = useToggleSubMenu();
@@ -87,3 +89,4 @@ export function loader(queryClient: QueryClient) {
 }
 
 export default ProfileLayout;
+

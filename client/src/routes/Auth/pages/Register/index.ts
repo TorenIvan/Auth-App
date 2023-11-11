@@ -1,3 +1,3 @@
-import Register, { action as registerAction } from "./Register";
+import Register, { action } from "./Register";
 
-export { Register as default, registerAction };
+export { Register as Component, action };

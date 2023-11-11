@@ -255,6 +255,11 @@ class UserController {
           refresh_token,
           cookieOptions
         )
+        .setCookie(
+          EnvironmentVariables.Cookie_Name_Social_Profile,
+          tokenResponse.data.access_token,
+          cookieOptions
+        )
         .send({ access_token: access_token });
     } catch (error) {
       UserController.handleError(reply, 500, Errors.GenericError);
@@ -582,9 +587,13 @@ class UserController {
   }
 
   async logout(_: FastifyRequest, reply: FastifyReply) {
-    reply.code(200).clearCookie(EnvironmentVariables.Cookie_Name, {
-      path: "/",
-    });
+    reply.code(200)
+      .clearCookie(EnvironmentVariables.Cookie_Name, {
+        path: "/",
+      })
+      .clearCookie(EnvironmentVariables.Cookie_Name_Social_Profile, {
+        path: "/",
+      });
   }
 
   async checkIfUserIsAuthenticated(_: FastifyRequest, reply: FastifyReply) {

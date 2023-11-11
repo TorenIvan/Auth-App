@@ -13,7 +13,6 @@ function indexRouter(queryClient: QueryClient) {
       children: [
         {
           loader: loader,
-          path: "",
           Component: PublicRoutes,
           children: [
             ...authRoutes(),
@@ -21,10 +20,17 @@ function indexRouter(queryClient: QueryClient) {
         },
         {
           loader: loader,
-          path: "",
           Component: PrivateRoutes,
           children: [
-            ...profileRoutes(queryClient),
+            {
+              async lazy() {
+                const { Component, loader } = await import("./Profile/layouts");
+                return { Component: Component, loader: loader(queryClient) };
+              },
+              children: [
+                ...profileRoutes(),
+              ]
+            },
           ],
         },
         {

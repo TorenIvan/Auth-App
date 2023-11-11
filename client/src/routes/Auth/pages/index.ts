@@ -1,12 +1,9 @@
-import Login, { loginAction } from "./Login";
-import Register, { registerAction } from "./Register";
-import ConfirmEmail, { confirmEmailLoader } from "./ConfirmEmail";
-import ForgotPassword, { forgotPasswordAction } from "./ForgotPassword";
-import LoginFacebook, { loginFacebookLoader } from "./LoginFacebook";
-import ResetPassword, {
-  resetPasswordLoader,
-  resetPasswordAction,
-} from "./ResetPassword";
+import { Component as Login, action as loginAction } from "./Login";
+import { Component as Register, action as registerAction } from "./Register";
+import { Component as ConfirmEmail, loader as confirmEmailLoader } from "./ConfirmEmail";
+import { Component as ForgotPassword, action as forgotPasswordAction } from "./ForgotPassword";
+import { Component as LoginFacebook, loader as loginFacebookLoader } from "./LoginFacebook";
+import { Component as ResetPassword, loader as resetPasswordLoader, action as resetPasswordAction } from "./ResetPassword";
 
 export {
   Login,

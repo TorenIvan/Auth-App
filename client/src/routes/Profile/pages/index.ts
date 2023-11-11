@@ -1,11 +1,10 @@
-import Profile, { loader as profileLoader } from "./Profile";
-import ProfileDetails from "./ProfileDetails";
-import ProfileEdit, { action } from "./ProfileEdit";
+import { Component } from "./Profile";
+import { Component as ProfileDetails } from "./ProfileDetails";
+import { Component as ProfileEdit, action as editProfileAction } from "./ProfileEdit";
 
 export {
-  Profile,
-  profileLoader,
+  Component,
   ProfileDetails,
   ProfileEdit,
-  action as editProfileAction,
+  editProfileAction,
 };

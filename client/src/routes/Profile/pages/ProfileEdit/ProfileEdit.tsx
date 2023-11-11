@@ -1,6 +1,5 @@
 import { Fragment, useRef } from "react";
-import { Form, NavLink, redirect, useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
+import { Form, NavLink, useNavigate } from "react-router-dom";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import {
   faCamera,
@@ -54,7 +53,7 @@ function ProfileEdit() {
       if (updated === false) {
         return;
       }
-      navigate("../");
+      navigate(`${import.meta.env.VITE_CLIENT_URI}profile`);
     } catch (error) {
       console.error(error);
       return;

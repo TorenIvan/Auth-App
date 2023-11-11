@@ -1,1 +1,1 @@
-export { LoginFacebook as default, loader as loginFacebookLoader } from "./LoginFacebook"
+export { LoginFacebook as Component, loader } from "./LoginFacebook"
