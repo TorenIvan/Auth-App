@@ -39,7 +39,7 @@ export const generateSocialCookieOptions = () => {
   );
 
   const options = {
-    signed: false, //refresh token is already signed
+    signed: false, //social login token is already signed
     httpOnly: true,
     sameSite: "lax" as SameSiteType,
     secure: true,
@@ -55,10 +55,10 @@ export const generateResetCookieOptions = () => {
   );
 
   const options = {
-    signed: false, //refresh token is already signed
+    signed: false, //reset token is already signed
     httpOnly: true,
     sameSite: "lax" as SameSiteType,
-    secure: EnvironmentVariables.IsProduction,
+    secure: true,
     expires: cookieExpirationDate, //for tabs compatibility
   };
   return options;

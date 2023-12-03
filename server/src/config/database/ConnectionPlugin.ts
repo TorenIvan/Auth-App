@@ -1,8 +1,8 @@
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
 import { MongoClient, Db, Collection } from "mongodb";
-import Image from "../../api/v1/image/image.model";
-import User from "../../api/v1/user/user.model";
+import Image from "../../modules/image/v1/image.model";
+import User from "../../modules/user/v1/user.model";
 import { EnvironmentVariables } from "../utils/constants/EnvironmentVariables";
 import { Strings } from "../utils/constants/Strings";
 

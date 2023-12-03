@@ -1,5 +1,5 @@
 import { Collection, Db } from "mongodb";
-import User from "../../../api/v1/user/user.model";
+import User from "../../../modules/user/v1/user.model";
 
 declare module "fastify" {
   export interface FastifyInstance {
@@ -79,4 +79,4 @@ declare module "fastify" {
   }
 }
 
-export { };
+export {};

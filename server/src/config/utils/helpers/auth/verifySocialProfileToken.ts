@@ -14,7 +14,6 @@ async function verifySocialProfileToken(cookies: {
 
   switch (signInMethod) {
     case "facebook": {
-      // Start of Facebook verification token
       const tokenVerifyInfo = await axios.get(
         `https://graph.facebook.com/debug_token?input_token=${socialProfileToken}&access_token=${socialProfileToken}`,
         { headers: { "Origin": "http://localhost:3000" } }
@@ -27,7 +26,6 @@ async function verifySocialProfileToken(cookies: {
       if (tokenVerifyInfo.data.data.app_id !== EnvironmentVariables.Facebook_App_Id) {
         throw new Error("Token has invalid app_id. Unauthorized");
       }
-      // End of Facebook verification token
       break;
     }
     case "twitter":

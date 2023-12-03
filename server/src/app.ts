@@ -8,7 +8,7 @@ import cookie from "@fastify/cookie";
 import type { FastifyCookieOptions } from "@fastify/cookie";
 import cors from "@fastify/cors";
 import multipart from "@fastify/multipart";
-import { userRoutes } from "./api/v1/user";
+import { userRoutes } from "./modules/user/v1";
 import { authMiddleware } from "./config/middleware";
 
 export type AppOptions = {

@@ -31,7 +31,7 @@ function ProfileEdit() {
   );
   const [image, handleImageChange] = useImageChange(userInfo?.image);
 
-  function triggerImageChange(_: unknown) {
+  function triggerImageChange() {
     inputFileRef?.current?.click();
   }
 
