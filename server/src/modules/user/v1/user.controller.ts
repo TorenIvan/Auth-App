@@ -200,7 +200,7 @@ class UserController {
       const fbRetrieveTokenUri = `https://graph.facebook.com/v18.0/oauth/access_token?client_id=${EnvironmentVariables.Facebook_App_Id}&redirect_uri=${EnvironmentVariables.Facebook_App_Redirect_Uri}&client_secret=${EnvironmentVariables.Facebook_App_Secret}&code=${code}`;
 
       const tokenResponse = await axios.get(fbRetrieveTokenUri, {
-        headers: { Origin: "http://localhost:3000" },
+        headers: { Origin: EnvironmentVariables.ServerUri },
       });
 
       if (!tokenResponse?.data?.access_token) {
@@ -210,7 +210,7 @@ class UserController {
       const userResponse = await axios.get(
         `https://graph.facebook.com/me?fields=id,email,name,about&access_token=${tokenResponse.data.access_token}`,
         {
-          headers: { Origin: "http://localhost:3000" },
+          headers: { Origin: EnvironmentVariables.ServerUri },
         }
       );
 
@@ -235,6 +235,10 @@ class UserController {
         userId =
           checkIfEmailWithGivenSocialPlatformExists.data!.userId.toString();
       }
+
+      /**
+       * Start of register user operation
+       */
       if (givenSocialPlatformEmailExist === false) {
         const userSocialLoginResponse: ServiceResponse =
           await UserController.userService.InsertUserWithSocialAccount(
@@ -254,6 +258,9 @@ class UserController {
         }
         userId = userSocialLoginResponse.data!.userId.toString();
       }
+      /**
+       * Start of register user operation
+       */
 
       const { access_token, refresh_token } = generateAuthJWTs(
         userId!,

@@ -14,9 +14,7 @@ function indexRouter(queryClient: QueryClient) {
         {
           loader: loader,
           Component: PublicRoutes,
-          children: [
-            ...authRoutes(),
-          ],
+          children: [...authRoutes()],
         },
         {
           loader: loader,
@@ -29,7 +27,8 @@ function indexRouter(queryClient: QueryClient) {
               },
               children: [
                 ...profileRoutes(),
-              ]
+                // ...homeRoutes(),
+              ],
             },
           ],
         },
@@ -60,7 +59,6 @@ async function indexLoader() {
     return redirect("login");
   }
 }
-
 
 async function loader() {
   try {

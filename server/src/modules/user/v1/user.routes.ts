@@ -15,7 +15,7 @@ import {
 import UserController from "./user.controller";
 
 /**
- * Encapsulates all the routes belonging to user in version 1
+ * @description Encapsulates all the routes belonging to user in version 1
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 const userRoutes: FastifyPluginAsync = async (

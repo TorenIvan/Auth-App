@@ -7,7 +7,7 @@ import { EnvironmentVariables } from "../utils/constants/EnvironmentVariables";
 import { Strings } from "../utils/constants/Strings";
 
 /**
- * Encapsulates DataBase connect/disconnect operations
+ * @description Encapsulates DataBase connect/disconnect operations
  * @param {FastifyInstance} fastify Encapsulated Fastify Instance
  */
 const databasePlugin: FastifyPluginAsync = fp(

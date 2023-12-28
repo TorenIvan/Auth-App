@@ -2,9 +2,12 @@ import axios from "axios";
 import { EnvironmentVariables } from "../../constants/EnvironmentVariables";
 import { retrieveSocialProfileToken } from "./retrieveSocialProfileToken";
 
-async function verifySocialProfileToken(cookies: {
-  [cookieName: string]: string | undefined;
-}, signInMethod: SignInMethod): Promise<void> {
+async function verifySocialProfileToken(
+  cookies: {
+    [cookieName: string]: string | undefined;
+  },
+  signInMethod: SignInMethod
+): Promise<void> {
   if (signInMethod === "credentials") return;
 
   const socialProfileToken = retrieveSocialProfileToken(cookies) ?? "";
@@ -16,14 +19,17 @@ async function verifySocialProfileToken(cookies: {
     case "facebook": {
       const tokenVerifyInfo = await axios.get(
         `https://graph.facebook.com/debug_token?input_token=${socialProfileToken}&access_token=${socialProfileToken}`,
-        { headers: { "Origin": "http://localhost:3000" } }
+        { headers: { Origin: EnvironmentVariables.ServerUri } }
       );
 
       if (!tokenVerifyInfo?.data?.data?.is_valid) {
         throw new Error("Token is invalid. Unauthorized");
       }
 
-      if (tokenVerifyInfo.data.data.app_id !== EnvironmentVariables.Facebook_App_Id) {
+      if (
+        tokenVerifyInfo.data.data.app_id !==
+        EnvironmentVariables.Facebook_App_Id
+      ) {
         throw new Error("Token has invalid app_id. Unauthorized");
       }
       break;

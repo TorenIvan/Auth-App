@@ -3,6 +3,7 @@ const DatabaseUri = `mongodb://${process.env.DB_USERNAME}:${encodedDBPassword}@$
 
 export const EnvironmentVariables = {
   DatabaseUri: DatabaseUri,
+  ServerUri: process.env.SERVER_URI!,
   DatabaseName: process.env.DB_NAME,
   IsProduction: process.env.NODE_END === "production",
   Access_Token_Secret: process.env.ACCESS_TOKEN_SECRET!,

@@ -13,6 +13,10 @@ import { authMiddleware } from "./config/middleware";
 
 export type AppOptions = {
   // Place your custom options for app below here.
+  https: {
+    key: "../key.pem";
+    cert: "../cert.pem";
+  };
 } & Partial<AutoloadPluginOptions>;
 
 const app: FastifyPluginAsync<AppOptions> = async (
@@ -20,6 +24,11 @@ const app: FastifyPluginAsync<AppOptions> = async (
   options
 ): Promise<void> => {
   // Place here your custom code!
+  const { key, cert } = options.https;
+  // await fastify.register(require("fastify-https"), {
+  //   key: fs.readFileSync(key),
+  //   cert: fs.readFileSync(cert),
+  // });
 
   // Do not touch the following lines
 
