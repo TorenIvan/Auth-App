@@ -68,7 +68,7 @@ function AuthForm(props: IProps) {
                       id: "password",
                       name: "password",
                       autoComplete: "new-password",
-                      placeholder: "Password",
+                      placeholder: Constants.Password,
                       readOnly: true,
                       required: true,
                       type: hidePassword === true ? "password" : "text",

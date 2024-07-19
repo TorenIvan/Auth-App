@@ -30,6 +30,7 @@ $input-focus-shadow: var(--input-border-focus-shadow);
     line-height: 18px;
     color: var(--text-secondary);
     font-family: NotoSansRegular, FontAwesome;
+    padding-left: 0 !important;
   }
 
   &:focus {
@@ -38,7 +39,6 @@ $input-focus-shadow: var(--input-border-focus-shadow);
 }
 
 .input.lightBorder {
-
   &:focus {
     box-shadow: 0 0 2px $input-focus-shadow;
     border: 1px solid $input-focus;
@@ -57,7 +57,7 @@ $input-focus-shadow: var(--input-border-focus-shadow);
   top: 51%;
 }
 
-.fa-eye-reset{
+.fa-eye-reset {
   position: absolute;
   right: 4%;
   cursor: pointer;
@@ -83,14 +83,14 @@ $input-focus-shadow: var(--input-border-focus-shadow);
   color: var(--text-primary);
 }
 
-.fa-lock-form{
+.fa-lock-form {
   position: absolute;
   left: 3%;
   top: 50%;
   color: var(--text-primary);
 }
 
-.fa-lock-reset{
+.fa-lock-reset {
   position: absolute;
   left: 3%;
   top: 35%;
