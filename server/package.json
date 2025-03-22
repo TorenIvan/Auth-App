@@ -8,9 +8,9 @@
   },
   "scripts": {
     "test": "npm run build:ts && tsc -p test/tsconfig.json && tap --ts test/**/*.test.ts",
-    "start": "export NODE_ENV=development && npm run build:ts && fastify start -l info dist/app.js",
     "build:ts": "tsc",
-    "dev": "tsc && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"tsc -w\" \" export NODE_ENV=development && fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js\""
+    "dev": "NODE_ENV=development tsc && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"tsc -w\" \" export NODE_ENV=development && fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js\"",
+    "start": "NODE_ENV=production npm run build:ts && fastify start -l info dist/app.js"
   },
   "keywords": [],
   "author": "",

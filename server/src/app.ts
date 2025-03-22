@@ -3,11 +3,13 @@ import AutoLoad, { AutoloadPluginOptions } from "@fastify/autoload";
 import FastifyOverview from "fastify-overview";
 import { FastifyPluginAsync } from "fastify";
 import { config } from "dotenv";
-config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
 import cookie from "@fastify/cookie";
 import type { FastifyCookieOptions } from "@fastify/cookie";
 import cors from "@fastify/cors";
 import multipart from "@fastify/multipart";
+
+config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
+
 import { userRoutes } from "./api/v1/user";
 import { authMiddleware } from "./config/middleware";
 

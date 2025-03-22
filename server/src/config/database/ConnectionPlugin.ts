@@ -14,7 +14,14 @@ const databasePlugin: FastifyPluginAsync = fp(
   async (fastify: FastifyInstance): Promise<void> => {
     try {
       const client: MongoClient = new MongoClient(
-        EnvironmentVariables.DatabaseUri
+        EnvironmentVariables.DatabaseUri,
+        {
+          tls: !EnvironmentVariables.IsProduction,
+          tlsAllowInvalidCertificates: !EnvironmentVariables.IsProduction,
+          serverSelectionTimeoutMS: 5000,
+          socketTimeoutMS: 45000,
+          monitorCommands: true,
+        }
       );
 
       await client.connect();
@@ -30,6 +37,13 @@ const databasePlugin: FastifyPluginAsync = fp(
         .addHook("onClose", () => {
           console.error(Strings.CloseDB);
         });
+
+      // await users.updateMany(
+      //   { schemaVersion: { $exists: false } },
+      //   {
+      //     $set: { schemaVersion: 1 },
+      //   }
+      // );
     } catch (error) {
       console.error(error);
     }

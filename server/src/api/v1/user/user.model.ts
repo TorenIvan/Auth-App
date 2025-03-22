@@ -1,8 +1,11 @@
 import * as z from "zod";
-import { Errors } from "../../../config/utils/constants/Errors";
+import { ObjectId } from "mongodb";
 import { ImageSchema } from "../image/image.model";
+import { Errors } from "../../../config/utils/constants/Errors";
 
 const UserSchema = z.object({
+  _id: z.instanceof(ObjectId),
+  schemaVersion: z.number(),
   username: z.string(),
   email: z.string().email(),
   phone: z
