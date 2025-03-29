@@ -16,11 +16,14 @@ const databasePlugin: FastifyPluginAsync = fp(
       const client: MongoClient = new MongoClient(
         EnvironmentVariables.DatabaseUri,
         {
-          tls: !EnvironmentVariables.IsProduction,
-          tlsAllowInvalidCertificates: !EnvironmentVariables.IsProduction,
           serverSelectionTimeoutMS: 5000,
           socketTimeoutMS: 45000,
           monitorCommands: true,
+          /**
+           * To be added...
+           */
+          // tls: !EnvironmentVariables.IsProduction,
+          // tlsAllowInvalidCertificates: !EnvironmentVariables.IsProduction,
         }
       );
 

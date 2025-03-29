@@ -3,22 +3,23 @@ version: "3.8"
 services:
   mongo:
     image: mongo:latest
-    container_name: mongo
+    container_name: mongo_auth_app
     restart: always
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
-      - MONGO_INITDB_DATABASE=admin
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_ROOT_DATABASE}
       - DB_NAME=${DB_NAME}
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
     volumes:
       - mongo-data:/data/db
-      - ./mongo-init.js:/docker-entrypoint-initdb.d/server/mongo-init.js:ro
-      - ./certs:/etc/ssl/mongo:ro
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     ports:
-      - "27017:27017"
-    command: ["mongod", "--auth", "--bind_ip_all", "--noscripting"]
+      - "${MONGO_PORT}:${MONGO_PORT}"
+    command: ["/bin/bash", "/docker-entrypoint-initdb.d/mongo-entrypoint.sh"]
+
 
 volumes:
-  mongo-data:
+  mongo-data: 
+    driver: local
