@@ -1,5 +1,6 @@
 import { memo } from "react";
 
+/* eslint-disable react/display-name */
 const GithubIcon = memo(() => {
   return (
     <svg

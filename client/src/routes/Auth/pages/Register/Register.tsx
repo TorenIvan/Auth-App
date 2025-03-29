@@ -1,11 +1,15 @@
-import { PureComponent } from "react";
+import { Fragment, PureComponent } from "react";
 import { ActionFunctionArgs, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { isEmailValid, isPasswordValid } from "../../../../helpers";
-import { AuthForm, RegisterTitle, RegisterNavLink } from "../../components";
 import { Constants } from "../../constants";
 import { registerUser } from "../../api";
 import { Errors } from "../../errors";
+import {
+  RegisterTitle,
+  RegisterNavLink,
+  AuthFormGroup,
+} from "../../components";
 
 class Register extends PureComponent {
   private readonly submitButtonText: string;
@@ -21,11 +25,13 @@ class Register extends PureComponent {
 
   render() {
     return (
-      <AuthForm
-        titleSlot={this.title}
-        submitButtonText={this.submitButtonText}
-        navLinkSlot={this.navigateLink}
-      />
+      <AuthFormGroup>
+        <Fragment>
+          <AuthFormGroup.Header titleSlot={this.title} />
+          <AuthFormGroup.Form submitButtonText={this.submitButtonText} />
+          <AuthFormGroup.Footer navLinkSlot={this.navigateLink} />
+        </Fragment>
+      </AuthFormGroup>
     );
   }
 }
@@ -56,6 +62,9 @@ async function action({ request }: ActionFunctionArgs) {
     return redirect("../login");
   } catch (error: unknown) {
     toast.error(error as string);
+    if (error === Errors.AUserAlreadyAuthenticated) {
+      return redirect('../profile');
+    }
     return true;
   }
 }

@@ -1,3 +1,3 @@
 import ProfileDetails from "./ProfileDetails";
 
-export default ProfileDetails;
+export { ProfileDetails as Component };

@@ -10,11 +10,15 @@ import multipart from "@fastify/multipart";
 
 config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
 
-import { userRoutes } from "./api/v1/user";
+import { userRoutes } from "./modules/user/v1";
 import { authMiddleware } from "./config/middleware";
 
 export type AppOptions = {
   // Place your custom options for app below here.
+  https: {
+    key: "../key.pem";
+    cert: "../cert.pem";
+  };
 } & Partial<AutoloadPluginOptions>;
 
 const app: FastifyPluginAsync<AppOptions> = async (
@@ -22,6 +26,11 @@ const app: FastifyPluginAsync<AppOptions> = async (
   options
 ): Promise<void> => {
   // Place here your custom code!
+  // const { key, cert } = options.https;
+  // await fastify.register(require("fastify-https"), {
+  //   key: fs.readFileSync(key),
+  //   cert: fs.readFileSync(cert),
+  // });
 
   // Do not touch the following lines
 
@@ -36,6 +45,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
   await fastify.register(multipart, {
     addToBody: true,
   });
+
   await fastify.register(cors, {
     origin: process.env.CLIENT_URI,
     methods: ["GET", "PUT", "POST", "OPTIONS"],
@@ -58,6 +68,24 @@ const app: FastifyPluginAsync<AppOptions> = async (
     hook: "onRequest",
     parseOptions: {},
   } as FastifyCookieOptions);
+
+  // Define the OAuth2 options
+  //  const oauth2OptionsFacebook: FastifyOAuth2Options = {
+  //    name: "facebookOAuth2",
+  //    credentials: {
+  //      client: {
+  //        id: process.env.FACEBOOK_APP_ID!,
+  //        secret: process.env.FACEBOOK_APP_SECRET!,
+  //      },
+  //      auth: fastifyOAuth2.FACEBOOK_CONFIGURATION,
+  //    },
+  //    // Register a Fastify URL to start the redirect flow
+  //    startRedirectPath: "/login/facebook",
+  //    // facebook redirect here after the user login
+  //    callbackUri: "https://localhost:3000/v1/auth/login/facebook",
+  //  };
+
+  //void fastify.register(fastifyOAuth2, oauth2OptionsFacebook);
 
   void fastify.register(AutoLoad, {
     dir: join(__dirname, "./config/database"),

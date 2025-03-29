@@ -5,6 +5,7 @@ import { Strings } from "../../../config/utils/constants/Strings";
 import {
   generateCookieOptions,
   generateResetCookieOptions,
+  generateSocialCookieOptions,
 } from "../../../config/utils/helpers/auth/generateCookieOptions";
 import {
   generateAuthJWTs,
@@ -21,6 +22,7 @@ import {
 } from "./user.schema";
 import UserService from "./user.service";
 import { isFileSizeExceeded } from "../../../config/utils/helpers";
+import axios from "axios";
 
 class UserController {
   private static instance: InstanceType<typeof UserController>;
@@ -180,6 +182,111 @@ class UserController {
     }
   }
 
+  /**
+   * @todo Check if email changed by user on facebook; if yes, cheange it.
+   * @todo Inside initial insert; if you retrieve user image, insert it as well.
+   */
+  async loginFacebookHandler(
+    request: FastifyRequest<{ Body: { code: string } }>,
+    reply: FastifyReply
+  ) {
+    try {
+      const { code } = request.body;
+
+      if (!code) {
+        return UserController.handleError(reply, 400, Errors.GenericError);
+      }
+
+      const fbRetrieveTokenUri = `https://graph.facebook.com/v18.0/oauth/access_token?client_id=${EnvironmentVariables.Facebook_App_Id}&redirect_uri=${EnvironmentVariables.Facebook_App_Redirect_Uri}&client_secret=${EnvironmentVariables.Facebook_App_Secret}&code=${code}`;
+
+      const tokenResponse = await axios.get(fbRetrieveTokenUri, {
+        headers: { Origin: EnvironmentVariables.ServerUri },
+      });
+
+      if (!tokenResponse?.data?.access_token) {
+        return UserController.handleError(reply, 400, Errors.GenericError);
+      }
+
+      const userResponse = await axios.get(
+        `https://graph.facebook.com/me?fields=id,email,name,about&access_token=${tokenResponse.data.access_token}`,
+        {
+          headers: { Origin: EnvironmentVariables.ServerUri },
+        }
+      );
+
+      if (!userResponse?.data?.email || !userResponse?.data?.name) {
+        return UserController.handleError(
+          reply,
+          400,
+          Errors.NotRetrievedFacebook
+        );
+      }
+
+      let userId: string | undefined = undefined;
+      const checkIfEmailWithGivenSocialPlatformExists: ServiceResponse =
+        await UserController.userService.CheckGivenSocialPlatformEmailExistence(
+          userResponse.data.email,
+          "facebook"
+        );
+
+      const givenSocialPlatformEmailExist: boolean =
+        checkIfEmailWithGivenSocialPlatformExists.success;
+      if (givenSocialPlatformEmailExist === true) {
+        userId =
+          checkIfEmailWithGivenSocialPlatformExists.data!.userId.toString();
+      }
+
+      /**
+       * Start of register user operation
+       */
+      if (givenSocialPlatformEmailExist === false) {
+        const userSocialLoginResponse: ServiceResponse =
+          await UserController.userService.InsertUserWithSocialAccount(
+            userResponse.data.name,
+            userResponse.data.email.toLowerCase(),
+            userResponse.data.about ?? "",
+            "facebook"
+          );
+
+        const inserted: boolean = userSocialLoginResponse.success;
+        if (inserted === false) {
+          return UserController.handleError(
+            reply,
+            400,
+            userSocialLoginResponse?.customError
+          );
+        }
+        userId = userSocialLoginResponse.data!.userId.toString();
+      }
+      /**
+       * Start of register user operation
+       */
+
+      const { access_token, refresh_token } = generateAuthJWTs(
+        userId!,
+        "facebook"
+      );
+
+      const cookieOptions = generateSocialCookieOptions();
+
+      reply
+        .code(200)
+        .setCookie(
+          EnvironmentVariables.Cookie_Name,
+          refresh_token,
+          cookieOptions
+        )
+        .setCookie(
+          EnvironmentVariables.Cookie_Name_Social_Profile,
+          tokenResponse.data.access_token,
+          cookieOptions
+        )
+        .send({ access_token: access_token });
+    } catch (error) {
+      UserController.handleError(reply, 500, Errors.GenericError);
+    }
+  }
+
   async loginCredentialsHandler(
     request: FastifyRequest<{ Body: credsUserInput }>,
     reply: FastifyReply
@@ -231,6 +338,9 @@ class UserController {
       );
 
       const cookieOptions = generateCookieOptions();
+      console.log("resfresh_token: ", refresh_token);
+      console.log("cookie_Options: ", cookieOptions);
+      console.log("cookieName: ", EnvironmentVariables.Cookie_Name);
 
       reply
         .code(200)
@@ -403,7 +513,7 @@ class UserController {
 
       let imageString: string | undefined = undefined;
       if (image?.data !== undefined) {
-        const bufferToBase64String: string = (image?.data).toString("base64");
+        const bufferToBase64String: string = image.data.toString("base64");
         imageString = `data:${image?.mimetype};base64,${bufferToBase64String}`;
       }
 
@@ -501,9 +611,14 @@ class UserController {
   }
 
   async logout(_: FastifyRequest, reply: FastifyReply) {
-    reply.code(200).clearCookie(EnvironmentVariables.Cookie_Name, {
-      path: "/",
-    });
+    reply
+      .code(200)
+      .clearCookie(EnvironmentVariables.Cookie_Name, {
+        path: "/",
+      })
+      .clearCookie(EnvironmentVariables.Cookie_Name_Social_Profile, {
+        path: "/",
+      });
   }
 
   async checkIfUserIsAuthenticated(_: FastifyRequest, reply: FastifyReply) {

@@ -1,3 +1,3 @@
 import Login, { action } from "./Login";
 
-export { Login as default, action as loginAction };
+export { Login as Component, action };

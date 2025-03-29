@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import {
   faCircleUser,
@@ -9,18 +9,31 @@ import { Footer, Header, Main } from "../../../layouts";
 import { SideMenu } from "../components";
 import { Constants } from "../constants";
 import { useToggleSubMenu } from "../hooks";
-import { logoutUser } from "../api";
-import { useQueryClient } from "@tanstack/react-query";
+import { logoutUser, userDetailsQuery } from "../api";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
+import { BroadcastChannel } from 'broadcast-channel';
 
 function ProfileLayout() {
   const [isSubMenuOpen, toggleSubMenu] = useToggleSubMenu();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const logoutChannel = new BroadcastChannel('logout');
 
   async function logout() {
-    await logoutUser(queryClient);
-    return navigate("login");
+    logoutChannel.postMessage('logout');
   }
+
+  const logoutAllTabs = () => {
+    logoutChannel.onmessage = async () => {
+      await logoutUser(queryClient);
+      logoutChannel.close();
+      return navigate("login");
+    }
+  }
+
+  useEffect(() => {
+    logoutAllTabs()
+  }, [])
 
   return (
     <Fragment>
@@ -28,11 +41,11 @@ function ProfileLayout() {
         rightSlot={
           <SideMenu isOpen={isSubMenuOpen} onPressingOpenButton={toggleSubMenu}>
             <SideMenu.SubMenu isOpen={isSubMenuOpen}>
-              <SideMenu.SubMenu.Item isUsed onClick={() => {}}>
+              <SideMenu.SubMenu.Item isUsed onClick={() => { }}>
                 <SideMenu.SubMenu.Item.Image icon={faCircleUser} size="xl" />
                 <SideMenu.SubMenu.Item.Text value={Constants.MyProfile} />
               </SideMenu.SubMenu.Item>
-              <SideMenu.SubMenu.Item isUsed={false} onClick={() => {}}>
+              <SideMenu.SubMenu.Item isUsed={false} onClick={() => { }}>
                 <SideMenu.SubMenu.Item.Image icon={faUserGroup} size="lg" />
                 <SideMenu.SubMenu.Item.Text value={Constants.GroupChat} />
               </SideMenu.SubMenu.Item>
@@ -58,6 +71,19 @@ function ProfileLayout() {
       <Footer />
     </Fragment>
   );
+}
+
+
+export function loader(queryClient: QueryClient) {
+  return async function() {
+    try {
+      const query = userDetailsQuery();
+      await queryClient.ensureQueryData(query);
+      return true;
+    } catch (error: unknown) {
+      return false;
+    }
+  }
 }
 
 export default ProfileLayout;

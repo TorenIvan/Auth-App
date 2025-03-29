@@ -6,7 +6,7 @@ import * as bcrypt from "bcryptjs";
 import { EnvironmentVariables } from "../../../config/utils/constants/EnvironmentVariables";
 
 /**
- * Keeps all the "database" logic of User Collection; including transactions if needed
+ * @description Keeps all the "database" logic of User Collection; including transactions if needed
  */
 class UserService {
   private static instance: InstanceType<typeof UserService>;
@@ -20,6 +20,7 @@ class UserService {
     return UserService.instance;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private static handleError(error: any): ServiceResponse {
     console.error(error);
     if (objectAttributeExistsAndHasValue(error, "customError") === true) {
@@ -68,6 +69,72 @@ class UserService {
     }
   }
 
+  async InsertUserWithSocialAccount(
+    username: string,
+    email: string,
+    biography: string,
+    signInMethod: SignInMethod
+  ) {
+    try {
+      const userExists: boolean = !!(await UserService.users.findOne({
+        email: email,
+      }));
+      if (userExists === true) {
+        throw {
+          customError: Errors.UserAlreadyExists,
+        };
+      }
+      const result = await UserService.users.insertOne({
+        username: username,
+        email: email,
+        biography: biography,
+        phone: "",
+        password: "",
+        signInMethod: signInMethod,
+        isVerified: true,
+      });
+      const data: ServiceInsertedData = {
+        userId: result.insertedId,
+        username: username,
+        email: email,
+        biography: biography,
+        phone: "",
+        signInMethod: signInMethod,
+      };
+      return { success: true, data: data };
+    } catch (error) {
+      return UserService.handleError(error);
+    }
+  }
+
+  async CheckGivenSocialPlatformEmailExistence(
+    email: string,
+    signInMethod: SignInMethod
+  ): Promise<ServiceResponse> {
+    try {
+      const result = await UserService.users.findOne(
+        {
+          email: email,
+          signInMethod: signInMethod,
+        },
+        {
+          projection: {
+            _id: 1,
+          },
+        }
+      );
+      if (result === null) {
+        throw "";
+      }
+      const data: ServiceFoundData = {
+        userId: result._id,
+      };
+      return { success: true, data: data };
+    } catch (error) {
+      return UserService.handleError(error);
+    }
+  }
+
   async ValidateUserWithCredentials(
     email: string,
     password: string
@@ -102,9 +169,9 @@ class UserService {
         };
       }
 
-      if (result.image) {
-        result.image.data = result.image.data;
-      }
+      //   if (result.image) {
+      //     result.image.data = result.image.data;
+      //   }
 
       const data: ServiceInsertedData = {
         userId: result._id,
@@ -311,7 +378,7 @@ class UserService {
     image: UploadedFile | null
   ): Promise<ServiceResponse> {
     try {
-      const updateFields: any = {
+      const updateFields = {
         username,
         phone,
         biography,
@@ -322,11 +389,16 @@ class UserService {
           Number(EnvironmentVariables.Salt_Size)
         );
         const hash = await bcrypt.hash(newPassword.trim(), salt);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         updateFields.password = hash;
       }
 
       if (image !== null) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { limit, ...restImageProperties } = image;
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         updateFields.image = restImageProperties;
       }
 

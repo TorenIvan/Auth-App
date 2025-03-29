@@ -1,3 +1,3 @@
-import ProfileEdit, { action } from "./ProfileEdit";
+import ProfileEdit from "./ProfileEdit";
 
-export { ProfileEdit as default, action };
+export { ProfileEdit as Component };

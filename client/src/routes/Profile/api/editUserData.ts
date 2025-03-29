@@ -1,4 +1,4 @@
-import { AxiosError, AxiosResponse, isAxiosError } from "axios";
+import { AxiosResponse, isAxiosError } from "axios";
 import { axiosInstance } from "../../../config";
 import { Errors } from "../errors";
 
@@ -21,14 +21,14 @@ export async function editUserData(request: IRequest): Promise<void> {
       }
     );
     return result.data;
-  } catch (error: unknown | AxiosError) {
+  } catch (error: unknown) {
     if (isAxiosError(error)) {
       const { response } = error;
       const statusCode = response?.status ?? 0;
       const message = response?.data?.message;
 
-      if (statusCode < 500) {
-        throw message ?? Errors.GenericError;
+      if (statusCode < 500 && message) {
+        throw (message ?? Errors.GenericError);
       }
     }
     throw Errors.GenericError;

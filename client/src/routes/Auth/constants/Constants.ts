@@ -34,4 +34,7 @@ export const Constants = {
     "Almost done! An email will be sent to your account soon. Follow the instructions to reset your password.",
   PasswordResetedMessage:
     "Congratulations! Your password has been reset. You can now sign in with your new password.",
+  LoginHeaderError: "Sorry! We couldn't confirm your identity.",
+  LoginHeaderLoading: "Authorize operation in progress might take a few seconds...",
+  LoginParagraphError: "Something went wrong with social login. Please, try again!",
 } as const;

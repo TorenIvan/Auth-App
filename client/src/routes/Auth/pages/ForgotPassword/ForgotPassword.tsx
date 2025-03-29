@@ -10,7 +10,7 @@ import { Constants } from "../../constants";
 import { forgotPassword } from "../../api";
 import styles from "./styles.module.scss";
 
-function ForgotPassword() {
+export function Component() {
   return (
     <Form
       autoComplete="off"
@@ -50,9 +50,8 @@ function ForgotPassword() {
   );
 }
 
-export { ForgotPassword, action };
 
-async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   try {
     const response = await request.formData();
     const email = response.get("email") as string;

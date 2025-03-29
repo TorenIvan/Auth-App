@@ -1,6 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
 import { createBrowserRouter, redirect } from "react-router-dom";
-import { ErrorPage } from "../pages";
+import { ErrorPage, PrivateRoutes, PublicRoutes } from "../pages";
 import { checkIfUserIsAuthenticated } from "../api";
 import authRoutes from "./Auth";
 import profileRoutes from "./Profile";
@@ -12,19 +12,43 @@ function indexRouter(queryClient: QueryClient) {
       ErrorBoundary: ErrorPage,
       children: [
         {
-          index: true,
           loader: loader,
+          Component: PublicRoutes,
+          children: [...authRoutes()],
         },
-        ...authRoutes(),
-        ...profileRoutes(queryClient),
+        {
+          loader: loader,
+          Component: PrivateRoutes,
+          children: [
+            {
+              async lazy() {
+                const { Component, loader } = await import("./Profile/layouts");
+                return { Component: Component, loader: loader(queryClient) };
+              },
+              children: [
+                ...profileRoutes(),
+                // ...homeRoutes(),
+              ],
+            },
+          ],
+        },
+        {
+          index: true,
+          loader: indexLoader,
+        },
       ],
+    },
+    {
+      path: "*",
+      loader: indexLoader,
+      ErrorBoundary: ErrorPage,
     },
   ]);
 }
 
 export default indexRouter;
 
-async function loader() {
+async function indexLoader() {
   try {
     const isAuthenticated = await checkIfUserIsAuthenticated();
     if (isAuthenticated === true) {
@@ -33,5 +57,17 @@ async function loader() {
     return redirect("login");
   } catch (error: unknown) {
     return redirect("login");
+  }
+}
+
+async function loader() {
+  try {
+    const isAuthenticated = await checkIfUserIsAuthenticated();
+    if (isAuthenticated === true) {
+      return true;
+    }
+    return false;
+  } catch (error: unknown) {
+    return false;
   }
 }

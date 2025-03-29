@@ -1,6 +1,5 @@
 import { Fragment, useRef } from "react";
 import { Form, NavLink, useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import {
   faCamera,
@@ -32,7 +31,7 @@ function ProfileEdit() {
   );
   const [image, handleImageChange] = useImageChange(userInfo?.image);
 
-  function triggerImageChange(_: unknown) {
+  function triggerImageChange() {
     inputFileRef?.current?.click();
   }
 
@@ -54,7 +53,7 @@ function ProfileEdit() {
       if (updated === false) {
         return;
       }
-      navigate("../");
+      navigate(`${import.meta.env.VITE_CLIENT_URI}profile`);
     } catch (error) {
       console.error(error);
       return;
@@ -247,7 +246,7 @@ function ProfileEdit() {
 export { ProfileEdit as default, action };
 
 function action(queryClient: QueryClient, formData: FormData) {
-  return async function () {
+  return async function() {
     try {
       const file = formData.get("file");
 
@@ -264,12 +263,17 @@ function action(queryClient: QueryClient, formData: FormData) {
         updatedFormData.entries()
       ) as unknown as IRequest;
 
+      if (userData.currentPassword == null && userData.newPassword == null) {
+        userData.currentPassword = "";
+        userData.newPassword = "";
+      }
+
       await editUserData(userData);
 
       await queryClient.refetchQueries(userDetailsQuery().queryKey);
       return true;
     } catch (error) {
-      toast.error(error as string);
+      console.error(error)
       return false;
     }
   };

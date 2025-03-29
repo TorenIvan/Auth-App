@@ -4,7 +4,6 @@ import { toast } from "react-hot-toast";
 import { faEye, faEyeSlash, faLock } from "@fortawesome/free-solid-svg-icons";
 import { InputGroup } from "../../../../components";
 import { isPasswordValid } from "../../../../helpers";
-import { checkIfUserIsAuthenticated } from "../../../../api";
 import { inputStyles } from "../../../../styles";
 import { Errors } from "../../errors";
 import { Constants } from "../../constants";
@@ -96,12 +95,12 @@ export { ResetPassword, loader, action };
 
 async function loader() {
   try {
-    const isAuthenticated: boolean = await checkIfUserIsAuthenticated();
+    //const isAuthenticated: boolean = await checkIfUserIsAuthenticated();
 
-    if (isAuthenticated) {
-      toast.error(Errors.AlreadyAuthenticatedOnReset);
-      return redirect(`${import.meta.env.VITE_CLIENT_URI}profile`);
-    }
+    //if (isAuthenticated) {
+    //  toast.error(Errors.AlreadyAuthenticatedOnReset);
+    //  return redirect(`${import.meta.env.VITE_CLIENT_URI}profile`);
+    //}
 
     const { search } = window.location;
     if (!search) {

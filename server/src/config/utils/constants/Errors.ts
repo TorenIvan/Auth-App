@@ -37,4 +37,5 @@ export const Errors = {
   FileGenericError:
     "Something went wrong while uploading the file. Please, try again",
   MaxFileSizeExceeded: "File size exceeds the maximum allowed limit",
+  NotRetrievedFacebook: "Information was not able to be retrieved from Facebook. Please, try again"
 } as const;

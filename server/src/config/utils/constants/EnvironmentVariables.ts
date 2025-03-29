@@ -3,6 +3,7 @@ const DatabaseUri = `mongodb://${process.env.DB_USERNAME}:${encodedDBPassword}@$
 
 export const EnvironmentVariables = {
   DatabaseUri: DatabaseUri,
+  ServerUri: process.env.SERVER_URI!,
   DatabaseName: process.env.DB_NAME,
   IsProduction: process.env.NODE_END === "production",
   Access_Token_Secret: process.env.ACCESS_TOKEN_SECRET!,
@@ -24,4 +25,8 @@ export const EnvironmentVariables = {
   Email_Host: process.env.EMAIL_HOST!,
   Email_Port: process.env.EMAIL_PORT!,
   Reset_Pass_Uri: process.env.RESET_PASS_URI!,
+  Facebook_App_Id: process.env.FACEBOOK_APP_ID!,
+  Facebook_App_Secret: process.env.FACEBOOK_APP_SECRET!,
+  Facebook_App_Redirect_Uri: process.env.FACEBOOK_APP_REDIRECT_URI!,
+  Cookie_Name_Social_Profile: process.env.COOKIE_NAME_SOCIAL_PROFILE!,
 } as const;

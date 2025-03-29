@@ -1,11 +1,15 @@
 import { Collection, Db } from "mongodb";
-import User from "../../../api/v1/user/user.model";
+import User from "../../../modules/user/v1/user.model";
 
 declare module "fastify" {
   export interface FastifyInstance {
     MongoDB: Db;
     User: Collection<User>;
     verifyAccessTokenHeader: (
+      request: FastifyRequest,
+      reply: FastifyReply
+    ) => Promise<void>;
+    verifySocialProfileTokenCookie: (
       request: FastifyRequest,
       reply: FastifyReply
     ) => Promise<void>;
@@ -22,6 +26,10 @@ declare module "fastify" {
       reply: FastifyReply
     ) => Promise<void>;
     checkIfUserIsAuthenticated: (
+      request: FastifyRequest,
+      reply: FastifyReply
+    ) => Promise<void>;
+    actionForbiddenToAuthenticatedUser: (
       request: FastifyRequest,
       reply: FastifyReply
     ) => Promise<void>;

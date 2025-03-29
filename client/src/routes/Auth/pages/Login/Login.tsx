@@ -1,19 +1,19 @@
-import { PureComponent } from "react";
+import { Fragment, PureComponent } from "react";
 import { ActionFunctionArgs, redirect } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { addAuthorizationHeader } from "../../../../config";
 import { isEmailValid, isPasswordValid } from "../../../../helpers";
 import { loginUser } from "../../api";
 import { Constants } from "../../constants";
+import { Errors } from "../../errors";
 import {
-  AuthForm,
   LoginTitle,
   LoginNavLink,
   ForgotPasswordLink,
+  AuthFormGroup,
 } from "../../components";
-import { Errors } from "../../errors";
 
-class Login extends PureComponent {
+class Login extends PureComponent<object, { socialItem: SocialItem | null }> {
   private readonly submitButtonText: string;
   private readonly title: JSX.Element;
   private readonly navigateLink: JSX.Element;
@@ -29,12 +29,16 @@ class Login extends PureComponent {
 
   render() {
     return (
-      <AuthForm
-        titleSlot={this.title}
-        submitButtonText={this.submitButtonText}
-        navLinkSlot={this.navigateLink}
-        forgotPasswordSlot={this.forgotPasswordLink}
-      />
+      <AuthFormGroup>
+        <Fragment>
+          <AuthFormGroup.Header titleSlot={this.title} />
+          <AuthFormGroup.Form
+            submitButtonText={this.submitButtonText}
+            forgotPasswordSlot={this.forgotPasswordLink}
+          />
+          <AuthFormGroup.Footer navLinkSlot={this.navigateLink} />
+        </Fragment>
+      </AuthFormGroup>
     );
   }
 }
@@ -69,3 +73,5 @@ async function action({ request }: ActionFunctionArgs) {
     return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
   }
 }
+
+type SocialItem = "facebook" | "google" | "twitter" | "github";

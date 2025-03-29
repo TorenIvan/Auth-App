@@ -21,7 +21,7 @@ async function retrieveUserData(): Promise<IResponse> {
       const statusCode = (error as AxiosError)?.response?.status ?? 0;
       const message = ((error as AxiosError)?.response?.data as any)?.message;
 
-      if (statusCode < 500) {
+      if (statusCode < 500 && message) {
         throw message ?? Errors.GenericError;
       }
     }

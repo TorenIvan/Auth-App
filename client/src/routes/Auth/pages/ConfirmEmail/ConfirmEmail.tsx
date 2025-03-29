@@ -1,16 +1,15 @@
 import { redirect, useLoaderData, useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleXmark,
   faEnvelopeCircleCheck,
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
-import styles from "./styles.module.scss";
-import { Constants } from "../../constants";
-import { checkIfUserIsAuthenticated } from "../../../../api";
-import { toast } from "react-hot-toast";
-import { confirmEmail } from "../../api";
 import { Errors } from "../../errors";
+import { Constants } from "../../constants";
+import { confirmEmail } from "../../api";
+import styles from "./styles.module.scss";
 
 export function ConfirmEmail() {
   const isEmailConfirmed = useLoaderData();
@@ -70,13 +69,6 @@ export function ConfirmEmail() {
 
 export async function loader() {
   try {
-    const isAuthenticated: boolean = await checkIfUserIsAuthenticated();
-
-    if (isAuthenticated) {
-      toast.error(Errors.AlreadyAuthenticated);
-      return redirect(`${import.meta.env.VITE_CLIENT_URI}profile`);
-    }
-
     const { search } = window.location;
     if (!search) {
       toast.error(Errors.NoConfirmationToken);

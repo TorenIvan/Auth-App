@@ -8,7 +8,7 @@ import fp from "fastify-plugin";
 import { verifyJWT } from "../utils/helpers/auth/generateJWTs";
 import { EnvironmentVariables } from "../utils/constants/EnvironmentVariables";
 import { Strings } from "../utils/constants/Strings";
-import { retrieveAccessToken, retrieveRefreshToken } from "../utils/helpers";
+import { retrieveAccessToken, retrieveRefreshToken, verifySocialProfileToken } from "../utils/helpers";
 import { Errors } from "../utils/constants/Errors";
 
 const authMiddleware: FastifyPluginAsync = fp(
@@ -17,7 +17,7 @@ const authMiddleware: FastifyPluginAsync = fp(
     fastify.decorateRequest("signInMethod", "credentials");
     fastify.decorate(
       "verifyAccessTokenHeader",
-      async function (
+      async function(
         request: FastifyRequest,
         reply: FastifyReply
       ): Promise<void> {
@@ -44,9 +44,8 @@ const authMiddleware: FastifyPluginAsync = fp(
           if (signInMethodExistsInJWTPayload === false) {
             throw "error";
           }
-          request.userId = data.userId;
-          request.signInMethod = (data?.signInMethod ??
-            "credentials") as SignInMethod;
+          request.userId = data.userId.toString();
+          request.signInMethod = <SignInMethod>data.signInMethod ?? "credentials";
         } catch (error) {
           const errorMessage = fastify.httpErrors.unauthorized();
           reply.send(errorMessage);
@@ -56,7 +55,7 @@ const authMiddleware: FastifyPluginAsync = fp(
 
     fastify.decorate(
       "verifyRefreshTokenCookie",
-      async function (
+      async function(
         request: FastifyRequest,
         reply: FastifyReply
       ): Promise<void> {
@@ -80,17 +79,46 @@ const authMiddleware: FastifyPluginAsync = fp(
           }
 
           request.userId = data.userId.toString();
-          request.signInMethod = data.signInMethod ?? "credentials";
+          request.signInMethod = <SignInMethod>data.signInMethod ?? "credentials";
         } catch (error) {
           const errorMessage = fastify.httpErrors.unauthorized();
-          reply.send(errorMessage);
+          reply
+            .clearCookie(EnvironmentVariables.Cookie_Name, {
+              path: "/",
+            })
+            .clearCookie(EnvironmentVariables.Cookie_Name_Social_Profile, {
+              path: "/",
+            })
+            .send(errorMessage);
+        }
+      }
+    );
+
+    fastify.decorate(
+      "verifySocialProfileTokenCookie",
+      async function(
+        request: FastifyRequest,
+        reply: FastifyReply
+      ): Promise<void> {
+        try {
+          await verifySocialProfileToken(request.cookies, request.signInMethod);
+        } catch (error) {
+          const errorMessage = fastify.httpErrors.unauthorized();
+          reply
+            .clearCookie(EnvironmentVariables.Cookie_Name, {
+              path: "/",
+            })
+            .clearCookie(EnvironmentVariables.Cookie_Name_Social_Profile, {
+              path: "/",
+            })
+            .send(errorMessage);
         }
       }
     );
 
     fastify.decorate(
       "verifyResetPasswordCookie",
-      async function (
+      async function(
         request: FastifyRequest,
         reply: FastifyReply
       ): Promise<void> {
@@ -126,8 +154,8 @@ const authMiddleware: FastifyPluginAsync = fp(
     );
 
     fastify.decorate(
-      "checkIfUserIsAuthenticated",
-      async function (
+      "actionForbiddenToAuthenticatedUser",
+      async function(
         request: FastifyRequest,
         reply: FastifyReply
       ): Promise<void> {
@@ -141,6 +169,46 @@ const authMiddleware: FastifyPluginAsync = fp(
               EnvironmentVariables.Access_Token_Secret
             );
             if (access_token_data?.userId && access_token_data?.signInMethod) {
+              reply.status(403).send();
+            }
+          }
+
+          const refresh_token: string | null = retrieveRefreshToken(request.cookies);
+
+          if (refresh_token !== null) {
+            const refresh_token_data = verifyJWT(
+              refresh_token,
+              EnvironmentVariables.Refresh_Token_Secret
+            );
+
+            if (refresh_token_data?.userId && refresh_token_data?.signInMethod) {
+              reply.status(403).send();
+            }
+          }
+
+        } catch {
+          reply.status(400).send();
+        }
+      }
+    );
+
+    fastify.decorate(
+      "checkIfUserIsAuthenticated",
+      async function(
+        request: FastifyRequest,
+        reply: FastifyReply
+      ): Promise<void> {
+        try {
+          const authHeader: string | undefined = request.headers?.authorization;
+          const access_token: string | null = retrieveAccessToken(authHeader);
+
+          if (access_token !== null) {
+            const access_token_data = verifyJWT(
+              access_token,
+              EnvironmentVariables.Access_Token_Secret
+            );
+            if (access_token_data?.userId && access_token_data?.signInMethod) {
+              await verifySocialProfileToken(request.cookies, access_token_data.signInMethod);
               reply.status(200).send();
             }
           }
@@ -153,6 +221,7 @@ const authMiddleware: FastifyPluginAsync = fp(
           );
 
           if (refresh_token_data?.userId && refresh_token_data?.signInMethod) {
+            await verifySocialProfileToken(request.cookies, refresh_token_data.signInMethod);
             reply.status(200).send();
           }
         } catch {

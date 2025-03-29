@@ -1,1 +1,1 @@
-export { default as Layout } from "./auth.layout";
+export { default as Component } from "./auth.layout";
