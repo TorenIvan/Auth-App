@@ -24,7 +24,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
   options
 ): Promise<void> => {
   // Place here your custom code!
-  const { key, cert } = options.https;
+  // const { key, cert } = options.https;
   // await fastify.register(require("fastify-https"), {
   //   key: fs.readFileSync(key),
   //   cert: fs.readFileSync(cert),

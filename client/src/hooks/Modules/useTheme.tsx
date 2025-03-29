@@ -2,8 +2,6 @@ import { useAtom } from "jotai";
 import { GlobalConstants, Theme } from "../../utils";
 import { themeAtom } from "../../store";
 
-type ReturnType = [theme: Theme, toggleTheme: () => void];
-
 export function useTheme(): ReturnType {
   const [theme, setTheme] = useAtom(themeAtom);
 
@@ -19,3 +17,6 @@ export function useTheme(): ReturnType {
   document.body.className = theme;
   return [theme, toggleTheme];
 }
+
+
+type ReturnType = [theme: Theme, toggleTheme: () => void];

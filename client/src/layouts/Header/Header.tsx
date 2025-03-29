@@ -3,10 +3,6 @@ import { useTheme } from "../../hooks";
 import { LogoIcon, ThemeIcon } from "../../icons";
 import styles from "./styles.module.scss";
 
-interface IProps {
-  rightSlot?: ReactNode;
-}
-
 function Header({ rightSlot }: IProps) {
   const [theme, toggleTheme] = useTheme();
 
@@ -29,3 +25,7 @@ function Header({ rightSlot }: IProps) {
 }
 
 export default Header;
+
+interface IProps {
+  rightSlot?: ReactNode;
+}

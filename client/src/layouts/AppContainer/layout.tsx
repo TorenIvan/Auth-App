@@ -7,6 +7,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { BroadcastChannel } from 'broadcast-channel';
+import { Errors } from "../../utils";
 import Header from "../Header";
 import Main from "../Main";
 import Footer from "../Footer";
@@ -14,6 +15,7 @@ import { useToggleSubMenu } from "../../routes/Profile/hooks";
 import { logoutUser, userDetailsQuery } from "../../routes/Profile/api";
 import { SideMenu } from "../../routes/Profile/components";
 import { Constants } from "../../routes/Profile/constants";
+import toast from "react-hot-toast";
 
 function ProfileLayout() {
   const [isSubMenuOpen, toggleSubMenu] = useToggleSubMenu();
@@ -27,9 +29,15 @@ function ProfileLayout() {
 
   const logoutAllTabs = () => {
     logoutChannel.onmessage = async () => {
-      await logoutUser(queryClient);
-      logoutChannel.close();
-      return navigate("login");
+      try {
+        await logoutUser(queryClient);
+        logoutChannel.close();
+        return navigate("login");
+      } catch (error) {
+        console.error(error);
+        toast.error(Errors.GenericError);
+        return undefined;
+      }
     }
   }
 
