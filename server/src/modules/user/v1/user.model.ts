@@ -1,7 +1,16 @@
 import * as z from "zod";
 import { ObjectId } from "mongodb";
 import { Errors } from "../../../config/utils/constants/Errors";
-import { ImageSchema } from "../../image/v1/image.model";
+
+export const ImageSchema = z.object({
+  _id: z.instanceof(ObjectId),
+  schemaVersion: z.number(),
+  filename: z.string(),
+  mimetype: z.string(),
+  encoding: z.string(),
+  data: z.instanceof(Buffer),
+});
+export type Image = z.infer<typeof ImageSchema>;
 
 const UserSchema = z.object({
   _id: z.instanceof(ObjectId),
@@ -22,8 +31,10 @@ const UserSchema = z.object({
   signInMethod: z.string(),
   isVerified: z.boolean(),
   image: z.union([ImageSchema, z.undefined()]),
+  refreshToken: z.string()
 });
 
 type User = z.infer<typeof UserSchema>;
 
 export default User;
+

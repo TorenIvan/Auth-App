@@ -9,15 +9,10 @@ import { EnvironmentVariables } from "../../../config/utils/constants/Environmen
  * @description Keeps all the "database" logic of User Collection; including transactions if needed
  */
 class UserService {
-  private static instance: InstanceType<typeof UserService>;
-  private static users: Collection<User>;
+  private users: Collection<User>;
 
   constructor(UserCollection: Collection<User>) {
-    if (UserService.instance === undefined) {
-      UserService.instance = this;
-      UserService.users = UserCollection;
-    }
-    return UserService.instance;
+    this.users = UserCollection;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,7 +30,7 @@ class UserService {
   ): Promise<ServiceResponse> {
     const username: string = email.split("@")[0];
     try {
-      const userExists: boolean = !!(await UserService.users.findOne({
+      const userExists: boolean = !!(await this.users.findOne({
         email: email,
       }));
       if (userExists === true) {
@@ -46,7 +41,8 @@ class UserService {
       const salt = await bcrypt.genSalt(Number(EnvironmentVariables.Salt_Size));
       const hash = await bcrypt.hash(password, salt);
 
-      const result = await UserService.users.insertOne({
+      const result = await this.users.insertOne({
+        _id: new ObjectId,
         username: username,
         email: email,
         biography: "",
@@ -54,6 +50,8 @@ class UserService {
         password: hash,
         signInMethod: "credentials",
         isVerified: false,
+        schemaVersion: 0,
+        refreshToken: ''
       });
       const data: ServiceInsertedData = {
         userId: result.insertedId,
@@ -73,10 +71,11 @@ class UserService {
     username: string,
     email: string,
     biography: string,
+    refreshToken: string,
     signInMethod: SignInMethod
   ) {
     try {
-      const userExists: boolean = !!(await UserService.users.findOne({
+      const userExists: boolean = !!(await this.users.findOne({
         email: email,
       }));
       if (userExists === true) {
@@ -84,7 +83,8 @@ class UserService {
           customError: Errors.UserAlreadyExists,
         };
       }
-      const result = await UserService.users.insertOne({
+      const result = await this.users.insertOne({
+        _id: new ObjectId,
         username: username,
         email: email,
         biography: biography,
@@ -92,6 +92,8 @@ class UserService {
         password: "",
         signInMethod: signInMethod,
         isVerified: true,
+        schemaVersion: 0,
+        refreshToken: refreshToken
       });
       const data: ServiceInsertedData = {
         userId: result.insertedId,
@@ -107,12 +109,46 @@ class UserService {
     }
   }
 
+  async updateUserRefreshToken(email: string, token: string){
+    try {
+      await this.users.updateOne(
+        {
+          email,
+        },
+        {
+          $set: {
+            refreshToken: token
+          },
+        }
+      );
+    } catch (error) {
+      return UserService.handleError(error);
+    }
+  }
+
+  async updateUserRefreshTokenById(userId: string, token: string){
+    try {
+      await this.users.updateOne(
+        {
+          _id: new ObjectId(userId),
+        },
+        {
+          $set: {
+            refreshToken: token
+          },
+        }
+      );
+    } catch (error) {
+      return UserService.handleError(error);
+    }
+  }
+
   async CheckGivenSocialPlatformEmailExistence(
     email: string,
     signInMethod: SignInMethod
   ): Promise<ServiceResponse> {
     try {
-      const result = await UserService.users.findOne(
+      const result = await this.users.findOne(
         {
           email: email,
           signInMethod: signInMethod,
@@ -140,7 +176,7 @@ class UserService {
     password: string
   ): Promise<ServiceResponse> {
     try {
-      const result = await UserService.users.findOne(
+      const result = await this.users.findOne(
         {
           email: email,
         },
@@ -193,7 +229,7 @@ class UserService {
     password: string
   ): Promise<ServiceResponse> {
     try {
-      const result = await UserService.users.findOne(
+      const result = await this.users.findOne(
         {
           _id: new ObjectId(userId),
         },
@@ -226,7 +262,7 @@ class UserService {
 
   async CheckUserEmailConfirmation(email: string) {
     try {
-      const isVerified: boolean = !!(await UserService.users.findOne({
+      const isVerified: boolean = !!(await this.users.findOne({
         email: email,
         isVerified: true,
       }));
@@ -238,7 +274,7 @@ class UserService {
 
   async UpdateIsVerifiedWhenUserExists(userId: string) {
     try {
-      const userFound = !!(await UserService.users.findOne({
+      const userFound = !!(await this.users.findOne({
         _id: new ObjectId(userId),
       }));
       if (userFound === false) {
@@ -246,7 +282,7 @@ class UserService {
           customError: Errors.UserNotFoundWithTheseCreds,
         };
       }
-      await UserService.users.updateOne(
+      await this.users.updateOne(
         {
           _id: new ObjectId(userId),
         },
@@ -264,7 +300,7 @@ class UserService {
 
   async CheckEmailExistence(email: string) {
     try {
-      const itExists = await UserService.users.findOne(
+      const itExists = await this.users.findOne(
         {
           email: email,
         },
@@ -288,7 +324,7 @@ class UserService {
 
   async CheckUserIdExistence(id: string) {
     try {
-      const itExists = await UserService.users.findOne(
+      const itExists = await this.users.findOne(
         {
           _id: new ObjectId(id),
         },
@@ -314,7 +350,7 @@ class UserService {
     try {
       const salt = await bcrypt.genSalt(Number(EnvironmentVariables.Salt_Size));
       const hash = await bcrypt.hash(newPassword, salt);
-      await UserService.users.updateOne(
+      await this.users.updateOne(
         {
           _id: new ObjectId(userId),
         },
@@ -332,7 +368,7 @@ class UserService {
 
   async RetrieveUserDetails(userId: string): Promise<ServiceResponse> {
     try {
-      const result = await UserService.users.findOne(
+      const result = await this.users.findOne(
         {
           _id: new ObjectId(userId),
         },
@@ -402,7 +438,7 @@ class UserService {
         updateFields.image = restImageProperties;
       }
 
-      const result: UpdateResult = await UserService.users.updateOne(
+      const result: UpdateResult = await this.users.updateOne(
         {
           _id: new ObjectId(userId),
         },

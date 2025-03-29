@@ -25,7 +25,7 @@ export const generateCookieOptions = () => {
   const options = {
     signed: false, //refresh token is already signed
     httpOnly: true,
-    sameSite: "lax" as SameSiteType,
+    sameSite: "none" as SameSiteType,
     secure: true,
     expires: cookieExpirationDate, //for tabs compatibility
     path: "/",
@@ -41,7 +41,7 @@ export const generateSocialCookieOptions = () => {
   const options = {
     signed: false, //social login token is already signed
     httpOnly: true,
-    sameSite: "lax" as SameSiteType,
+    sameSite: "none" as SameSiteType,
     secure: true,
     expires: cookieExpirationDate, //for tabs compatibility
     path: "/",
@@ -57,7 +57,7 @@ export const generateResetCookieOptions = () => {
   const options = {
     signed: false, //reset token is already signed
     httpOnly: true,
-    sameSite: "lax" as SameSiteType,
+    sameSite: "none" as SameSiteType,
     secure: true,
     expires: cookieExpirationDate, //for tabs compatibility
   };

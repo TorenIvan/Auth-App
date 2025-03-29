@@ -12,6 +12,7 @@ config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
 
 import { userRoutes } from "./modules/user/v1";
 import { authMiddleware } from "./config/middleware";
+import { userControllerPlugin, userServicePlugin } from "./config/plugins/user.plugin";
 
 export type AppOptions = {
   // Place your custom options for app below here.
@@ -101,6 +102,8 @@ const app: FastifyPluginAsync<AppOptions> = async (
     options: options,
   });
 
+  void fastify.register(userServicePlugin);
+  void fastify.register(userControllerPlugin);
   void fastify.register(authMiddleware);
   void fastify.register(userRoutes, options);
 

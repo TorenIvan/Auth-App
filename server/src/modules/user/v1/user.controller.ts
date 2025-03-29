@@ -1,4 +1,5 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { FastifyReply, FastifyRequest } from "fastify";
+import createError from "@fastify/error";
 import { EnvironmentVariables } from "../../../config/utils/constants/EnvironmentVariables";
 import { Errors } from "../../../config/utils/constants/Errors";
 import { Strings } from "../../../config/utils/constants/Strings";
@@ -25,17 +26,10 @@ import { isFileSizeExceeded } from "../../../config/utils/helpers";
 import axios from "axios";
 
 class UserController {
-  private static instance: InstanceType<typeof UserController>;
-  private static userService: InstanceType<typeof UserService>;
-  private static fastifyInstance: FastifyInstance;
+  private userService: UserService;
 
-  constructor(fastifyInstance: FastifyInstance) {
-    if (UserController.instance === undefined) {
-      UserController.instance = this;
-      UserController.fastifyInstance = fastifyInstance;
-      UserController.userService = new UserService(fastifyInstance.User);
-    }
-    return UserController.instance;
+  constructor(userService: UserService) {
+    this.userService = userService;
   }
 
   private static handleError(
@@ -47,38 +41,31 @@ class UserController {
     if (customError !== undefined) {
       switch (errorCode) {
         case 403:
-          error =
-            UserController.fastifyInstance.httpErrors.forbidden(customError);
+          error = createError('403', customError);
           break;
         case 401:
-          error =
-            UserController.fastifyInstance.httpErrors.unauthorized(customError);
+          error = createError('401', customError);
           break;
         case 500:
-          error =
-            UserController.fastifyInstance.httpErrors.internalServerError(
-              customError
-            );
+          error = createError('500', customError);
           break;
         default:
-          error =
-            UserController.fastifyInstance.httpErrors.badRequest(customError);
+          error = createError('400', customError);
           break;
       }
     } else {
       switch (errorCode) {
         case 403:
-          error = UserController.fastifyInstance.httpErrors.forbidden();
+          error = createError("401", "Forbidden");
           break;
         case 401:
-          error = UserController.fastifyInstance.httpErrors.unauthorized();
+          error = createError("401", "Unauthorized");
           break;
         case 500:
-          error =
-            UserController.fastifyInstance.httpErrors.internalServerError();
+          error = createError("500", "Internal server error");
           break;
         default:
-          error = UserController.fastifyInstance.httpErrors.badRequest();
+          error = createError("400", "Invalid request");
           break;
       }
     }
@@ -110,7 +97,7 @@ class UserController {
       const { email, password } = request.body;
 
       const serviceResponse: ServiceResponse =
-        await UserController.userService.InsertUserWithCredentials(
+        await this.userService.InsertUserWithCredentials(
           email.toLowerCase(),
           password
         );
@@ -152,7 +139,7 @@ class UserController {
       }
 
       const hasConfirmedEmail: ServiceResponse =
-        await UserController.userService.CheckUserEmailConfirmation(
+        await this.userService.CheckUserEmailConfirmation(
           request.query.email.toLowerCase()
         );
 
@@ -163,7 +150,7 @@ class UserController {
         }
 
         const serviceResponse: ServiceResponse =
-          await UserController.userService.UpdateIsVerifiedWhenUserExists(
+          await this.userService.UpdateIsVerifiedWhenUserExists(
             userId
           );
 
@@ -224,7 +211,7 @@ class UserController {
 
       let userId: string | undefined = undefined;
       const checkIfEmailWithGivenSocialPlatformExists: ServiceResponse =
-        await UserController.userService.CheckGivenSocialPlatformEmailExistence(
+        await this.userService.CheckGivenSocialPlatformEmailExistence(
           userResponse.data.email,
           "facebook"
         );
@@ -239,12 +226,17 @@ class UserController {
       /**
        * Start of register user operation
        */
+      const { access_token, refresh_token } = generateAuthJWTs(
+        userId!,
+        "facebook"
+      );
       if (givenSocialPlatformEmailExist === false) {
         const userSocialLoginResponse: ServiceResponse =
-          await UserController.userService.InsertUserWithSocialAccount(
+          await this.userService.InsertUserWithSocialAccount(
             userResponse.data.name,
             userResponse.data.email.toLowerCase(),
             userResponse.data.about ?? "",
+            refresh_token,
             "facebook"
           );
 
@@ -262,11 +254,8 @@ class UserController {
        * Start of register user operation
        */
 
-      const { access_token, refresh_token } = generateAuthJWTs(
-        userId!,
-        "facebook"
-      );
 
+      
       const cookieOptions = generateSocialCookieOptions();
 
       reply
@@ -295,7 +284,7 @@ class UserController {
       const { email, password } = request.body;
 
       const userCredsResponse: ServiceResponse =
-        await UserController.userService.ValidateUserWithCredentials(
+        await this.userService.ValidateUserWithCredentials(
           email.toLowerCase(),
           password
         );
@@ -310,7 +299,7 @@ class UserController {
       }
 
       const hasConfirmedEmail: ServiceResponse =
-        await UserController.userService.CheckUserEmailConfirmation(
+        await this.userService.CheckUserEmailConfirmation(
           email.toLowerCase()
         );
 
@@ -336,6 +325,7 @@ class UserController {
       const { access_token, refresh_token } = generateAuthJWTs(
         userCredsResponse.data!.userId.toString()
       );
+      await this.userService.updateUserRefreshToken(email.toLowerCase(), refresh_token);
 
       const cookieOptions = generateCookieOptions();
       console.log("resfresh_token: ", refresh_token);
@@ -363,14 +353,14 @@ class UserController {
       const { email } = request.body;
 
       const serviceResponse: ServiceResponse =
-        await UserController.userService.CheckEmailExistence(
+        await this.userService.CheckEmailExistence(
           email.toLowerCase()
         );
 
       const emailExists: boolean = serviceResponse.success;
 
       const hasConfirmedEmail: ServiceResponse =
-        await UserController.userService.CheckUserEmailConfirmation(
+        await this.userService.CheckUserEmailConfirmation(
           email.toLowerCase()
         );
 
@@ -422,6 +412,7 @@ class UserController {
         userId,
         signInMethod
       );
+      await this.userService.updateUserRefreshTokenById(userId, refresh_token);
 
       const cookieOptions = generateCookieOptions();
 
@@ -464,7 +455,7 @@ class UserController {
         );
       }
       const userExistsResponse: ServiceResponse =
-        await UserController.userService.CheckUserIdExistence(userId);
+        await this.userService.CheckUserIdExistence(userId);
 
       if (userExistsResponse.success === false) {
         return UserController.handleError(
@@ -479,7 +470,7 @@ class UserController {
         return UserController.handleError(reply, 400, Errors.PasswordsNotSame);
       }
       const resetPasswordById: ServiceResponse =
-        await UserController.userService.ResetPassword(userId, newPassword);
+        await this.userService.ResetPassword(userId, newPassword);
 
       if (resetPasswordById.success === false) {
         return UserController.handleError(
@@ -500,7 +491,7 @@ class UserController {
   async retrieveUserDetails(request: FastifyRequest, reply: FastifyReply) {
     try {
       const userDetails: ServiceResponse =
-        await UserController.userService.RetrieveUserDetails(
+        await this.userService.RetrieveUserDetails(
           request.userId ?? ""
         );
 
@@ -572,7 +563,7 @@ class UserController {
 
       if (isChangingPassword === true) {
         const verifyUserPassword =
-          await UserController.userService.ValidateUserPassword(
+          await this.userService.ValidateUserPassword(
             request.userId,
             currentPassword
           );
@@ -587,7 +578,7 @@ class UserController {
       }
 
       const updatedUserDetails =
-        await UserController.userService.UpdateUserDetails(
+        await this.userService.UpdateUserDetails(
           request.userId,
           username,
           phone,
@@ -618,7 +609,7 @@ class UserController {
       })
       .clearCookie(EnvironmentVariables.Cookie_Name_Social_Profile, {
         path: "/",
-      });
+      }).send();
   }
 
   async checkIfUserIsAuthenticated(_: FastifyRequest, reply: FastifyReply) {

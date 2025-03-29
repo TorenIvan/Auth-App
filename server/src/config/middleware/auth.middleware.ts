@@ -213,7 +213,11 @@ const authMiddleware: FastifyPluginAsync = fp(
             }
           }
 
+          console.log("cookies: ", request.cookies);
+          
           const refresh_token = retrieveRefreshToken(request.cookies) ?? "";
+          console.log("Eimai me refresh token: ", refresh_token);
+          
 
           const refresh_token_data = verifyJWT(
             refresh_token,
@@ -225,7 +229,7 @@ const authMiddleware: FastifyPluginAsync = fp(
             reply.status(200).send();
           }
         } catch {
-          reply.status(403).send();
+          return reply.status(403).send();
         }
       }
     );

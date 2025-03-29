@@ -12,7 +12,7 @@ import {
   userEditRequestBodySchema,
   verifyEmailQueryStringSchema,
 } from "./user.schema";
-import UserController from "./user.controller";
+
 
 /**
  * @description Encapsulates all the routes belonging to user in version 1
@@ -76,7 +76,7 @@ async function refreshTokens(fastify: FastifyInstance): Promise<void> {
     await fastify.verifyRefreshTokenCookie(request, reply);
     await fastify.verifySocialProfileTokenCookie(request, reply);
   });
-  fastify.get("/", new UserController(fastify).renewTokens);
+  fastify.get("/", fastify.userController.renewTokens);
 }
 
 /**
@@ -87,7 +87,7 @@ async function checkIsAuthenticated(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("preHandler", async (request, reply) => {
     await fastify.checkIfUserIsAuthenticated(request, reply);
   });
-  fastify.get("/", {}, new UserController(fastify).checkIfUserIsAuthenticated);
+  fastify.get("/", {}, fastify.userController.checkIfUserIsAuthenticated);
 }
 
 /**
@@ -102,7 +102,7 @@ async function loginWithCredentials(fastify: FastifyInstance): Promise<void> {
       await validateRequestBody(request, reply, authCredsBodySchema);
     }
   );
-  fastify.post("/", new UserController(fastify).loginCredentialsHandler);
+  fastify.post("/", fastify.userController.loginCredentialsHandler);
 }
 
 /**
@@ -113,7 +113,7 @@ async function loginWithFacebook(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("preHandler", async (request, reply) => {
     await fastify.actionForbiddenToAuthenticatedUser(request, reply);
   });
-  fastify.post("/", new UserController(fastify).loginFacebookHandler);
+  fastify.post("/", fastify.userController.loginFacebookHandler);
 }
 
 /**
@@ -157,7 +157,7 @@ async function registerWithCredentials(
     await fastify.actionForbiddenToAuthenticatedUser(request, reply);
     await validateRequestBody(request, reply, authCredsBodySchema);
   });
-  fastify.post("/", new UserController(fastify).registerCredentialsHandler);
+  fastify.post("/", fastify.userController.registerCredentialsHandler);
 }
 
 /**
@@ -168,7 +168,7 @@ async function logout(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("preHandler", async (request, reply) => {
     await fastify.verifyAccessTokenHeader(request, reply);
   });
-  fastify.post("/", {}, new UserController(fastify).logout);
+  fastify.post("/", {}, fastify.userController.logout);
 }
 
 /**
@@ -179,7 +179,7 @@ async function confirmEmail(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("preHandler", async (request, reply) => {
     await validateRequestQuery(request, reply, verifyEmailQueryStringSchema);
   });
-  fastify.get("/", new UserController(fastify).confirmEmailHandler);
+  fastify.get("/", fastify.userController.confirmEmailHandler);
 }
 
 /**
@@ -190,7 +190,7 @@ async function forgotPassword(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("preHandler", async (request, reply) => {
     await validateRequestBody(request, reply, forgotPasswordRequestSchema);
   });
-  fastify.post("/", new UserController(fastify).forgotPasswordHandler);
+  fastify.post("/", fastify.userController.forgotPasswordHandler);
 }
 
 /**
@@ -205,7 +205,7 @@ async function resetPassword(fastify: FastifyInstance): Promise<void> {
     await validateRequestQuery(request, reply, verifyEmailQueryStringSchema);
     await validateRequestBody(request, reply, resetPasswordRequestSchema);
   });
-  fastify.post("/", new UserController(fastify).resetPasswordHandler);
+  fastify.post("/", fastify.userController.resetPasswordHandler);
 }
 
 /**
@@ -216,7 +216,7 @@ async function getUserDetails(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("preHandler", async (request, reply) => {
     await fastify.verifyAccessTokenHeader(request, reply);
   });
-  fastify.get("/", new UserController(fastify).retrieveUserDetails);
+  fastify.get("/", fastify.userController.retrieveUserDetails);
 }
 
 /**
@@ -228,7 +228,7 @@ async function editUserDetails(fastify: FastifyInstance): Promise<void> {
     await fastify.verifyAccessTokenHeader(request, reply);
     await validateRequestBody(request, reply, userEditRequestBodySchema);
   });
-  fastify.post("/", new UserController(fastify).updateUserDetails);
+  fastify.post("/", fastify.userController.updateUserDetails);
 }
 
 async function validateRequestBody<T>(

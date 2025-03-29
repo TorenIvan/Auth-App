@@ -11,6 +11,8 @@ export async function logoutUser(queryClient?: QueryClient): Promise<void> {
     addAuthorizationHeader("");
     queryClient?.clear();
   } catch (error: unknown | AxiosError) {
+    console.log(error);
+    
     if (isAxiosError(error)) {
       const statusCode = (error as AxiosError)?.response?.status ?? 0;
       const message = ((error as AxiosError)?.response?.data as any)?.message;
