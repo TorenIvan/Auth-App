@@ -11,8 +11,7 @@ import { Errors } from "../../errors";
 const notAddedSlot: JSX.Element = <em>{Constants.NotAdded}</em>;
 
 function ProfileDetails(): JSX.Element | undefined {
-  const { data: userInfo, isLoading, isFetching, isError } = useQuery(userDetailsQuery);
-  console.log({isFetching});
+  const { data: userInfo, isLoading, isError } = useQuery(userDetailsQuery);
   useEffect(() => {
     if (isError) {
       toast.error(Errors.GenericError);

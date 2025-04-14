@@ -39,7 +39,6 @@ axiosInstance.interceptors.response.use(
 
           originalRequest.headers["Authorization"] = authorizationHeader;
           originalRequest.headers["Content-Type"] = lastAxiosContentTypeHeader;
-          console.log('Pira token: ', access_token, '  kai eimai me original request: ', originalRequest);
           return axiosInstance(originalRequest);
         } catch (err) {
           toast.error("Session not exists or expired. Redirecting to login...");

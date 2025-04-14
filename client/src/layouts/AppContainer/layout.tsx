@@ -28,7 +28,6 @@ function ProfileLayout() {
   }
 
   const logoutAllTabs = () => {
-    console.log('logoutAllTabs');
     logoutChannel.onmessage = async () => {
       try {
         await logoutUser(queryClient);

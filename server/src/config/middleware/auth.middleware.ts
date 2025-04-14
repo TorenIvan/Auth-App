@@ -173,9 +173,6 @@ const authMiddleware: FastifyPluginAsync = fp(
           }
 
           const refresh_token: string | null = retrieveRefreshToken(request.cookies);
-          console.log(`pira refresh token ${refresh_token}`);
-          
-
           if (refresh_token !== null) {
             const refresh_token_data = verifyJWT(
               refresh_token,
@@ -222,8 +219,6 @@ const authMiddleware: FastifyPluginAsync = fp(
 
           if (refresh_token_data?.userId && refresh_token_data?.signInMethod) {
             await verifySocialProfileToken(request.cookies, refresh_token_data.signInMethod);
-            console.log('replied');
-            
             return reply.status(200).send();
           }
         } catch {

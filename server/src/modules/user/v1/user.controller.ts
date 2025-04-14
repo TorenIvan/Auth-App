@@ -535,9 +535,6 @@ class UserController {
     try {
       const { username, biography, phone, currentPassword, newPassword } =
         request.body;
-
-      console.log({ body: request.body });
-
       const images = request.body.file as Array<UploadedFile>;
 
       let image: UploadedFile | null = (images[0] as UploadedFile) || null;
@@ -568,15 +565,9 @@ class UserController {
         );
       }
 
-      console.log(this.dbClient);
-
       const session = this.dbClient.startSession();
-
-      console.log("after session");
       try {
         await session.withTransaction(async () => {
-          console.log("inside transaction");
-
           if (isChangingPassword === true) {
             const verifyUserPassword =
               await this.userService.ValidateUserPassword(
