@@ -12,6 +12,7 @@ import {
   userEditRequestBodySchema,
   verifyEmailQueryStringSchema,
 } from "./user.schema";
+import UserController from "./user.controller";
 
 
 /**
@@ -33,15 +34,15 @@ const userRoutes: FastifyPluginAsync = async (
   fastify.register(loginWithFacebook, {
     prefix: "/v1/auth/login/facebook",
   });
-  fastify.register(loginWithGoogle, {
-    prefix: "/v1/auth/login/google",
-  });
-  fastify.register(loginWithGithub, {
-    prefix: "/v1/auth/login/github",
-  });
-  fastify.register(loginWithTwitter, {
-    prefix: "/v1/auth/login/twitter",
-  });
+  // fastify.register(loginWithGoogle, {
+  //   prefix: "/v1/auth/login/google",
+  // });
+  // fastify.register(loginWithGithub, {
+  //   prefix: "/v1/auth/login/github",
+  // });
+  // fastify.register(loginWithTwitter, {
+  //   prefix: "/v1/auth/login/twitter",
+  // });
   fastify.register(registerWithCredentials, {
     prefix: "/v1/auth/register/credentials",
   });
@@ -72,11 +73,12 @@ export default userRoutes;
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function refreshTokens(fastify: FastifyInstance): Promise<void> {
+  const userController = new UserController(fastify.DBClient, fastify.userService);
   fastify.addHook("onRequest", async (request, reply) => {
     await fastify.verifyRefreshTokenCookie(request, reply);
     await fastify.verifySocialProfileTokenCookie(request, reply);
   });
-  fastify.get("/", fastify.userController.renewTokens);
+  fastify.get("/", userController.renewTokens.bind(userController));
 }
 
 /**
@@ -84,10 +86,11 @@ async function refreshTokens(fastify: FastifyInstance): Promise<void> {
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function checkIsAuthenticated(fastify: FastifyInstance): Promise<void> {
+  const userController = new UserController(fastify.DBClient, fastify.userService);
   fastify.addHook("preHandler", async (request, reply) => {
     await fastify.checkIfUserIsAuthenticated(request, reply);
   });
-  fastify.get("/", {}, fastify.userController.checkIfUserIsAuthenticated);
+  fastify.get("/", {}, userController.checkIfUserIsAuthenticated.bind(userController));
 }
 
 /**
@@ -95,6 +98,7 @@ async function checkIsAuthenticated(fastify: FastifyInstance): Promise<void> {
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function loginWithCredentials(fastify: FastifyInstance): Promise<void> {
+  const userController = new UserController(fastify.DBClient, fastify.userService);
   fastify.addHook(
     "preHandler",
     async (request: FastifyRequest, reply: FastifyReply) => {
@@ -102,7 +106,7 @@ async function loginWithCredentials(fastify: FastifyInstance): Promise<void> {
       await validateRequestBody(request, reply, authCredsBodySchema);
     }
   );
-  fastify.post("/", fastify.userController.loginCredentialsHandler);
+  fastify.post("/", userController.loginCredentialsHandler.bind(userController));
 }
 
 /**
@@ -110,41 +114,42 @@ async function loginWithCredentials(fastify: FastifyInstance): Promise<void> {
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function loginWithFacebook(fastify: FastifyInstance): Promise<void> {
+  const userController = new UserController(fastify.DBClient, fastify.userService);
   fastify.addHook("preHandler", async (request, reply) => {
     await fastify.actionForbiddenToAuthenticatedUser(request, reply);
   });
-  fastify.post("/", fastify.userController.loginFacebookHandler);
+  fastify.post("/", userController.loginFacebookHandler.bind(userController));
 }
 
 /**
  * Encapsulates the login with google route
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
-async function loginWithGoogle(fastify: FastifyInstance): Promise<void> {
-  fastify.get("/", async function (request, reply) {
-    return "this is a login example route with google";
-  });
-}
+// async function loginWithGoogle(fastify: FastifyInstance): Promise<void> {
+//   fastify.get("/", async function (request, reply) {
+//     return "this is a login example route with google";
+//   });
+// }
 
 /**
  * Encapsulates the login with github route
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
-async function loginWithGithub(fastify: FastifyInstance): Promise<void> {
-  fastify.get("/", async function (request, reply) {
-    return "this is a login example route with github";
-  });
-}
+//async function loginWithGithub(fastify: FastifyInstance): Promise<void> {
+//  fastify.get("/", async function (request, reply) {
+//    return "this is a login example route with github";
+//  });
+//}
 
 /**
  * Encapsulates the login with twitter route
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
-async function loginWithTwitter(fastify: FastifyInstance): Promise<void> {
-  fastify.get("/", async function (request, reply) {
-    return "this is a login example route with twitter";
-  });
-}
+// async function loginWithTwitter(fastify: FastifyInstance): Promise<void> {
+//   fastify.get("/", async function (request, reply) {
+//     return "this is a login example route with twitter";
+//   });
+// }
 
 /**
  * Encapsulates the register with credentials route
@@ -153,11 +158,12 @@ async function loginWithTwitter(fastify: FastifyInstance): Promise<void> {
 async function registerWithCredentials(
   fastify: FastifyInstance
 ): Promise<void> {
+  const userController = new UserController(fastify.DBClient, fastify.userService);
   fastify.addHook("preHandler", async (request, reply) => {
     await fastify.actionForbiddenToAuthenticatedUser(request, reply);
     await validateRequestBody(request, reply, authCredsBodySchema);
   });
-  fastify.post("/", fastify.userController.registerCredentialsHandler);
+  fastify.post("/", userController.registerCredentialsHandler.bind(userController));
 }
 
 /**
@@ -165,10 +171,11 @@ async function registerWithCredentials(
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function logout(fastify: FastifyInstance): Promise<void> {
+  const userController = new UserController(fastify.DBClient, fastify.userService);
   fastify.addHook("preHandler", async (request, reply) => {
     await fastify.verifyAccessTokenHeader(request, reply);
   });
-  fastify.post("/", {}, fastify.userController.logout);
+  fastify.post("/", {}, userController.logout.bind(userController));
 }
 
 /**
@@ -176,10 +183,11 @@ async function logout(fastify: FastifyInstance): Promise<void> {
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function confirmEmail(fastify: FastifyInstance): Promise<void> {
+  const userController = new UserController(fastify.DBClient, fastify.userService);
   fastify.addHook("preHandler", async (request, reply) => {
     await validateRequestQuery(request, reply, verifyEmailQueryStringSchema);
   });
-  fastify.get("/", fastify.userController.confirmEmailHandler);
+  fastify.get("/", userController.confirmEmailHandler.bind(userController));
 }
 
 /**
@@ -187,10 +195,11 @@ async function confirmEmail(fastify: FastifyInstance): Promise<void> {
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function forgotPassword(fastify: FastifyInstance): Promise<void> {
+  const userController = new UserController(fastify.DBClient, fastify.userService);
   fastify.addHook("preHandler", async (request, reply) => {
     await validateRequestBody(request, reply, forgotPasswordRequestSchema);
   });
-  fastify.post("/", fastify.userController.forgotPasswordHandler);
+  fastify.post("/", userController.forgotPasswordHandler.bind(userController));
 }
 
 /**
@@ -198,6 +207,7 @@ async function forgotPassword(fastify: FastifyInstance): Promise<void> {
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function resetPassword(fastify: FastifyInstance): Promise<void> {
+  const userController = new UserController(fastify.DBClient, fastify.userService);
   fastify.addHook("onRequest", async (request, reply) => {
     await fastify.verifyResetPasswordCookie(request, reply);
   });
@@ -205,7 +215,7 @@ async function resetPassword(fastify: FastifyInstance): Promise<void> {
     await validateRequestQuery(request, reply, verifyEmailQueryStringSchema);
     await validateRequestBody(request, reply, resetPasswordRequestSchema);
   });
-  fastify.post("/", fastify.userController.resetPasswordHandler);
+  fastify.post("/", userController.resetPasswordHandler.bind(userController));
 }
 
 /**
@@ -213,10 +223,11 @@ async function resetPassword(fastify: FastifyInstance): Promise<void> {
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function getUserDetails(fastify: FastifyInstance): Promise<void> {
+  const userController = new UserController(fastify.DBClient, fastify.userService);
   fastify.addHook("preHandler", async (request, reply) => {
     await fastify.verifyAccessTokenHeader(request, reply);
   });
-  fastify.get("/", fastify.userController.retrieveUserDetails);
+  fastify.get("/", userController.retrieveUserDetails.bind(userController));
 }
 
 /**
@@ -224,11 +235,12 @@ async function getUserDetails(fastify: FastifyInstance): Promise<void> {
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
 async function editUserDetails(fastify: FastifyInstance): Promise<void> {
+  const userController = new UserController(fastify.DBClient, fastify.userService);
   fastify.addHook("preHandler", async (request, reply) => {
     await fastify.verifyAccessTokenHeader(request, reply);
     await validateRequestBody(request, reply, userEditRequestBodySchema);
   });
-  fastify.post("/", fastify.userController.updateUserDetails);
+  fastify.post("/", userController.updateUserDetails.bind(userController));
 }
 
 async function validateRequestBody<T>(

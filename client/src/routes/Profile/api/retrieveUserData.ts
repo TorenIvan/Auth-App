@@ -4,10 +4,10 @@ import { Errors } from "../errors";
 
 const userDetailsUri = "v1/profile/details";
 
-export const userDetailsQuery = () => ({
+export const userDetailsQuery = {
   queryKey: ["user", "details"],
   queryFn: () => retrieveUserData(),
-});
+};
 
 async function retrieveUserData(): Promise<IResponse> {
   try {
@@ -19,6 +19,7 @@ async function retrieveUserData(): Promise<IResponse> {
   } catch (error: unknown | AxiosError) {
     if (isAxiosError(error)) {
       const statusCode = (error as AxiosError)?.response?.status ?? 0;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const message = ((error as AxiosError)?.response?.data as any)?.message;
 
       if (statusCode < 500 && message) {

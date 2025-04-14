@@ -1,5 +1,6 @@
 import { Fragment, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   faCircleUser,
   faRightFromBracket,
@@ -15,7 +16,6 @@ import { useToggleSubMenu } from "../../routes/Profile/hooks";
 import { logoutUser, userDetailsQuery } from "../../routes/Profile/api";
 import { SideMenu } from "../../routes/Profile/components";
 import { Constants } from "../../routes/Profile/constants";
-import toast from "react-hot-toast";
 
 function ProfileLayout() {
   const [isSubMenuOpen, toggleSubMenu] = useToggleSubMenu();
@@ -23,11 +23,12 @@ function ProfileLayout() {
   const queryClient = useQueryClient();
   const logoutChannel = new BroadcastChannel('logout');
 
-  async function logout() {
+  function logout() {
     logoutChannel.postMessage('logout');
   }
 
   const logoutAllTabs = () => {
+    console.log('logoutAllTabs');
     logoutChannel.onmessage = async () => {
       try {
         await logoutUser(queryClient);
@@ -87,7 +88,7 @@ function ProfileLayout() {
 export function loader(queryClient: QueryClient) {
   return async function() {
     try {
-      const query = userDetailsQuery();
+      const query = userDetailsQuery;
       await queryClient.ensureQueryData(query);
       return true;
     } catch (error: unknown) {

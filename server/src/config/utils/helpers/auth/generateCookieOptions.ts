@@ -1,6 +1,6 @@
 import { EnvironmentVariables } from "../../constants/EnvironmentVariables";
 
-type SameSiteType = boolean | "none" | "lax" | "strict" | undefined;
+export type SameSiteType = boolean | "none" | "lax" | "strict" | undefined;
 
 const cookieExpirationDays = Number(
   String(EnvironmentVariables.Refresh_Token_Expiration_Time).replace(/\D/, "")
@@ -17,6 +17,18 @@ const resetCookieExpirationTime = Number(
   )
 );
 
+export const generateCookieOptionsToClear = (isItResetPassword = false) => {
+  /**
+   * *** The below attributes +domain which is known here, are needed to identify the cookie from browser in order to be deleted. ***
+   * *** If for some reason, you miss one of them, it might not be deleted, depending on the browser. ***
+   */
+  return {
+    path: isItResetPassword === true ? "/v1/auth" : "/",
+    sameSite: "none" as SameSiteType,
+    secure: true,
+  };
+};
+
 export const generateCookieOptions = () => {
   const cookieExpirationDate = new Date(
     new Date().setDate(new Date().getDate() + cookieExpirationDays)
@@ -27,7 +39,8 @@ export const generateCookieOptions = () => {
     httpOnly: true,
     sameSite: "none" as SameSiteType,
     secure: true,
-    expires: cookieExpirationDate, //for tabs compatibility
+    expires: cookieExpirationDate,
+    maxAge: cookieExpirationDate,
     path: "/",
   };
   return options;
@@ -43,7 +56,8 @@ export const generateSocialCookieOptions = () => {
     httpOnly: true,
     sameSite: "none" as SameSiteType,
     secure: true,
-    expires: cookieExpirationDate, //for tabs compatibility
+    expires: cookieExpirationDate,
+    maxAge: cookieExpirationDate,
     path: "/",
   };
   return options;
@@ -59,7 +73,8 @@ export const generateResetCookieOptions = () => {
     httpOnly: true,
     sameSite: "none" as SameSiteType,
     secure: true,
-    expires: cookieExpirationDate, //for tabs compatibility
+    expires: cookieExpirationDate,
+    maxAge: cookieExpirationDate,
   };
   return options;
 };

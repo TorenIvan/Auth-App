@@ -23,9 +23,8 @@ const authMiddleware: FastifyPluginAsync = fp(
       ): Promise<void> {
         try {
           const authHeader: string | undefined = request.headers?.authorization;
-
           const authToken: string | null = retrieveAccessToken(authHeader);
-          if (authToken === null) {
+          if (authToken === null || authToken === undefined) {
             throw "error";
           }
 
@@ -174,6 +173,8 @@ const authMiddleware: FastifyPluginAsync = fp(
           }
 
           const refresh_token: string | null = retrieveRefreshToken(request.cookies);
+          console.log(`pira refresh token ${refresh_token}`);
+          
 
           if (refresh_token !== null) {
             const refresh_token_data = verifyJWT(
@@ -209,16 +210,11 @@ const authMiddleware: FastifyPluginAsync = fp(
             );
             if (access_token_data?.userId && access_token_data?.signInMethod) {
               await verifySocialProfileToken(request.cookies, access_token_data.signInMethod);
-              reply.status(200).send();
+              return reply.status(200).send();
             }
           }
 
-          console.log("cookies: ", request.cookies);
-          
           const refresh_token = retrieveRefreshToken(request.cookies) ?? "";
-          console.log("Eimai me refresh token: ", refresh_token);
-          
-
           const refresh_token_data = verifyJWT(
             refresh_token,
             EnvironmentVariables.Refresh_Token_Secret
@@ -226,7 +222,9 @@ const authMiddleware: FastifyPluginAsync = fp(
 
           if (refresh_token_data?.userId && refresh_token_data?.signInMethod) {
             await verifySocialProfileToken(request.cookies, refresh_token_data.signInMethod);
-            reply.status(200).send();
+            console.log('replied');
+            
+            return reply.status(200).send();
           }
         } catch {
           return reply.status(403).send();

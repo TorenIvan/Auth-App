@@ -19,7 +19,7 @@ const databasePlugin: FastifyPluginAsync = fp(
           socketTimeoutMS: 45000,
           monitorCommands: true,
           /**
-           * To be added...
+           * TLS support for mongo database to be added...
            */
           // tls: !EnvironmentVariables.IsProduction,
           // tlsAllowInvalidCertificates: !EnvironmentVariables.IsProduction,
@@ -34,12 +34,16 @@ const databasePlugin: FastifyPluginAsync = fp(
 
       fastify
         .decorate("MongoDB", db)
+        .decorate("DBClient", client)
         .decorate("User", users)
         .decorate("Image", images)
         .addHook("onClose", () => {
           console.error(Strings.CloseDB);
         });
 
+      /**
+       * *** Schema versioning (aka migrations) to be added ***
+       */
       // await users.updateMany(
       //   { schemaVersion: { $exists: false } },
       //   {

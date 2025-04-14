@@ -11,8 +11,7 @@ export const globalQueryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       refetchOnMount: false,
-      retry: false,
-      cacheTime: Infinity,
+      staleTime: 120000,
     },
   },
 });

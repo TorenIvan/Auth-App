@@ -51,6 +51,8 @@ export default indexRouter;
 async function indexLoader() {
   try {
     const isAuthenticated = await checkIfUserIsAuthenticated();
+    console.log({isAuthenticated});
+    
     if (isAuthenticated === true) {
       return redirect("profile");
     }

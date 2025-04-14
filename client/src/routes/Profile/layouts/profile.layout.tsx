@@ -1,5 +1,6 @@
 import { Fragment, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   faCircleUser,
   faRightFromBracket,
@@ -12,6 +13,7 @@ import { useToggleSubMenu } from "../hooks";
 import { logoutUser, userDetailsQuery } from "../api";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { BroadcastChannel } from 'broadcast-channel';
+import { Errors } from "../errors";
 
 function ProfileLayout() {
   const [isSubMenuOpen, toggleSubMenu] = useToggleSubMenu();
@@ -19,15 +21,21 @@ function ProfileLayout() {
   const queryClient = useQueryClient();
   const logoutChannel = new BroadcastChannel('logout');
 
-  async function logout() {
+  function logout() {
     logoutChannel.postMessage('logout');
   }
 
   const logoutAllTabs = () => {
     logoutChannel.onmessage = async () => {
-      await logoutUser(queryClient);
-      logoutChannel.close();
-      return navigate("login");
+      try {
+        await logoutUser(queryClient);
+        logoutChannel.close();
+        return navigate("login");
+      } catch (error) {
+        console.error(error);
+        toast.error(Errors.GenericError);
+        return undefined;
+      }
     }
   }
 
@@ -77,8 +85,9 @@ function ProfileLayout() {
 export function loader(queryClient: QueryClient) {
   return async function() {
     try {
-      const query = userDetailsQuery();
-      await queryClient.ensureQueryData(query);
+      const query = userDetailsQuery;
+      const data = await queryClient.ensureQueryData(query);
+      queryClient.setQueryData(query.queryKey, data);
       return true;
     } catch (error: unknown) {
       return false;

@@ -1,6 +1,6 @@
 import { Fragment, useRef } from "react";
 import { Form, NavLink, useNavigate } from "react-router-dom";
-import { QueryClient, useQueryClient } from "@tanstack/react-query";
+import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   faCamera,
   faEnvelope,
@@ -16,7 +16,6 @@ import { InputGroup, Textarea } from "../../../../components";
 import { inputStyles } from "../../../../styles";
 import { ProfileEditItem as EditItem, UserPhoto } from "../../components";
 import { Constants } from "../../constants";
-import { TUserInfo } from "../../types";
 import { useImageChange } from "../../hooks";
 import { editUserData, userDetailsQuery } from "../../api";
 import { isEditFormValid as isFormValid } from "../../helpers";
@@ -26,9 +25,7 @@ function ProfileEdit() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const inputFileRef = useRef<HTMLInputElement>(null);
-  const userInfo: TUserInfo = queryClient.getQueryData(
-    userDetailsQuery().queryKey
-  );
+  const { data: userInfo } = useQuery(userDetailsQuery)
   const [image, handleImageChange] = useImageChange(userInfo?.image);
 
   function triggerImageChange() {
@@ -270,7 +267,7 @@ function action(queryClient: QueryClient, formData: FormData) {
 
       await editUserData(userData);
 
-      await queryClient.refetchQueries(userDetailsQuery().queryKey);
+      await queryClient.refetchQueries(userDetailsQuery.queryKey);
       return true;
     } catch (error) {
       console.error(error)

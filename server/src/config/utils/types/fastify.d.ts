@@ -1,14 +1,13 @@
-import { Collection, Db } from "mongodb";
+import { Collection, Db, MongoClient } from "mongodb";
 import User from "../../../modules/user/v1/user.model";
 import UserService from "../../../modules/user/v1/user.service";
-import UserController from "../../../modules/user/v1/user.controller";
 
 declare module "fastify" {
   export interface FastifyInstance {
     MongoDB: Db;
+    DBClient: MongoClient,
     User: Collection<User>;
     userService: UserService;
-    userController: UserController;
     verifyAccessTokenHeader: (
       request: FastifyRequest,
       reply: FastifyReply

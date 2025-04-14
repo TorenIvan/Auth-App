@@ -1,3 +1,4 @@
+import { MongoClient, TransactionOptions } from "mongodb";
 import { FastifyReply, FastifyRequest } from "fastify";
 import createError from "@fastify/error";
 import { EnvironmentVariables } from "../../../config/utils/constants/EnvironmentVariables";
@@ -5,6 +6,7 @@ import { Errors } from "../../../config/utils/constants/Errors";
 import { Strings } from "../../../config/utils/constants/Strings";
 import {
   generateCookieOptions,
+  generateCookieOptionsToClear,
   generateResetCookieOptions,
   generateSocialCookieOptions,
 } from "../../../config/utils/helpers/auth/generateCookieOptions";
@@ -25,11 +27,19 @@ import UserService from "./user.service";
 import { isFileSizeExceeded } from "../../../config/utils/helpers";
 import axios from "axios";
 
+const transactionOptions: TransactionOptions = {
+  readPreference: "primary",
+  readConcern: { level: "local" },
+  writeConcern: { w: "majority" },
+};
+
 class UserController {
   private userService: UserService;
+  private dbClient: MongoClient;
 
-  constructor(userService: UserService) {
+  constructor(client: MongoClient, userService: UserService) {
     this.userService = userService;
+    this.dbClient = client;
   }
 
   private static handleError(
@@ -41,16 +51,16 @@ class UserController {
     if (customError !== undefined) {
       switch (errorCode) {
         case 403:
-          error = createError('403', customError);
+          error = createError("403", customError);
           break;
         case 401:
-          error = createError('401', customError);
+          error = createError("401", customError);
           break;
         case 500:
-          error = createError('500', customError);
+          error = createError("500", customError);
           break;
         default:
-          error = createError('400', customError);
+          error = createError("400", customError);
           break;
       }
     } else {
@@ -95,34 +105,42 @@ class UserController {
   ) {
     try {
       const { email, password } = request.body;
+      const session = this.dbClient.startSession();
+      try {
+        await session.withTransaction(async () => {
+          const serviceResponse: ServiceResponse =
+            await this.userService.InsertUserWithCredentials(
+              email.toLowerCase(),
+              password
+            );
 
-      const serviceResponse: ServiceResponse =
-        await this.userService.InsertUserWithCredentials(
-          email.toLowerCase(),
-          password
-        );
+          const insertedCorrectly: boolean = serviceResponse.success;
+          if (insertedCorrectly === false) {
+            return UserController.handleError(
+              reply,
+              400,
+              serviceResponse?.customError
+            );
+          }
 
-      const insertedCorrectly: boolean = serviceResponse.success;
-      if (insertedCorrectly === false) {
-        return UserController.handleError(
-          reply,
-          400,
-          serviceResponse?.customError
-        );
+          const email_token = generateJWT(
+            {
+              userId: serviceResponse.data!.userId.toString(),
+              type: Strings.ConfirmEmailType,
+            },
+            EnvironmentVariables.Email_Secret,
+            EnvironmentVariables.Email_Token_Expiration_Time
+          );
+
+          sendEmail(email, email_token, Strings.ActionConfirmEmail);
+          reply.code(201);
+        }, transactionOptions);
+      } catch (error) {
+        await session.abortTransaction();
+        throw error;
+      } finally {
+        await session.endSession();
       }
-
-      const email_token = generateJWT(
-        {
-          userId: serviceResponse.data!.userId.toString(),
-          type: Strings.ConfirmEmailType,
-        },
-        EnvironmentVariables.Email_Secret,
-        EnvironmentVariables.Email_Token_Expiration_Time
-      );
-
-      sendEmail(email, email_token, Strings.ActionConfirmEmail);
-
-      reply.code(201);
     } catch (error) {
       UserController.handleError(reply, 500, Errors.GenericError);
     }
@@ -150,9 +168,7 @@ class UserController {
         }
 
         const serviceResponse: ServiceResponse =
-          await this.userService.UpdateIsVerifiedWhenUserExists(
-            userId
-          );
+          await this.userService.UpdateIsVerifiedWhenUserExists(userId);
 
         const doneVerified: boolean = serviceResponse.success;
         if (doneVerified === false) {
@@ -250,12 +266,6 @@ class UserController {
         }
         userId = userSocialLoginResponse.data!.userId.toString();
       }
-      /**
-       * Start of register user operation
-       */
-
-
-      
       const cookieOptions = generateSocialCookieOptions();
 
       reply
@@ -299,9 +309,7 @@ class UserController {
       }
 
       const hasConfirmedEmail: ServiceResponse =
-        await this.userService.CheckUserEmailConfirmation(
-          email.toLowerCase()
-        );
+        await this.userService.CheckUserEmailConfirmation(email.toLowerCase());
 
       if (hasConfirmedEmail.success === false) {
         const new_email_token = generateJWT(
@@ -325,12 +333,12 @@ class UserController {
       const { access_token, refresh_token } = generateAuthJWTs(
         userCredsResponse.data!.userId.toString()
       );
-      await this.userService.updateUserRefreshToken(email.toLowerCase(), refresh_token);
+      await this.userService.updateUserRefreshToken(
+        email.toLowerCase(),
+        refresh_token
+      );
 
       const cookieOptions = generateCookieOptions();
-      console.log("resfresh_token: ", refresh_token);
-      console.log("cookie_Options: ", cookieOptions);
-      console.log("cookieName: ", EnvironmentVariables.Cookie_Name);
 
       reply
         .code(200)
@@ -353,16 +361,12 @@ class UserController {
       const { email } = request.body;
 
       const serviceResponse: ServiceResponse =
-        await this.userService.CheckEmailExistence(
-          email.toLowerCase()
-        );
+        await this.userService.CheckEmailExistence(email.toLowerCase());
 
       const emailExists: boolean = serviceResponse.success;
 
       const hasConfirmedEmail: ServiceResponse =
-        await this.userService.CheckUserEmailConfirmation(
-          email.toLowerCase()
-        );
+        await this.userService.CheckUserEmailConfirmation(email.toLowerCase());
 
       const emailConfirmed: boolean = hasConfirmedEmail.success;
 
@@ -480,9 +484,12 @@ class UserController {
         );
       }
 
-      reply.code(200).clearCookie(EnvironmentVariables.Reset_Pass_Cookie_Name, {
-        path: "/v1/auth",
-      });
+      reply
+        .code(200)
+        .clearCookie(
+          EnvironmentVariables.Reset_Pass_Cookie_Name,
+          generateCookieOptionsToClear(true)
+        );
     } catch (error) {
       UserController.handleError(reply, 500, Errors.GenericError);
     }
@@ -491,9 +498,7 @@ class UserController {
   async retrieveUserDetails(request: FastifyRequest, reply: FastifyReply) {
     try {
       const userDetails: ServiceResponse =
-        await this.userService.RetrieveUserDetails(
-          request.userId ?? ""
-        );
+        await this.userService.RetrieveUserDetails(request.userId ?? "");
 
       if (userDetails.success === false) {
         return UserController.handleError(reply, 400, userDetails?.customError);
@@ -531,6 +536,8 @@ class UserController {
       const { username, biography, phone, currentPassword, newPassword } =
         request.body;
 
+      console.log({ body: request.body });
+
       const images = request.body.file as Array<UploadedFile>;
 
       let image: UploadedFile | null = (images[0] as UploadedFile) || null;
@@ -561,55 +568,73 @@ class UserController {
         );
       }
 
-      if (isChangingPassword === true) {
-        const verifyUserPassword =
-          await this.userService.ValidateUserPassword(
+      console.log(this.dbClient);
+
+      const session = this.dbClient.startSession();
+
+      console.log("after session");
+      try {
+        await session.withTransaction(async () => {
+          console.log("inside transaction");
+
+          if (isChangingPassword === true) {
+            const verifyUserPassword =
+              await this.userService.ValidateUserPassword(
+                request.userId,
+                currentPassword
+              );
+
+            if (verifyUserPassword.success === false) {
+              return UserController.handleError(
+                reply,
+                400,
+                Errors.IncorrectPassword
+              );
+            }
+          }
+
+          const updatedUserDetails = await this.userService.UpdateUserDetails(
             request.userId,
-            currentPassword
+            username,
+            phone,
+            biography,
+            newPassword,
+            image
           );
 
-        if (verifyUserPassword.success === false) {
-          return UserController.handleError(
-            reply,
-            400,
-            Errors.IncorrectPassword
-          );
-        }
+          if (updatedUserDetails.success === false) {
+            return UserController.handleError(
+              reply,
+              400,
+              updatedUserDetails?.customError
+            );
+          }
+
+          reply.code(200);
+        }, transactionOptions);
+      } catch (error) {
+        await session.abortTransaction();
+        throw error;
+      } finally {
+        await session.endSession();
       }
-
-      const updatedUserDetails =
-        await this.userService.UpdateUserDetails(
-          request.userId,
-          username,
-          phone,
-          biography,
-          newPassword,
-          image
-        );
-
-      if (updatedUserDetails.success === false) {
-        return UserController.handleError(
-          reply,
-          400,
-          updatedUserDetails?.customError
-        );
-      }
-
-      reply.code(200);
     } catch (error) {
       UserController.handleError(reply, 500, Errors.GenericError);
     }
   }
 
   async logout(_: FastifyRequest, reply: FastifyReply) {
-    reply
+    return reply
       .code(200)
-      .clearCookie(EnvironmentVariables.Cookie_Name, {
-        path: "/",
-      })
-      .clearCookie(EnvironmentVariables.Cookie_Name_Social_Profile, {
-        path: "/",
-      }).send();
+      .clearCookie(
+        EnvironmentVariables.Cookie_Name,
+        generateCookieOptionsToClear()
+      )
+      .clearCookie(
+        EnvironmentVariables.Cookie_Name_Social_Profile,
+        generateCookieOptionsToClear()
+      )
+      .send({ message: "Logged out successfully" });
   }
 
   async checkIfUserIsAuthenticated(_: FastifyRequest, reply: FastifyReply) {
