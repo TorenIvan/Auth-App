@@ -40,6 +40,7 @@ export async function sendEmail(
   try {
     await transporter.sendMail(mailOptions);
   } catch (error) {
+    console.error('Something went wrong');
     console.error(error);
   }
 }

@@ -1,4 +1,6 @@
-function profileRoutes() {
+import { QueryClient } from "@tanstack/react-query";
+
+function profileRoutes(queryClient: QueryClient) {
   return [
     {
       path: "profile",
@@ -9,7 +11,13 @@ function profileRoutes() {
         },
         {
           path: "edit",
-          lazy: () => import("./pages/ProfileEdit"),
+          lazy: async () => {
+            const module = await import("./pages/ProfileEdit");
+            return {
+              ...module,
+              action: module.createEditProfileAction(queryClient),
+            };
+          },
         },
       ],
     },

@@ -34,6 +34,7 @@ export function isEditFormValid(formData: FormData): boolean {
 
       case "currentPassword":
       case "newPassword":
+        // eslint-disable-next-line no-case-declarations
         const isPasswordEmpty: boolean = valueString.trim().length === 0;
         if (!isPasswordEmpty && isPasswordValid(valueString) === false) {
           if (keyString === "currentPassword") {

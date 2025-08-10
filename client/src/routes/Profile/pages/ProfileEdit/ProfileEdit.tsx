@@ -1,6 +1,7 @@
 import { Fragment, useRef } from "react";
-import { Form, NavLink, useNavigate } from "react-router-dom";
-import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ActionFunctionArgs, NavLink, redirect, useFetcher } from "react-router-dom";
+import toast from "react-hot-toast";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 import {
   faCamera,
   faEnvelope,
@@ -22,10 +23,9 @@ import { isEditFormValid as isFormValid } from "../../helpers";
 import styles from "./styles.module.scss";
 
 function ProfileEdit() {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const fetcher = useFetcher();
   const inputFileRef = useRef<HTMLInputElement>(null);
-  const { data: userInfo } = useQuery(userDetailsQuery)
+  const { data: userInfo } = useQuery(userDetailsQuery);
   const [image, handleImageChange] = useImageChange(userInfo?.image);
 
   function triggerImageChange() {
@@ -44,17 +44,10 @@ function ProfileEdit() {
     if (file !== undefined) {
       formData.set("file", file);
     }
-
-    try {
-      const updated = await action(queryClient, formData)();
-      if (updated === false) {
-        return;
-      }
-      navigate(`${import.meta.env.VITE_CLIENT_URI}profile`);
-    } catch (error) {
-      console.error(error);
-      return;
-    }
+    fetcher.submit(formData, {
+      method: "post",
+      action: "",
+    });
   }
 
   return (
@@ -63,7 +56,7 @@ function ProfileEdit() {
         <span className={styles["arrow-left"]} />
         <span>{Constants.Back}</span>
       </NavLink>
-      <Form
+      <fetcher.Form
         className={styles.form}
         autoComplete="off"
         method="post"
@@ -235,16 +228,17 @@ function ProfileEdit() {
             </button>
           </section>
         </EditItem>
-      </Form>
+      </fetcher.Form>
     </div>
   );
 }
 
-export { ProfileEdit as default, action };
+export { ProfileEdit as default, createEditProfileAction };
 
-function action(queryClient: QueryClient, formData: FormData) {
-  return async function() {
+function createEditProfileAction(queryClient: QueryClient) {
+  return async function ({ request }: ActionFunctionArgs) {
     try {
+      const formData = await request.formData();
       const file = formData.get("file");
 
       const updatedFormData = new FormData();
@@ -266,12 +260,12 @@ function action(queryClient: QueryClient, formData: FormData) {
       }
 
       await editUserData(userData);
-
       await queryClient.refetchQueries(userDetailsQuery.queryKey);
-      return true;
+      return redirect(`${import.meta.env.VITE_CLIENT_URI}profile`);
     } catch (error) {
-      console.error(error)
-      return false;
+      console.error(error);
+      toast.error(error as string);
+      return undefined;
     }
   };
 }

@@ -1,30 +1,27 @@
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, useLoaderData, useNavigate } from "react-router-dom";
 
-function Component() {
+function PublicRoutes() {
   const navigate = useNavigate();
   const isAuthenticated = useLoaderData();
   const [showChildren, setShowChildren] = useState<boolean>(false);
 
   useEffect(() => {
-    if (isAuthenticated === true) {
-      navigate(`${import.meta.env.VITE_CLIENT_URI}profile`);
-    }
-    if (isAuthenticated === false) {
+    if (!isAuthenticated) {
+      navigate(`/profile`, {
+        replace: true
+      });
+    } else {
+      console.log("perasa 1");
       setShowChildren(true);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate]);
 
+  console.log({ showChildren }, "public");
   if (showChildren === true) {
-    return (
-      <Fragment>
-        <Outlet />
-      </Fragment>
-    );
+    return <Outlet />;
   }
-
-  return null;
+  return undefined;
 }
 
-export { Component as default };
-
+export default PublicRoutes;

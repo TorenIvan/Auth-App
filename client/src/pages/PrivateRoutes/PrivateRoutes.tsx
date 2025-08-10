@@ -1,5 +1,5 @@
-import { Fragment, useEffect, useState } from "react";
-import { Outlet, useLoaderData, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Outlet, useNavigate, useLoaderData } from "react-router-dom";
 
 function PrivateRoutes() {
   const navigate = useNavigate();
@@ -7,24 +7,21 @@ function PrivateRoutes() {
   const [showChildren, setShowChildren] = useState<boolean>(false);
 
   useEffect(() => {
-    if (isAuthenticated === false) {
-      navigate(`${import.meta.env.VITE_CLIENT_URI}login`);
-    }
-    if (isAuthenticated === true) {
+    if (isAuthenticated) {
+      navigate(`/login`, {
+        replace: true
+      });
+    } else {
+      console.log("perasa 2");
       setShowChildren(true);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate]);
 
+  console.log({ showChildren }, "private");
   if (showChildren === true) {
-    return (
-      <Fragment>
-        <Outlet />
-      </Fragment>
-    );
+    return <Outlet />;
   }
-
-  return null;
+  return undefined;
 }
 
-export { PrivateRoutes as default };
-
+export default PrivateRoutes;
