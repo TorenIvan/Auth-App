@@ -10,9 +10,14 @@ import multipart from "@fastify/multipart";
 
 config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
 
-import { userRoutes } from "./modules/user/v1";
+import { userRoutesV1 } from "./modules/user/v1";
 import { authMiddleware } from "./config/middleware";
-import { userServicePlugin } from "./config/plugins/user.plugin";
+import { DIPlugin } from "./config/plugins/di.plugin";
+import databasePlugin from "./config/plugins/database.plugin";
+import fastifySensible from "@fastify/sensible";
+import loggerPlugin from "./config/plugins/logger.plugin";
+import httpErrorPlugin from "./config/plugins/httpError.plugin";
+import notFoundPlugin from "./config/plugins/notFound.plugin";
 
 export type AppOptions = {
   // Place your custom options for app below here.
@@ -88,27 +93,21 @@ const app: FastifyPluginAsync<AppOptions> = async (
 
   //void fastify.register(fastifyOAuth2, oauth2OptionsFacebook);
 
-  void fastify.register(AutoLoad, {
-    dir: join(__dirname, "./config/database"),
-  });
-
-  void fastify.register(AutoLoad, {
+  await fastify.register(databasePlugin, options)
+  await fastify.register(AutoLoad, {
     dir: join(__dirname, "./config/utils"),
     options: options,
   });
-
-  void fastify.register(AutoLoad, {
-    dir: join(__dirname, "./config/plugins"),
-    options: options,
-  });
-
-  void fastify.register(userServicePlugin, options);
-  void fastify.register(authMiddleware, options);
-  void fastify.register(userRoutes, options);
+  await fastify.register(fastifySensible);
+  await fastify.register(loggerPlugin);
+  await fastify.register(DIPlugin, options);
+  await fastify.register(authMiddleware, options);
+  await fastify.register(userRoutesV1(fastify.controllers.user), options);
+  await fastify.register(httpErrorPlugin, options);
+  await fastify.register(notFoundPlugin, options);
 
   if (process.env.NODE_ENV === "development") {
     fastify.addHook("onReady", async function showStructure() {
-      // const fastifyStructure = fastify.overview({ hideEmpty: true });
     });
   }
 };

@@ -2,7 +2,7 @@ import { AxiosResponse, isAxiosError } from "axios";
 import { axiosInstance } from "../../../config";
 import { Errors } from "../errors";
 
-const userEditUri = "v1/profile/edit";
+const userEditUri = "v1/user/edit";
 
 export const userEditQuery = () => ({
   queryKey: ["user", "edit"],

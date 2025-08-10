@@ -1,7 +1,7 @@
 import * as z from "zod";
 import { Errors } from "../../../config/utils/constants/Errors";
 
-export const authCredsBodySchema = z.object({
+export const authCredentialsBodySchema = z.object({
   email: z
     .string({
       required_error: Errors.EmailRequired,
@@ -104,7 +104,7 @@ export const userEditRequestBodySchema = z.object({
   file: z.unknown().optional(),
 });
 
-export type credsUserInput = z.infer<typeof authCredsBodySchema>;
+export type credentialsUserInput = z.infer<typeof authCredentialsBodySchema>;
 export type forgotPasswordInput = z.infer<typeof forgotPasswordRequestSchema>;
 export type resetPasswordUserInput = z.infer<typeof resetPasswordRequestSchema>;
 export type queryConfirmEmail = z.infer<typeof verifyEmailQueryStringSchema>;

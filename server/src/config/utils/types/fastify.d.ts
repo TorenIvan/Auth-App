@@ -1,13 +1,16 @@
-import { Collection, Db, MongoClient } from "mongodb";
-import User from "../../../modules/user/v1/user.model";
+import { Db, MongoClient } from "mongodb";
 import UserService from "../../../modules/user/v1/user.service";
 
 declare module "fastify" {
   export interface FastifyInstance {
-    MongoDB: Db;
-    DBClient: MongoClient,
-    User: Collection<User>;
-    userService: UserService;
+    db: Db;
+    mongoClient: MongoClient,
+    services: {
+      user: UserService;
+    };
+    controllers: {
+      user: UserController;
+    };
     verifyAccessTokenHeader: (
       request: FastifyRequest,
       reply: FastifyReply
@@ -28,7 +31,7 @@ declare module "fastify" {
       request: FastifyRequest,
       reply: FastifyReply
     ) => Promise<void>;
-    checkIfUserIsAuthenticated: (
+    isAuthenticated: (
       request: FastifyRequest,
       reply: FastifyReply
     ) => Promise<void>;

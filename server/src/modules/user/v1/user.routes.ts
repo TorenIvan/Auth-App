@@ -6,7 +6,7 @@ import {
 } from "fastify";
 import { ZodError, Schema as ZodSchema } from "zod";
 import {
-  authCredsBodySchema,
+  authCredentialsBodySchema,
   forgotPasswordRequestSchema,
   resetPasswordRequestSchema,
   userEditRequestBodySchema,
@@ -17,23 +17,21 @@ import UserController from "./user.controller";
 
 /**
  * @description Encapsulates all the routes belonging to user in version 1
- * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
-const userRoutes: FastifyPluginAsync = async (
+const userRoutesV1 = (controller: UserController): FastifyPluginAsync => async (
   fastify: FastifyInstance
 ): Promise<void> => {
-  fastify.register(refreshTokens, {
-    prefix: "/v1/auth/refresh",
-  });
-  fastify.register(checkIsAuthenticated, {
-    prefix: "/v1/auth/check",
-  });
-  fastify.register(loginWithCredentials, {
-    prefix: "/v1/auth/login/credentials",
-  });
-  fastify.register(loginWithFacebook, {
-    prefix: "/v1/auth/login/facebook",
-  });
+  fastify.register(refreshTokens(controller), { prefix: "/v1/auth/refresh" });
+  fastify.register(checkIsAuthenticated(controller), { prefix: "/v1/auth/check" });
+  fastify.register(loginWithCredentials(controller), { prefix: "/v1/auth/login/credentials" });
+  fastify.register(loginWithFacebook(controller), { prefix: "/v1/auth/login/facebook" });
+  fastify.register(registerWithCredentials(controller), { prefix: "/v1/auth/register/credentials" });
+  fastify.register(logout(controller), { prefix: "/v1/auth/logout" });
+  fastify.register(confirmEmail(controller), { prefix: "/v1/auth/verify" });
+  fastify.register(forgotPassword(controller), { prefix: "/v1/auth/forgot-password" });
+  fastify.register(resetPassword(controller), { prefix: "/v1/auth/reset-password" });
+  fastify.register(getUserDetails(controller), { prefix: "/v1/user/details" });
+  fastify.register(editUserDetails(controller), { prefix: "/v1/user/edit",});
   // fastify.register(loginWithGoogle, {
   //   prefix: "/v1/auth/login/google",
   // });
@@ -43,205 +41,135 @@ const userRoutes: FastifyPluginAsync = async (
   // fastify.register(loginWithTwitter, {
   //   prefix: "/v1/auth/login/twitter",
   // });
-  fastify.register(registerWithCredentials, {
-    prefix: "/v1/auth/register/credentials",
-  });
-  fastify.register(logout, {
-    prefix: "/v1/auth/logout",
-  });
-  fastify.register(confirmEmail, {
-    prefix: "/v1/auth/verify",
-  });
-  fastify.register(forgotPassword, {
-    prefix: "/v1/auth/forgot-password",
-  });
-  fastify.register(resetPassword, {
-    prefix: "/v1/auth/reset-password",
-  });
-  fastify.register(getUserDetails, {
-    prefix: "/v1/profile/details",
-  });
-  fastify.register(editUserDetails, {
-    prefix: "/v1/profile/edit",
-  });
 };
 
-export default userRoutes;
+export default userRoutesV1;
 
-/**
- * Encapsulates the refresh token verification and renewing tokens
- * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
- */
-async function refreshTokens(fastify: FastifyInstance): Promise<void> {
-  const userController = new UserController(fastify.DBClient, fastify.userService);
-  fastify.addHook("onRequest", async (request, reply) => {
-    await fastify.verifyRefreshTokenCookie(request, reply);
-    await fastify.verifySocialProfileTokenCookie(request, reply);
-  });
-  fastify.get("/", userController.renewTokens.bind(userController));
-}
 
-/**
- * Encapsulates the checking operation of user authentication status
- * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
- */
-async function checkIsAuthenticated(fastify: FastifyInstance): Promise<void> {
-  const userController = new UserController(fastify.DBClient, fastify.userService);
-  fastify.addHook("preHandler", async (request, reply) => {
-    await fastify.checkIfUserIsAuthenticated(request, reply);
-  });
-  fastify.get("/", {}, userController.checkIfUserIsAuthenticated.bind(userController));
-}
+const refreshTokens = (controller: UserController): FastifyPluginAsync => {
+  return async (fastify: FastifyInstance) => {
+    fastify.addHook("onRequest", async (request, reply) => {
+      await fastify.verifyRefreshTokenCookie(request, reply);
+      await fastify.verifySocialProfileTokenCookie(request, reply);
+    });
+    fastify.get("/", controller.renewTokens.bind(controller));
+  };
+};
 
-/**
- * Encapsulates the login with credentials route
- * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
- */
-async function loginWithCredentials(fastify: FastifyInstance): Promise<void> {
-  const userController = new UserController(fastify.DBClient, fastify.userService);
-  fastify.addHook(
-    "preHandler",
-    async (request: FastifyRequest, reply: FastifyReply) => {
+const checkIsAuthenticated = (controller: UserController): FastifyPluginAsync => {
+  return async (fastify: FastifyInstance) => {
+    fastify.addHook("preHandler", async (request, reply) => {
+      await fastify.isAuthenticated(request, reply);
+    });
+    fastify.get("/", {}, controller.checkIfUserIsAuthenticated.bind(controller));
+  };
+};
+
+const loginWithCredentials = (controller: UserController): FastifyPluginAsync => {
+  return async (fastify: FastifyInstance) => {
+    fastify.addHook("preHandler", async (request: FastifyRequest, reply: FastifyReply) => {
       await fastify.actionForbiddenToAuthenticatedUser(request, reply);
-      await validateRequestBody(request, reply, authCredsBodySchema);
-    }
-  );
-  fastify.post("/", userController.loginCredentialsHandler.bind(userController));
-}
+      await validateRequestBody(request, reply, authCredentialsBodySchema);
+    });
+    fastify.post("/", controller.loginCredentialsHandler.bind(controller));
+  };
+};
 
-/**
- * Encapsulates the login with facebook route
- * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
- */
-async function loginWithFacebook(fastify: FastifyInstance): Promise<void> {
-  const userController = new UserController(fastify.DBClient, fastify.userService);
-  fastify.addHook("preHandler", async (request, reply) => {
-    await fastify.actionForbiddenToAuthenticatedUser(request, reply);
-  });
-  fastify.post("/", userController.loginFacebookHandler.bind(userController));
-}
+const loginWithFacebook = (controller: UserController): FastifyPluginAsync => {
+  return async (fastify: FastifyInstance) => {
+    fastify.addHook("preHandler", async (request, reply) => {
+      await fastify.actionForbiddenToAuthenticatedUser(request, reply);
+    });
+    fastify.post("/", controller.loginFacebookHandler.bind(controller));
+  };
+};
 
-/**
- * Encapsulates the login with google route
- * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
- */
 // async function loginWithGoogle(fastify: FastifyInstance): Promise<void> {
 //   fastify.get("/", async function (request, reply) {
 //     return "this is a login example route with google";
 //   });
 // }
 
-/**
- * Encapsulates the login with github route
- * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
- */
 //async function loginWithGithub(fastify: FastifyInstance): Promise<void> {
 //  fastify.get("/", async function (request, reply) {
 //    return "this is a login example route with github";
 //  });
 //}
 
-/**
- * Encapsulates the login with twitter route
- * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
- */
 // async function loginWithTwitter(fastify: FastifyInstance): Promise<void> {
 //   fastify.get("/", async function (request, reply) {
 //     return "this is a login example route with twitter";
 //   });
 // }
 
-/**
- * Encapsulates the register with credentials route
- * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
- */
-async function registerWithCredentials(
-  fastify: FastifyInstance
-): Promise<void> {
-  const userController = new UserController(fastify.DBClient, fastify.userService);
-  fastify.addHook("preHandler", async (request, reply) => {
-    await fastify.actionForbiddenToAuthenticatedUser(request, reply);
-    await validateRequestBody(request, reply, authCredsBodySchema);
-  });
-  fastify.post("/", userController.registerCredentialsHandler.bind(userController));
-}
+const registerWithCredentials = (controller: UserController): FastifyPluginAsync => {
+  return async (fastify: FastifyInstance): Promise<void> => {
+    fastify.addHook("preHandler", async (request, reply) => {
+      await fastify.actionForbiddenToAuthenticatedUser(request, reply);
+      await validateRequestBody(request, reply, authCredentialsBodySchema);
+    });
+    fastify.post("/", controller.registerCredentialsHandler.bind(controller));
+  };
+};
 
-/**
- * Encapsulates the logout operation route
- * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
- */
-async function logout(fastify: FastifyInstance): Promise<void> {
-  const userController = new UserController(fastify.DBClient, fastify.userService);
-  fastify.addHook("preHandler", async (request, reply) => {
-    await fastify.verifyAccessTokenHeader(request, reply);
-  });
-  fastify.post("/", {}, userController.logout.bind(userController));
-}
+const logout = (controller: UserController): FastifyPluginAsync => {
+  return async (fastify: FastifyInstance) => {
+    fastify.addHook("preHandler", async (request, reply) => {
+      await fastify.verifyAccessTokenHeader(request, reply);
+    });
+    fastify.post("/", {}, controller.logout.bind(controller));
+  };
+};
 
-/**
- * Encapsulates the email verification process route
- * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
- */
-async function confirmEmail(fastify: FastifyInstance): Promise<void> {
-  const userController = new UserController(fastify.DBClient, fastify.userService);
-  fastify.addHook("preHandler", async (request, reply) => {
-    await validateRequestQuery(request, reply, verifyEmailQueryStringSchema);
-  });
-  fastify.get("/", userController.confirmEmailHandler.bind(userController));
-}
+const confirmEmail = (controller: UserController): FastifyPluginAsync => {
+  return async (fastify: FastifyInstance) => {
+    fastify.addHook("preHandler", async (request, reply) => {
+      await validateRequestQuery(request, reply, verifyEmailQueryStringSchema);
+    });
+    fastify.get("/", controller.confirmEmailHandler.bind(controller));
+  };
+};
 
-/**
- * Encapsulates the forgot password operation route
- * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
- */
-async function forgotPassword(fastify: FastifyInstance): Promise<void> {
-  const userController = new UserController(fastify.DBClient, fastify.userService);
-  fastify.addHook("preHandler", async (request, reply) => {
-    await validateRequestBody(request, reply, forgotPasswordRequestSchema);
-  });
-  fastify.post("/", userController.forgotPasswordHandler.bind(userController));
-}
+const forgotPassword = (controller: UserController): FastifyPluginAsync => {
+  return async (fastify: FastifyInstance) => {
+    fastify.addHook("preHandler", async (request, reply) => {
+      await validateRequestBody(request, reply, forgotPasswordRequestSchema);
+    });
+    fastify.post("/", controller.forgotPasswordHandler.bind(controller));
+  };
+};
 
-/**
- * Encapsulates the reset password operation route
- * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
- */
-async function resetPassword(fastify: FastifyInstance): Promise<void> {
-  const userController = new UserController(fastify.DBClient, fastify.userService);
-  fastify.addHook("onRequest", async (request, reply) => {
-    await fastify.verifyResetPasswordCookie(request, reply);
-  });
-  fastify.addHook("preHandler", async (request, reply) => {
-    await validateRequestQuery(request, reply, verifyEmailQueryStringSchema);
-    await validateRequestBody(request, reply, resetPasswordRequestSchema);
-  });
-  fastify.post("/", userController.resetPasswordHandler.bind(userController));
-}
+const resetPassword = (controller: UserController): FastifyPluginAsync => {
+  return async (fastify: FastifyInstance) => {
+    fastify.addHook("onRequest", async (request, reply) => {
+      await fastify.verifyResetPasswordCookie(request, reply);
+    });
+    fastify.addHook("preHandler", async (request, reply) => {
+      await validateRequestQuery(request, reply, verifyEmailQueryStringSchema);
+      await validateRequestBody(request, reply, resetPasswordRequestSchema);
+    });
+    fastify.post("/", controller.resetPasswordHandler.bind(controller));
+  };
+};
 
-/**
- * Encapsulates all the user profile details operation route
- * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
- */
-async function getUserDetails(fastify: FastifyInstance): Promise<void> {
-  const userController = new UserController(fastify.DBClient, fastify.userService);
-  fastify.addHook("preHandler", async (request, reply) => {
-    await fastify.verifyAccessTokenHeader(request, reply);
-  });
-  fastify.get("/", userController.retrieveUserDetails.bind(userController));
-}
+const getUserDetails = (controller: UserController): FastifyPluginAsync => {
+  return async (fastify: FastifyInstance) => {
+    fastify.addHook("preHandler", async (request, reply) => {
+      await fastify.verifyAccessTokenHeader(request, reply);
+    });
+    fastify.get("/", controller.retrieveUserDetails.bind(controller));
+  };
+};
 
-/**
- * Encapsulates all the user profile editing operation route
- * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
- */
-async function editUserDetails(fastify: FastifyInstance): Promise<void> {
-  const userController = new UserController(fastify.DBClient, fastify.userService);
-  fastify.addHook("preHandler", async (request, reply) => {
-    await fastify.verifyAccessTokenHeader(request, reply);
-    await validateRequestBody(request, reply, userEditRequestBodySchema);
-  });
-  fastify.post("/", userController.updateUserDetails.bind(userController));
-}
+const editUserDetails = (controller: UserController): FastifyPluginAsync => {
+  return async (fastify: FastifyInstance) => {
+    fastify.addHook("preHandler", async (request, reply) => {
+      await fastify.verifyAccessTokenHeader(request, reply);
+      await validateRequestBody(request, reply, userEditRequestBodySchema);
+    });
+    fastify.post("/", controller.updateUserDetails.bind(controller));
+  };
+};
 
 async function validateRequestBody<T>(
   request: FastifyRequest,

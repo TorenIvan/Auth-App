@@ -2,7 +2,7 @@ import { AxiosError, AxiosResponse, isAxiosError } from "axios";
 import { axiosInstance } from "../../../config";
 import { Errors } from "../errors";
 
-const userDetailsUri = "v1/profile/details";
+const userDetailsUri = "v1/user/details";
 
 export const userDetailsQuery = {
   queryKey: ["user", "details"],

@@ -1,18 +1,15 @@
-import { Collection, ObjectId, UpdateResult } from "mongodb";
+import { Collection, Db, ObjectId, UpdateResult } from "mongodb";
 import { Errors } from "../../../config/utils/constants/Errors";
 import { objectAttributeExistsAndHasValue } from "../../../config/utils/helpers";
 import User from "./user.model";
 import * as bcrypt from "bcryptjs";
 import { EnvironmentVariables } from "../../../config/utils/constants/EnvironmentVariables";
 
-/**
- * @description Keeps all the "database" logic of User Collection; including transactions if needed
- */
 class UserService {
   private users: Collection<User>;
 
-  constructor(UserCollection: Collection<User>) {
-    this.users = UserCollection;
+  constructor(private db: Db) {
+    this.users = this.db.collection<User>("users");
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -84,7 +81,7 @@ class UserService {
         };
       }
       const result = await this.users.insertOne({
-        _id: new ObjectId,
+        _id: new ObjectId(),
         username: username,
         email: email,
         biography: biography,
@@ -121,6 +118,7 @@ class UserService {
           },
         }
       );
+      return { success: true };
     } catch (error) {
       return UserService.handleError(error);
     }
@@ -160,6 +158,7 @@ class UserService {
         }
       );
       if (result === null) {
+        //User not found
         throw "";
       }
       const data: ServiceFoundData = {

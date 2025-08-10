@@ -17,7 +17,7 @@ import {
 } from "../../../config/utils/helpers/auth/generateJWTs";
 import { sendEmail } from "../../../config/utils/helpers/general/sendEmail";
 import {
-  credsUserInput,
+  credentialsUserInput,
   editUserDetailsBody,
   forgotPasswordInput,
   queryConfirmEmail,
@@ -34,12 +34,9 @@ const transactionOptions: TransactionOptions = {
 };
 
 class UserController {
-  private userService: UserService;
-  private dbClient: MongoClient;
-
-  constructor(client: MongoClient, userService: UserService) {
+  constructor(private client: MongoClient, private userService: UserService) {
     this.userService = userService;
-    this.dbClient = client;
+    this.client = client;
   }
 
   private static handleError(
@@ -66,7 +63,7 @@ class UserController {
     } else {
       switch (errorCode) {
         case 403:
-          error = createError("401", "Forbidden");
+          error = createError("403", "Forbidden");
           break;
         case 401:
           error = createError("401", "Unauthorized");
@@ -100,12 +97,12 @@ class UserController {
   }
 
   async registerCredentialsHandler(
-    request: FastifyRequest<{ Body: credsUserInput }>,
+    request: FastifyRequest<{ Body: credentialsUserInput }>,
     reply: FastifyReply
   ) {
     try {
       const { email, password } = request.body;
-      const session = this.dbClient.startSession();
+      const session = this.client.startSession();
       try {
         await session.withTransaction(async () => {
           const serviceResponse: ServiceResponse =
@@ -133,7 +130,7 @@ class UserController {
           );
 
           sendEmail(email, email_token, Strings.ActionConfirmEmail);
-          reply.code(201);
+          reply.code(201).send();
         }, transactionOptions);
       } catch (error) {
         await session.abortTransaction();
@@ -179,7 +176,7 @@ class UserController {
           );
         }
       }
-      reply.code(200);
+      reply.code(200).send();
     } catch (error) {
       UserController.handleError(reply, 500, Errors.GenericError);
     }
@@ -287,7 +284,7 @@ class UserController {
   }
 
   async loginCredentialsHandler(
-    request: FastifyRequest<{ Body: credsUserInput }>,
+    request: FastifyRequest<{ Body: credentialsUserInput }>,
     reply: FastifyReply
   ) {
     try {
@@ -402,7 +399,7 @@ class UserController {
           );
       }
 
-      reply.code(200);
+      reply.code(200).send();
     } catch (error) {
       UserController.handleError(reply, 500, Errors.GenericError);
     }
@@ -565,7 +562,7 @@ class UserController {
         );
       }
 
-      const session = this.dbClient.startSession();
+      const session = this.client.startSession();
       try {
         await session.withTransaction(async () => {
           if (isChangingPassword === true) {
@@ -601,7 +598,7 @@ class UserController {
             );
           }
 
-          reply.code(200);
+          reply.code(200).send();
         }, transactionOptions);
       } catch (error) {
         await session.abortTransaction();
@@ -629,7 +626,7 @@ class UserController {
   }
 
   async checkIfUserIsAuthenticated(_: FastifyRequest, reply: FastifyReply) {
-    reply.code(403);
+    reply.code(403).send();
   }
 }
 
