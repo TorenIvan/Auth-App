@@ -63,6 +63,7 @@ async function action({ request }: ActionFunctionArgs) {
   } catch (error: unknown) {
     toast.error(error as string);
     if (error === Errors.AUserAlreadyAuthenticated) {
+      console.log('Mpika');
       return redirect('../profile');
     }
     return true;

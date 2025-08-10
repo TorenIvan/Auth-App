@@ -7,21 +7,22 @@ function PublicRoutes() {
   const [showChildren, setShowChildren] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate(`/profile`, {
-        replace: true
-      });
+    if (isAuthenticated) {
+      // If user IS authenticated, redirect to profile
+      navigate(`/profile`, { replace: true });
     } else {
-      console.log("perasa 1");
+      // If user is NOT authenticated, show public routes (login, register, etc.)
+      console.log("User not authenticated, showing public routes");
       setShowChildren(true);
     }
   }, [isAuthenticated, navigate]);
 
-  console.log({ showChildren }, "public");
+  console.log({ showChildren, isAuthenticated }, "public routes");
+  
   if (showChildren === true) {
     return <Outlet />;
   }
-  return undefined;
+  return null; 
 }
 
 export default PublicRoutes;

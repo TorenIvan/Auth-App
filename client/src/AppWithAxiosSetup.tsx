@@ -1,0 +1,21 @@
+import { useEffect } from "react";
+import { QueryClient } from "@tanstack/react-query";
+import { useAuth } from "./store";
+import { RouterProvider } from "react-router-dom";
+import indexRouter from "./routes/main.router";
+import { setupAxiosInterceptors } from "./config/axios";
+
+export function AppWithAxiosSetup({ globalQueryClient }: { globalQueryClient: QueryClient }): JSX.Element {
+  const { refreshTokens, logout } = useAuth();
+  
+  // Setup axios interceptors with AuthContext methods
+  useEffect(() => {
+    setupAxiosInterceptors({ refreshTokens, logout });
+  }, [refreshTokens, logout]);
+
+  return (
+    <div className="screen-container">
+      <RouterProvider router={indexRouter(globalQueryClient)} />
+    </div>
+  );
+}

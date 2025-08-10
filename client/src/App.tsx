@@ -1,10 +1,10 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 // import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Provider as JotaiGlobalProvider } from "jotai";
-import { RouterProvider } from "react-router-dom";
 import Toast from "./components/Toast";
-import indexRouter from "./routes";
 import "./App.css";
+import { AppWithAxiosSetup } from "./AppWithAxiosSetup";
+import { AuthProvider } from "./store";
 
 export const globalQueryClient = new QueryClient({
   defaultOptions: {
@@ -20,10 +20,10 @@ const App = (): JSX.Element => {
   return (
     <JotaiGlobalProvider>
       <QueryClientProvider client={globalQueryClient}>
-        <div className="screen-container">
-          <RouterProvider router={indexRouter(globalQueryClient)} />
-        </div>
-        <Toast />
+        <AuthProvider>
+          <AppWithAxiosSetup globalQueryClient={globalQueryClient}/>
+          <Toast />
+        </AuthProvider>
         {/* <ReactQueryDevtools initialIsOpen={false} /> */}
       </QueryClientProvider>
     </JotaiGlobalProvider>

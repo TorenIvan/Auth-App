@@ -4,24 +4,22 @@ import { Outlet, useNavigate, useLoaderData } from "react-router-dom";
 function PrivateRoutes() {
   const navigate = useNavigate();
   const isAuthenticated = useLoaderData();
-  const [showChildren, setShowChildren] = useState<boolean>(false);
+  const [showChildren, setShowChildren] = useState(false);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      navigate(`/login`, {
-        replace: true
-      });
+    if (!isAuthenticated) {
+      // If user is NOT authenticated, redirect to login
+      navigate(`/login`, { replace: true });
     } else {
-      console.log("perasa 2");
+      // If user IS authenticated, show private routes
       setShowChildren(true);
     }
   }, [isAuthenticated, navigate]);
 
-  console.log({ showChildren }, "private");
-  if (showChildren === true) {
-    return <Outlet />;
-  }
-  return undefined;
+  console.log({ showChildren, isAuthenticated }, "private routes");
+
+  if (!showChildren) return null;
+  return <Outlet />;
 }
 
 export default PrivateRoutes;
