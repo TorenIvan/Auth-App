@@ -4,21 +4,20 @@ import {
   FastifyReply,
   FastifyRequest,
 } from "fastify";
-import { ZodError, Schema as ZodSchema } from "zod";
-import {
-  authCredentialsBodySchema,
-  forgotPasswordRequestSchema,
-  resetPasswordRequestSchema,
-  userEditRequestBodySchema,
-  verifyEmailQueryStringSchema,
-} from "./user.schema";
-import UserController from "./user.controller";
+import AuthController from "./auth.controller";
+import { validateRequestBody, validateRequestQuery } from "../../../config/utils/helpers";
+import { 
+    authCredentialsBodySchema, 
+    forgotPasswordRequestSchema, 
+    resetPasswordRequestSchema, 
+    verifyEmailQueryStringSchema 
+} from "./auth.schema";
 
 
 /**
- * @description Encapsulates all the routes belonging to user in version 1
+ * @description Encapsulates all the routes belonging to auth in version 1
  */
-const userRoutesV1 = (controller: UserController): FastifyPluginAsync => async (
+const authRoutesV1 = (controller: AuthController): FastifyPluginAsync => async (
   fastify: FastifyInstance
 ): Promise<void> => {
   fastify.register(refreshTokens(controller), { prefix: "/v1/auth/refresh" });
@@ -30,23 +29,11 @@ const userRoutesV1 = (controller: UserController): FastifyPluginAsync => async (
   fastify.register(confirmEmail(controller), { prefix: "/v1/auth/verify" });
   fastify.register(forgotPassword(controller), { prefix: "/v1/auth/forgot-password" });
   fastify.register(resetPassword(controller), { prefix: "/v1/auth/reset-password" });
-  fastify.register(getUserDetails(controller), { prefix: "/v1/user/details" });
-  fastify.register(editUserDetails(controller), { prefix: "/v1/user/edit",});
-  // fastify.register(loginWithGoogle, {
-  //   prefix: "/v1/auth/login/google",
-  // });
-  // fastify.register(loginWithGithub, {
-  //   prefix: "/v1/auth/login/github",
-  // });
-  // fastify.register(loginWithTwitter, {
-  //   prefix: "/v1/auth/login/twitter",
-  // });
-};
+}
 
-export default userRoutesV1;
+export default authRoutesV1;
 
-
-const refreshTokens = (controller: UserController): FastifyPluginAsync => {
+const refreshTokens = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance) => {
     fastify.addHook("onRequest", async (request, reply) => {
       await fastify.verifyRefreshTokenCookie(request, reply);
@@ -56,7 +43,7 @@ const refreshTokens = (controller: UserController): FastifyPluginAsync => {
   };
 };
 
-const checkIsAuthenticated = (controller: UserController): FastifyPluginAsync => {
+const checkIsAuthenticated = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance) => {
     fastify.addHook("preHandler", async (request, reply) => {
       await fastify.isAuthenticated(request, reply);
@@ -65,7 +52,7 @@ const checkIsAuthenticated = (controller: UserController): FastifyPluginAsync =>
   };
 };
 
-const loginWithCredentials = (controller: UserController): FastifyPluginAsync => {
+const loginWithCredentials = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance) => {
     fastify.addHook("preHandler", async (request: FastifyRequest, reply: FastifyReply) => {
       await fastify.actionForbiddenToAuthenticatedUser(request, reply);
@@ -75,7 +62,7 @@ const loginWithCredentials = (controller: UserController): FastifyPluginAsync =>
   };
 };
 
-const loginWithFacebook = (controller: UserController): FastifyPluginAsync => {
+const loginWithFacebook = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance) => {
     fastify.addHook("preHandler", async (request, reply) => {
       await fastify.actionForbiddenToAuthenticatedUser(request, reply);
@@ -102,7 +89,7 @@ const loginWithFacebook = (controller: UserController): FastifyPluginAsync => {
 //   });
 // }
 
-const registerWithCredentials = (controller: UserController): FastifyPluginAsync => {
+const registerWithCredentials = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance): Promise<void> => {
     fastify.addHook("preHandler", async (request, reply) => {
       await fastify.actionForbiddenToAuthenticatedUser(request, reply);
@@ -112,7 +99,7 @@ const registerWithCredentials = (controller: UserController): FastifyPluginAsync
   };
 };
 
-const logout = (controller: UserController): FastifyPluginAsync => {
+const logout = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance) => {
     fastify.addHook("preHandler", async (request, reply) => {
       await fastify.verifyAccessTokenHeader(request, reply);
@@ -121,7 +108,7 @@ const logout = (controller: UserController): FastifyPluginAsync => {
   };
 };
 
-const confirmEmail = (controller: UserController): FastifyPluginAsync => {
+const confirmEmail = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance) => {
     fastify.addHook("preHandler", async (request, reply) => {
       await validateRequestQuery(request, reply, verifyEmailQueryStringSchema);
@@ -130,7 +117,7 @@ const confirmEmail = (controller: UserController): FastifyPluginAsync => {
   };
 };
 
-const forgotPassword = (controller: UserController): FastifyPluginAsync => {
+const forgotPassword = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance) => {
     fastify.addHook("preHandler", async (request, reply) => {
       await validateRequestBody(request, reply, forgotPasswordRequestSchema);
@@ -139,7 +126,7 @@ const forgotPassword = (controller: UserController): FastifyPluginAsync => {
   };
 };
 
-const resetPassword = (controller: UserController): FastifyPluginAsync => {
+const resetPassword = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance) => {
     fastify.addHook("onRequest", async (request, reply) => {
       await fastify.verifyResetPasswordCookie(request, reply);
@@ -151,54 +138,3 @@ const resetPassword = (controller: UserController): FastifyPluginAsync => {
     fastify.post("/", controller.resetPasswordHandler.bind(controller));
   };
 };
-
-const getUserDetails = (controller: UserController): FastifyPluginAsync => {
-  return async (fastify: FastifyInstance) => {
-    fastify.addHook("preHandler", async (request, reply) => {
-      await fastify.verifyAccessTokenHeader(request, reply);
-    });
-    fastify.get("/", controller.retrieveUserDetails.bind(controller));
-  };
-};
-
-const editUserDetails = (controller: UserController): FastifyPluginAsync => {
-  return async (fastify: FastifyInstance) => {
-    fastify.addHook("preHandler", async (request, reply) => {
-      await fastify.verifyAccessTokenHeader(request, reply);
-      await validateRequestBody(request, reply, userEditRequestBodySchema);
-    });
-    fastify.post("/", controller.updateUserDetails.bind(controller));
-  };
-};
-
-async function validateRequestBody<T>(
-  request: FastifyRequest,
-  reply: FastifyReply,
-  schema: ZodSchema<T>
-): Promise<void> {
-  try {
-    request.body = await schema.parseAsync(request.body);
-  } catch (error) {
-    if (error instanceof ZodError) {
-      const firstError = error.errors[0];
-      return reply.status(400).send(firstError);
-    }
-    return reply.status(400).send(error);
-  }
-}
-
-async function validateRequestQuery<T>(
-  request: FastifyRequest,
-  reply: FastifyReply,
-  schema: ZodSchema<T>
-): Promise<void> {
-  try {
-    request.query = await schema.parseAsync(request.query);
-  } catch (error) {
-    if (error instanceof ZodError) {
-      const firstError = error.errors[0];
-      return reply.status(400).send(firstError);
-    }
-    return reply.status(400).send(error);
-  }
-}

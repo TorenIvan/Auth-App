@@ -1,14 +1,19 @@
 import { Db, MongoClient } from "mongodb";
 import UserService from "../../../modules/user/v1/user.service";
+import AuthService from "../../../modules/auth/v1/auth.service";
+import UserController from "../../../modules/user/v1/user.controller";
+import AuthController from "../../../modules/auth/v1/auth.controller";
 
 declare module "fastify" {
   export interface FastifyInstance {
     db: Db;
     mongoClient: MongoClient,
     services: {
+      auth: AuthService;
       user: UserService;
     };
     controllers: {
+      auth: AuthController;
       user: UserController;
     };
     verifyAccessTokenHeader: (

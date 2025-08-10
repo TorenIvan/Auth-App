@@ -1,3 +1,3 @@
-import userRoutesV1 from "./user.routes";
+import userRoutesV1 from "./user.route";
 
 export { userRoutesV1 };

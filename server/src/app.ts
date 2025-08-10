@@ -18,6 +18,7 @@ import fastifySensible from "@fastify/sensible";
 import loggerPlugin from "./config/plugins/logger.plugin";
 import httpErrorPlugin from "./config/plugins/httpError.plugin";
 import notFoundPlugin from "./config/plugins/notFound.plugin";
+import { authRoutesV1 } from "./modules/auth/v1";
 
 export type AppOptions = {
   // Place your custom options for app below here.
@@ -102,6 +103,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
   await fastify.register(loggerPlugin);
   await fastify.register(DIPlugin, options);
   await fastify.register(authMiddleware, options);
+  await fastify.register(authRoutesV1(fastify.controllers.auth), options);
   await fastify.register(userRoutesV1(fastify.controllers.user), options);
   await fastify.register(httpErrorPlugin, options);
   await fastify.register(notFoundPlugin, options);

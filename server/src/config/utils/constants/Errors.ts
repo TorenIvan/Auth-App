@@ -24,7 +24,7 @@ export const Errors = {
   InvalidResetPasswordCookie:
     "It appears that the password reset time has expired or something went wrong. Try repeating the password reset procedure.",
   GenericErrorResetPassword:
-    "Oops, something went wrong. Please, try reseting your password",
+    "Oops, something went wrong. Please, try resetting your password",
   ConfirmEmailInOrderToContinue:
     "A new confirmation link will be sent to your email soon. Please, follow the instructions to complete your registration",
   PasswordsNotSame: "Passwords do not match. Please, try again",
