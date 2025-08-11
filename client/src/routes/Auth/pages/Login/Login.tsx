@@ -11,11 +11,13 @@ import {
   ForgotPasswordLink,
   AuthFormGroup,
 } from "../../components";
+import { useQueryClient } from "@tanstack/react-query";
 
 // type SocialItem = "facebook" | "google" | "twitter" | "github";
 
 export function Login() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { login } = useAuth();
 
   const title = useMemo(() => LoginTitle(), []);
@@ -40,6 +42,8 @@ export function Login() {
         }
 
         await login({ email, password });
+        await queryClient.cancelQueries();
+        queryClient.clear();
         navigate("/profile");
       } catch (error) {
         toast.error(String(error));

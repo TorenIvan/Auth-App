@@ -1,5 +1,5 @@
 import { QueryClientProvider } from "@tanstack/react-query";
-// import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Provider as JotaiGlobalProvider } from "jotai";
 import Toast from "./components/Toast";
 import "./App.css";
@@ -15,7 +15,9 @@ const App = (): JSX.Element => {
           <AppWithAxiosSetup />
           <Toast />
         </AuthProvider>
-        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+        {import.meta.env.VITE_NODE_ENV === 'development' ? (
+          <ReactQueryDevtools initialIsOpen={false} />
+        ): undefined}
       </QueryClientProvider>
     </JotaiGlobalProvider>
   );
