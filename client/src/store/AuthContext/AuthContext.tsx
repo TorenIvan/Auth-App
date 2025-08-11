@@ -1,11 +1,19 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { checkIfUserIsAuthenticated, renewTokens } from "../../api";
+import { loginUser } from "../../routes/Auth/api";
 import { logoutUser } from "../../routes/Profile/api";
+import { addAuthorizationHeader } from "../../config";
+import { QueryClient } from "@tanstack/react-query";
+
+interface ILoginRequest {
+  email: string; 
+  password: string;
+}
 
 interface AuthContextType {
   isAuthenticated: boolean | undefined; // undefined = loading
-  login: () => Promise<void>;
-  logout: () => Promise<void>;
+  login: (req: ILoginRequest) => Promise<void>;
+  logout: (queryClient: QueryClient) => Promise<void>;
   refreshTokens: () => Promise<string>; 
 }
 
@@ -23,21 +31,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const login = useCallback(async () => {
-    // After successful login API call
+  const login = useCallback(async ({ email, password }: ILoginRequest): Promise<void> => {
+    const accessToken = await loginUser({ email, password })
+    addAuthorizationHeader(accessToken);
     setIsAuthenticated(true);
   }, []);
 
-  const logout = useCallback(async () => {
+  const logout = useCallback(async (queryClient: QueryClient) => {
     try {
       await logoutUser(); 
     } finally {
+      queryClient?.clear();
+      addAuthorizationHeader("");
       setIsAuthenticated(false);
     }
   }, []);
 
   // This method will be called by axios interceptor
-  const refreshTokensWithContext = useCallback(async (): Promise<string> => {
+  const refreshTokens = useCallback(async (): Promise<string> => {
     try {
       const newToken = await renewTokens();
       // Token refresh successful, user is still authenticated
@@ -50,7 +61,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // On mount, check auth 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
@@ -61,7 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthenticated, 
         login, 
         logout, 
-        refreshTokens: refreshTokensWithContext 
+        refreshTokens
       }}
     >
       {children}

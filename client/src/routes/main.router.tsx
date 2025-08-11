@@ -1,11 +1,10 @@
-import { QueryClient } from "@tanstack/react-query";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import { ErrorPage } from "../pages";
 import { AuthGuard } from "../components";
 import authRoutes from "./Auth";
 import profileRoutes from "./Profile";
 
-function indexRouter(queryClient: QueryClient) {
+function indexRouter(login: (req: ILoginRequest) => Promise<void>) {
   return createBrowserRouter([
     {
       path: "/",
@@ -16,11 +15,16 @@ function indexRouter(queryClient: QueryClient) {
           index: true,
           element: <Navigate to="/profile" replace />,
         },
-        ...authRoutes(),
-        ...profileRoutes(queryClient)
+        ...authRoutes(login),
+        ...profileRoutes()
       ],
     },
   ]);
 }
 
 export default indexRouter;
+
+interface ILoginRequest {
+  email: string;
+  password: string;
+}

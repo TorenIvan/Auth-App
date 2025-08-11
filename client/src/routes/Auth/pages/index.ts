@@ -1,4 +1,4 @@
-import { Component as Login, action as loginAction } from "./Login";
+import { Login, action as loginAction } from "./Login";
 import { Component as Register, action as registerAction } from "./Register";
 import { Component as ConfirmEmail, loader as confirmEmailLoader } from "./ConfirmEmail";
 import { Component as ForgotPassword, action as forgotPasswordAction } from "./ForgotPassword";

@@ -1,6 +1,7 @@
 import { Fragment, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   faCircleUser,
   faRightFromBracket,
@@ -10,12 +11,14 @@ import { Footer, Header, Main } from "../../../layouts";
 import { SideMenu } from "../components";
 import { Constants } from "../constants";
 import { useToggleSubMenu } from "../hooks";
-import { logoutUser, userDetailsQuery } from "../api";
-import { QueryClient, useQueryClient } from "@tanstack/react-query";
+import { userDetailsQuery } from "../api";
 import { BroadcastChannel } from "broadcast-channel";
 import { Errors } from "../errors";
+import { queryClient } from "../../../config";
+import { useAuth } from "../../../store";
 
 function ProfileLayout() {
+  const { logout: logoutContext } = useAuth();
   const [isSubMenuOpen, toggleSubMenu] = useToggleSubMenu();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -28,7 +31,7 @@ function ProfileLayout() {
   const logoutAllTabs = () => {
     logoutChannel.onmessage = async () => {
       try {
-        await logoutUser(queryClient);
+        await logoutContext(queryClient);
         logoutChannel.close();
         return navigate("/login");
       } catch (error) {
@@ -81,9 +84,11 @@ function ProfileLayout() {
   );
 }
 
-export function loader(queryClient: QueryClient) {
+export function loader() {
   return async function () {
     try {
+      console.log('Mpika loader profile');
+      
       const query = userDetailsQuery;
       const data = await queryClient.ensureQueryData(query);
       console.log({ data });

@@ -1,4 +1,6 @@
-function authRoutes() {
+import { Login, loginAction } from "./pages";
+
+function authRoutes(loginContext: ({ email, password }: { email: string, password: string }) => Promise<void>) {
   return [
     {
       path: "",
@@ -6,7 +8,8 @@ function authRoutes() {
       children: [
         {
           path: "login",
-          lazy: () => import("./pages/Login"),
+          Component: Login,
+          action: loginAction(loginContext)
         },
         {
           path: "register",

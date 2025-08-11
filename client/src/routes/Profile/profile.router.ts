@@ -1,9 +1,8 @@
-import { QueryClient } from "@tanstack/react-query";
-
-function profileRoutes(queryClient: QueryClient) {
+function profileRoutes() {
   return [
     {
       path: "profile",
+      lazy: () => import("./layouts"),
       children: [
         {
           index: true,
@@ -15,7 +14,7 @@ function profileRoutes(queryClient: QueryClient) {
             const module = await import("./pages/ProfileEdit");
             return {
               ...module,
-              action: module.createEditProfileAction(queryClient),
+              action: module.createEditProfileAction(),
             };
           },
         },

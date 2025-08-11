@@ -1,5 +1,7 @@
+import { QueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { queryClient } from "./queryClient";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_SERVER_URI,
@@ -13,8 +15,7 @@ let lastAxiosContentTypeHeader: string | undefined = "application/json";
 
 // Token renewal state management
 let isRenewing = false;
-let renewalPromise: Promise<string> | null = null;
-let failedRequestsQueue: Array<{
+let missedRequestsForPendingRenewalQueue: Array<{
   resolve: (token: string) => void;
   reject: (error: unknown) => void;
 }> = [];
@@ -22,7 +23,7 @@ let failedRequestsQueue: Array<{
 // AuthContext reference - will be set by setupAxiosInterceptors
 let authContextRef: {
   refreshTokens: () => Promise<string>;
-  logout: () => Promise<void>;
+  logout: (queryClient: QueryClient) => Promise<void>;
 } | null = null;
 
 axiosInstance.interceptors.request.use(
@@ -44,9 +45,9 @@ axiosInstance.interceptors.response.use(
       // If token renewal is already in progress, queue this request
       if (isRenewing) {
         return new Promise((resolve, reject) => {
-          failedRequestsQueue.push({ resolve, reject });
+          missedRequestsForPendingRenewalQueue.push({ resolve, reject });
         })
-          .then((token: unknown) => { // Actually a string
+          .then((token: unknown) => {
             originalRequest.headers.Authorization = `Bearer ${token}`;
             originalRequest.headers["Content-Type"] = lastAxiosContentTypeHeader;
             return axiosInstance(originalRequest);
@@ -61,8 +62,7 @@ axiosInstance.interceptors.response.use(
           throw new Error("Auth context not available");
         }
 
-        renewalPromise = authContextRef.refreshTokens();
-        const accessToken = await renewalPromise;
+        const accessToken = await authContextRef.refreshTokens();
         
         // Process all queued requests with new token
         processQueue(accessToken, null);
@@ -70,6 +70,7 @@ axiosInstance.interceptors.response.use(
         // Retry original request with new token
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         originalRequest.headers["Content-Type"] = lastAxiosContentTypeHeader;
+        addAuthorizationHeader(accessToken);
         
         return axiosInstance(originalRequest);
       } catch (renewError) {
@@ -81,12 +82,12 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(renewError);
       } finally {
         isRenewing = false;
-        renewalPromise = null;
       }
     }
 
     // Second 401 after retry - session definitely expired
     if (error?.response?.status === 401 && originalRequest._retry) {
+      toast.error("Session expired. Please login again.");
       await handleAuthFailure();
       return Promise.reject(error);
     }
@@ -95,21 +96,26 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-function processQueue(token: string | null | undefined, error: unknown) {
-  failedRequestsQueue.forEach(({ resolve, reject }) => {
+/**
+ * @description Receives the refreshed access token and re-runs all the failed (pending) requests with this new access token at their header.
+ * If an error occurs, it means that the user is no longer authenticated; thus it rejects all failed "pending" request promises.
+ * @param {string | null} token Access token retrieved from renewal.
+ * @param {unknown} error Error from renewal.
+ */
+function processQueue(token: string | null, error: unknown) {
+  missedRequestsForPendingRenewalQueue.forEach(({ resolve, reject }) => {
     if (error) {
       reject(error);
     } else {
       resolve(token!);
     }
   });
-  failedRequestsQueue = [];
+  missedRequestsForPendingRenewalQueue = [];
 }
 
 async function handleAuthFailure() {
   if (authContextRef) {
-    toast.error("Session expired. Please login again.");
-    await authContextRef.logout();
+    await authContextRef.logout(queryClient);
   }
 }
 
@@ -118,14 +124,14 @@ async function handleAuthFailure() {
  */
 export function setupAxiosInterceptors(authContext: {
   refreshTokens: () => Promise<string>;
-  logout: () => Promise<void>;
+  logout: (queryClient: QueryClient) => Promise<void>;
 }) {
   authContextRef = authContext;
 }
 
 export default axiosInstance;
 
-export function addAuthorizationHeader(accessToken: string): string {
+export function addAuthorizationHeader(accessToken: string): void {
   if (
     accessToken === null ||
     accessToken === undefined ||
@@ -133,5 +139,6 @@ export function addAuthorizationHeader(accessToken: string): string {
   ) {
     throw new Error("Invalid access token");
   }
-  return `Bearer ${accessToken}`;
+
+  axiosInstance.defaults.headers.Authorization = `Bearer ${accessToken}`;
 }

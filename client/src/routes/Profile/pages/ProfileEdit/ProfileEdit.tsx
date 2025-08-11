@@ -1,7 +1,7 @@
 import { Fragment, useRef } from "react";
 import { ActionFunctionArgs, NavLink, redirect, useFetcher } from "react-router-dom";
 import toast from "react-hot-toast";
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
   faCamera,
   faEnvelope,
@@ -12,6 +12,7 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { queryClient } from "../../../../config";
 import { GlobalConstants } from "../../../../utils";
 import { InputGroup, Textarea } from "../../../../components";
 import { inputStyles } from "../../../../styles";
@@ -235,7 +236,7 @@ function ProfileEdit() {
 
 export { ProfileEdit as default, createEditProfileAction };
 
-function createEditProfileAction(queryClient: QueryClient) {
+function createEditProfileAction() {
   return async function ({ request }: ActionFunctionArgs) {
     try {
       const formData = await request.formData();
