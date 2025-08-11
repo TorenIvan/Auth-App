@@ -11,7 +11,7 @@ import { Errors } from "../../errors";
 const notAddedSlot: JSX.Element = <em>{Constants.NotAdded}</em>;
 
 export function ProfileDetails(): JSX.Element | undefined {
-  const { data: userInfo, isLoading, isError } = useQuery(userDetailsQuery);
+  const { data: userInfo, isLoading, isFetching, isError } = useQuery(userDetailsQuery);
 
   useEffect(() => {
     if (isError) {
@@ -19,10 +19,14 @@ export function ProfileDetails(): JSX.Element | undefined {
     }
   }, [isError])
 
+  console.log({isLoading, isFetching});
+  
   if (isLoading || userInfo === undefined) return undefined;
 
   const photoSlot: JSX.Element = findPhotoSlot(userInfo?.image);
   const imageExists: boolean = !!userInfo?.image;
+
+  
 
   return (
     <div className={styles["page-container"]}>

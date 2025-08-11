@@ -42,7 +42,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await logoutUser(); 
     } finally {
-      queryClient?.clear();
+      queryClient.removeQueries();
+      queryClient.clear();
       addAuthorizationHeader("");
       setIsAuthenticated(false);
     }

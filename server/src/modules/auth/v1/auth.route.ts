@@ -55,7 +55,6 @@ const checkIsAuthenticated = (controller: AuthController): FastifyPluginAsync =>
 const loginWithCredentials = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance) => {
     fastify.addHook("preHandler", async (request: FastifyRequest, reply: FastifyReply) => {
-      await fastify.actionForbiddenToAuthenticatedUser(request, reply);
       await validateRequestBody(request, reply, authCredentialsBodySchema);
     });
     fastify.post("/", controller.loginCredentialsHandler.bind(controller));
@@ -64,9 +63,6 @@ const loginWithCredentials = (controller: AuthController): FastifyPluginAsync =>
 
 const loginWithFacebook = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance) => {
-    fastify.addHook("preHandler", async (request, reply) => {
-      await fastify.actionForbiddenToAuthenticatedUser(request, reply);
-    });
     fastify.post("/", controller.loginFacebookHandler.bind(controller));
   };
 };
@@ -92,7 +88,6 @@ const loginWithFacebook = (controller: AuthController): FastifyPluginAsync => {
 const registerWithCredentials = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance): Promise<void> => {
     fastify.addHook("preHandler", async (request, reply) => {
-      await fastify.actionForbiddenToAuthenticatedUser(request, reply);
       await validateRequestBody(request, reply, authCredentialsBodySchema);
     });
     fastify.post("/", controller.registerCredentialsHandler.bind(controller));

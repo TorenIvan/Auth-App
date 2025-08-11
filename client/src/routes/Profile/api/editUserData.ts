@@ -2,7 +2,7 @@ import { AxiosResponse, isAxiosError } from "axios";
 import { axiosInstance } from "../../../config";
 import { Errors } from "../errors";
 
-const userEditUri = "v1/user/edit";
+const userEditUri = "v1/profile/edit";
 
 export const userEditQuery = () => ({
   queryKey: ["user", "edit"],
@@ -11,6 +11,8 @@ export const userEditQuery = () => ({
 
 export async function editUserData(request: IRequest): Promise<void> {
   try {
+    console.log(request);
+    
     const result: AxiosResponse<void> = await axiosInstance.post(
       userEditUri,
       request,
@@ -39,7 +41,7 @@ export interface IRequest {
   username: string;
   biography: string;
   phone: string;
-  currentPassword: string;
-  newPassword: string;
+  currentPassword?: string;
+  newPassword?: string;
   file?: File;
 }
