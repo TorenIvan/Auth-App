@@ -4,7 +4,7 @@ import { AuthGuard } from "../components";
 import authRoutes from "./Auth";
 import profileRoutes from "./Profile";
 
-function indexRouter(login: (req: ILoginRequest) => Promise<void>) {
+function indexRouter() {
   return createBrowserRouter([
     {
       path: "/",
@@ -15,7 +15,7 @@ function indexRouter(login: (req: ILoginRequest) => Promise<void>) {
           index: true,
           element: <Navigate to="/profile" replace />,
         },
-        ...authRoutes(login),
+        ...authRoutes(),
         ...profileRoutes()
       ],
     },
@@ -23,8 +23,3 @@ function indexRouter(login: (req: ILoginRequest) => Promise<void>) {
 }
 
 export default indexRouter;
-
-interface ILoginRequest {
-  email: string;
-  password: string;
-}

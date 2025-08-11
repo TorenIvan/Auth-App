@@ -5,7 +5,7 @@ import indexRouter from "./routes/main.router";
 import { setupAxiosInterceptors } from "./config/axios";
 
 export function AppWithAxiosSetup(): JSX.Element {
-  const { refreshTokens, logout, login } = useAuth();
+  const { refreshTokens, logout } = useAuth();
   
   // Setup axios interceptors with AuthContext methods
   useEffect(() => {
@@ -14,7 +14,7 @@ export function AppWithAxiosSetup(): JSX.Element {
 
   return (
     <div className="screen-container">
-      <RouterProvider router={indexRouter(login)} />
+      <RouterProvider router={indexRouter()} />
     </div>
   );
 }

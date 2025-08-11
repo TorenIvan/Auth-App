@@ -10,8 +10,9 @@ import { Errors } from "../../errors";
 
 const notAddedSlot: JSX.Element = <em>{Constants.NotAdded}</em>;
 
-function ProfileDetails(): JSX.Element | undefined {
+export function ProfileDetails(): JSX.Element | undefined {
   const { data: userInfo, isLoading, isError } = useQuery(userDetailsQuery);
+
   useEffect(() => {
     if (isError) {
       toast.error(Errors.GenericError);
@@ -19,6 +20,7 @@ function ProfileDetails(): JSX.Element | undefined {
   }, [isError])
 
   if (isLoading || userInfo === undefined) return undefined;
+
   const photoSlot: JSX.Element = findPhotoSlot(userInfo?.image);
   const imageExists: boolean = !!userInfo?.image;
 
@@ -75,12 +77,7 @@ function ProfileDetails(): JSX.Element | undefined {
   );
 }
 
-export default ProfileDetails;
-
 function findPhotoSlot(image?: string) {
-  let photoSlot: JSX.Element = <span>{notAddedSlot}</span>;
-  if (image !== undefined) {
-    photoSlot = <UserPhoto image={image} />;
-  }
-  return photoSlot;
+  return image ? <UserPhoto image={image} /> : <em>{Constants.NotAdded}</em>;
 }
+

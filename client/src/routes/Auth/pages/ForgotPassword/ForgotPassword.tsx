@@ -1,5 +1,5 @@
-import { Fragment } from "react";
-import { ActionFunctionArgs, Form, redirect } from "react-router-dom";
+import { FormEvent, Fragment, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { InputGroup } from "../../../../components";
@@ -10,13 +10,42 @@ import { Constants } from "../../constants";
 import { forgotPassword } from "../../api";
 import styles from "./styles.module.scss";
 
-export function Component() {
+export function ForgotPassword() {
+  const navigate = useNavigate();
+
+  const handleSubmit = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+
+      try {
+        const formData = new FormData(event.currentTarget);
+        const email = (formData.get("email") as string).trim();
+
+        if (!isEmailValid(email)) {
+          toast.error(Errors.InvalidEmail);
+          return;
+        }
+
+        const isOperationSuccessful = await forgotPassword(email);
+        if (!isOperationSuccessful) {
+          toast.error(Errors.GenericError);
+          return;
+        }
+
+        toast.success(Constants.ResetPasswordEmailMessage);
+        navigate("/login");
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : String(error));
+      }
+    },
+    [navigate]
+  );
+
   return (
-    <Form
+    <form
       autoComplete="off"
-      method="post"
-      action=""
       className={styles["form-container"]}
+      onSubmit={handleSubmit}
     >
       <section id={styles.header}>
         <h2>{Constants.ForgotPassword}</h2>
@@ -43,33 +72,9 @@ export function Component() {
           </Fragment>
         </InputGroup>
         <div id={styles["submitBox"]}>
-          <input type="submit" value={Constants.Continue}></input>
+          <input type="submit" value={Constants.Continue} />
         </div>
       </section>
-    </Form>
+    </form>
   );
-}
-
-
-export async function action({ request }: ActionFunctionArgs) {
-  try {
-    const response = await request.formData();
-    const email = response.get("email") as string;
-
-    if (isEmailValid(email) === false) {
-      toast.error(Errors.InvalidEmail);
-      return false;
-    }
-
-    const isOperationSuccessful: boolean = await forgotPassword(email.trim());
-    if (isOperationSuccessful === false) {
-      toast.error(Errors.GenericError);
-      return false;
-    }
-    toast.success(Constants.ResetPasswordEmailMessage);
-    return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
-  } catch (error: unknown) {
-    toast.error(error instanceof Error ? error.message : (error as string));
-    return false;
-  }
 }

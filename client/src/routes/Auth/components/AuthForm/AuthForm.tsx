@@ -1,5 +1,4 @@
-import { Fragment } from "react";
-import { Form } from "react-router-dom";
+import { FormEvent, Fragment } from "react";
 import "font-awesome/css/font-awesome.min.css";
 import {
   faEnvelope,
@@ -13,14 +12,13 @@ import { Constants } from "../../constants";
 import mainStyles from "./AuthForm.module.scss";
 
 function AuthForm(props: IProps): JSX.Element {
-  const { submitButtonText, forgotPasswordSlot } = props;
+  const { submitButtonText, forgotPasswordSlot, onSubmit } = props;
 
   return (
-    <Form
+    <form
       autoComplete="off"
-      method="post"
-      action=""
       className={mainStyles["auth-container"]}
+      onSubmit={onSubmit}
     >
       <div className={mainStyles["auth-item"]}>
         <InputGroup stylesContainer="auth-form">
@@ -76,13 +74,14 @@ function AuthForm(props: IProps): JSX.Element {
         <input type="submit" value={submitButtonText}></input>
       </div>
       {forgotPasswordSlot}
-    </Form>
+    </form>
   );
 }
 
 export default AuthForm;
 
 interface IProps {
+  onSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
   submitButtonText: string;
   forgotPasswordSlot?: JSX.Element;
 }

@@ -1,7 +1,7 @@
 import { Fragment, useRef } from "react";
-import { ActionFunctionArgs, NavLink, redirect, useFetcher } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   faCamera,
   faEnvelope,
@@ -16,17 +16,28 @@ import { queryClient } from "../../../../config";
 import { GlobalConstants } from "../../../../utils";
 import { InputGroup, Textarea } from "../../../../components";
 import { inputStyles } from "../../../../styles";
-import { ProfileEditItem as EditItem, UserPhoto } from "../../components";
+import { Errors } from "../../errors";
 import { Constants } from "../../constants";
 import { useImageChange } from "../../hooks";
+import { ProfileEditItem as EditItem, UserPhoto } from "../../components";
 import { editUserData, userDetailsQuery } from "../../api";
 import { isEditFormValid as isFormValid } from "../../helpers";
 import styles from "./styles.module.scss";
 
-function ProfileEdit() {
-  const fetcher = useFetcher();
-  const inputFileRef = useRef<HTMLInputElement>(null);
+export function ProfileEdit() {
+  const navigate = useNavigate();
   const { data: userInfo } = useQuery(userDetailsQuery);
+  const mutation = useMutation(editUserData, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(userDetailsQuery.queryKey);
+      toast.success(Constants.ProfileUpdatedSuccess);
+      navigate("/profile");
+    },
+    onError: (error: unknown) => {
+      toast.error(typeof error === "string" ? error : Errors.GenericError);
+    },
+  });
+  const inputFileRef = useRef<HTMLInputElement>(null);
   const [image, handleImageChange] = useImageChange(userInfo?.image);
 
   function triggerImageChange() {
@@ -37,18 +48,23 @@ function ProfileEdit() {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
-    if (isFormValid(formData) === false) {
-      return;
-    }
+    if (isFormValid(formData) === false) return;
 
     const file = inputFileRef.current?.files?.[0];
     if (file !== undefined) {
       formData.set("file", file);
     }
-    fetcher.submit(formData, {
-      method: "post",
-      action: "",
-    });
+
+    const userData: IRequest = {
+      username: formData.get("username") as string,
+      biography: formData.get("biography") as string,
+      phone: formData.get("phone") as string,
+      currentPassword: (formData.get("currentPassword") as string) || "",
+      newPassword: (formData.get("newPassword") as string) || "",
+      file,
+    };
+
+    mutation.mutate(userData);
   }
 
   return (
@@ -57,11 +73,9 @@ function ProfileEdit() {
         <span className={styles["arrow-left"]} />
         <span>{Constants.Back}</span>
       </NavLink>
-      <fetcher.Form
+      <form
         className={styles.form}
         autoComplete="off"
-        method="post"
-        action=""
         onSubmit={handleSubmit}
       >
         <article>
@@ -224,51 +238,16 @@ function ProfileEdit() {
         )}
         <EditItem>
           <section className={styles["edit-item"]}>
-            <button id={styles["save-button"]} type="submit">
-              <span id={styles["save-button-text"]}>{Constants.Save}</span>
+            <button id={styles["save-button"]} type="submit" disabled={mutation.isLoading}>
+              <span id={styles["save-button-text"]}>
+                {mutation.isLoading ? Constants.Saving : Constants.Save}
+              </span>
             </button>
           </section>
         </EditItem>
-      </fetcher.Form>
+      </form>
     </div>
   );
-}
-
-export { ProfileEdit as default, createEditProfileAction };
-
-function createEditProfileAction() {
-  return async function ({ request }: ActionFunctionArgs) {
-    try {
-      const formData = await request.formData();
-      const file = formData.get("file");
-
-      const updatedFormData = new FormData();
-      updatedFormData.append("file", file as File);
-
-      for (const [key, value] of formData.entries()) {
-        if (key !== "file") {
-          updatedFormData.append(key, value);
-        }
-      }
-
-      const userData: IRequest = Object.fromEntries(
-        updatedFormData.entries()
-      ) as unknown as IRequest;
-
-      if (userData.currentPassword == null && userData.newPassword == null) {
-        userData.currentPassword = "";
-        userData.newPassword = "";
-      }
-
-      await editUserData(userData);
-      await queryClient.refetchQueries(userDetailsQuery.queryKey);
-      return redirect(`${import.meta.env.VITE_CLIENT_URI}profile`);
-    } catch (error) {
-      console.error(error);
-      toast.error(error as string);
-      return undefined;
-    }
-  };
 }
 
 interface IRequest {

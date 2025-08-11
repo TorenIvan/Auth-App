@@ -1,1 +1,1 @@
-export { ResetPassword as Component, loader, action } from "./ResetPassword";
+export { ResetPassword as Component } from "./ResetPassword";

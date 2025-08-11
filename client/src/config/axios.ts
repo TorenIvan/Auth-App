@@ -1,7 +1,5 @@
-import { QueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { queryClient } from "./queryClient";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_SERVER_URI,
@@ -23,7 +21,7 @@ let missedRequestsForPendingRenewalQueue: Array<{
 // AuthContext reference - will be set by setupAxiosInterceptors
 let authContextRef: {
   refreshTokens: () => Promise<string>;
-  logout: (queryClient: QueryClient) => Promise<void>;
+  logout: () => Promise<void>;
 } | null = null;
 
 axiosInstance.interceptors.request.use(
@@ -115,7 +113,7 @@ function processQueue(token: string | null, error: unknown) {
 
 async function handleAuthFailure() {
   if (authContextRef) {
-    await authContextRef.logout(queryClient);
+    await authContextRef.logout();
   }
 }
 
@@ -124,7 +122,7 @@ async function handleAuthFailure() {
  */
 export function setupAxiosInterceptors(authContext: {
   refreshTokens: () => Promise<string>;
-  logout: (queryClient: QueryClient) => Promise<void>;
+  logout: () => Promise<void>;
 }) {
   authContextRef = authContext;
 }

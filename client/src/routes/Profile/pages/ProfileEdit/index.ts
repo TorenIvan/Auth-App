@@ -1,3 +1,1 @@
-import ProfileEdit, { createEditProfileAction } from "./ProfileEdit";
-
-export { ProfileEdit as Component, createEditProfileAction };
+export { ProfileEdit as Component } from "./ProfileEdit";

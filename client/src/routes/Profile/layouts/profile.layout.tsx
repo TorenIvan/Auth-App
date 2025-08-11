@@ -1,49 +1,44 @@
 import { Fragment, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useQueryClient } from "@tanstack/react-query";
+import { useToggleSubMenu } from "../hooks";
+import { SideMenu } from "../components";
+import { Header, Main, Footer } from "../../../layouts";
 import {
   faCircleUser,
   faRightFromBracket,
   faUserGroup,
 } from "@fortawesome/free-solid-svg-icons";
-import { Footer, Header, Main } from "../../../layouts";
-import { SideMenu } from "../components";
 import { Constants } from "../constants";
-import { useToggleSubMenu } from "../hooks";
-import { userDetailsQuery } from "../api";
 import { BroadcastChannel } from "broadcast-channel";
-import { Errors } from "../errors";
-import { queryClient } from "../../../config";
 import { useAuth } from "../../../store";
+import { Errors } from "../errors";
 
-function ProfileLayout() {
+export function ProfileLayout() {
   const { logout: logoutContext } = useAuth();
   const [isSubMenuOpen, toggleSubMenu] = useToggleSubMenu();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const logoutChannel = new BroadcastChannel("logout");
 
   function logout() {
     logoutChannel.postMessage("logout");
   }
 
-  const logoutAllTabs = () => {
+  useEffect(() => {
     logoutChannel.onmessage = async () => {
       try {
-        await logoutContext(queryClient);
+        await logoutContext();
         logoutChannel.close();
-        return navigate("/login");
+        navigate("/login");
       } catch (error) {
         console.error(error);
         toast.error(Errors.GenericError);
-        return undefined;
       }
     };
-  };
 
-  useEffect(() => {
-    logoutAllTabs();
+    return () => {
+      logoutChannel.close();
+    };
   }, []);
 
   return (
@@ -83,22 +78,3 @@ function ProfileLayout() {
     </Fragment>
   );
 }
-
-export function loader() {
-  return async function () {
-    try {
-      console.log('Mpika loader profile');
-      
-      const query = userDetailsQuery;
-      const data = await queryClient.ensureQueryData(query);
-      console.log({ data });
-      queryClient.setQueryData(query.queryKey, data);
-      return true;
-    } catch (error: unknown) {
-      console.error(error);
-      return false;
-    }
-  };
-}
-
-export default ProfileLayout;

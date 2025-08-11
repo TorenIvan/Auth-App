@@ -1,3 +1,1 @@
-import Login, { action } from "./Login";
-
-export { Login, action };
+export { Login as Component } from "./Login";

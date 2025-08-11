@@ -10,13 +10,7 @@ function profileRoutes() {
         },
         {
           path: "edit",
-          lazy: async () => {
-            const module = await import("./pages/ProfileEdit");
-            return {
-              ...module,
-              action: module.createEditProfileAction(),
-            };
-          },
+          lazy: () => import("./pages/ProfileEdit"),
         },
       ],
     },

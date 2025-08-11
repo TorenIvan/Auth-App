@@ -1,39 +1,69 @@
-import { redirect, useLoaderData, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { faCircleXmark, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Errors } from "../../errors";
 import { Constants } from "../../constants";
 import { useFacebookLogin } from "../../hooks";
-import { useEffect } from "react";
 import { addAuthorizationHeader } from "../../../../config";
-import styles from "./styles.module.scss"
+import styles from "./styles.module.scss";
 
 export function LoginFacebook() {
-  const code = useLoaderData();
   const navigate = useNavigate();
-  const { data, error, isLoading } = useFacebookLogin({ code: code as string | boolean });
+
+  // Extract params from URL
+  const { search } = window.location;
+  const urlParams = new URLSearchParams(search);
+  const code = urlParams.get("code");
+  const state = urlParams.get("state");
+
+  // Validate params
+  let isParamsValid = true;
+  if (!search || !code || !state) {
+    toast.error(Errors.InvalidQueryParameters);
+    localStorage.removeItem("auth_app_csrf_token");
+    isParamsValid = false;
+  }
+
+  // Validate CSRF
+  if (isParamsValid) {
+    const csrfToken = extractCSRFToken(state);
+    if (csrfToken !== localStorage.getItem("auth_app_csrf_token")) {
+      toast.error(Errors.InvalidCSRFToken);
+      localStorage.removeItem("auth_app_csrf_token");
+      isParamsValid = false;
+    }
+  }
+
+  // Always clear token from storage after check
+  useEffect(() => {
+    localStorage.removeItem("auth_app_csrf_token");
+  }, []);
+
+  const { data, error } = useFacebookLogin({
+    code: isParamsValid ? code! : "",
+  });
 
   function goBackToLogin() {
-    return navigate("../../login");
+    navigate("/login");
   }
 
   useEffect(() => {
     if (data) {
       addAuthorizationHeader(data);
-      navigate("../../profile");
+      navigate("/profile");
     }
 
     if (error) {
       toast.error(typeof error === "string" ? error : Errors.GenericError);
       if (error === Errors.AUserAlreadyAuthenticated) {
-        navigate("../../profile");
+        navigate("/profile");
       }
     }
-  }, [data, error, isLoading])
+  }, [data, error, navigate]);
 
-
-  if (code === false || error) {
+  if (!isParamsValid || error) {
     return (
       <div id={styles.container}>
         <h2 id={styles.header}>{Constants.LoginHeaderError}</h2>
@@ -52,7 +82,6 @@ export function LoginFacebook() {
     );
   }
 
-
   return (
     <div id={styles.container}>
       <h2 id={styles.header}>{Constants.LoginHeaderLoading}</h2>
@@ -64,48 +93,9 @@ export function LoginFacebook() {
   );
 }
 
-export async function loader() {
-  try {
-    const { search } = window.location;
-    if (!search) {
-      setTimeout(() => {
-        toast.error(Errors.InvalidQueryParameters);
-      }, 500);
-      localStorage.removeItem("auth_app_csrf_token");
-      return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
-    }
-
-    const urlParams = new URLSearchParams(search);
-    const code = urlParams.get("code");
-    const state = urlParams.get("state");
-
-    if (!code || !state) {
-      setTimeout(() => {
-        toast.error(Errors.InvalidQueryParameters);
-      }, 500);
-      localStorage.removeItem("auth_app_csrf_token");
-      return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
-    }
-    const csrf_token = extractCSRFToken(state);
-    if (csrf_token !== localStorage.getItem("auth_app_csrf_token")) {
-      setTimeout(() => {
-        toast.error(Errors.InvalidCSRFToken);
-      }, 500);
-      localStorage.removeItem("auth_app_csrf_token");
-      return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
-    }
-    localStorage.removeItem("auth_app_csrf_token");
-    return code;
-  } catch (error: string | unknown) {
-    setTimeout(() => {
-      toast.error(typeof error === "string" ? error : Errors.GenericError);
-    }, 500);
-    localStorage.removeItem("auth_app_csrf_token");
-    return false;
-  }
-}
-
-function extractCSRFToken(inputString: string): string | undefined {
+function extractCSRFToken(inputString: string | null): string | undefined {
+  if (!inputString) return undefined;
+  
   const start = "csrf_token=";
   const end = "}";
   const startIndex = inputString.indexOf(start);
@@ -113,13 +103,8 @@ function extractCSRFToken(inputString: string): string | undefined {
   if (startIndex !== -1) {
     const endIndex = inputString.indexOf(end, startIndex);
     if (endIndex !== -1) {
-      const csrfToken = inputString.substring(startIndex + start.length, endIndex);
-      return csrfToken;
-    } else {
-      return undefined;
+      return inputString.substring(startIndex + start.length, endIndex);
     }
-  } else {
-    return undefined;
   }
+  return undefined;
 }
-

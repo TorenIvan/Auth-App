@@ -1,3 +1,1 @@
-import ProfileDetails from "./ProfileDetails";
-
-export { ProfileDetails as Component };
+export { ProfileDetails as Component } from "./ProfileDetails";

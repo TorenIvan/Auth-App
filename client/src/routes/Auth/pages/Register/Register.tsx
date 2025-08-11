@@ -1,5 +1,5 @@
-import { Fragment, PureComponent } from "react";
-import { ActionFunctionArgs, redirect } from "react-router-dom";
+import { FormEvent, Fragment, useCallback, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { isEmailValid, isPasswordValid } from "../../../../helpers";
 import { Constants } from "../../constants";
@@ -11,61 +11,52 @@ import {
   AuthFormGroup,
 } from "../../components";
 
-class Register extends PureComponent {
-  private readonly submitButtonText: string;
-  private readonly title: JSX.Element;
-  private readonly navigateLink: JSX.Element;
+export function Register() {
+  const navigate = useNavigate();
 
-  constructor(props: object) {
-    super(props);
-    this.submitButtonText = Constants.RegisterButtonText;
-    this.title = RegisterTitle();
-    this.navigateLink = RegisterNavLink();
-  }
+  const title = useMemo(() => RegisterTitle(), []);
+  const navigateLink = useMemo(() => RegisterNavLink(), []);
 
-  render() {
-    return (
-      <AuthFormGroup>
-        <Fragment>
-          <AuthFormGroup.Header titleSlot={this.title} />
-          <AuthFormGroup.Form submitButtonText={this.submitButtonText} />
-          <AuthFormGroup.Footer navLinkSlot={this.navigateLink} />
-        </Fragment>
-      </AuthFormGroup>
-    );
-  }
-}
+  const handleSubmit = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      try {
+        const formData = new FormData(event.currentTarget);
+        const email = formData.get("email") as string;
+        const password = formData.get("password") as string;
 
-export { Register as default, action };
+        if (!isEmailValid(email)) {
+          toast.error(Errors.InvalidEmail);
+          return;
+        }
+        if (!isPasswordValid(password)) {
+          toast.error(Errors.InvalidPassword);
+          return;
+        }
 
-async function action({ request }: ActionFunctionArgs) {
-  try {
-    const response = await request.formData();
-    const email = response.get("email") as string;
-    const password = response.get("password") as string;
+        await registerUser({ email, password });
+        toast.success(Constants.ConfirmEmailMessage);
+        navigate("../login");
+      } catch (error) {
+        toast.error(String(error));
+        if (error === Errors.AUserAlreadyAuthenticated) {
+          navigate("../profile");
+        }
+      }
+    },
+    [navigate]
+  );
 
-    if (isEmailValid(email) === false) {
-      toast.error(Errors.InvalidEmail);
-      return false;
-    }
-    if (isPasswordValid(password) === false) {
-      toast.error(Errors.InvalidPassword);
-      return false;
-    }
-
-    await registerUser({
-      email: email,
-      password: password,
-    });
-
-    toast.success(Constants.ConfirmEmailMessage);
-    return redirect("../login");
-  } catch (error: unknown) {
-    toast.error(error as string);
-    if (error === Errors.AUserAlreadyAuthenticated) {
-      console.log('Mpika');
-      return redirect('../profile');
-    }
-    return true;
-  }
+  return (
+    <AuthFormGroup>
+      <Fragment>
+        <AuthFormGroup.Header titleSlot={title} />
+        <AuthFormGroup.Form
+          onSubmit={handleSubmit}
+          submitButtonText={Constants.RegisterButtonText}
+        />
+        <AuthFormGroup.Footer navLinkSlot={navigateLink} />
+      </Fragment>
+    </AuthFormGroup>
+  );
 }

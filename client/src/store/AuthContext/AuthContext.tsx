@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { checkIfUserIsAuthenticated, renewTokens } from "../../api";
 import { loginUser } from "../../routes/Auth/api";
 import { logoutUser } from "../../routes/Profile/api";
 import { addAuthorizationHeader } from "../../config";
-import { QueryClient } from "@tanstack/react-query";
 
 interface ILoginRequest {
   email: string; 
@@ -11,15 +11,16 @@ interface ILoginRequest {
 }
 
 interface AuthContextType {
-  isAuthenticated: boolean | undefined; // undefined = loading
+  isAuthenticated: boolean | undefined; // undefined is the loading state
   login: (req: ILoginRequest) => Promise<void>;
-  logout: (queryClient: QueryClient) => Promise<void>;
+  logout: () => Promise<void>;
   refreshTokens: () => Promise<string>; 
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const queryClient = useQueryClient();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | undefined>(undefined);
 
   const checkAuth = useCallback(async () => {
@@ -37,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsAuthenticated(true);
   }, []);
 
-  const logout = useCallback(async (queryClient: QueryClient) => {
+  const logout = useCallback(async () => {
     try {
       await logoutUser(); 
     } finally {

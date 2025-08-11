@@ -1,1 +1,1 @@
-export { default as Component, loader } from "./profile.layout";
+export { ProfileLayout as Component } from "./profile.layout";

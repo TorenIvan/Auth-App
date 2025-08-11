@@ -6,6 +6,7 @@ export const Constants = {
   ProfileInfoSubText: "Basic info, like your name and photo",
   ProfileHeaderTitle: "Profile",
   ProfileHeaderSubText: "Some info may be visible",
+  ProfileUpdatedSuccess: "Profile updated successfully",
   Edit: "Edit",
   Photo: "Photo",
   Name: "Name",
@@ -28,5 +29,6 @@ export const Constants = {
   AddPhoto: "Add Photo",
   ChangePhoto: "Change Photo",
   Save: "Save",
+  Saving: "Saving...",
   NotAdded: "Not added...",
 } as const;

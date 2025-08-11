@@ -1,4 +1,5 @@
-import { redirect, useLoaderData, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,11 +13,42 @@ import { confirmEmail } from "../../api";
 import styles from "./styles.module.scss";
 
 export function ConfirmEmail() {
-  const isEmailConfirmed = useLoaderData();
   const navigate = useNavigate();
+  const [isEmailConfirmed, setIsEmailConfirmed] = useState<boolean | null>(null); //Null is the loading state
+
+  useEffect(() => {
+    async function checkEmailConfirmation() {
+      try {
+        const { search } = window.location;
+        if (!search) {
+          toast.error(Errors.NoConfirmationToken);
+          navigate("/login", { replace: true });
+          return;
+        }
+
+        const urlParams = new URLSearchParams(search);
+        const token = urlParams.get("token");
+        const email = urlParams.get("email");
+
+        if (!token || !email) {
+          toast.error(Errors.InvalidConfirmationToken);
+          navigate("/login", { replace: true });
+          return;
+        }
+
+        await confirmEmail(email, token);
+        setIsEmailConfirmed(true);
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : String(error));
+        setIsEmailConfirmed(false);
+      }
+    }
+
+    checkEmailConfirmation();
+  }, [navigate]);
 
   function goBackToLogin() {
-    return navigate("../login");
+    navigate("/login");
   }
 
   if (isEmailConfirmed === false) {
@@ -65,29 +97,4 @@ export function ConfirmEmail() {
       </p>
     </div>
   );
-}
-
-export async function loader() {
-  try {
-    const { search } = window.location;
-    if (!search) {
-      toast.error(Errors.NoConfirmationToken);
-      return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
-    }
-
-    const urlParams = new URLSearchParams(search);
-    const token = urlParams.get("token");
-    const email = urlParams.get("email");
-
-    if (!token || !email) {
-      toast.error(Errors.InvalidConfirmationToken);
-      return redirect(`${import.meta.env.VITE_CLIENT_URI}login`);
-    }
-
-    await confirmEmail(email, token);
-    return true;
-  } catch (error: unknown) {
-    toast.error(error instanceof Error ? error.message : (error as string));
-    return false;
-  }
 }

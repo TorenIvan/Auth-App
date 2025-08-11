@@ -32,7 +32,7 @@ export const Constants = {
     "Almost done! An email will be sent to your account soon. Follow the instructions to verify your account.",
   ResetPasswordEmailMessage:
     "Almost done! An email will be sent to your account soon. Follow the instructions to reset your password.",
-  PasswordResetedMessage:
+  PasswordResetMessage:
     "Congratulations! Your password has been reset. You can now sign in with your new password.",
   LoginHeaderError: "Sorry! We couldn't confirm your identity.",
   LoginHeaderLoading: "Authorize operation in progress might take a few seconds...",

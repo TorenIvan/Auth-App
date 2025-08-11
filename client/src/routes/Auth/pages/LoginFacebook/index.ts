@@ -1,1 +1,1 @@
-export { LoginFacebook as Component, loader } from "./LoginFacebook"
+export { LoginFacebook as Component } from "./LoginFacebook"
