@@ -16,7 +16,10 @@ function indexRouter() {
           element: <Navigate to="/profile" replace />,
         },
         ...authRoutes(),
-        ...profileRoutes()
+        ...profileRoutes(),
+        {
+          path: "*", element: <Navigate to="/profile" replace />,
+        },
       ],
     },
   ]);

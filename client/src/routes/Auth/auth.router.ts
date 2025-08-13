@@ -27,7 +27,7 @@ function authRoutes() {
         {
           path: "oauth2/facebook",
           lazy: () => import("./pages/LoginFacebook"),
-        }
+        },
       ],
     },
   ];

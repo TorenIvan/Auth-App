@@ -1,6 +1,5 @@
-import { Binary, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 import { Strings } from "../constants/Strings";
-import { Multipart } from "@fastify/multipart";
 
 declare module "@fastify/autoload";
 declare module "@fastify/cookie";

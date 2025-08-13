@@ -6,20 +6,16 @@ const userEditUri = "v1/user/edit";
 
 export const userEditQuery = () => ({
   queryKey: ["user", "edit"],
-  queryFn: (request: IRequest) => editUserData(request),
+  queryFn: (request: FormData) => editUserData(request),
 });
 
-export async function editUserData(request: IRequest): Promise<void> {
+export async function editUserData(formData: FormData): Promise<void> {
   try {
-    console.log(request);
-    
     const result: AxiosResponse<void> = await axiosInstance.post(
       userEditUri,
-      request,
+      formData,
       {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       }
     );
     return result.data;

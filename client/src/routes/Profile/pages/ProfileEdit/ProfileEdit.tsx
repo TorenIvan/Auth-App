@@ -47,26 +47,24 @@ export function ProfileEdit() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const formData = new FormData(event.currentTarget);
-    if (isFormValid(formData) === false) return;
+    const form = event.currentTarget;
+    const formData = new FormData();
 
     const file = inputFileRef.current?.files?.[0];
-    if (file !== undefined) {
-      formData.set("file", file);
+    if (file) {
+      formData.append("file", file);
     }
 
-    const userData: IRequest = {
-      username: formData.get("username") as string,
-      biography: formData.get("biography") as string,
-      phone: formData.get("phone") as string,
-      currentPassword: (formData.get("currentPassword") as string) || "",
-      newPassword: (formData.get("newPassword") as string) || "",
-      file,
-    };
-    
+    formData.append("username", (form.username.value as string) || "");
+    formData.append("biography", (form.biography.value as string) || "");
+    formData.append("phone", (form.phone.value as string) || "");
+    formData.append("currentPassword", form.currentPassword.value || "");
+    formData.append("newPassword", form.newPassword.value || "");
 
-    mutation.mutate(userData);
+    if (isFormValid(formData) === false) return;
+    mutation.mutate(formData);
   }
+
 
   return (
     <div className={styles["page-container"]}>
@@ -249,13 +247,4 @@ export function ProfileEdit() {
       </form>
     </div>
   );
-}
-
-interface IRequest {
-  username: string;
-  biography: string;
-  phone: string;
-  currentPassword: string;
-  newPassword: string;
-  file?: File;
 }

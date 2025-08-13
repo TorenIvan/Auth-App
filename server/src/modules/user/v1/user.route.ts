@@ -42,6 +42,7 @@ const editUserDetails = (controller: UserController): FastifyPluginAsync => {
     fastify.addHook("preHandler", async (request, reply) => {
       await fastify.verifyAccessTokenHeader(request, reply);
       await validateRequestBody(request, reply, userEditRequestBodySchema);
+      await fastify.verifyImageUpload(request, reply);
     });
     fastify.post("/", controller.updateUserDetails.bind(controller));
   };

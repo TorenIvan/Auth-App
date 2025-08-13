@@ -11,7 +11,7 @@ import multipart from "@fastify/multipart";
 config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
 
 import { userRoutesV1 } from "./modules/user/v1";
-import { authMiddleware } from "./config/middleware";
+import { authMiddleware, userMiddleware } from "./config/middleware";
 import { DIPlugin } from "./config/plugins/di.plugin";
 import databasePlugin from "./config/plugins/database.plugin";
 import fastifySensible from "@fastify/sensible";
@@ -51,6 +51,10 @@ const app: FastifyPluginAsync<AppOptions> = async (
 
   await fastify.register(multipart, {
     addToBody: true,
+    limits: {
+      fileSize: 16 * 1024 * 1024, 
+      files: 1, 
+    }
   });
 
   await fastify.register(cors, {
@@ -103,6 +107,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
   await fastify.register(loggerPlugin);
   await fastify.register(DIPlugin, options);
   await fastify.register(authMiddleware, options);
+  await fastify.register(userMiddleware, options);
   await fastify.register(authRoutesV1(fastify.controllers.auth), options);
   await fastify.register(userRoutesV1(fastify.controllers.user), options);
   await fastify.register(httpErrorPlugin, options);

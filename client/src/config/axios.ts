@@ -76,6 +76,7 @@ axiosInstance.interceptors.response.use(
         processQueue(null, renewError);
         
         // Handle authentication failure
+        toast.error("Session expired. Please login again.");
         await handleAuthFailure();
         return Promise.reject(renewError);
       } finally {

@@ -4,7 +4,6 @@ import createError from "@fastify/error";
 import { Errors } from "../../../config/utils/constants/Errors";
 import { editUserDetailsBody } from "./user.schema";
 import UserService from "./user.service";
-import { isFileSizeExceeded } from "../../../config/utils/helpers";
 import AuthService from "../../auth/v1/auth.service";
 
 const transactionOptions: TransactionOptions = {
@@ -101,16 +100,10 @@ class UserController {
 
       let image: UploadedFile | null = images ? ((images[0] as UploadedFile) || null) : null;
 
+      // In theory this is tested due to middleware
       if (image !== null) {
         if (!image.data || image.data.length === 0) {
           image = null;
-        }
-        if (isFileSizeExceeded(image) === true) {
-          return UserController.handleError(
-            reply,
-            400,
-            Errors.MaxFileSizeExceeded
-          );
         }
       }
 
