@@ -99,7 +99,7 @@ class UserController {
         request.body;
       const images = request.body.file as Array<UploadedFile>;
 
-      let image: UploadedFile | null = (images[0] as UploadedFile) || null;
+      let image: UploadedFile | null = images ? ((images[0] as UploadedFile) || null) : null;
 
       if (image !== null) {
         if (!image.data || image.data.length === 0) {
@@ -145,6 +145,7 @@ class UserController {
               );
             }
           }
+      
 
           const updatedUserDetails = await this.userService.UpdateUserDetails(
             request.userId,

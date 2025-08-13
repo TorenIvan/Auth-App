@@ -45,4 +45,4 @@ interface IProps {
   navLinkSlot: JSX.Element;
 }
 
-type SocialItem = "facebook" | "google" | "twitter" | "github";
+// type SocialItem = "facebook" | "google" | "twitter" | "github";

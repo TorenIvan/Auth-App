@@ -7,6 +7,7 @@ export const Constants = {
   SocialProfilesFormText: "or continue with these social profiles",
   SignInButtonText: "Sign In!",
   RegisterButtonText: "Register Now!",
+  Registering: "Registering...",
   Register: "Register",
   Login: "Login",
   SignIn: "Sign In",

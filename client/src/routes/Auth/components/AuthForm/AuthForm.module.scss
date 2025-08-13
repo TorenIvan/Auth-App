@@ -55,3 +55,8 @@
 #submitBox > input[type="submit"]:hover {
   cursor: pointer;
 }
+
+#submitBox input[data-loading="true"] {
+  opacity: 0.4;
+  cursor: not-allowed !important;
+}

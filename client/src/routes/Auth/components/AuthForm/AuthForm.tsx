@@ -12,7 +12,7 @@ import { Constants } from "../../constants";
 import mainStyles from "./AuthForm.module.scss";
 
 function AuthForm(props: IProps): JSX.Element {
-  const { submitButtonText, forgotPasswordSlot, onSubmit } = props;
+  const { submitButtonText, forgotPasswordSlot, onSubmit, isSubmitting } = props;
 
   return (
     <form
@@ -71,7 +71,12 @@ function AuthForm(props: IProps): JSX.Element {
         </InputGroup>
       </div>
       <div id={mainStyles["submitBox"]}>
-        <input type="submit" value={submitButtonText}></input>
+        <input  
+          data-loading={isSubmitting ? "true" : "false"}
+          type="submit" 
+          value={submitButtonText} 
+          disabled={isSubmitting === true} 
+        />
       </div>
       {forgotPasswordSlot}
     </form>
@@ -84,4 +89,5 @@ interface IProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
   submitButtonText: string;
   forgotPasswordSlot?: JSX.Element;
+  isSubmitting?: boolean;
 }

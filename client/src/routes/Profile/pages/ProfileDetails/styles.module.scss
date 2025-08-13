@@ -28,6 +28,7 @@ $title-text: var(--text-contrast);
   color: $title-text;
   font-family: "Noto Sans";
   font-style: normal;
+  user-select: none;
   &#header-title {
     font-size: 36px;
     font-weight: 400;

@@ -8,7 +8,7 @@ function indexRouter() {
   return createBrowserRouter([
     {
       path: "/",
-      element: <AuthGuard />,
+      Component: AuthGuard,
       ErrorBoundary: ErrorPage,
       children: [
         {

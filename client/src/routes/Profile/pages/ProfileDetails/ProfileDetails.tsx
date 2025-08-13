@@ -26,8 +26,6 @@ export function ProfileDetails(): JSX.Element | undefined {
   const photoSlot: JSX.Element = findPhotoSlot(userInfo?.image);
   const imageExists: boolean = !!userInfo?.image;
 
-  
-
   return (
     <div className={styles["page-container"]}>
       <article id={styles.header}>

@@ -1,4 +1,4 @@
-import { FormEvent, Fragment, useCallback, useMemo } from "react";
+import { FormEvent, Fragment, useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { isEmailValid, isPasswordValid } from "../../../../helpers";
@@ -12,6 +12,7 @@ import {
 } from "../../components";
 
 export function Register() {
+  const [isMutating, setIsMutating] = useState(false);
   const navigate = useNavigate();
 
   const title = useMemo(() => RegisterTitle(), []);
@@ -34,6 +35,7 @@ export function Register() {
           return;
         }
 
+        setIsMutating(true);
         await registerUser({ email, password });
         toast.success(Constants.ConfirmEmailMessage);
         navigate("../login");
@@ -42,6 +44,8 @@ export function Register() {
         if (error === Errors.AUserAlreadyAuthenticated) {
           navigate("../profile");
         }
+      } finally {
+        setIsMutating(false);
       }
     },
     [navigate]
@@ -53,7 +57,8 @@ export function Register() {
         <AuthFormGroup.Header titleSlot={title} />
         <AuthFormGroup.Form
           onSubmit={handleSubmit}
-          submitButtonText={Constants.RegisterButtonText}
+          submitButtonText={isMutating ? Constants.Registering : Constants.RegisterButtonText}
+          isSubmitting={isMutating}
         />
         <AuthFormGroup.Footer navLinkSlot={navigateLink} />
       </Fragment>

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { ReactNode, createContext, useContext, useEffect, useState, useCallback, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { checkIfUserIsAuthenticated, renewTokens } from "../../api";
 import { loginUser } from "../../routes/Auth/api";
@@ -12,6 +12,7 @@ interface ILoginRequest {
 
 interface AuthContextType {
   isAuthenticated: boolean | undefined; // undefined is the loading state
+  isCheckingForAuth: boolean; // basically isAuthenticated being undefined
   login: (req: ILoginRequest) => Promise<void>;
   logout: () => Promise<void>;
   refreshTokens: () => Promise<string>; 
@@ -19,7 +20,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | undefined>(undefined);
 
@@ -65,11 +66,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
+  }, []);
+
+  const isCheckingForAuth: boolean = useMemo(() => isAuthenticated === undefined, [isAuthenticated]);
 
   return (
     <AuthContext.Provider 
       value={{ 
+        isCheckingForAuth,
         isAuthenticated, 
         login, 
         logout, 
