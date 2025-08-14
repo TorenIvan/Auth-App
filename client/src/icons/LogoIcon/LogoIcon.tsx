@@ -1,5 +1,5 @@
-import { GlobalConstants } from "../../../utils";
-import { useTheme } from "../../../store";
+import { GlobalConstants } from "../../utils";
+import { useTheme } from "../../store";
 import { DevChallengesDark, DevChallengesLight } from "../ThemeSpecific";
 import styles from "./styles.module.scss";
 

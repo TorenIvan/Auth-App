@@ -25,8 +25,6 @@ export function ProfileLayout() {
   }
 
   useEffect(() => {
-    console.log('Mpika layouyt');
-    
     logoutChannel.onmessage = async () => {
       try {
         await logoutContext();
