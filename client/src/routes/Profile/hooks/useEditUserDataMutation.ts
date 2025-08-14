@@ -1,9 +1,10 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Errors } from "../errors";
 import { Constants } from "../constants";
 import { editUserData, userDetailsQuery } from "../api";
-import { useEffect } from "react";
 
 export function useEditUserDataMutation() {
     const navigate = useNavigate();
@@ -12,7 +13,11 @@ export function useEditUserDataMutation() {
 
     useEffect(() => {
       if (isError) {
-        toast.error(error as string);
+        if (typeof error === 'string' || error instanceof String) {
+          toast.error(error as string);
+        } else {
+          toast.error(Errors.GenericError);
+        }
       }
       if (isSuccess) {
         queryClient.invalidateQueries(userDetailsQuery.queryKey);

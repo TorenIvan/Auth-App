@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
+import { Errors } from "../errors";
 import { userDetailsQuery } from "../api";
 
 export function useRetrieveUserDataQuery() {
@@ -8,7 +9,11 @@ export function useRetrieveUserDataQuery() {
 
   useEffect(() => {
     if (isError) {
-      toast.error(error as string);
+      if (typeof error === 'string' || error instanceof String) {
+        toast.error(error as string);
+      } else {
+        toast.error(Errors.GenericError);
+      }
     }
   }, [isError, error])
 
