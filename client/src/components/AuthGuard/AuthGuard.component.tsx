@@ -1,7 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../store";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { Loader } from "../Loader";
 
 const publicRoutes = [
   "/login",
@@ -12,8 +11,8 @@ const publicRoutes = [
 ];
 
 export function AuthGuard() {
-  const { isAuthenticated } = useAuth();
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
 
   const isLoadingAuth: boolean = isAuthenticated === undefined;
   const isPublic: boolean = publicRoutes.some((route) => location.pathname.startsWith(route));
@@ -21,7 +20,7 @@ export function AuthGuard() {
   const isUnauthenticatedOnPrivateRoute: boolean = isPublic === false && isAuthenticated === false;
 
   if (isLoadingAuth) {
-    return <FontAwesomeIcon icon={faSpinner} spinPulse color="red" width={80}/>
+    return <Loader />;
   }
   if (isAuthenticatedOnPublicRoute) {
     return <Navigate to="/profile" replace />;

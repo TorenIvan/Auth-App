@@ -183,7 +183,6 @@ export function ProfileEdit() {
                     />
                     <InputGroup.Label value={Constants.CurrentPassword} />
                     <InputGroup.Input
-                      isLoading={isFetching}
                       attributes={{
                         name: "currentPassword",
                         placeholder: Constants.CurrentPasswordPlaceholder,
@@ -212,7 +211,6 @@ export function ProfileEdit() {
                     />
                     <InputGroup.Label value={Constants.NewPassword} />
                     <InputGroup.Input
-                      isLoading={isFetching}
                       attributes={{
                         name: "newPassword",
                         placeholder: Constants.NewPasswordPlaceholder,
