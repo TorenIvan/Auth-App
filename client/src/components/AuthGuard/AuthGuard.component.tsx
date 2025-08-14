@@ -12,9 +12,8 @@ const publicRoutes = [
 
 export function AuthGuard() {
   const location = useLocation();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoadingAuth } = useAuth();
 
-  const isLoadingAuth: boolean = isAuthenticated === undefined;
   const isPublic: boolean = publicRoutes.some((route) => location.pathname.startsWith(route));
   const isAuthenticatedOnPublicRoute: boolean = isPublic === true && isAuthenticated === true;
   const isUnauthenticatedOnPrivateRoute: boolean = isPublic === false && isAuthenticated === false;

@@ -1,9 +1,6 @@
-import { ReactNode, createContext, useContext, useEffect, useState, useCallback } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { checkIfUserIsAuthenticated, renewTokens } from "../../api";
-import { loginUser } from "../../routes/Auth/api";
-import { logoutUser } from "../../routes/Profile/api";
-import { addAuthorizationHeader } from "../../config";
+import { ReactNode, createContext, useContext, useMemo } from "react";
+import { useLoginMutation, useLogoutMutation } from "../../routes/Auth/hooks";
+import { useCheckIfUserIsAuthenticatedQuery, useRenewTokensMutation } from "../../hooks";
 
 interface ILoginRequest {
   email: string; 
@@ -11,7 +8,8 @@ interface ILoginRequest {
 }
 
 interface AuthContextType {
-  isAuthenticated: boolean | undefined; // undefined is the loading state
+  isAuthenticated: boolean | undefined;
+  isLoadingAuth: boolean;
   login: (req: ILoginRequest) => Promise<void>;
   logout: () => Promise<void>;
   refreshTokens: () => Promise<string>; 
@@ -20,52 +18,12 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const queryClient = useQueryClient();
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | undefined>(undefined);
+  const { logout } = useLogoutMutation();
+  const { login, isLoggingIn } = useLoginMutation();
+  const { renewTokens } = useRenewTokensMutation();
+  const { isAuthenticated, isAuthenticating } = useCheckIfUserIsAuthenticatedQuery();
 
-  const checkAuth = useCallback(async () => {
-    try {
-      const authenticated = await checkIfUserIsAuthenticated();
-      setIsAuthenticated(authenticated);
-    } catch {
-      setIsAuthenticated(false);
-    }
-  }, []);
-
-  const login = useCallback(async ({ email, password }: ILoginRequest): Promise<void> => {
-    const accessToken = await loginUser({ email, password })
-    addAuthorizationHeader(accessToken);
-    setIsAuthenticated(true);
-  }, []);
-
-  const logout = useCallback(async () => {
-    try {
-      await logoutUser(); 
-    } finally {
-      addAuthorizationHeader("");
-      setIsAuthenticated(false);
-      queryClient.removeQueries();
-      queryClient.clear();
-    }
-  }, []);
-
-  // This method will be called by axios interceptor
-  const refreshTokens = useCallback(async (): Promise<string> => {
-    try {
-      const newToken = await renewTokens();
-      // Token refresh successful, user is still authenticated
-      setIsAuthenticated(true);
-      return newToken;
-    } catch (error) {
-      // Token refresh failed, user is no longer authenticated
-      setIsAuthenticated(false);
-      throw error;
-    }
-  }, []);
-
-  useEffect(() => {
-    checkAuth();
-  }, []);
+  const isLoadingAuth = useMemo(() => isAuthenticating || isLoggingIn, [isAuthenticating, isLoggingIn]);
 
   return (
     <AuthContext.Provider 
@@ -73,7 +31,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated, 
         login, 
         logout, 
-        refreshTokens
+        refreshTokens: renewTokens,
+        isLoadingAuth
       }}
     >
       {children}

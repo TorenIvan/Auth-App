@@ -9,7 +9,7 @@ import { editUserData, userDetailsQuery } from "../api";
 export function useEditUserDataMutation() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { mutate, isLoading, isError, isSuccess, error } = useMutation(editUserData); 
+  const { mutateAsync, isLoading, isError, isSuccess, error } = useMutation(editUserData); 
 
   useEffect(() => {
     if (isError) {
@@ -27,7 +27,7 @@ export function useEditUserDataMutation() {
   }, [isError, isSuccess, error]);
 
   return {
-    editUser: mutate,
+    editUser: mutateAsync,
     isMutating: isLoading,
     isError,
     isSuccess,
