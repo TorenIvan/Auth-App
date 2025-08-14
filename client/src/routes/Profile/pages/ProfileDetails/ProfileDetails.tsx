@@ -1,26 +1,14 @@
 import { NavLink } from "react-router-dom";
-import toast from "react-hot-toast";
-import { useQuery } from "@tanstack/react-query";
-import { userDetailsQuery } from "../../api";
-import { ProfileDetail, UserPhoto } from "../../components";
 import { Constants } from "../../constants";
+import { ProfileDetail, UserPhoto } from "../../components";
+import { useRetrieveUserDataQuery } from "../../hooks";
 import styles from "./styles.module.scss";
-import { useEffect } from "react";
-import { Errors } from "../../errors";
 
 const notAddedSlot: JSX.Element = <em>{Constants.NotAdded}</em>;
 
 export function ProfileDetails(): JSX.Element | undefined {
-  const { data: userInfo, isLoading, isFetching, isError } = useQuery(userDetailsQuery);
+  const { userInfo, isLoading } = useRetrieveUserDataQuery();
 
-  useEffect(() => {
-    if (isError) {
-      toast.error(Errors.GenericError);
-    }
-  }, [isError])
-
-  console.log({isLoading, isFetching});
-  
   if (isLoading || userInfo === undefined) return undefined;
 
   const photoSlot: JSX.Element = findPhotoSlot(userInfo?.image);

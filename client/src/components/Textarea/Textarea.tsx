@@ -1,6 +1,6 @@
 import { ForwardedRef, forwardRef } from "react";
 import styles from "./styles.module.scss";
-import { Constants } from "../../utils/Modules/Constants";
+import { Constants } from "../../utils/Constants";
 import { useTheme } from "../../store";
 
 export const Textarea = forwardRef<HTMLTextAreaElement, IProps>(

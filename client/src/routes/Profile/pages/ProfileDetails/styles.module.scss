@@ -29,16 +29,20 @@ $title-text: var(--text-contrast);
   font-family: "Noto Sans";
   font-style: normal;
   user-select: none;
-  &#header-title {
-    font-size: 36px;
-    font-weight: 400;
-    line-height: 49px;
-  }
-  &#header-subtext {
-    font-size: 18px;
-    font-weight: 300;
-    line-height: 25px;
-  }
+}
+
+#header-title {
+  color: $title-text;
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 49px;
+}
+
+#header-subtext {
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 25px;
+  color: $title-text;
 }
 
 .details-container {

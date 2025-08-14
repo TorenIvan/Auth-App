@@ -12,7 +12,6 @@ interface ILoginRequest {
 
 interface AuthContextType {
   isAuthenticated: boolean | undefined; // undefined is the loading state
-  isCheckingForAuth: boolean; // basically isAuthenticated being undefined
   login: (req: ILoginRequest) => Promise<void>;
   logout: () => Promise<void>;
   refreshTokens: () => Promise<string>; 
@@ -68,12 +67,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     checkAuth();
   }, []);
 
-  const isCheckingForAuth: boolean = useMemo(() => isAuthenticated === undefined, [isAuthenticated]);
-
   return (
     <AuthContext.Provider 
       value={{ 
-        isCheckingForAuth,
         isAuthenticated, 
         login, 
         logout, 

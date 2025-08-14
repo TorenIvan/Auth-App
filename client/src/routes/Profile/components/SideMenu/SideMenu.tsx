@@ -1,8 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
 import { ReactNode } from "react";
-import { userDetailsQuery } from "../../api";
 import SubMenu from "../SubMenu";
 import UserAvatar from "../UserAvatar";
+import { useRetrieveUserDataQuery } from "../../hooks";
 import styles from "./styles.module.scss";
 
 interface IProps {
@@ -12,7 +11,7 @@ interface IProps {
 }
 
 function SideMenu({ isOpen, onPressingOpenButton, children }: IProps) {
-  const { data: userInfo } = useQuery(userDetailsQuery)
+  const { userInfo } = useRetrieveUserDataQuery();
 
   const iconSlot: JSX.Element = <UserAvatar userImage={userInfo?.image} />;
 

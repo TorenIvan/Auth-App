@@ -1,5 +1,5 @@
 import { ClipboardEvent, FocusEvent, InputHTMLAttributes } from "react";
-import { Constants } from "../../utils/Modules/Constants";
+import { Constants } from "../../utils/Constants";
 import { useTheme } from "../../store";
 import { inputStyles } from "../../styles";
 

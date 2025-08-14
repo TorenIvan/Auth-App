@@ -1,7 +1,5 @@
 import { Fragment, useRef } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { NavLink } from "react-router-dom";
 import {
   faCamera,
   faEnvelope,
@@ -12,31 +10,19 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { queryClient } from "../../../../config";
 import { GlobalConstants } from "../../../../utils";
 import { InputGroup, Textarea } from "../../../../components";
 import { inputStyles } from "../../../../styles";
-import { Errors } from "../../errors";
 import { Constants } from "../../constants";
-import { useImageChange } from "../../hooks";
-import { ProfileEditItem as EditItem, UserPhoto } from "../../components";
-import { editUserData, userDetailsQuery } from "../../api";
 import { isEditFormValid as isFormValid } from "../../helpers";
+import { ProfileEditItem as EditItem, UserPhoto } from "../../components";
+import { useEditUserDataMutation, useImageChange, useRetrieveUserDataQuery } from "../../hooks";
 import styles from "./styles.module.scss";
 
 export function ProfileEdit() {
-  const navigate = useNavigate();
-  const { data: userInfo } = useQuery(userDetailsQuery);
-  const mutation = useMutation(editUserData, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(userDetailsQuery.queryKey);
-      toast.success(Constants.ProfileUpdatedSuccess);
-      navigate("/profile");
-    },
-    onError: (error: unknown) => {
-      toast.error(typeof error === "string" ? error : Errors.GenericError);
-    },
-  });
+  const { userInfo } = useRetrieveUserDataQuery();
+  const { editUser, isMutating } = useEditUserDataMutation();
+  
   const inputFileRef = useRef<HTMLInputElement>(null);
   const [image, handleImageChange] = useImageChange(userInfo?.image);
 
@@ -62,7 +48,7 @@ export function ProfileEdit() {
     formData.append("newPassword", form.newPassword.value || "");
 
     if (isFormValid(formData) === false) return;
-    mutation.mutate(formData);
+    editUser(formData);
   }
 
 
@@ -237,9 +223,9 @@ export function ProfileEdit() {
         )}
         <EditItem>
           <section className={styles["edit-item"]}>
-            <button id={styles["save-button"]} type="submit" disabled={mutation.isLoading}>
+            <button id={styles["save-button"]} type="submit" disabled={isMutating}>
               <span id={styles["save-button-text"]}>
-                {mutation.isLoading ? Constants.Saving : Constants.Save}
+                {isMutating ? Constants.Saving : Constants.Save}
               </span>
             </button>
           </section>
