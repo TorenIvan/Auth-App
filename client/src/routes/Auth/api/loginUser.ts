@@ -22,9 +22,11 @@ export async function loginUser(request: IRequest): Promise<string> {
     if (isAxiosError(error)) {
       const { response } = error;
       const statusCode = response?.status ?? 0;
-      const message = response?.data?.message;
+      const message = response?.data;
 
-      if (statusCode === 403) {
+      console.log({error});
+      
+      if (statusCode === 403 && !message) {
         throw Errors.AUserAlreadyAuthenticated;
       }
 

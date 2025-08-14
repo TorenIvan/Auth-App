@@ -16,7 +16,7 @@ export async function registerUser(request: IRequest): Promise<void> {
     if (isAxiosError(error)) {
       const { response } = error;
       const statusCode = response?.status ?? 0;
-      const message = response?.data?.message;
+      const message = response?.data;
 
       if (statusCode === 403) {
         throw Errors.AUserAlreadyAuthenticated;

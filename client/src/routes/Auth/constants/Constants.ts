@@ -5,6 +5,7 @@ export const Constants = {
   AroundTheWorld: "around the world",
   JoinLearners: "Join thousands of learners from",
   SocialProfilesFormText: "or continue with these social profiles",
+  SignInButtonTextLoad: "Signing...",
   SignInButtonText: "Sign In!",
   RegisterButtonText: "Register Now!",
   Registering: "Registering...",

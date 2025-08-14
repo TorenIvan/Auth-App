@@ -19,7 +19,7 @@ export async function confirmEmail(
     if (isAxiosError(error)) {
       const { response } = error;
       const statusCode = response?.status ?? 0;
-      const message = response?.data?.message;
+      const message = response?.data;
 
       if (statusCode < 500 && message) {
         throw message;

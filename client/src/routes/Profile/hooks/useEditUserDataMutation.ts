@@ -19,7 +19,7 @@ export function useEditUserDataMutation() {
         toast.success(Constants.ProfileUpdatedSuccess);
         navigate("/profile");
       }
-    }, [isError, isSuccess]);
+    }, [isError, isSuccess, error]);
 
     return {
       editUser: mutate,

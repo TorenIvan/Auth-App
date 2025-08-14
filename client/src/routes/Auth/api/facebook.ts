@@ -31,7 +31,7 @@ export async function retrieveToken(code: string | boolean): Promise<string | vo
     if (isAxiosError(error)) {
       const { response } = error;
       const statusCode = response?.status ?? 0;
-      const message = response?.data?.message;
+      const message = response?.data;
 
       if (statusCode === 403) {
         throw Errors.AUserAlreadyAuthenticated;

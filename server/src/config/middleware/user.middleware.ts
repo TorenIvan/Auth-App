@@ -6,7 +6,6 @@ import {
 } from "fastify";
 import fp from "fastify-plugin";
 import { isFileSizeExceeded } from "../utils/helpers";
-import createError from "@fastify/error";
 import { Errors } from "../utils/constants/Errors";
 
 const userMiddleware: FastifyPluginAsync = fp(
@@ -40,5 +39,8 @@ const userMiddleware: FastifyPluginAsync = fp(
 export default userMiddleware;
 
 function createUserReadableError(message: string) {
-    return createError("400", message);
+  return {
+    error: "Bad Request",
+    message,
+  };
 }

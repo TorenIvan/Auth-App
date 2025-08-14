@@ -38,10 +38,16 @@
 
     svg {
       cursor: pointer;
+      transition: fill 0.2s, opacity 0.2s;
+    }
 
-      &:hover {
-        fill: var(--svg-contrast);
-      }
+    &[data-loading="false"] svg:hover {
+      fill: var(--svg-contrast);
+    }
+
+    &[data-loading="true"] svg {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
   }
 }

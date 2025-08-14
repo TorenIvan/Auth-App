@@ -9,9 +9,10 @@ import { Constants } from "../../constants";
 import footerStyles from "./AuthFormFooter.module.scss";
 
 function AuthFormFooter(props: IProps): JSX.Element {
-  const { navLinkSlot } = props;
+  const { navLinkSlot, isSubmitting } = props;
 
   const responseFacebook = async () => {
+    if (isSubmitting) return;
     facebookInitLoginFlow();
   };
 
@@ -21,16 +22,29 @@ function AuthFormFooter(props: IProps): JSX.Element {
         <p>{Constants.SocialProfilesFormText}</p>
       </div>
       <ul id={footerStyles["social-profiles"]}>
-        <li className={footerStyles["social-item"]}>
+        <li 
+          className={footerStyles["social-item"]}
+          data-loading={isSubmitting ? "true" : "false"}
+        >
           <GoogleIcon />
         </li>
-        <li className={footerStyles["social-item"]} onClick={responseFacebook}>
+        <li 
+          className={footerStyles["social-item"]} 
+          data-loading={isSubmitting ? "true" : "false"}
+          onClick={responseFacebook}
+        >
           <FacebookIcon />
         </li>
-        <li className={footerStyles["social-item"]}>
+        <li 
+          className={footerStyles["social-item"]} 
+          data-loading={isSubmitting ? "true" : "false"}
+        >
           <GithubIcon />
         </li>
-        <li className={footerStyles["social-item"]}>
+        <li 
+          className={footerStyles["social-item"]} 
+          data-loading={isSubmitting ? "true" : "false"}
+        >
           <TwitterIcon />
         </li>
       </ul>
@@ -43,6 +57,7 @@ export default AuthFormFooter;
 
 interface IProps {
   navLinkSlot: JSX.Element;
+  isSubmitting: boolean;
 }
 
 // type SocialItem = "facebook" | "google" | "twitter" | "github";

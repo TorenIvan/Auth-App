@@ -1,4 +1,4 @@
-import { FormEvent, Fragment, useCallback, useMemo } from "react";
+import { FormEvent, Fragment, useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { isEmailValid, isPasswordValid } from "../../../../helpers";
@@ -16,6 +16,7 @@ import { useQueryClient } from "@tanstack/react-query";
 // type SocialItem = "facebook" | "google" | "twitter" | "github";
 
 export function Login() {
+  const [isMutating, setIsMutating] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { login } = useAuth();
@@ -41,12 +42,15 @@ export function Login() {
           return;
         }
 
+        setIsMutating(true);
         await login({ email, password });
         await queryClient.cancelQueries();
         queryClient.clear();
         navigate("/profile");
       } catch (error) {
         toast.error(String(error));
+      } finally {
+        setIsMutating(false);
       }
     },
     [navigate]
@@ -58,10 +62,11 @@ export function Login() {
         <AuthFormGroup.Header titleSlot={title} />
         <AuthFormGroup.Form
           onSubmit={handleSubmit}
-          submitButtonText={Constants.SignInButtonText}
           forgotPasswordSlot={forgotPasswordLink}
+          submitButtonText={isMutating ? Constants.SignInButtonTextLoad : Constants.SignInButtonText}
+          isSubmitting={isMutating}
         />
-        <AuthFormGroup.Footer navLinkSlot={navigateLink} />
+        <AuthFormGroup.Footer navLinkSlot={navigateLink} isSubmitting={isMutating} />
       </Fragment>
     </AuthFormGroup>
   );

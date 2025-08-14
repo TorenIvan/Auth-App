@@ -28,7 +28,7 @@ export async function resetPassword(
     if (isAxiosError(error)) {
       const { response } = error;
       const statusCode = response?.status ?? 0;
-      const message = response?.data?.message;
+      const message = response?.data;
 
       if (statusCode === 403 && message) {
         throw { isForbidden: true, message: message };

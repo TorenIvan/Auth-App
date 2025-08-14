@@ -10,7 +10,7 @@ export function useRetrieveUserDataQuery() {
     if (isError) {
       toast.error(error as string);
     }
-  }, [isError])
+  }, [isError, error])
 
    return {
     userInfo: data,

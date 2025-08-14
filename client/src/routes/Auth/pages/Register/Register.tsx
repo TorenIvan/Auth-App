@@ -60,7 +60,7 @@ export function Register() {
           submitButtonText={isMutating ? Constants.Registering : Constants.RegisterButtonText}
           isSubmitting={isMutating}
         />
-        <AuthFormGroup.Footer navLinkSlot={navigateLink} />
+        <AuthFormGroup.Footer navLinkSlot={navigateLink} isSubmitting={isMutating} />
       </Fragment>
     </AuthFormGroup>
   );

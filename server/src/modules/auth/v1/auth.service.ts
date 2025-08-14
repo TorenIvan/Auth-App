@@ -184,6 +184,7 @@ class AuthService {
             username: 1,
             email: 1,
             password: 1,
+            isVerified: 1,
             _id: 1,
           },
         }
@@ -215,6 +216,7 @@ class AuthService {
         biography: result.biography,
         phone: result.phone,
         image: result.image,
+        isVerified: result.isVerified,
         signInMethod: result.signInMethod as SignInMethod,
       };
       return { success: true, data: data };

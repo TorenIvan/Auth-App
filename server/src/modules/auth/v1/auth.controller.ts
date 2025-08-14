@@ -1,5 +1,4 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import createError from "@fastify/error";
 import { EnvironmentVariables } from "../../../config/utils/constants/EnvironmentVariables";
 import { Errors } from "../../../config/utils/constants/Errors";
 import { Strings } from "../../../config/utils/constants/Strings";
@@ -24,7 +23,6 @@ import {
 import AuthService from "./auth.service";
 import axios from "axios";
 
-
 class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -34,39 +32,21 @@ class AuthController {
     customError?: string
   ) {
     let error;
-    if (customError !== undefined) {
-      switch (errorCode) {
-        case 403:
-          error = createError("403", customError);
-          break;
-        case 401:
-          error = createError("401", customError);
-          break;
-        case 500:
-          error = createError("500", customError);
-          break;
-        default:
-          error = createError("400", customError);
-          break;
-      }
-    } else {
-      switch (errorCode) {
-        case 403:
-          error = createError("403", "Forbidden");
-          break;
-        case 401:
-          error = createError("401", "Unauthorized");
-          break;
-        case 500:
-          error = createError("500", "Internal server error");
-          break;
-        default:
-          error = createError("400", "Invalid request");
-          break;
-      }
+    switch (errorCode) {
+      case 403:
+        error = customError ?? 'Forbidden';
+        break;
+      case 401:
+        error = customError ?? 'Unauthorized';
+        break;
+      case 500:
+        error = customError ?? 'Internal server error';
+        break;
+      default:
+        error = customError ?? 'Invalid request';
+        break;
     }
     reply.code(errorCode).send(error);
-    return;
   }
 
   private static verifyQueryToken(query: {
@@ -284,10 +264,9 @@ class AuthController {
         );
       }
 
-      const hasConfirmedEmail: ServiceResponse =
-        await this.authService.CheckUserEmailConfirmation(email.toLowerCase());
+      const hasConfirmedEmail: boolean | null | undefined = (userCredsResponse.data as ServiceInsertedData)?.isVerified;
 
-      if (hasConfirmedEmail.success === false) {
+      if (hasConfirmedEmail === false) {
         const new_email_token = generateJWT(
           {
             userId: userCredsResponse.data!.userId.toString(),

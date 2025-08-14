@@ -19,7 +19,6 @@
     "@fastify/autoload": "^5.7.1",
     "@fastify/cookie": "^8.3.0",
     "@fastify/cors": "^8.2.0",
-    "@fastify/error": "^4.1.0",
     "@fastify/helmet": "^10.1.0",
     "@fastify/multipart": "^7.6.0",
     "@fastify/oauth2": "^7.5.0",

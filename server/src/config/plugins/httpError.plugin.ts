@@ -6,7 +6,8 @@ const httpErrorPlugin: FastifyPluginAsync = async (fastify) => {
     // Handle Fastify validation errors
     if (error.validation) {
       return reply.status(400).send({
-        ...fastify.httpErrors.badRequest(error.message),
+        error: "Bad Request",
+        message: error.message,
         details: error.validation,
       });
     }
@@ -20,7 +21,8 @@ const httpErrorPlugin: FastifyPluginAsync = async (fastify) => {
       }));
 
       return reply.status(400).send({
-        ...fastify.httpErrors.badRequest("Request validation failed"),
+        error: "Bad Request",
+        message: "Request validation failed",
         details: formattedErrors,
       });
     }
@@ -28,18 +30,22 @@ const httpErrorPlugin: FastifyPluginAsync = async (fastify) => {
     // Fallback for other errors
     const statusCode = error.statusCode ?? 500;
 
-    const fastifyError =
-      statusCode >= 400 && statusCode < 600
-        ? fastify.httpErrors.createError(statusCode, error.message)
-        : fastify.httpErrors.internalServerError("Something went wrong");
+    const defaultMessages: Record<number, string> = {
+      400: "Invalid request",
+      401: "Unauthorized",
+      403: "Forbidden",
+      404: "Not found",
+      500: "Internal server error",
+    };
+
+    const message = error.message ?? defaultMessages[statusCode] ?? "Something went wrong";
+    const errorName = statusCode >= 400 && statusCode < 600 ? defaultMessages[statusCode]?.split(" ")[0] ?? "Error" : "InternalError";
 
     return reply.status(statusCode).send({
-      error: fastifyError.name,
-      message: fastifyError.message,
+      error: errorName,
+      message,
     });
   });
 };
 
 export default httpErrorPlugin;
-
-

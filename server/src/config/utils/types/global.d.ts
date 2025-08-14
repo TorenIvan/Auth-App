@@ -29,6 +29,7 @@ declare global {
     biography: string;
     phone: string;
     signInMethod: SignInMethod;
+    isVerified?: boolean;
     image?: InsertedFile;
   };
 

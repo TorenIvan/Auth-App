@@ -18,7 +18,7 @@ export async function editUserData(formData: FormData): Promise<void> {
     if (isAxiosError(error)) {
       const { response } = error;
       const statusCode = response?.status ?? 0;
-      const message = response?.data?.message;
+      const message = response?.data;
 
       if (statusCode < 500 && message) {
         throw (message ?? Errors.GenericError);
