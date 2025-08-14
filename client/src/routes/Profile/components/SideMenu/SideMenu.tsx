@@ -11,9 +11,7 @@ interface IProps {
 }
 
 function SideMenu({ isOpen, onPressingOpenButton, children }: IProps) {
-  const { userInfo } = useRetrieveUserDataQuery();
-
-  const iconSlot: JSX.Element = <UserAvatar userImage={userInfo?.image} />;
+  const { userInfo, isFetching } = useRetrieveUserDataQuery();
 
   return (
     <div
@@ -23,8 +21,8 @@ function SideMenu({ isOpen, onPressingOpenButton, children }: IProps) {
       onClick={() => onPressingOpenButton()}
     >
       <div className={styles["account-menu-dropdown"]}>
-        {iconSlot}
-        <span>{userInfo?.username}</span>
+        <UserAvatar userImage={userInfo?.image} isLoading={isFetching} />
+        <span className={isFetching ? 'text-skeleton narrow' : undefined}>{userInfo?.username}</span>
         <span
           className={`${styles.caret} ${isOpen === true ? styles.open : ""}`}
           role="presentation"
