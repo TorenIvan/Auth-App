@@ -7,11 +7,11 @@ import styles from "./styles.module.scss";
 const notAddedSlot: JSX.Element = <em>{Constants.NotAdded}</em>;
 
 export function ProfileDetails(): JSX.Element | undefined {
-  const { userInfo, isLoading } = useRetrieveUserDataQuery();
+  const { userInfo, isFetching } = useRetrieveUserDataQuery();
 
-  if (isLoading || userInfo === undefined) return undefined;
+  if (isFetching === false && userInfo === undefined) return undefined;
 
-  const photoSlot: JSX.Element = findPhotoSlot(userInfo?.image);
+  const photoSlot: JSX.Element = findPhotoSlot(isFetching, userInfo?.image);
   const imageExists: boolean = !!userInfo?.image;
 
   return (
@@ -44,30 +44,45 @@ export function ProfileDetails(): JSX.Element | undefined {
         />
         <ProfileDetail
           label={Constants.Name.toUpperCase()}
-          valueSlot={<span>{userInfo!.username}</span>}
+          valueSlot={isFetching 
+            ? <div className="text-skeleton wide"></div> 
+            : <span>{userInfo?.username}</span>}
         />
         <ProfileDetail
           label={Constants.Bio.toUpperCase()}
-          valueSlot={<span>{userInfo?.biography || notAddedSlot}</span>}
+          valueSlot={isFetching 
+            ? <div className="text-skeleton wide"></div> 
+            : <span>{userInfo?.biography || notAddedSlot}</span>}
         />
         <ProfileDetail
           label={Constants.Phone.toUpperCase()}
-          valueSlot={<span>{userInfo?.phone || notAddedSlot}</span>}
+          valueSlot={isFetching 
+            ? <div className="text-skeleton wide"></div> 
+            : <span>{userInfo?.phone || notAddedSlot}</span>}
         />
         <ProfileDetail
           label={Constants.Email.toUpperCase()}
-          valueSlot={<span>{userInfo!.email}</span>}
+          valueSlot={isFetching 
+            ? <div className="text-skeleton wide"></div> 
+            : <span>{userInfo!.email || notAddedSlot}</span>}
         />
         <ProfileDetail
           label={Constants.Password.toUpperCase()}
-          valueSlot={<span>{Constants.Asterisks}</span>}
+          valueSlot={isFetching 
+            ? <div className="text-skeleton wide"></div> 
+            : <span>{Constants.Asterisks}</span>}
         />
       </main>
     </div>
   );
 }
 
-function findPhotoSlot(image?: string) {
+function findPhotoSlot(isLoading: boolean, image?: string ) {
+  if (isLoading) {
+   return (
+    <div className={`avatar-skeleton large`} />
+   ) 
+  }
   return image ? <UserPhoto image={image} /> : <em>{Constants.NotAdded}</em>;
 }
 

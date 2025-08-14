@@ -1,7 +1,7 @@
 import { memo } from "react";
 import styles from "./styles.module.scss";
 
-function ProfileDetail({ label, valueSlot, isImage }: IProps): JSX.Element {
+function ProfileDetail({ label, valueSlot, isImage}: IProps): JSX.Element {
   const valueColumnStyles: string = setValueColumnStyles(isImage);
 
   return (
@@ -9,7 +9,11 @@ function ProfileDetail({ label, valueSlot, isImage }: IProps): JSX.Element {
       <div className={styles["details-label-column"]}>
         <span>{label}</span>
       </div>
-      <div className={styles[valueColumnStyles]}>{valueSlot}</div>
+      <div 
+        className={styles[valueColumnStyles]}
+        >
+          {valueSlot}
+        </div>
     </section>
   );
 }

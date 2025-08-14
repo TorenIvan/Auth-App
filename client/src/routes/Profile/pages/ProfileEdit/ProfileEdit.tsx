@@ -20,9 +20,9 @@ import { useEditUserDataMutation, useImageChange, useRetrieveUserDataQuery } fro
 import styles from "./styles.module.scss";
 
 export function ProfileEdit() {
-  const { userInfo } = useRetrieveUserDataQuery();
+  const { userInfo, isFetching } = useRetrieveUserDataQuery();
   const { editUser, isMutating } = useEditUserDataMutation();
-  
+ 
   const inputFileRef = useRef<HTMLInputElement>(null);
   const [image, handleImageChange] = useImageChange(userInfo?.image);
 
@@ -51,7 +51,7 @@ export function ProfileEdit() {
     editUser(formData);
   }
 
-
+  if (isFetching === false && userInfo === undefined) return undefined;
   return (
     <div className={styles["page-container"]}>
       <NavLink className={styles["back-button"]} to="/profile" end replace>
@@ -69,6 +69,7 @@ export function ProfileEdit() {
         </article>
         <UserPhoto
           image={image}
+          isLoading={isFetching}
           handleImage={triggerImageChange}
           inputSlot={
             <>
