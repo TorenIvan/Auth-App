@@ -235,7 +235,7 @@ export function ProfileEdit() {
         )}
         <EditItem>
           <section className={styles["edit-item"]}>
-            <button id={styles["save-button"]} type="submit" disabled={isMutating}>
+            <button id={styles["save-button"]} type="submit" disabled={isMutating || isFetching}>
               <span id={styles["save-button-text"]}>
                 {isMutating ? Constants.Saving : Constants.Save}
               </span>
