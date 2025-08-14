@@ -5,7 +5,7 @@ import { inputStyles } from "../../styles";
 
 function InputGroupInput(props: IProps) {
   const [theme] = useTheme();
-  const { attributes, readonlyFocusEnabled, preventCopyPasteEnabled } = props;
+  const { attributes, readonlyFocusEnabled, preventCopyPasteEnabled, isLoading = false } = props;
 
   function handleFocus(event: FocusEvent<HTMLInputElement>) {
     if (readonlyFocusEnabled === true) {
@@ -20,10 +20,14 @@ function InputGroupInput(props: IProps) {
     }
   }
 
+  if (isLoading) {
+    return (
+      <div className="input-skeleton" /> 
+    );
+  }
   return (
     <input
-      className={`${inputStyles.input} ${theme === Constants.LightPalette ? inputStyles.lightBorder : ""
-        }`}
+      className={`${inputStyles.input} ${theme === Constants.LightPalette ? inputStyles.lightBorder : ""}`}
       {...attributes}
       onFocus={handleFocus}
       onCopy={preventCopyPaste}
@@ -39,4 +43,5 @@ interface IProps {
   attributes: InputHTMLAttributes<HTMLInputElement>;
   readonlyFocusEnabled?: boolean;
   preventCopyPasteEnabled?: boolean;
+  isLoading?: boolean;
 }

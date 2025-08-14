@@ -67,37 +67,42 @@ export function ProfileEdit() {
           <h3>{Constants.ChangeInfo}</h3>
           <span>{Constants.ChangeInfoSub}</span>
         </article>
-        <UserPhoto
-          image={image}
-          isLoading={isFetching}
-          handleImage={triggerImageChange}
-          inputSlot={
-            <>
-              <FontAwesomeIcon
-                icon={faCamera}
-                color="#ffffff"
-                className={styles["edit-photo-icon"]}
-              />
-              <input
-                type="file"
-                name="file"
-                accept=".png, .jpg, .jpeg"
-                ref={inputFileRef}
-                onChange={handleImageChange}
-              />
-            </>
-          }
-          paragraphSlot={
-            <span
-              id={styles["default-photo-text"]}
-              onClick={triggerImageChange}
-            >
-              {image === null
-                ? Constants.AddPhoto.toUpperCase()
-                : Constants.ChangePhoto.toUpperCase()}
-            </span>
-          }
-        />
+        {
+          isFetching ? (
+            <div className={`avatar-skeleton xl ${styles['margin-loader']}`} />
+          ): (
+            <UserPhoto
+              image={image}
+              handleImage={triggerImageChange}
+              inputSlot={
+                <>
+                  <FontAwesomeIcon
+                    icon={faCamera}
+                    color="#ffffff"
+                    className={styles["edit-photo-icon"]}
+                  />
+                  <input
+                    type="file"
+                    name="file"
+                    accept=".png, .jpg, .jpeg"
+                    ref={inputFileRef}
+                    onChange={handleImageChange}
+                  />
+                </>
+              }
+              paragraphSlot={
+                <span
+                  id={styles["default-photo-text"]}
+                  onClick={triggerImageChange}
+                >
+                  {image === null
+                    ? Constants.AddPhoto.toUpperCase()
+                    : Constants.ChangePhoto.toUpperCase()}
+                </span>
+              }
+            />
+          )
+        }
         <EditItem>
           <InputGroup stylesContainer="profile-input-container">
             <Fragment>
@@ -107,6 +112,7 @@ export function ProfileEdit() {
               />
               <InputGroup.Label value={Constants.Name} />
               <InputGroup.Input
+                isLoading={isFetching}
                 attributes={{
                   name: "username",
                   placeholder: Constants.NamePlaceholder,
@@ -119,6 +125,7 @@ export function ProfileEdit() {
         <EditItem>
           <Textarea
             labelSlot={<label>{Constants.Bio}</label>}
+            isLoading={isFetching}
             attributes={{
               name: "biography",
               placeholder: Constants.BioPlaceholder,
@@ -135,6 +142,7 @@ export function ProfileEdit() {
               />
               <InputGroup.Label value={Constants.Phone} />
               <InputGroup.Input
+                isLoading={isFetching}
                 attributes={{
                   name: "phone",
                   placeholder: Constants.PhonePlaceholder,
@@ -153,6 +161,7 @@ export function ProfileEdit() {
               />
               <InputGroup.Label value={Constants.Email} />
               <InputGroup.Input
+                isLoading={isFetching}
                 attributes={{
                   placeholder: Constants.EmailPlaceholder,
                   defaultValue: userInfo?.email,
@@ -174,6 +183,7 @@ export function ProfileEdit() {
                     />
                     <InputGroup.Label value={Constants.CurrentPassword} />
                     <InputGroup.Input
+                      isLoading={isFetching}
                       attributes={{
                         name: "currentPassword",
                         placeholder: Constants.CurrentPasswordPlaceholder,
@@ -202,6 +212,7 @@ export function ProfileEdit() {
                     />
                     <InputGroup.Label value={Constants.NewPassword} />
                     <InputGroup.Input
+                      isLoading={isFetching}
                       attributes={{
                         name: "newPassword",
                         placeholder: Constants.NewPasswordPlaceholder,
