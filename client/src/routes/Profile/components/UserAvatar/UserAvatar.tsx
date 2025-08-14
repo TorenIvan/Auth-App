@@ -1,11 +1,10 @@
-import { useAtom } from "jotai";
-import { themeAtom } from "../../../../store";
-import { Theme, GlobalConstants } from "../../../../utils";
 import Assets from "../../../../assets";
+import { GlobalConstants } from "../../../../utils";
+import { useTheme } from "../../../../store";
 import styles from "./styles.module.scss";
 
 function UserAvatar({ userImage }: IProps): JSX.Element {
-  const [theme, _] = useAtom<Theme>(themeAtom);
+  const [theme] = useTheme();
 
   if (userImage === undefined) {
     return (

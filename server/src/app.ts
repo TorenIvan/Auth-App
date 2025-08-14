@@ -10,6 +10,7 @@ import multipart from "@fastify/multipart";
 
 config({ path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`) });
 
+import { authRoutesV1 } from "./modules/auth/v1";
 import { userRoutesV1 } from "./modules/user/v1";
 import { authMiddleware, userMiddleware } from "./config/middleware";
 import { DIPlugin } from "./config/plugins/di.plugin";
@@ -18,7 +19,6 @@ import fastifySensible from "@fastify/sensible";
 import loggerPlugin from "./config/plugins/logger.plugin";
 import httpErrorPlugin from "./config/plugins/httpError.plugin";
 import notFoundPlugin from "./config/plugins/notFound.plugin";
-import { authRoutesV1 } from "./modules/auth/v1";
 
 export type AppOptions = {
   // Place your custom options for app below here.

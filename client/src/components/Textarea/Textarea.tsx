@@ -1,13 +1,11 @@
 import { ForwardedRef, forwardRef } from "react";
-import { useAtom } from "jotai";
-import { themeAtom } from "../../store";
-import { Theme } from "../../utils";
 import styles from "./styles.module.scss";
 import { Constants } from "../../utils/Modules/Constants";
+import { useTheme } from "../../store";
 
 export const Textarea = forwardRef<HTMLTextAreaElement, IProps>(
   (props, ref: TRef): JSX.Element => {
-    const [theme, _] = useAtom<Theme>(themeAtom);
+    const [theme] = useTheme();
     const { labelSlot, attributes } = props;
 
     return (

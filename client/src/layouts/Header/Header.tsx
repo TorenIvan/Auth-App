@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { useTheme } from "../../hooks";
+import { useTheme } from "../../store";
 import { LogoIcon, ThemeIcon } from "../../icons";
 import styles from "./styles.module.scss";
 

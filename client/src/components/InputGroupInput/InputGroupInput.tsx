@@ -1,12 +1,10 @@
 import { ClipboardEvent, FocusEvent, InputHTMLAttributes } from "react";
-import { useAtom } from "jotai";
-import { Theme } from "../../utils";
 import { Constants } from "../../utils/Modules/Constants";
-import { themeAtom } from "../../store";
+import { useTheme } from "../../store";
 import { inputStyles } from "../../styles";
 
 function InputGroupInput(props: IProps) {
-  const [theme, _] = useAtom<Theme>(themeAtom);
+  const [theme] = useTheme();
   const { attributes, readonlyFocusEnabled, preventCopyPasteEnabled } = props;
 
   function handleFocus(event: FocusEvent<HTMLInputElement>) {
