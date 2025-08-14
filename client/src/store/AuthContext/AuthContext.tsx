@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useContext, useEffect, useState, useCallback, useMemo } from "react";
+import { ReactNode, createContext, useContext, useEffect, useState, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { checkIfUserIsAuthenticated, renewTokens } from "../../api";
 import { loginUser } from "../../routes/Auth/api";
