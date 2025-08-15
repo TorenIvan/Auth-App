@@ -1,1 +1,1 @@
-export { AuthGuard } from "./AuthGuard.component"
+export { AuthGuard } from "./AuthGuard"
