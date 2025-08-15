@@ -1,25 +1,22 @@
-import { FormEvent, Fragment, useCallback, useMemo, useState } from "react";
+import { FormEvent, Fragment, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { isEmailValid, isPasswordValid } from "../../../../helpers";
 import { Constants } from "../../constants";
 import { Errors } from "../../errors";
-import { useAuth } from "../../../../store";
 import {
   LoginTitle,
   LoginNavLink,
   ForgotPasswordLink,
   AuthFormGroup,
 } from "../../components";
-import { useQueryClient } from "@tanstack/react-query";
+import { useLoginMutation } from "../../hooks";
 
 // type SocialItem = "facebook" | "google" | "twitter" | "github";
 
 export function Login() {
-  const [isMutating, setIsMutating] = useState(false);
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const { login } = useAuth();
+  const { login, isLoggingIn } = useLoginMutation();
 
   const title = useMemo(() => LoginTitle(), []);
   const navigateLink = useMemo(() => LoginNavLink(), []);
@@ -41,17 +38,10 @@ export function Login() {
           toast.error(Errors.InvalidPassword);
           return;
         }
-
-        setIsMutating(true);
         await login({ email, password });
-        await queryClient.cancelQueries();
-        queryClient.clear();
-        navigate("/profile");
       } catch (error) {
         toast.error(String(error));
-      } finally {
-        setIsMutating(false);
-      }
+      } 
     },
     [navigate]
   );
@@ -63,10 +53,10 @@ export function Login() {
         <AuthFormGroup.Form
           onSubmit={handleSubmit}
           forgotPasswordSlot={forgotPasswordLink}
-          submitButtonText={isMutating ? Constants.SignInButtonTextLoad : Constants.SignInButtonText}
-          isSubmitting={isMutating}
+          submitButtonText={isLoggingIn ? Constants.SignInButtonTextLoad : Constants.SignInButtonText}
+          isSubmitting={isLoggingIn}
         />
-        <AuthFormGroup.Footer navLinkSlot={navigateLink} isSubmitting={isMutating} />
+        <AuthFormGroup.Footer navLinkSlot={navigateLink} isSubmitting={isLoggingIn} />
       </Fragment>
     </AuthFormGroup>
   );

@@ -13,8 +13,8 @@ export function useLogoutMutation() {
     try {
       await mutateAsync();
       addAuthorizationHeader("")
-      queryClient.removeQueries();
-      queryClient.clear();
+      await queryClient.cancelQueries();
+      queryClient.setQueryData(['auth'], false);
     } catch (localError) {
       if (typeof localError === 'string' || localError instanceof String) {
         toast.error(localError as string);

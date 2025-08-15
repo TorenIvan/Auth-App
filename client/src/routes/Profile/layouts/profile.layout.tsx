@@ -1,35 +1,33 @@
 import { Fragment, useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useToggleSubMenu } from "../hooks";
-import { SideMenu } from "../components";
-import { Header, Main, Footer } from "../../../layouts";
+import { BroadcastChannel } from "broadcast-channel";
 import {
   faCircleUser,
   faRightFromBracket,
   faUserGroup,
 } from "@fortawesome/free-solid-svg-icons";
+import { Header, Main, Footer } from "../../../layouts";
+import { useToggleSubMenu } from "../hooks";
 import { Constants } from "../constants";
-import { BroadcastChannel } from "broadcast-channel";
-import { useAuth } from "../../../store";
 import { Errors } from "../errors";
+import { useLogoutMutation } from "../../Auth/hooks";
+import { SideMenu } from "../components";
 
 export function ProfileLayout() {
-  const { logout: logoutContext } = useAuth();
+  const { logout } = useLogoutMutation();
   const [isSubMenuOpen, toggleSubMenu] = useToggleSubMenu();
-  const navigate = useNavigate();
   const logoutChannel = new BroadcastChannel("logout");
 
-  function logout() {
+  function handleLogout() {
     logoutChannel.postMessage("logout");
   }
 
   useEffect(() => {
     logoutChannel.onmessage = async () => {
       try {
-        await logoutContext();
+        await logout();
         logoutChannel.close();
-        navigate("/login");
       } catch (error) {
         console.error(error);
         toast.error(Errors.GenericError);
@@ -56,7 +54,7 @@ export function ProfileLayout() {
                 <SideMenu.SubMenu.Item.Text value={Constants.GroupChat} />
               </SideMenu.SubMenu.Item>
               <SideMenu.SubMenu.Divider />
-              <SideMenu.SubMenu.Item isUsed={false} onClick={logout}>
+              <SideMenu.SubMenu.Item isUsed={false} onClick={handleLogout}>
                 <SideMenu.SubMenu.Item.Image
                   icon={faRightFromBracket}
                   size="lg"

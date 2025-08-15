@@ -1,6 +1,7 @@
-import { ReactNode, createContext, useContext, useMemo } from "react";
+import { ReactNode, createContext, useContext, useEffect, useMemo } from "react";
 import { useLoginMutation, useLogoutMutation } from "../../routes/Auth/hooks";
 import { useCheckIfUserIsAuthenticatedQuery, useRenewTokensMutation } from "../../hooks";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ILoginRequest {
   email: string; 
@@ -18,12 +19,22 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const queryClient = useQueryClient();
   const { logout } = useLogoutMutation();
   const { login, isLoggingIn } = useLoginMutation();
   const { renewTokens } = useRenewTokensMutation();
   const { isAuthenticated, isAuthenticating } = useCheckIfUserIsAuthenticatedQuery();
 
   const isLoadingAuth = useMemo(() => isAuthenticating || isLoggingIn, [isAuthenticating, isLoggingIn]);
+
+  /**
+   * *** Smart Selective Clearing::Effect to clear all private-specific data after logging out ***
+   */
+  useEffect(() => {
+    if (isAuthenticated === false) {
+      queryClient.resetQueries(['user']);
+    }
+  }, [isAuthenticated])
 
   return (
     <AuthContext.Provider 
