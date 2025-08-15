@@ -7,6 +7,7 @@ const axiosInstance = axios.create({
     "Content-Type": "application/json",
   },
   withCredentials: true,
+  timeout: 10000,
 });
 
 let lastAxiosContentTypeHeader: string | undefined = "application/json";
