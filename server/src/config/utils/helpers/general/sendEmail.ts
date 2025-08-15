@@ -1,33 +1,21 @@
-import { createTransport } from "nodemailer";
-import SMTPConnection = require("nodemailer/lib/smtp-connection");
+import { Resend } from "resend";
 import { EnvironmentVariables } from "../../constants/EnvironmentVariables";
 import { Strings } from "../../constants/Strings";
+import { logger } from "./logger";
 
-const transportAuthenticationObject: SMTPConnection.AuthenticationType = {
-  user: EnvironmentVariables.Email_Username,
-  pass: EnvironmentVariables.Email_Password,
-};
-
-const transportOptions: SMTPConnection.Options = {
-  host: EnvironmentVariables.Email_Host,
-  port: Number(EnvironmentVariables.Email_Port),
-  secure: false,
-  auth: transportAuthenticationObject,
-  logger: EnvironmentVariables.IsProduction === false,
-  debug: EnvironmentVariables.IsProduction === false,
-};
+const resend = new Resend(EnvironmentVariables.Email_Api_Key);
 
 export async function sendEmail(
   email: string,
   token: string,
   action: SendEmailAction
 ) {
-  const transporter = createTransport(transportOptions);
-
   let emailLink = EnvironmentVariables.Email_Verification_Uri;
   if (action === Strings.ActionResetPassword) {
     emailLink = EnvironmentVariables.Reset_Pass_Uri;
   }
+
+logger.debug(email);
 
   const mailOptions = {
     from: EnvironmentVariables.Email_Username,
@@ -37,10 +25,8 @@ export async function sendEmail(
     html: `<p>Please, click <a href=${emailLink}?email=${email}&token=${token}>here</a> to ${action}</p>`,
   };
 
-  try {
-    await transporter.sendMail(mailOptions);
-  } catch (error) {
-    console.error('Something went wrong');
-    console.error(error);
-  }
+   const { error } = await resend.emails.send(mailOptions);
+   if (error) {
+    logger.error(error);
+   }
 }
