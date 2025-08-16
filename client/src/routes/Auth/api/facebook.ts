@@ -3,15 +3,7 @@ import { axiosInstance } from "../../../config";
 import { generateCsrfToken } from "../../../helpers";
 import { Errors } from "../errors";
 
-const fbLoginUri = `https://www.facebook.com/v22.0/dialog/oauth?client_id=${import.meta.env.VITE_FACEBOOK_APP_ID}&redirect_uri=${import.meta.env.VITE_CLIENT_URI}oauth2/facebook`;
-
-export function facebookInitLoginFlow(): void {
-  const csrf_token = generateCsrfToken();
-  localStorage.setItem('auth_app_csrf_token', csrf_token);
-  window.location.replace(`${fbLoginUri}&state={csrf_token=${csrf_token}}`);
-}
-
-export async function retrieveToken(code: string | boolean): Promise<string | void> {
+export async function facebookLogin(code: string | boolean): Promise<string | void> {
   try {
     if (typeof code === "boolean") return;
     const headers = {
@@ -42,4 +34,16 @@ export async function retrieveToken(code: string | boolean): Promise<string | vo
     }
     throw Errors.GenericError;
   }
+}
+
+export function facebookInitLoginFlow(): void {
+  const csrf_token = generateCsrfToken();
+  localStorage.setItem('auth_app_csrf_token', csrf_token);
+  const fbLoginUri = `https://www.facebook.com/v23.0/dialog/oauth
+    ?client_id=${import.meta.env.VITE_FACEBOOK_APP_ID}
+    &redirect_uri=${encodeURIComponent(import.meta.env.VITE_CLIENT_URI + "oauth2/facebook")}
+    &state=${encodeURIComponent(csrf_token)}
+    `.replace(/\s+/g, ""); 
+
+  window.location.replace(fbLoginUri);
 }

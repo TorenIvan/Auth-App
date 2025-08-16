@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { Loader } from "../Loader";
 import { useEffect, useMemo } from "react";
-import { useLoginMutation } from "../../routes/Auth/hooks";
+import { useFacebookLoginMutation, useLoginMutation } from "../../routes/Auth/hooks";
 import { useCheckIfUserIsAuthenticatedQuery } from "../../hooks";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -11,14 +11,18 @@ const publicRoutes = [
   "/verify",
   "/forgot-password",
   "/reset-password",
+  "/oauth2/facebook"
 ];
 
 export function AuthGuard() {
   const location = useLocation();
   const queryClient = useQueryClient();
+  const { isLoggingInWithFacebook } = useFacebookLoginMutation();
   const { isLoggingIn } = useLoginMutation();
   const { isAuthenticated, isAuthenticating } = useCheckIfUserIsAuthenticatedQuery();
-  const isLoadingAuth = useMemo(() => isAuthenticating || isLoggingIn, [isAuthenticating, isLoggingIn]);
+  const isLoadingAuth = useMemo(() => 
+    isAuthenticating || isLoggingIn || isLoggingInWithFacebook, 
+  [isAuthenticating, isLoggingIn, isLoggingInWithFacebook]);
 
   /**
    * *** Smart Selective Clearing::Reset all private-specific cached data after logging out ***

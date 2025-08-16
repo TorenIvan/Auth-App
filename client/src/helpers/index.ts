@@ -1,2 +1,2 @@
 export * from "./validations";
-export { default as generateCsrfToken } from "./generateCSRFToken";
+export { generateCsrfToken } from "./generateCSRFToken";

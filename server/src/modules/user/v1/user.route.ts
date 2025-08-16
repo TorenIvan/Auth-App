@@ -15,15 +15,6 @@ const userRoutesV1 = (controller: UserController): FastifyPluginAsync => async (
 ): Promise<void> => {
   fastify.register(getUserDetails(controller), { prefix: "/v1/user/details" });
   fastify.register(editUserDetails(controller), { prefix: "/v1/user/edit",});
-  // fastify.register(loginWithGoogle, {
-  //   prefix: "/v1/auth/login/google",
-  // });
-  // fastify.register(loginWithGithub, {
-  //   prefix: "/v1/auth/login/github",
-  // });
-  // fastify.register(loginWithTwitter, {
-  //   prefix: "/v1/auth/login/twitter",
-  // });
 };
 
 export default userRoutesV1;

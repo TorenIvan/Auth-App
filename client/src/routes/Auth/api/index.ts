@@ -3,4 +3,4 @@ export { registerUser } from "./registerUser";
 export { confirmEmail } from "./confirmEmail";
 export { forgotPassword } from "./forgotPassword";
 export { resetPassword } from "./resetPassword";
-export { facebookInitLoginFlow, retrieveToken } from "./facebook";
+export { facebookInitLoginFlow, facebookLogin } from "./facebook";

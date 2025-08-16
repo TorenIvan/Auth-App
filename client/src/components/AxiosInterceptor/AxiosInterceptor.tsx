@@ -1,8 +1,8 @@
 import { useEffect, ReactNode } from 'react';
+import toast from 'react-hot-toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { axiosInstance, addAuthorizationHeader, clearAuthorizationHeader } from '../../config';
 import { renewTokens } from '../../api';
-import toast from 'react-hot-toast';
 import { Errors } from '../../utils';
 
 export function AxiosInterceptor({ children }: { children: ReactNode }) {

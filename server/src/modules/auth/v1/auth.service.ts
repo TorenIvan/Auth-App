@@ -68,7 +68,6 @@ class AuthService {
     username: string,
     email: string,
     biography: string,
-    refreshToken: string,
     signInMethod: SignInMethod
   ) {
     try {
@@ -87,10 +86,10 @@ class AuthService {
         biography: biography,
         phone: "",
         password: "",
+        refreshToken: "",
         signInMethod: signInMethod,
         isVerified: true,
         schemaVersion: 0,
-        refreshToken: refreshToken
       });
       const data: ServiceInsertedData = {
         userId: result.insertedId,

@@ -1,4 +1,4 @@
-export default function generateCsrfToken(length: number = 32): string {
+export function generateCsrfToken(length: number = 32): string {
   const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   let token = "";
 

@@ -22,6 +22,7 @@ import {
 } from "./auth.schema";
 import AuthService from "./auth.service";
 import axios from "axios";
+import { logger } from "../../../config/utils/helpers";
 
 class AuthController {
   constructor(private authService: AuthService) {}
@@ -142,7 +143,7 @@ class AuthController {
   }
 
   /**
-   * @todo Check if email changed by user on facebook; if yes, cheange it.
+   * @todo Check if email changed by user on facebook; if yes, change it.
    * @todo Inside initial insert; if you retrieve user image, insert it as well.
    */
   async loginFacebookHandler(
@@ -151,16 +152,20 @@ class AuthController {
   ) {
     try {
       const { code } = request.body;
+      logger.debug(code);
 
       if (!code) {
         return AuthController.handleError(reply, 400, Errors.GenericError);
       }
 
-      const fbRetrieveTokenUri = `https://graph.facebook.com/v18.0/oauth/access_token?client_id=${EnvironmentVariables.Facebook_App_Id}&redirect_uri=${EnvironmentVariables.Facebook_App_Redirect_Uri}&client_secret=${EnvironmentVariables.Facebook_App_Secret}&code=${code}`;
+      const fbRetrieveTokenUri = `https://graph.facebook.com/v23.0/oauth/access_token?client_id=${EnvironmentVariables.Facebook_App_Id}&redirect_uri=${encodeURIComponent(EnvironmentVariables.Facebook_App_Redirect_Uri)}&client_secret=${EnvironmentVariables.Facebook_App_Secret}&code=${code}`;
 
       const tokenResponse = await axios.get(fbRetrieveTokenUri, {
-        headers: { Origin: EnvironmentVariables.ServerUri },
+        headers: { 
+          Origin: EnvironmentVariables.ServerUri,
+        },
       });
+      logger.debug(tokenResponse?.data?.access_token);
 
       if (!tokenResponse?.data?.access_token) {
         return AuthController.handleError(reply, 400, Errors.GenericError);
@@ -172,6 +177,7 @@ class AuthController {
           headers: { Origin: EnvironmentVariables.ServerUri },
         }
       );
+      logger.debug({ data: userResponse?.data });
 
       if (!userResponse?.data?.email || !userResponse?.data?.name) {
         return AuthController.handleError(
@@ -182,33 +188,29 @@ class AuthController {
       }
 
       let userId: string | undefined = undefined;
-      const checkIfEmailWithGivenSocialPlatformExists: ServiceResponse =
-        await this.authService.CheckGivenSocialPlatformEmailExistence(
-          userResponse.data.email,
-          "facebook"
+      const checkIfEmailExists: ServiceResponse =
+        await this.authService.CheckEmailExistence(
+          userResponse.data.email.trim().toLowerCase()
         );
 
+      logger.debug('Email ', userResponse.data.email, ' exists: ', checkIfEmailExists.success);
+
       const givenSocialPlatformEmailExist: boolean =
-        checkIfEmailWithGivenSocialPlatformExists.success;
+        checkIfEmailExists.success;
       if (givenSocialPlatformEmailExist === true) {
         userId =
-          checkIfEmailWithGivenSocialPlatformExists.data!.userId.toString();
+          checkIfEmailExists.data!.userId.toString();
       }
 
       /**
        * Start of register user operation
        */
-      const { access_token, refresh_token } = generateAuthJWTs(
-        userId!,
-        "facebook"
-      );
       if (givenSocialPlatformEmailExist === false) {
         const userSocialLoginResponse: ServiceResponse =
           await this.authService.InsertUserWithSocialAccount(
             userResponse.data.name,
-            userResponse.data.email.toLowerCase(),
+            userResponse.data.email.trim().toLowerCase(),
             userResponse.data.about ?? "",
-            refresh_token,
             "facebook"
           );
 
@@ -223,6 +225,13 @@ class AuthController {
         userId = userSocialLoginResponse.data!.userId.toString();
       }
       const cookieOptions = generateSocialCookieOptions();
+
+      logger.debug('UserId ', userId);
+      const { access_token, refresh_token } = generateAuthJWTs(
+        userId!,
+        "facebook"
+      );
+      await this.authService.updateUserRefreshTokenById(userId!, refresh_token);
 
       reply
         .code(200)

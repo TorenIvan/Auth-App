@@ -1,69 +1,68 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { faCircleXmark, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Errors } from "../../errors";
 import { Constants } from "../../constants";
-import { useFacebookLogin } from "../../hooks";
-import { addAuthorizationHeader } from "../../../../config";
+import { useFacebookLoginMutation } from "../../hooks";
 import styles from "./styles.module.scss";
 
 export function LoginFacebook() {
   const navigate = useNavigate();
+  const [isParamsValid, setIsParamsValid] = useState(true);
+  const { isError, mutate } = useFacebookLoginMutation();
 
-  // Extract params from URL
+  /**
+   * *** Extract params from URL ***
+   */
   const { search } = window.location;
   const urlParams = new URLSearchParams(search);
   const code = urlParams.get("code");
   const state = urlParams.get("state");
 
-  // Validate params
-  let isParamsValid = true;
-  if (!search || !code || !state) {
-    toast.error(Errors.InvalidQueryParameters);
-    localStorage.removeItem("auth_app_csrf_token");
-    isParamsValid = false;
-  }
+  /* 
+  * *** Validate params + CSRF only once on mount ***
+  */
+  useEffect(() => {
+    let valid = true;
 
-  // Validate CSRF
-  if (isParamsValid) {
-    const csrfToken = extractCSRFToken(state);
-    if (csrfToken !== localStorage.getItem("auth_app_csrf_token")) {
-      toast.error(Errors.InvalidCSRFToken);
+    if (!search || !code || !state) {
+      toast.error(Errors.InvalidQueryParameters);
       localStorage.removeItem("auth_app_csrf_token");
-      isParamsValid = false;
-    }
-  }
-
-  // Always clear token from storage after check
-  useEffect(() => {
-    localStorage.removeItem("auth_app_csrf_token");
-  }, []);
-
-  const { data, error } = useFacebookLogin({
-    code: isParamsValid ? code! : "",
-  });
-
-  function goBackToLogin() {
-    navigate("/login");
-  }
-
-  useEffect(() => {
-    if (data) {
-      addAuthorizationHeader(data);
-      navigate("/profile");
-    }
-
-    if (error) {
-      toast.error(typeof error === "string" ? error : Errors.GenericError);
-      if (error === Errors.AUserAlreadyAuthenticated) {
-        navigate("/profile");
+      valid = false;
+    } else {
+      const csrfToken = extractCSRFToken(state);
+      const csrfTokenLocalStorage = localStorage.getItem("auth_app_csrf_token");
+      console.log({ csrfToken, csrfTokenLocalStorage });
+      if (csrfToken !== csrfTokenLocalStorage) {
+        toast.error(Errors.InvalidCSRFToken);
+        localStorage.removeItem("auth_app_csrf_token");
+        valid = false;
       }
     }
-  }, [data, error, navigate]);
 
-  if (!isParamsValid || error) {
+    setIsParamsValid(valid);
+  }, [search, code, state]);
+
+
+  /**
+   * *** Trigger mutation once validation passes ***
+   */
+  useEffect(() => {
+    console.log({ isParamsValid, code });
+    
+    if (isParamsValid && code) {
+      mutate(decodeURI(code));
+    }
+  }, [isParamsValid, code, mutate]);
+
+
+  const goBackToLogin = useCallback(() => {
+    navigate("/login");
+  }, []);
+
+  if (!isParamsValid || isError) {
     return (
       <div id={styles.container}>
         <h2 id={styles.header}>{Constants.LoginHeaderError}</h2>
@@ -93,18 +92,7 @@ export function LoginFacebook() {
   );
 }
 
-function extractCSRFToken(inputString: string | null): string | undefined {
-  if (!inputString) return undefined;
-  
-  const start = "csrf_token=";
-  const end = "}";
-  const startIndex = inputString.indexOf(start);
-
-  if (startIndex !== -1) {
-    const endIndex = inputString.indexOf(end, startIndex);
-    if (endIndex !== -1) {
-      return inputString.substring(startIndex + start.length, endIndex);
-    }
-  }
-  return undefined;
+function extractCSRFToken(state: string | null | undefined): string | undefined {
+  if (!state) return undefined;
+  return decodeURIComponent(state);
 }
