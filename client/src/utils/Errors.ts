@@ -7,4 +7,5 @@ export const DefaultError = {
 
 export const Errors = {
   GenericError: "Something went wrong. Please, try again later!",
+  SessionExpired: "Session expired. Redirecting to login...",
 } as const;

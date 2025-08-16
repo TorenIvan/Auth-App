@@ -1,2 +1,2 @@
-export { default as axiosInstance, addAuthorizationHeader } from "./axios";
+export { axiosInstance, addAuthorizationHeader, clearAuthorizationHeader } from "./axios";
 export { queryClient } from "./queryClient";

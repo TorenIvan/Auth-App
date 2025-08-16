@@ -1,22 +1,25 @@
+import { RouterProvider } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import Toast from "./components/Toast";
-import "./App.css";
-import { AppWithAxiosSetup } from "./AppWithAxiosSetup";
-import { AuthProvider, ThemeProvider } from "./store";
 import { queryClient } from "./config";
+import { ThemeProvider } from "./store";
+import { AxiosInterceptor, Toast } from "./components";
+import indexRouter from "./routes";
+import "./App.css";
 
 const App = (): JSX.Element => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <AuthProvider>
-          <AppWithAxiosSetup />
-          <Toast />
-        </AuthProvider>
+        <AxiosInterceptor>
+          <div className="screen-container">
+            <RouterProvider router={indexRouter()} />
+          </div>
+        </AxiosInterceptor>
+        <Toast />
       </ThemeProvider>
       {import.meta.env.VITE_NODE_ENV === 'development' ? (
-        <ReactQueryDevtools initialIsOpen={false} />
+        <ReactQueryDevtools initialIsOpen={false} panelPosition="right"/>
       ): undefined}
     </QueryClientProvider>
   );

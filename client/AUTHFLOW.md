@@ -4,16 +4,20 @@ This file describes the authentication layer flow of the application.
 
 ## Structure
 
-- **AuthProvider**  
-  Provides the `AuthContext` with:
-  - `isAuthenticated`
-  - `login`
-  - `logout`
-  - `refreshTokens`
-  - `isLoadingAuth`
+- **AxiosInterceptor**  
+  A wrapper around the app that:
+  - Attaches a Response Interceptor to axiosInstance
+  - Handles token expiration and refresh queueing
+  - Updates React Query’s auth state (['auth', 'status']) on success/failure
 
-- **useAuth**  
-  Hook that returns the data from `AuthContext`.
+- **AxiosConfig**  
+  - Request Interceptor (default header injection):
+      - Adds Authorization: Bearer <accessToken> if present
+  - Response Interceptor (in AxiosInterceptor):
+      - If already refreshing → queues the failed request until a new token is obtained
+      - If not refreshing → triggers renewTokens
+      - On success → retries the original request with new token
+      - On failure → clears headers, updates auth state to false, and forces logout
 
 - **AuthGuard**  
 
@@ -27,15 +31,12 @@ This file describes the authentication layer flow of the application.
   - If `isAuthenticated === false` → Redirect to `/login`  
   - If `isAuthenticated === true` → Render normally
 
-- **Axios Config**  
-  Includes interceptors:
-  - **Request Interceptor:** Adds the Authorization header
-  - **Response Interceptor:**  
-    - If token is expired → Calls `refreshTokens` from `AuthContext`  
-    - If it fails → Calls `logout`
-
 - **React Query Hooks**  
-  Handle API calls (`loginUser`, `logoutUser`, `renewTokens`, `checkIfUserIsAuthenticated`) providing loading & error states.
+  - Encapsulate API logic with loading/error states:
+      - useLoginMutation → Calls loginUser, sets token, updates headers, sets ['auth','status'] = true
+      - useLogoutMutation → Calls logoutUser, clears headers, cancels queries, sets ['auth','status'] = false
+      - useCheckIfUserIsAuthenticatedQuery → Validates user session (used by AuthGuard)
+      - renewTokens → Called by Axios interceptor on 401 (silent refresh)
 
 ## Flow
       [User Action]
@@ -45,47 +46,47 @@ This file describes the authentication layer flow of the application.
             |
            Yes
             v
-      [AuthGuard checks useAuth]
+      [AuthGuard checks auth status via React Query]
             |
        Authenticated? ---- No ----> [Redirect to Login]
             |
            Yes
             v
-       [Render Component]
+      [Render Component]
 
   -----------------------------------------------------
 
       [Component makes API call via Axios]
             |
-      Authorized? ---- Yes ----> [Redirect to Login]
+      [Axios adds Authorization header if present]
             |
-           No
-            v
-      [Axios Interceptor checks token validity]
+      [Server validates token]
             |
-      Expired? ---- No ----> [API Request Sent]
+      401 Unauthorized?
             |
-           Yes
-            v
-      [refreshTokens from AuthContext]
-            |
-      Success? ---- No ----> [logout from AuthContext]
+      ---- No ----> [API Request Sent → Response → Update UI]
             |
            Yes
             v
-       [API Request Sent]
+      [AxiosInterceptor handles refreshTokens]
+            |
+      Refresh success? ---- No ----> [Logout + Redirect to Login]
+            |
+           Yes
+            v
+      [Retry original request with new token]
             |
             v
-       [API Response]
+      [API Response]
             |
             v
       [Update UI]
 
-
 ## Advantages
 
-- **Clean separation of concerns** (Auth, API calls, UI)
+- **Robust token refresh** with request queueing (no race conditions)
 - **Silent refresh** for tokens without breaking UX
-- **Centralized state management** via Context
-- **Full state reset** on logout (React Query + headers)
+- **Single source of truth** via React Query (['auth','status'])
+- **Automatic state reset** on logout (clears headers + queries)
+- **Cross-tab sync** supported via BroadcastChannel for logout events
 - **Extensible** for future features (e.g. roles, permissions)

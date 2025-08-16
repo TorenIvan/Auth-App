@@ -1,16 +1,18 @@
 import { useEffect } from "react";
-import { useAuth } from "./store";
 import { RouterProvider } from "react-router-dom";
-import indexRouter from "./routes/main.router";
-import { setupAxiosInterceptors } from "./config/axios";
+import { setupAxiosInterceptors } from "./config";
+import { useRenewTokensMutation } from "./hooks";
+import { useLogoutMutation } from "./routes/Auth/hooks";
+import indexRouter from "./routes";
 
 export function AppWithAxiosSetup(): JSX.Element {
-  const { refreshTokens, logout } = useAuth();
+  const { renewTokens } = useRenewTokensMutation()
+  const { logout } = useLogoutMutation();
   
-  // Setup axios interceptors with AuthContext methods
+  // Setup axios interceptors with react query methods
   useEffect(() => {
-    setupAxiosInterceptors({ refreshTokens, logout });
-  }, [refreshTokens, logout]);
+    setupAxiosInterceptors({ refreshTokens: renewTokens, logout });
+  }, [renewTokens, logout]);
 
   return (
     <div className="screen-container">

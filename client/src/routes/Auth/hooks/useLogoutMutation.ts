@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addAuthorizationHeader } from "../../../config";
+import { clearAuthorizationHeader } from "../../../config";
 import { Errors } from "../errors";
 import { logoutUser } from "../../Profile/api";
 
@@ -12,9 +12,9 @@ export function useLogoutMutation() {
   const logout = useCallback(async () => {
     try {
       await mutateAsync();
-      addAuthorizationHeader("")
+      clearAuthorizationHeader()
       await queryClient.cancelQueries();
-      queryClient.setQueryData(['auth'], false);
+      queryClient.setQueryData(['auth', 'status'], false);
     } catch (localError) {
       if (typeof localError === 'string' || localError instanceof String) {
         toast.error(localError as string);

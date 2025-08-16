@@ -18,7 +18,9 @@ export async function renewTokens(): Promise<string> {
     }
     return data.access_token;
   } catch (error) {
-    console.error("Failed to renew tokens");
+    if (import.meta.env.VITE_NODE_ENV === 'development') {
+      console.error("Failed to renew tokens");
+    }
     throw error;
   }
 }

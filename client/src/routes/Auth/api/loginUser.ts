@@ -24,8 +24,6 @@ export async function loginUser(request: IRequest): Promise<string> {
       const statusCode = response?.status ?? 0;
       const message = response?.data;
 
-      console.log({error});
-      
       if (statusCode === 403 && !message) {
         throw Errors.AUserAlreadyAuthenticated;
       }

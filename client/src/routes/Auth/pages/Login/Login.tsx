@@ -1,5 +1,4 @@
 import { FormEvent, Fragment, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { isEmailValid, isPasswordValid } from "../../../../helpers";
 import { Constants } from "../../constants";
@@ -15,7 +14,6 @@ import { useLoginMutation } from "../../hooks";
 // type SocialItem = "facebook" | "google" | "twitter" | "github";
 
 export function Login() {
-  const navigate = useNavigate();
   const { login, isLoggingIn } = useLoginMutation();
 
   const title = useMemo(() => LoginTitle(), []);
@@ -43,7 +41,7 @@ export function Login() {
         toast.error(String(error));
       } 
     },
-    [navigate]
+    []
   );
 
   return (

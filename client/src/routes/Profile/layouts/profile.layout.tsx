@@ -1,6 +1,5 @@
 import { Fragment, useEffect } from "react";
 import { Outlet } from "react-router-dom";
-import toast from "react-hot-toast";
 import { BroadcastChannel } from "broadcast-channel";
 import {
   faCircleUser,
@@ -10,9 +9,8 @@ import {
 import { Header, Main, Footer } from "../../../layouts";
 import { useToggleSubMenu } from "../hooks";
 import { Constants } from "../constants";
-import { Errors } from "../errors";
-import { useLogoutMutation } from "../../Auth/hooks";
 import { SideMenu } from "../components";
+import { useLogoutMutation } from "../../Auth/hooks";
 
 export function ProfileLayout() {
   const { logout } = useLogoutMutation();
@@ -25,13 +23,8 @@ export function ProfileLayout() {
 
   useEffect(() => {
     logoutChannel.onmessage = async () => {
-      try {
-        await logout();
-        logoutChannel.close();
-      } catch (error) {
-        console.error(error);
-        toast.error(Errors.GenericError);
-      }
+      await logout();
+      logoutChannel.close();
     };
 
     return () => {

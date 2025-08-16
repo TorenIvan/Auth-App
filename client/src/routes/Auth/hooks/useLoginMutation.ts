@@ -13,7 +13,7 @@ export function useLoginMutation() {
     try {
       const accessToken = await mutateAsync({ email, password })
       addAuthorizationHeader(accessToken)
-      queryClient.setQueryData(['auth'], true);
+      queryClient.setQueryData(['auth', 'status'], true);
     } catch (localError) {
       if (typeof localError === 'string' || localError instanceof String) {
         toast.error(localError as string);

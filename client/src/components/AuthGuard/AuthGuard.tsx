@@ -1,6 +1,9 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAuth } from "../../store";
 import { Loader } from "../Loader";
+import { useEffect, useMemo } from "react";
+import { useLoginMutation } from "../../routes/Auth/hooks";
+import { useCheckIfUserIsAuthenticatedQuery } from "../../hooks";
+import { useQueryClient } from "@tanstack/react-query";
 
 const publicRoutes = [
   "/login",
@@ -12,7 +15,19 @@ const publicRoutes = [
 
 export function AuthGuard() {
   const location = useLocation();
-  const { isAuthenticated, isLoadingAuth } = useAuth();
+  const queryClient = useQueryClient();
+  const { isLoggingIn } = useLoginMutation();
+  const { isAuthenticated, isAuthenticating } = useCheckIfUserIsAuthenticatedQuery();
+  const isLoadingAuth = useMemo(() => isAuthenticating || isLoggingIn, [isAuthenticating, isLoggingIn]);
+
+  /**
+   * *** Smart Selective Clearing::Reset all private-specific cached data after logging out ***
+   */
+  useEffect(() => {
+    if (isAuthenticated === false) {
+      queryClient.resetQueries(['user']);
+    }
+  }, [isAuthenticated])
 
   const isPublic: boolean = publicRoutes.some((route) => location.pathname.startsWith(route));
   const isAuthenticatedOnPublicRoute: boolean = isPublic === true && isAuthenticated === true;
