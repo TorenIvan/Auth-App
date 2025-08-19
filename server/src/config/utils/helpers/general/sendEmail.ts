@@ -15,7 +15,7 @@ export async function sendEmail(
     emailLink = EnvironmentVariables.Reset_Pass_Uri;
   }
 
-logger.debug(email);
+  logger.debug(email);
 
   const mailOptions = {
     from: EnvironmentVariables.Email_Username,

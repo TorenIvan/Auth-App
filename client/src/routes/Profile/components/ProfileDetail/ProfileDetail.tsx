@@ -9,11 +9,9 @@ function ProfileDetail({ label, valueSlot, isImage}: IProps): JSX.Element {
       <div className={styles["details-label-column"]}>
         <span>{label}</span>
       </div>
-      <div 
-        className={styles[valueColumnStyles]}
-        >
-          {valueSlot}
-        </div>
+      <div className={styles[valueColumnStyles]}>
+        {valueSlot}
+      </div>
     </section>
   );
 }

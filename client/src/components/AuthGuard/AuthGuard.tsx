@@ -17,9 +17,11 @@ const publicRoutes = [
 export function AuthGuard() {
   const location = useLocation();
   const queryClient = useQueryClient();
+
   const { isLoggingInWithFacebook } = useFacebookLoginMutation();
   const { isLoggingIn } = useLoginMutation();
   const { isAuthenticated, isAuthenticating } = useCheckIfUserIsAuthenticatedQuery();
+
   const isLoadingAuth = useMemo(() => 
     isAuthenticating || isLoggingIn || isLoggingInWithFacebook, 
   [isAuthenticating, isLoggingIn, isLoggingInWithFacebook]);

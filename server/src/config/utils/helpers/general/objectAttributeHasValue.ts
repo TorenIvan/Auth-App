@@ -5,8 +5,9 @@ export const objectAttributeExistsAndHasValue = (
 ): boolean => {
   let objectAttributeHasValue: boolean = false;
 
-  if (hasDefinedAttribute(objectArg, attributeName) === true)
+  if (hasDefinedAttribute(objectArg, attributeName) === true) {
     objectAttributeHasValue = true;
+  }
   return objectAttributeHasValue;
 };
 
@@ -18,7 +19,8 @@ const hasDefinedAttribute = (element: any, attr: string) => {
     // eslint-disable-next-line no-prototype-builtins
     element.hasOwnProperty(attr) &&
     element[attr] !== undefined
-  )
+  ) {
     return true;
+  }
   return false;
 };

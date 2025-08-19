@@ -2,8 +2,8 @@ import { useEffect, ReactNode } from 'react';
 import toast from 'react-hot-toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { axiosInstance, addAuthorizationHeader, clearAuthorizationHeader } from '../../config';
-import { renewTokens } from '../../api';
 import { Errors } from '../../utils';
+import { renewTokens } from '../../api';
 
 export function AxiosInterceptor({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
@@ -11,8 +11,8 @@ export function AxiosInterceptor({ children }: { children: ReactNode }) {
   useEffect(() => {
     let isRefreshing = false;
     let missedRequestsForPendingRenewalQueue: Array<{
-    resolve: (token: string) => void;
-    reject: (error: unknown) => void;
+      resolve: (token: string) => void;
+      reject: (error: unknown) => void;
     }> = [];
 
     function processQueue(error: unknown, token: string | null = null) {

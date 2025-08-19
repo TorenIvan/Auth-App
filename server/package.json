@@ -7,7 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "test": "npm run build:ts && tsc -p test/tsconfig.json && tap --ts test/**/*.test.ts",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
     "build:ts": "tsc",
     "dev": "NODE_ENV=development tsc && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"tsc -w\" \" export NODE_ENV=development && fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js\"",
     "start": "NODE_ENV=production npm run build:ts && fastify start -l info dist/app.js"
@@ -43,6 +45,7 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.9.0",
     "@types/node": "^17.0.8",
     "@types/tap": "^15.0.7",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
@@ -50,10 +53,14 @@
     "concurrently": "^7.0.0",
     "eslint": "^8.52.0",
     "eslint-plugin-react": "^7.33.2",
+    "faker": "^6.6.6",
+    "faker-js": "^1.0.0",
     "fastify-tsconfig": "^1.0.1",
+    "mongodb-memory-server": "^10.2.0",
     "nodemon": "^2.0.15",
     "tap": "^16.3.3",
     "ts-node": "^10.4.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "vitest": "^3.2.4"
   }
 }

@@ -11,7 +11,7 @@ export const queryClient = new QueryClient({
         if (error?.response?.status === 401 || error?.response?.status === 403) {
           return false;
         }
-        // Retry network errors up to 3 times
+        // Retry network errors up to 3 times for queries
         return failureCount < 3;
       },
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff between retries
