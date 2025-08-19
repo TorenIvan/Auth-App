@@ -1,21 +1,18 @@
-import { AxiosResponse, isAxiosError } from "axios";
-import { axiosInstance } from "../../../config";
-import { Errors } from "../errors";
+import { AxiosResponse, isAxiosError } from 'axios';
+import { axiosInstance } from '../../../config';
+import { Errors } from '../errors';
 
-const loginUri = "v1/auth/login/credentials";
+const loginUri = 'v1/auth/login/credentials';
 
 export async function loginUser(request: IRequest): Promise<string> {
   const { email, password } = request;
   try {
-    const result: AxiosResponse<IResponse> = await axiosInstance.post(
-      loginUri,
-      {
-        email: email,
-        password: password,
-      }
-    );
+    const result: AxiosResponse<IResponse> = await axiosInstance.post(loginUri, {
+      email: email,
+      password: password,
+    });
     const { data } = result;
-    if (data?.access_token === undefined) throw "error";
+    if (data?.access_token === undefined) throw 'error';
 
     return data.access_token;
   } catch (error: unknown) {

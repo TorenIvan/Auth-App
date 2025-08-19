@@ -1,5 +1,5 @@
 import { FacebookIcon, GithubIcon, GoogleIcon, TwitterIcon } from '../../../../icons';
-import { facebookInitLoginFlow } from '../../api';
+import { facebookInitLoginFlow, githubInitLoginFlow } from '../../api';
 import { Constants } from '../../constants';
 import footerStyles from './AuthFormFooter.module.scss';
 
@@ -9,6 +9,11 @@ function AuthFormFooter(props: IProps): JSX.Element {
   const responseFacebook = async () => {
     if (isSubmitting) return;
     facebookInitLoginFlow();
+  };
+
+  const responseGithub = async () => {
+    if (isSubmitting) return;
+    githubInitLoginFlow();
   };
 
   return (
@@ -27,7 +32,11 @@ function AuthFormFooter(props: IProps): JSX.Element {
         >
           <FacebookIcon />
         </li>
-        <li className={footerStyles['social-item']} data-loading={isSubmitting ? 'true' : 'false'}>
+        <li
+          className={footerStyles['social-item']}
+          data-loading={isSubmitting ? 'true' : 'false'}
+          onClick={responseGithub}
+        >
           <GithubIcon />
         </li>
         <li className={footerStyles['social-item']} data-loading={isSubmitting ? 'true' : 'false'}>

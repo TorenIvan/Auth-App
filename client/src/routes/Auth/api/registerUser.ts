@@ -1,8 +1,7 @@
-import axios, { isAxiosError } from "axios";
-import { Errors } from "../errors";
+import axios, { isAxiosError } from 'axios';
+import { Errors } from '../errors';
 
-const registerUri = `${import.meta.env.VITE_SERVER_URI
-  }v1/auth/register/credentials`;
+const registerUri = `${import.meta.env.VITE_SERVER_URI}v1/auth/register/credentials`;
 
 export async function registerUser(request: IRequest): Promise<void> {
   const { email, password } = request;

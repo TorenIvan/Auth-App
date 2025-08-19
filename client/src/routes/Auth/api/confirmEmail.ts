@@ -1,13 +1,10 @@
-import { AxiosError, isAxiosError } from "axios";
-import { axiosInstance } from "../../../config";
-import { Errors } from "../errors";
+import { AxiosError, isAxiosError } from 'axios';
+import { axiosInstance } from '../../../config';
+import { Errors } from '../errors';
 
-const confirmBaseUri = "v1/auth/verify";
+const confirmBaseUri = 'v1/auth/verify';
 
-export async function confirmEmail(
-  email: string,
-  token: string
-): Promise<boolean> {
+export async function confirmEmail(email: string, token: string): Promise<boolean> {
   if (!token) {
     throw new AxiosError(Errors.NoConfirmationToken);
   }

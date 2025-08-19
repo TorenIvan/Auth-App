@@ -217,6 +217,110 @@ class AuthController {
     }
   }
 
+  /**
+   * @todo Check if email changed by user on facebook; if yes, change it.
+   * @todo Inside initial insert; if you retrieve user image, insert it as well.
+   */
+  async loginGithubHandler(
+    request: FastifyRequest<{ Body: { code: string } }>,
+    reply: FastifyReply
+  ) {
+    try {
+      const { code } = request.body;
+      logger.debug({ code });
+
+      if (!code) {
+        return AuthController.handleError(reply, 400, Errors.GenericError);
+      }
+
+      const githubTokenUri = 'https://github.com/login/oauth/access_token';
+      const params = {
+        client_id: EnvironmentVariables.Github_App_Id,
+        client_secret: EnvironmentVariables.Github_App_Secret,
+        code,
+        redirect_uri: EnvironmentVariables.Github_App_Redirect_Uri,
+      };
+
+      const tokenResponse = await axios.post(githubTokenUri, params, {
+        headers: { Accept: 'application/json' },
+      });
+      logger.debug({ tokenResponse });
+
+      const accessTokenGithub: string | undefined = tokenResponse.data?.access_token;
+      if (!accessTokenGithub) {
+        return AuthController.handleError(reply, 400, Errors.GenericError);
+      }
+      logger.debug({ accessTokenGithub });
+
+      const [userResponse, emailResponse] = await Promise.all([
+        axios.get('https://api.github.com/user', {
+          headers: { Authorization: `Bearer ${accessTokenGithub}` },
+        }),
+        axios.get('https://api.github.com/user/emails', {
+          headers: { Authorization: `Bearer ${accessTokenGithub}` },
+        }),
+      ]);
+      logger.debug({ userResponse, emailResponse });
+
+      // Find primary, verified email
+      const primaryEmailObj = Array.isArray(emailResponse.data)
+        ? emailResponse.data.find((e) => e.primary && e.verified)
+        : undefined;
+      const email = primaryEmailObj?.email || userResponse.data.email;
+      logger.debug({ email });
+
+      if (!email || !userResponse.data.name) {
+        return AuthController.handleError(reply, 400, Errors.NotRetrievedGithub);
+      }
+      let userId: string | undefined = undefined;
+      const checkIfEmailExists: ServiceResponse = await this.authService.CheckEmailExistence(
+        email.trim().toLowerCase()
+      );
+
+      logger.debug('Email ', userResponse.data.email, ' exists: ', checkIfEmailExists.success);
+
+      const givenSocialPlatformEmailExist: boolean = checkIfEmailExists.success;
+      if (givenSocialPlatformEmailExist === true) {
+        userId = checkIfEmailExists.data!.userId.toString();
+      }
+
+      /**
+       * Start of register user operation
+       */
+      if (givenSocialPlatformEmailExist === false) {
+        const userSocialLoginResponse: ServiceResponse =
+          await this.authService.InsertUserWithSocialAccount(
+            userResponse.data.name,
+            email.trim().toLowerCase(),
+            userResponse.data.about ?? '',
+            'github'
+          );
+
+        const inserted: boolean = userSocialLoginResponse.success;
+        if (inserted === false) {
+          return AuthController.handleError(reply, 400, userSocialLoginResponse?.customError);
+        }
+        userId = userSocialLoginResponse.data!.userId.toString();
+      }
+      const cookieOptions = generateSocialCookieOptions();
+
+      const { access_token, refresh_token } = generateAuthJWTs(userId!, 'github');
+      await this.authService.updateUserRefreshTokenById(userId!, refresh_token);
+
+      reply
+        .code(200)
+        .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
+        .setCookie(
+          EnvironmentVariables.Cookie_Name_Social_Profile,
+          accessTokenGithub,
+          cookieOptions
+        )
+        .send({ access_token: access_token });
+    } catch (error) {
+      AuthController.handleError(reply, 500, Errors.GenericError);
+    }
+  }
+
   async loginCredentialsHandler(
     request: FastifyRequest<{ Body: credentialsUserInput }>,
     reply: FastifyReply

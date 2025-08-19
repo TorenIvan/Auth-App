@@ -4,6 +4,7 @@ import RegisterNavLink from './RegisterNavLink';
 import RegisterTitle from './RegisterTitle';
 import ForgotPasswordLink from './ForgotPasswordLink';
 import AuthFormGroup from './AuthFormGroup';
+import { LoginOAuth } from './LoginOAuth';
 
 export {
   LoginTitle,
@@ -12,4 +13,5 @@ export {
   RegisterNavLink,
   ForgotPasswordLink,
   AuthFormGroup,
+  LoginOAuth,
 };

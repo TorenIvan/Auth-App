@@ -1,8 +1,8 @@
-import { AxiosResponse, isAxiosError } from "axios";
-import { axiosInstance } from "../../../config";
-import { Errors } from "../errors";
+import { AxiosResponse, isAxiosError } from 'axios';
+import { axiosInstance } from '../../../config';
+import { Errors } from '../errors';
 
-const resetPasswordBaseUri = "v1/auth/reset-password";
+const resetPasswordBaseUri = 'v1/auth/reset-password';
 
 export async function resetPassword(
   email: string,
@@ -12,13 +12,10 @@ export async function resetPassword(
 ): Promise<boolean> {
   try {
     const resetPasswordUri = `${resetPasswordBaseUri}?email=${email}&token=${token}`;
-    const result: AxiosResponse<void> = await axiosInstance.post(
-      resetPasswordUri,
-      {
-        newPassword: password,
-        confirmNewPassword: confirmPassword,
-      }
-    );
+    const result: AxiosResponse<void> = await axiosInstance.post(resetPasswordUri, {
+      newPassword: password,
+      confirmNewPassword: confirmPassword,
+    });
     const statusCode: number = result.status;
     if (statusCode === 200) {
       return true;

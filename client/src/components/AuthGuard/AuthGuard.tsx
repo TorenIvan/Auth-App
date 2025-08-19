@@ -1,7 +1,11 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { Loader } from '../Loader';
 import { useEffect, useMemo } from 'react';
-import { useFacebookLoginMutation, useLoginMutation } from '../../routes/Auth/hooks';
+import {
+  useFacebookLoginMutation,
+  useGithubLoginMutation,
+  useLoginMutation,
+} from '../../routes/Auth/hooks';
 import { useCheckIfUserIsAuthenticatedQuery } from '../../hooks';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -12,6 +16,7 @@ const publicRoutes = [
   '/forgot-password',
   '/reset-password',
   '/oauth2/facebook',
+  '/oauth2/github',
 ];
 
 export function AuthGuard() {
@@ -19,12 +24,13 @@ export function AuthGuard() {
   const queryClient = useQueryClient();
 
   const { isLoggingInWithFacebook } = useFacebookLoginMutation();
+  const { isLoggingInWithGithub } = useGithubLoginMutation();
   const { isLoggingIn } = useLoginMutation();
   const { isAuthenticated, isAuthenticating } = useCheckIfUserIsAuthenticatedQuery();
 
   const isLoadingAuth = useMemo(
-    () => isAuthenticating || isLoggingIn || isLoggingInWithFacebook,
-    [isAuthenticating, isLoggingIn, isLoggingInWithFacebook]
+    () => isAuthenticating || isLoggingIn || isLoggingInWithFacebook || isLoggingInWithGithub,
+    [isAuthenticating, isLoggingIn, isLoggingInWithFacebook, isLoggingInWithGithub]
   );
 
   /**

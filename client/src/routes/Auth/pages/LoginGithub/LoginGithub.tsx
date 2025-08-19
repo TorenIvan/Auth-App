@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { Errors } from '../../errors';
-import { useFacebookLoginMutation } from '../../hooks';
+import { useGithubLoginMutation } from '../../hooks';
 import { LoginOAuth } from '../../components';
 
-export function LoginFacebook() {
+export function LoginGithub() {
   const [isParamsValid, setIsParamsValid] = useState(true);
-  const { isError, mutate } = useFacebookLoginMutation();
+  const { isError, mutate } = useGithubLoginMutation();
 
   /**
    * *** Extract params from URL ***
@@ -15,6 +15,7 @@ export function LoginFacebook() {
   const urlParams = new URLSearchParams(search);
   const code = urlParams.get('code');
   const state = urlParams.get('state');
+  console.log({ code, search, state });
 
   /*
    * *** Validate params + CSRF only once on mount ***

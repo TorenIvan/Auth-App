@@ -36,4 +36,5 @@ export const Errors = {
   InvalidFileData: 'Invalid file data',
   InvalidFileType: 'Invalid file type',
   NotRetrievedFacebook: 'Information was not able to be retrieved from Facebook. Please, try again',
+  NotRetrievedGithub: 'Information was not able to be retrieved from Github. Please, try again',
 } as const;

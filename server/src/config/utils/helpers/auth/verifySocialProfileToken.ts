@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { EnvironmentVariables } from '../../constants/EnvironmentVariables';
 import { retrieveSocialProfileToken } from './retrieveSocialProfileToken';
+import { logger } from '../general/logger';
 
 async function verifySocialProfileToken(
   cookies: {
@@ -12,6 +13,7 @@ async function verifySocialProfileToken(
 
   const socialProfileToken = retrieveSocialProfileToken(cookies) ?? '';
   if (!socialProfileToken) {
+    logger.debug('Token not exist for social profile. Unauthorized');
     throw new Error('Token not exist for social profile. Unauthorized');
   }
 
@@ -31,9 +33,18 @@ async function verifySocialProfileToken(
       }
       break;
     }
+    case 'github': {
+      const userResponse = await axios.get('https://api.github.com/user', {
+        headers: { Authorization: `Bearer ${socialProfileToken}` },
+      });
+      if (userResponse.status < 200 || userResponse.status >= 300) {
+        logger.debug('Token is invalid. Unauthorized');
+        throw new Error('Token is invalid. Unauthorized');
+      }
+      break;
+    }
     case 'twitter':
     case 'google':
-    case 'github':
     default: {
       throw new Error('No known sign-in method found. Unauthorized');
     }

@@ -25,6 +25,9 @@ export const EnvironmentVariables = {
   Facebook_App_Id: process.env.FACEBOOK_APP_ID!,
   Facebook_App_Secret: process.env.FACEBOOK_APP_SECRET!,
   Facebook_App_Redirect_Uri: process.env.FACEBOOK_APP_REDIRECT_URI!,
+  Github_App_Id: process.env.GITHUB_APP_ID!,
+  Github_App_Secret: process.env.GITHUB_APP_SECRET!,
+  Github_App_Redirect_Uri: process.env.GITHUB_APP_REDIRECT_URI!,
   Cookie_Name_Social_Profile: process.env.COOKIE_NAME_SOCIAL_PROFILE!,
   Log_Level: process.env.LOG_LEVEL!,
 } as const;

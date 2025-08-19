@@ -9,6 +9,7 @@ export function AxiosInterceptor({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
 
   useEffect(() => {
+    let lastAxiosHeaders = {};
     let isRefreshing = false;
     let missedRequestsForPendingRenewalQueue: Array<{
       resolve: (token: string) => void;
@@ -26,7 +27,15 @@ export function AxiosInterceptor({ children }: { children: ReactNode }) {
       missedRequestsForPendingRenewalQueue = [];
     }
 
-    const interceptor = axiosInstance.interceptors.response.use(
+    const reqInterceptor = axiosInstance.interceptors.request.use(
+      (config) => {
+        lastAxiosHeaders = { ...config.headers };
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
+
+    const resInterceptor = axiosInstance.interceptors.response.use(
       (response) => response,
       async (error) => {
         const originalRequest = error.config;
@@ -54,7 +63,10 @@ export function AxiosInterceptor({ children }: { children: ReactNode }) {
 
             processQueue(null, newToken);
 
-            originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+            originalRequest.headers = {
+              ...lastAxiosHeaders,
+              Authorization: `Bearer ${newToken}`,
+            };
             return axiosInstance(originalRequest);
           } catch (refreshError) {
             processQueue(refreshError, null);
@@ -74,7 +86,8 @@ export function AxiosInterceptor({ children }: { children: ReactNode }) {
     );
 
     return () => {
-      axiosInstance.interceptors.response.eject(interceptor);
+      axiosInstance.interceptors.response.eject(reqInterceptor);
+      axiosInstance.interceptors.response.eject(resInterceptor);
     };
   }, [queryClient]);
 
