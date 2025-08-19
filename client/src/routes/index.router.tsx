@@ -1,13 +1,13 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
-import { ErrorPage } from "../pages";
-import { AuthGuard } from "../components";
-import authRoutes from "./Auth";
-import profileRoutes from "./Profile";
+import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { ErrorPage } from '../pages';
+import { AuthGuard } from '../components';
+import authRoutes from './Auth';
+import profileRoutes from './Profile';
 
 function indexRouter() {
   return createBrowserRouter([
     {
-      path: "/",
+      path: '/',
       Component: AuthGuard,
       ErrorBoundary: ErrorPage,
       children: [
@@ -18,7 +18,8 @@ function indexRouter() {
         ...authRoutes(),
         ...profileRoutes(),
         {
-          path: "*", element: <Navigate to="/profile" replace />,
+          path: '*',
+          element: <Navigate to="/profile" replace />,
         },
       ],
     },

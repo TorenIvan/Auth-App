@@ -5,7 +5,7 @@ export const EnvironmentVariables = {
   DatabaseUri: DatabaseUri,
   ServerUri: process.env.SERVER_URI!,
   DatabaseName: process.env.DB_NAME,
-  IsProduction: process.env.NODE_END === "production",
+  IsProduction: process.env.NODE_END === 'production',
   Access_Token_Secret: process.env.ACCESS_TOKEN_SECRET!,
   Refresh_Token_Secret: process.env.REFRESH_TOKEN_SECRET!,
   Access_Token_Expiration_Time: process.env.ACCESS_TOKEN_SECRET_EXPIRATION!,
@@ -13,8 +13,7 @@ export const EnvironmentVariables = {
   Cookie_Name: process.env.COOKIE_NAME!,
   Reset_Pass_Cookie_Name: process.env.RESET_PASS_COOKIE_NAME!,
   Reset_Pass_Cookie_Secret: process.env.RESET_PASS_SECRET!,
-  Reset_Pass_Cookie_Expiration_Time:
-    process.env.RESET_PASS_COOKIE_EXPIRATION_TIME!,
+  Reset_Pass_Cookie_Expiration_Time: process.env.RESET_PASS_COOKIE_EXPIRATION_TIME!,
   Cookie_Secret: process.env.COOKIE_SECRET!,
   Salt_Size: process.env.SALT_SIZE!,
   Email_Secret: process.env.EMAIL_SECRET!,

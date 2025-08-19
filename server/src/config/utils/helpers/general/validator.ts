@@ -1,5 +1,5 @@
-import { FastifyReply, FastifyRequest } from "fastify";
-import { ZodError, ZodSchema } from "zod";
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { ZodError, ZodSchema } from 'zod';
 
 export async function validateRequestBody<T>(
   request: FastifyRequest,

@@ -1,1 +1,1 @@
-export { ConfirmEmail as Component, loader } from "./ConfirmEmail";
+export { ConfirmEmail as Component } from './ConfirmEmail';

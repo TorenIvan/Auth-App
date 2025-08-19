@@ -1,16 +1,12 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCircleXmark,
-  faEnvelopeCircleCheck,
-  faSpinner,
-} from "@fortawesome/free-solid-svg-icons";
-import { Errors } from "../../errors";
-import { Constants } from "../../constants";
-import { confirmEmail } from "../../api";
-import styles from "./styles.module.scss";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleXmark, faEnvelopeCircleCheck, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { Errors } from '../../errors';
+import { Constants } from '../../constants';
+import { confirmEmail } from '../../api';
+import styles from './styles.module.scss';
 
 export function ConfirmEmail() {
   const navigate = useNavigate();
@@ -22,17 +18,17 @@ export function ConfirmEmail() {
         const { search } = window.location;
         if (!search) {
           toast.error(Errors.NoConfirmationToken);
-          navigate("/login", { replace: true });
+          navigate('/login', { replace: true });
           return;
         }
 
         const urlParams = new URLSearchParams(search);
-        const token = urlParams.get("token");
-        const email = urlParams.get("email");
+        const token = urlParams.get('token');
+        const email = urlParams.get('email');
 
         if (!token || !email) {
           toast.error(Errors.InvalidConfirmationToken);
-          navigate("/login", { replace: true });
+          navigate('/login', { replace: true });
           return;
         }
 
@@ -48,18 +44,14 @@ export function ConfirmEmail() {
   }, [navigate]);
 
   function goBackToLogin() {
-    navigate("/login");
+    navigate('/login');
   }
 
   if (isEmailConfirmed === false) {
     return (
       <div id={styles.container}>
         <h2 id={styles.header}>{Constants.ConfirmHeaderError}</h2>
-        <FontAwesomeIcon
-          icon={faCircleXmark}
-          className={styles.fontIconError}
-          beatFade
-        />
+        <FontAwesomeIcon icon={faCircleXmark} className={styles.fontIconError} beatFade />
         <p id={styles.content}>
           <em>{Constants.ConfirmParagraphError}</em>
         </p>
@@ -74,10 +66,7 @@ export function ConfirmEmail() {
     return (
       <div id={styles.container}>
         <h2 id={styles.header}>{Constants.ConfirmHeader}</h2>
-        <FontAwesomeIcon
-          icon={faEnvelopeCircleCheck}
-          className={styles.fontIcon}
-        />
+        <FontAwesomeIcon icon={faEnvelopeCircleCheck} className={styles.fontIcon} />
         <p id={styles.content}>
           <em>{Constants.ConfirmParagraph}</em>
         </p>

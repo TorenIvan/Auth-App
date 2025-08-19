@@ -1,15 +1,9 @@
-import { memo } from "react";
+import { memo } from 'react';
 
 /* eslint-disable react/display-name */
 const FacebookIcon = memo(() => {
   return (
-    <svg
-      width="43"
-      height="43"
-      viewBox="0 0 43 43"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="43" height="43" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="21.8088" cy="21.5981" r="20.5" stroke="#828282" />
       <g>
         <path
@@ -18,12 +12,7 @@ const FacebookIcon = memo(() => {
         />
       </g>
       <defs>
-        <rect
-          width="18"
-          height="17.561"
-          fill="white"
-          transform="translate(13.433 13.4419)"
-        />
+        <rect width="18" height="17.561" fill="white" transform="translate(13.433 13.4419)" />
       </defs>
     </svg>
   );

@@ -1,5 +1,5 @@
-import * as z from "zod";
-import { Errors } from "../../../config/utils/constants/Errors";
+import * as z from 'zod';
+import { Errors } from '../../../config/utils/constants/Errors';
 
 export const authCredentialsBodySchema = z.object({
   email: z
@@ -14,10 +14,9 @@ export const authCredentialsBodySchema = z.object({
       invalid_type_error: Errors.PasswordInvalid,
     })
     .trim()
-    .refine(
-      (value) => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/.test(value),
-      { message: Errors.PasswordInvalid }
-    ),
+    .refine((value) => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/.test(value), {
+      message: Errors.PasswordInvalid,
+    }),
 });
 
 export const verifyEmailQueryStringSchema = z.object({
@@ -41,20 +40,18 @@ export const resetPasswordRequestSchema = z.object({
       invalid_type_error: Errors.PasswordInvalid,
     })
     .trim()
-    .refine(
-      (value) => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/.test(value),
-      { message: Errors.PasswordInvalid }
-    ),
+    .refine((value) => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/.test(value), {
+      message: Errors.PasswordInvalid,
+    }),
   confirmNewPassword: z
     .string({
       required_error: Errors.PasswordRequired,
       invalid_type_error: Errors.PasswordInvalid,
     })
     .trim()
-    .refine(
-      (value) => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/.test(value),
-      { message: Errors.PasswordInvalid }
-    ),
+    .refine((value) => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/.test(value), {
+      message: Errors.PasswordInvalid,
+    }),
 });
 
 export type credentialsUserInput = z.infer<typeof authCredentialsBodySchema>;

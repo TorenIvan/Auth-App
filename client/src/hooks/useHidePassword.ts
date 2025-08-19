@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState } from 'react';
 
 export function useHidePassword(): TUseHidePassword {
   const [hidePassword, setHidePassword] = useState<boolean>(true);
@@ -10,7 +10,4 @@ export function useHidePassword(): TUseHidePassword {
   return [hidePassword, togglePasswordVisibility] as const;
 }
 
-type TUseHidePassword = readonly [
-  hidePassword: boolean,
-  togglePasswordVisibility: () => void
-];
+type TUseHidePassword = readonly [hidePassword: boolean, togglePasswordVisibility: () => void];

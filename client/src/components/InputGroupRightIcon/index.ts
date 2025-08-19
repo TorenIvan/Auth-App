@@ -1,3 +1,3 @@
-import InputGroupRightIcon from "./InputGroupRightIcon";
+import InputGroupRightIcon from './InputGroupRightIcon';
 
 export default InputGroupRightIcon;

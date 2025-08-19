@@ -1,8 +1,8 @@
-import { AxiosError, isAxiosError } from "axios";
-import { axiosInstance } from "../../../config";
-import { Errors } from "../errors";
+import { AxiosError, isAxiosError } from 'axios';
+import { axiosInstance } from '../../../config';
+import { Errors } from '../errors';
 
-const logoutUri = "v1/auth/logout";
+const logoutUri = 'v1/auth/logout';
 
 export async function logoutUser(): Promise<void> {
   try {

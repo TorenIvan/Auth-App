@@ -1,1 +1,1 @@
-export { AxiosInterceptor } from "./AxiosInterceptor";
+export { AxiosInterceptor } from './AxiosInterceptor';

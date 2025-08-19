@@ -1,8 +1,6 @@
-import { EnvironmentVariables } from "../../constants/EnvironmentVariables";
+import { EnvironmentVariables } from '../../constants/EnvironmentVariables';
 
-const retrieveSocialProfileToken = (cookies: {
-  [cookieName: string]: string | undefined;
-}) => {
+const retrieveSocialProfileToken = (cookies: { [cookieName: string]: string | undefined }) => {
   let socialProfileToken: string | null = null;
   let requestCookiesExist: boolean = false;
 

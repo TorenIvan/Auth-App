@@ -1,3 +1,3 @@
-import InputGroupLabel from "./InputGroupLabel";
+import InputGroupLabel from './InputGroupLabel';
 
 export default InputGroupLabel;

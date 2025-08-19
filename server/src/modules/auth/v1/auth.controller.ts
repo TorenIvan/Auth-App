@@ -1,37 +1,33 @@
-import { FastifyReply, FastifyRequest } from "fastify";
-import { EnvironmentVariables } from "../../../config/utils/constants/EnvironmentVariables";
-import { Errors } from "../../../config/utils/constants/Errors";
-import { Strings } from "../../../config/utils/constants/Strings";
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { EnvironmentVariables } from '../../../config/utils/constants/EnvironmentVariables';
+import { Errors } from '../../../config/utils/constants/Errors';
+import { Strings } from '../../../config/utils/constants/Strings';
 import {
   generateCookieOptions,
   generateCookieOptionsToClear,
   generateResetCookieOptions,
   generateSocialCookieOptions,
-} from "../../../config/utils/helpers/auth/generateCookieOptions";
+} from '../../../config/utils/helpers/auth/generateCookieOptions';
 import {
   generateAuthJWTs,
   generateJWT,
   verifyJWT,
-} from "../../../config/utils/helpers/auth/generateJWTs";
-import { sendEmail } from "../../../config/utils/helpers/general/sendEmail";
+} from '../../../config/utils/helpers/auth/generateJWTs';
+import { sendEmail } from '../../../config/utils/helpers/general/sendEmail';
 import {
   credentialsUserInput,
   forgotPasswordInput,
   queryConfirmEmail,
   resetPasswordUserInput,
-} from "./auth.schema";
-import AuthService from "./auth.service";
-import axios from "axios";
-import { logger } from "../../../config/utils/helpers";
+} from './auth.schema';
+import AuthService from './auth.service';
+import axios from 'axios';
+import { logger } from '../../../config/utils/helpers';
 
 class AuthController {
   constructor(private authService: AuthService) {}
 
-  private static handleError(
-    reply: FastifyReply,
-    errorCode: number,
-    customError?: string
-  ) {
+  private static handleError(reply: FastifyReply, errorCode: number, customError?: string) {
     let error;
     switch (errorCode) {
       case 403:
@@ -50,15 +46,13 @@ class AuthController {
     reply.code(errorCode).send(error);
   }
 
-  private static verifyQueryToken(query: {
-    token?: string;
-  }): TokenInterface | null {
+  private static verifyQueryToken(query: { token?: string }): TokenInterface | null {
     try {
       const token = query.token;
-      if (!token) throw new Error("Invalid token");
+      if (!token) throw new Error('Invalid token');
 
       const data = verifyJWT(token!, EnvironmentVariables.Email_Secret);
-      if (!data?.userId || !data?.type) throw new Error("Invalid token data");
+      if (!data?.userId || !data?.type) throw new Error('Invalid token data');
 
       return data;
     } catch (error) {
@@ -72,32 +66,27 @@ class AuthController {
   ) {
     try {
       const { email, password } = request.body;
-          const serviceResponse: ServiceResponse =
-            await this.authService.InsertUserWithCredentials(
-              email.toLowerCase(),
-              password
-            );
+      const serviceResponse: ServiceResponse = await this.authService.InsertUserWithCredentials(
+        email.toLowerCase(),
+        password
+      );
 
-          const insertedCorrectly: boolean = serviceResponse.success;
-          if (insertedCorrectly === false) {
-            return AuthController.handleError(
-              reply,
-              400,
-              serviceResponse?.customError
-            );
-          }
+      const insertedCorrectly: boolean = serviceResponse.success;
+      if (insertedCorrectly === false) {
+        return AuthController.handleError(reply, 400, serviceResponse?.customError);
+      }
 
-          const email_token = generateJWT(
-            {
-              userId: serviceResponse.data!.userId.toString(),
-              type: Strings.ConfirmEmailType,
-            },
-            EnvironmentVariables.Email_Secret,
-            EnvironmentVariables.Email_Token_Expiration_Time
-          );
+      const email_token = generateJWT(
+        {
+          userId: serviceResponse.data!.userId.toString(),
+          type: Strings.ConfirmEmailType,
+        },
+        EnvironmentVariables.Email_Secret,
+        EnvironmentVariables.Email_Token_Expiration_Time
+      );
 
-          sendEmail(email, email_token, Strings.ActionConfirmEmail);
-          reply.code(201).send();
+      sendEmail(email, email_token, Strings.ActionConfirmEmail);
+      reply.code(201).send();
     } catch (error) {
       AuthController.handleError(reply, 500, Errors.GenericError);
     }
@@ -113,10 +102,9 @@ class AuthController {
         return AuthController.handleError(reply, 400, Errors.TokenExpired);
       }
 
-      const hasConfirmedEmail: ServiceResponse =
-        await this.authService.CheckUserEmailConfirmation(
-          request.query.email.toLowerCase()
-        );
+      const hasConfirmedEmail: ServiceResponse = await this.authService.CheckUserEmailConfirmation(
+        request.query.email.toLowerCase()
+      );
 
       if (hasConfirmedEmail.success === false) {
         const { userId, type } = tokenVerifiedData;
@@ -129,11 +117,7 @@ class AuthController {
 
         const doneVerified: boolean = serviceResponse.success;
         if (doneVerified === false) {
-          return AuthController.handleError(
-            reply,
-            400,
-            serviceResponse?.customError
-          );
+          return AuthController.handleError(reply, 400, serviceResponse?.customError);
         }
       }
       reply.code(200).send();
@@ -161,7 +145,7 @@ class AuthController {
       const fbRetrieveTokenUri = `https://graph.facebook.com/v23.0/oauth/access_token?client_id=${EnvironmentVariables.Facebook_App_Id}&redirect_uri=${encodeURIComponent(EnvironmentVariables.Facebook_App_Redirect_Uri)}&client_secret=${EnvironmentVariables.Facebook_App_Secret}&code=${code}`;
 
       const tokenResponse = await axios.get(fbRetrieveTokenUri, {
-        headers: { 
+        headers: {
           Origin: EnvironmentVariables.ServerUri,
         },
       });
@@ -180,26 +164,19 @@ class AuthController {
       logger.debug({ data: userResponse?.data });
 
       if (!userResponse?.data?.email || !userResponse?.data?.name) {
-        return AuthController.handleError(
-          reply,
-          400,
-          Errors.NotRetrievedFacebook
-        );
+        return AuthController.handleError(reply, 400, Errors.NotRetrievedFacebook);
       }
 
       let userId: string | undefined = undefined;
-      const checkIfEmailExists: ServiceResponse =
-        await this.authService.CheckEmailExistence(
-          userResponse.data.email.trim().toLowerCase()
-        );
+      const checkIfEmailExists: ServiceResponse = await this.authService.CheckEmailExistence(
+        userResponse.data.email.trim().toLowerCase()
+      );
 
       logger.debug('Email ', userResponse.data.email, ' exists: ', checkIfEmailExists.success);
 
-      const givenSocialPlatformEmailExist: boolean =
-        checkIfEmailExists.success;
+      const givenSocialPlatformEmailExist: boolean = checkIfEmailExists.success;
       if (givenSocialPlatformEmailExist === true) {
-        userId =
-          checkIfEmailExists.data!.userId.toString();
+        userId = checkIfEmailExists.data!.userId.toString();
       }
 
       /**
@@ -210,36 +187,25 @@ class AuthController {
           await this.authService.InsertUserWithSocialAccount(
             userResponse.data.name,
             userResponse.data.email.trim().toLowerCase(),
-            userResponse.data.about ?? "",
-            "facebook"
+            userResponse.data.about ?? '',
+            'facebook'
           );
 
         const inserted: boolean = userSocialLoginResponse.success;
         if (inserted === false) {
-          return AuthController.handleError(
-            reply,
-            400,
-            userSocialLoginResponse?.customError
-          );
+          return AuthController.handleError(reply, 400, userSocialLoginResponse?.customError);
         }
         userId = userSocialLoginResponse.data!.userId.toString();
       }
       const cookieOptions = generateSocialCookieOptions();
 
       logger.debug('UserId ', userId);
-      const { access_token, refresh_token } = generateAuthJWTs(
-        userId!,
-        "facebook"
-      );
+      const { access_token, refresh_token } = generateAuthJWTs(userId!, 'facebook');
       await this.authService.updateUserRefreshTokenById(userId!, refresh_token);
 
       reply
         .code(200)
-        .setCookie(
-          EnvironmentVariables.Cookie_Name,
-          refresh_token,
-          cookieOptions
-        )
+        .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
         .setCookie(
           EnvironmentVariables.Cookie_Name_Social_Profile,
           tokenResponse.data.access_token,
@@ -258,22 +224,19 @@ class AuthController {
     try {
       const { email, password } = request.body;
 
-      const userCredsResponse: ServiceResponse =
-        await this.authService.ValidateUserWithCredentials(
-          email.toLowerCase(),
-          password
-        );
+      const userCredsResponse: ServiceResponse = await this.authService.ValidateUserWithCredentials(
+        email.toLowerCase(),
+        password
+      );
 
       const credentialsAuthenticated: boolean = userCredsResponse.success;
       if (credentialsAuthenticated === false) {
-        return AuthController.handleError(
-          reply,
-          400,
-          userCredsResponse?.customError
-        );
+        return AuthController.handleError(reply, 400, userCredsResponse?.customError);
       }
 
-      const hasConfirmedEmail: boolean | null | undefined = (userCredsResponse.data as ServiceInsertedData)?.isVerified;
+      const hasConfirmedEmail: boolean | null | undefined = (
+        userCredsResponse.data as ServiceInsertedData
+      )?.isVerified;
 
       if (hasConfirmedEmail === false) {
         const new_email_token = generateJWT(
@@ -287,30 +250,19 @@ class AuthController {
 
         sendEmail(email, new_email_token, Strings.ActionConfirmEmail);
 
-        return AuthController.handleError(
-          reply,
-          403,
-          Errors.ConfirmEmailInOrderToContinue
-        );
+        return AuthController.handleError(reply, 403, Errors.ConfirmEmailInOrderToContinue);
       }
 
       const { access_token, refresh_token } = generateAuthJWTs(
         userCredsResponse.data!.userId.toString()
       );
-      await this.authService.updateUserRefreshToken(
-        email.toLowerCase(),
-        refresh_token
-      );
+      await this.authService.updateUserRefreshToken(email.toLowerCase(), refresh_token);
 
       const cookieOptions = generateCookieOptions();
 
       reply
         .code(200)
-        .setCookie(
-          EnvironmentVariables.Cookie_Name,
-          refresh_token,
-          cookieOptions
-        )
+        .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
         .send({ access_token: access_token });
     } catch (error) {
       AuthController.handleError(reply, 500, Errors.GenericError);
@@ -324,13 +276,15 @@ class AuthController {
     try {
       const { email } = request.body;
 
-      const serviceResponse: ServiceResponse =
-        await this.authService.CheckEmailExistence(email.toLowerCase());
+      const serviceResponse: ServiceResponse = await this.authService.CheckEmailExistence(
+        email.toLowerCase()
+      );
 
       const emailExists: boolean = serviceResponse.success;
 
-      const hasConfirmedEmail: ServiceResponse =
-        await this.authService.CheckUserEmailConfirmation(email.toLowerCase());
+      const hasConfirmedEmail: ServiceResponse = await this.authService.CheckUserEmailConfirmation(
+        email.toLowerCase()
+      );
 
       const emailConfirmed: boolean = hasConfirmedEmail.success;
 
@@ -376,21 +330,14 @@ class AuthController {
     try {
       const { userId, signInMethod } = request;
 
-      const { access_token, refresh_token } = generateAuthJWTs(
-        userId,
-        signInMethod
-      );
+      const { access_token, refresh_token } = generateAuthJWTs(userId, signInMethod);
       await this.authService.updateUserRefreshTokenById(userId, refresh_token);
 
       const cookieOptions = generateCookieOptions();
 
       reply
         .code(200)
-        .setCookie(
-          EnvironmentVariables.Cookie_Name,
-          refresh_token,
-          cookieOptions
-        )
+        .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
         .send({ access_token: access_token });
     } catch (error) {
       AuthController.handleError(reply, 500, Errors.GenericError);
@@ -407,45 +354,31 @@ class AuthController {
     try {
       const tokenVerifiedData = AuthController.verifyQueryToken(request.query);
       if (tokenVerifiedData === null) {
-        return AuthController.handleError(
-          reply,
-          403,
-          Errors.GenericErrorResetPassword
-        );
+        return AuthController.handleError(reply, 403, Errors.GenericErrorResetPassword);
       }
 
       const { userId, type } = tokenVerifiedData;
       if (type !== Strings.ForgotPasswordType) {
-        return AuthController.handleError(
-          reply,
-          403,
-          Errors.IncorrectResetToken
-        );
+        return AuthController.handleError(reply, 403, Errors.IncorrectResetToken);
       }
       const userExistsResponse: ServiceResponse =
         await this.authService.CheckUserIdExistence(userId);
 
       if (userExistsResponse.success === false) {
-        return AuthController.handleError(
-          reply,
-          403,
-          Errors.GenericErrorResetPassword
-        );
+        return AuthController.handleError(reply, 403, Errors.GenericErrorResetPassword);
       }
 
       const { newPassword, confirmNewPassword } = request.body;
       if (newPassword !== confirmNewPassword) {
         return AuthController.handleError(reply, 400, Errors.PasswordsNotSame);
       }
-      const resetPasswordById: ServiceResponse =
-        await this.authService.ResetPassword(userId, newPassword);
+      const resetPasswordById: ServiceResponse = await this.authService.ResetPassword(
+        userId,
+        newPassword
+      );
 
       if (resetPasswordById.success === false) {
-        return AuthController.handleError(
-          reply,
-          400,
-          Errors.GenericErrorResetPassword
-        );
+        return AuthController.handleError(reply, 400, Errors.GenericErrorResetPassword);
       }
 
       reply
@@ -462,15 +395,9 @@ class AuthController {
   async logout(_: FastifyRequest, reply: FastifyReply) {
     return reply
       .code(200)
-      .clearCookie(
-        EnvironmentVariables.Cookie_Name,
-        generateCookieOptionsToClear()
-      )
-      .clearCookie(
-        EnvironmentVariables.Cookie_Name_Social_Profile,
-        generateCookieOptionsToClear()
-      )
-      .send({ message: "Logged out successfully" });
+      .clearCookie(EnvironmentVariables.Cookie_Name, generateCookieOptionsToClear())
+      .clearCookie(EnvironmentVariables.Cookie_Name_Social_Profile, generateCookieOptionsToClear())
+      .send({ message: 'Logged out successfully' });
   }
 
   async checkIfUserIsAuthenticated(_: FastifyRequest, reply: FastifyReply) {
@@ -479,4 +406,3 @@ class AuthController {
 }
 
 export default AuthController;
-

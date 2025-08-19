@@ -1,6 +1,6 @@
-import { Fragment } from "react";
-import { Outlet } from "react-router-dom";
-import { Footer, Header, Main } from "../../../layouts";
+import { Fragment } from 'react';
+import { Outlet } from 'react-router-dom';
+import { Footer, Header, Main } from '../../../layouts';
 
 function Layout() {
   return (

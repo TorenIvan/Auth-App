@@ -1,12 +1,7 @@
-import {
-  FacebookIcon,
-  GithubIcon,
-  GoogleIcon,
-  TwitterIcon,
-} from "../../../../icons";
-import { facebookInitLoginFlow } from "../../api";
-import { Constants } from "../../constants";
-import footerStyles from "./AuthFormFooter.module.scss";
+import { FacebookIcon, GithubIcon, GoogleIcon, TwitterIcon } from '../../../../icons';
+import { facebookInitLoginFlow } from '../../api';
+import { Constants } from '../../constants';
+import footerStyles from './AuthFormFooter.module.scss';
 
 function AuthFormFooter(props: IProps): JSX.Element {
   const { navLinkSlot, isSubmitting } = props;
@@ -18,37 +13,28 @@ function AuthFormFooter(props: IProps): JSX.Element {
 
   return (
     <footer className={footerStyles.footer}>
-      <div className={footerStyles["social-profile-paragraph"]}>
+      <div className={footerStyles['social-profile-paragraph']}>
         <p>{Constants.SocialProfilesFormText}</p>
       </div>
-      <ul id={footerStyles["social-profiles"]}>
-        <li 
-          className={footerStyles["social-item"]}
-          data-loading={isSubmitting ? "true" : "false"}
-        >
+      <ul id={footerStyles['social-profiles']}>
+        <li className={footerStyles['social-item']} data-loading={isSubmitting ? 'true' : 'false'}>
           <GoogleIcon />
         </li>
-        <li 
-          className={footerStyles["social-item"]} 
-          data-loading={isSubmitting ? "true" : "false"}
+        <li
+          className={footerStyles['social-item']}
+          data-loading={isSubmitting ? 'true' : 'false'}
           onClick={responseFacebook}
         >
           <FacebookIcon />
         </li>
-        <li 
-          className={footerStyles["social-item"]} 
-          data-loading={isSubmitting ? "true" : "false"}
-        >
+        <li className={footerStyles['social-item']} data-loading={isSubmitting ? 'true' : 'false'}>
           <GithubIcon />
         </li>
-        <li 
-          className={footerStyles["social-item"]} 
-          data-loading={isSubmitting ? "true" : "false"}
-        >
+        <li className={footerStyles['social-item']} data-loading={isSubmitting ? 'true' : 'false'}>
           <TwitterIcon />
         </li>
       </ul>
-      <div className={footerStyles["social-item"]}>{navLinkSlot}</div>
+      <div className={footerStyles['social-item']}>{navLinkSlot}</div>
     </footer>
   );
 }

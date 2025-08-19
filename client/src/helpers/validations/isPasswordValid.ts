@@ -1,8 +1,6 @@
-import * as z from "zod";
+import * as z from 'zod';
 
-const passwordSchema = z
-  .string()
-  .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/);
+const passwordSchema = z.string().regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/);
 
 function passwordValidator(password: string): boolean {
   try {

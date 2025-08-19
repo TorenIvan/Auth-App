@@ -1,4 +1,4 @@
-import { ChangeEvent, useState, useEffect } from "react";
+import { ChangeEvent, useState, useEffect } from 'react';
 
 function useImageChange(imageName: string | undefined) {
   const [image, setImage] = useState<string | null>(findPhoto(imageName));

@@ -1,1 +1,1 @@
-export { isEditFormValid } from "./isEditFormValid";
+export { isEditFormValid } from './isEditFormValid';

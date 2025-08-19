@@ -1,3 +1,3 @@
-import AuthFormHeader from "./AuthFormHeader";
+import AuthFormHeader from './AuthFormHeader';
 
 export default AuthFormHeader;

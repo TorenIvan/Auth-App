@@ -1,3 +1,3 @@
-import SubMenuItemImage from "./SubMenuItemImage";
+import SubMenuItemImage from './SubMenuItemImage';
 
 export default SubMenuItemImage;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 export function useLocalStorage<T>(
   key: string,
@@ -20,11 +20,9 @@ export function useLocalStorage<T>(
       window.localStorage.setItem(key, JSON.stringify(value));
       setStoredValue(value);
     } catch (error) {
-      console.error(
-        `Failed to Update Local Storage Value with key: ${key} error: ${error}`
-      );
+      console.error(`Failed to Update Local Storage Value with key: ${key} error: ${error}`);
     }
   };
 
-  return [storedValue, updateStoredValue];
+  return [storedValue, updateStoredValue] as const;
 }

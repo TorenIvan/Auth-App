@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from 'zod';
 
 const biographySchema = z.string().trim().max(500);
 

@@ -1,3 +1,3 @@
-import inputStyles from "./inputStyles.module.scss";
+import inputStyles from './inputStyles.module.scss';
 
 export default inputStyles;

@@ -1,5 +1,5 @@
-import { Constants } from "../../constants";
-import headerStyles from "./AuthFormHeader.module.scss";
+import { Constants } from '../../constants';
+import headerStyles from './AuthFormHeader.module.scss';
 
 function AuthFormHeader(props: IProps): JSX.Element {
   const { titleSlot } = props;

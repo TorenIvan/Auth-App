@@ -1,3 +1,3 @@
-import router from "./index.router";
+import router from './index.router';
 
 export default router;

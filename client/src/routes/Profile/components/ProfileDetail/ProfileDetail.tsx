@@ -1,17 +1,15 @@
-import { memo } from "react";
-import styles from "./styles.module.scss";
+import { memo } from 'react';
+import styles from './styles.module.scss';
 
-function ProfileDetail({ label, valueSlot, isImage}: IProps): JSX.Element {
+function ProfileDetail({ label, valueSlot, isImage }: IProps): JSX.Element {
   const valueColumnStyles: string = setValueColumnStyles(isImage);
 
   return (
-    <section className={styles["details-row"]}>
-      <div className={styles["details-label-column"]}>
+    <section className={styles['details-row']}>
+      <div className={styles['details-label-column']}>
         <span>{label}</span>
       </div>
-      <div className={styles[valueColumnStyles]}>
-        {valueSlot}
-      </div>
+      <div className={styles[valueColumnStyles]}>{valueSlot}</div>
     </section>
   );
 }
@@ -25,9 +23,9 @@ interface IProps {
 }
 
 function setValueColumnStyles(isImage?: boolean): string {
-  let valueColumnStyles: string = "details-value-column";
+  let valueColumnStyles: string = 'details-value-column';
   if (isImage === true) {
-    valueColumnStyles = "details-value-column-image";
+    valueColumnStyles = 'details-value-column-image';
   }
   return valueColumnStyles;
 }

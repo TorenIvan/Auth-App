@@ -1,2 +1,2 @@
-export * from "./validations";
-export { generateCsrfToken } from "./generateCSRFToken";
+export * from './validations';
+export { generateCsrfToken } from './generateCSRFToken';

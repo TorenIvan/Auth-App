@@ -1,1 +1,1 @@
-export { ForgotPasswordLink as default } from "./ForgotPasswordLink";
+export { ForgotPasswordLink as default } from './ForgotPasswordLink';

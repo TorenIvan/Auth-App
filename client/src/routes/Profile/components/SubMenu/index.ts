@@ -1,3 +1,3 @@
-import SubMenu from "./SubMenu";
+import SubMenu from './SubMenu';
 
 export default SubMenu;

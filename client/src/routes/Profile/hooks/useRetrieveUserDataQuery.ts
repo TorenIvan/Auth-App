@@ -1,11 +1,11 @@
-import { useEffect } from "react";
-import toast from "react-hot-toast";
-import { useQuery } from "@tanstack/react-query";
-import { Errors } from "../errors";
-import { userDetailsQuery } from "../api";
+import { useEffect } from 'react';
+import toast from 'react-hot-toast';
+import { useQuery } from '@tanstack/react-query';
+import { Errors } from '../errors';
+import { userDetailsQuery } from '../api';
 
 export function useRetrieveUserDataQuery() {
-   const { data, isLoading, isFetching, isError, error } = useQuery(userDetailsQuery);
+  const { data, isLoading, isFetching, isError, error } = useQuery(userDetailsQuery);
 
   useEffect(() => {
     if (isError) {
@@ -15,13 +15,13 @@ export function useRetrieveUserDataQuery() {
         toast.error(Errors.GenericError);
       }
     }
-  }, [isError, error])
+  }, [isError, error]);
 
-   return {
+  return {
     userInfo: data,
     isLoading,
     isFetching,
     isError,
     error,
-   } as const;
+  } as const;
 }

@@ -1,2 +1,2 @@
-export { renewTokens } from "./renewTokens";
-export { userAuthQuery } from "./checkIfUserIsAuthenticated";
+export { renewTokens } from './renewTokens';
+export { userAuthQuery } from './checkIfUserIsAuthenticated';

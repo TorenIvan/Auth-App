@@ -1,3 +1,3 @@
-import profileRoutes from "./profile.router";
+import profileRoutes from './profile.router';
 
 export default profileRoutes;

@@ -1,16 +1,16 @@
 function profileRoutes() {
   return [
     {
-      path: "profile",
-      lazy: () => import("./layouts"),
+      path: 'profile',
+      lazy: () => import('./layouts'),
       children: [
         {
           index: true,
-          lazy: () => import("./pages/ProfileDetails"),
+          lazy: () => import('./pages/ProfileDetails'),
         },
         {
-          path: "edit",
-          lazy: () => import("./pages/ProfileEdit"),
+          path: 'edit',
+          lazy: () => import('./pages/ProfileEdit'),
         },
       ],
     },

@@ -1,16 +1,16 @@
-import { NavLink } from "react-router-dom";
-import { Constants } from "../../constants";
-import styles from "./styles.module.css";
+import { NavLink } from 'react-router-dom';
+import { Constants } from '../../constants';
+import styles from './styles.module.css';
 
 const RegisterNavLink = (): JSX.Element => {
   return (
-    <p id={styles["social-profiles-text"]}>
+    <p id={styles['social-profiles-text']}>
       <span>{Constants.AlreadyAMember}&nbsp;&nbsp;&nbsp;</span>
       <NavLink
         to="/login"
         end
         style={{
-          color: "#545e6f",
+          color: '#545e6f',
         }}
       >
         {Constants.Login}

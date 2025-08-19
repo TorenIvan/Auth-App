@@ -1,7 +1,7 @@
-import React, { ReactNode } from "react";
-import { useTheme } from "../../store";
-import { LogoIcon, ThemeIcon } from "../../icons";
-import styles from "./styles.module.scss";
+import React, { ReactNode } from 'react';
+import { useTheme } from '../../store';
+import { LogoIcon, ThemeIcon } from '../../icons';
+import styles from './styles.module.scss';
 
 function Header({ rightSlot }: IProps) {
   const [theme, toggleTheme] = useTheme();
@@ -12,9 +12,9 @@ function Header({ rightSlot }: IProps) {
   };
 
   return (
-    <div className={styles["container"]}>
+    <div className={styles['container']}>
       <LogoIcon />
-      <div className={styles["developer-information"]}>
+      <div className={styles['developer-information']}>
         <div className={styles.toggleButton} onClick={handleThemeIconClick}>
           <ThemeIcon theme={theme} />
         </div>

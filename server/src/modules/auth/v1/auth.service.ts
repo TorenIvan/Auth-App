@@ -1,31 +1,28 @@
-import { Collection, Db, ObjectId } from "mongodb";
-import { Errors } from "../../../config/utils/constants/Errors";
-import { objectAttributeExistsAndHasValue } from "../../../config/utils/helpers";
-import * as bcrypt from "bcryptjs";
-import { EnvironmentVariables } from "../../../config/utils/constants/EnvironmentVariables";
-import User from "../../user/v1/user.model";
+import { Collection, Db, ObjectId } from 'mongodb';
+import { Errors } from '../../../config/utils/constants/Errors';
+import { objectAttributeExistsAndHasValue } from '../../../config/utils/helpers';
+import * as bcrypt from 'bcryptjs';
+import { EnvironmentVariables } from '../../../config/utils/constants/EnvironmentVariables';
+import User from '../../user/v1/user.model';
 
 class AuthService {
   private users: Collection<User>;
 
   constructor(private db: Db) {
-    this.users = this.db.collection<User>("users");
+    this.users = this.db.collection<User>('users');
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private static handleError(error: any): ServiceResponse {
     console.error(error);
-    if (objectAttributeExistsAndHasValue(error, "customError") === true) {
+    if (objectAttributeExistsAndHasValue(error, 'customError') === true) {
       return { success: false, customError: error.customError };
     }
     return { success: false };
   }
 
-  async InsertUserWithCredentials(
-    email: string,
-    password: string
-  ): Promise<ServiceResponse> {
-    const username: string = email.split("@")[0];
+  async InsertUserWithCredentials(email: string, password: string): Promise<ServiceResponse> {
+    const username: string = email.split('@')[0];
     try {
       const userExists: boolean = !!(await this.users.findOne({
         email: email,
@@ -39,24 +36,24 @@ class AuthService {
       const hash = await bcrypt.hash(password, salt);
 
       const result = await this.users.insertOne({
-        _id: new ObjectId,
+        _id: new ObjectId(),
         username: username,
         email: email,
-        biography: "",
-        phone: "",
+        biography: '',
+        phone: '',
         password: hash,
-        signInMethod: "credentials",
+        signInMethod: 'credentials',
         isVerified: false,
         schemaVersion: 0,
-        refreshToken: ''
+        refreshToken: '',
       });
       const data: ServiceInsertedData = {
         userId: result.insertedId,
         username: username,
         email: email,
-        biography: "",
-        phone: "",
-        signInMethod: "credentials",
+        biography: '',
+        phone: '',
+        signInMethod: 'credentials',
       };
       return { success: true, data: data };
     } catch (error) {
@@ -84,9 +81,9 @@ class AuthService {
         username: username,
         email: email,
         biography: biography,
-        phone: "",
-        password: "",
-        refreshToken: "",
+        phone: '',
+        password: '',
+        refreshToken: '',
         signInMethod: signInMethod,
         isVerified: true,
         schemaVersion: 0,
@@ -96,7 +93,7 @@ class AuthService {
         username: username,
         email: email,
         biography: biography,
-        phone: "",
+        phone: '',
         signInMethod: signInMethod,
       };
       return { success: true, data: data };
@@ -105,7 +102,7 @@ class AuthService {
     }
   }
 
-  async updateUserRefreshToken(email: string, token: string){
+  async updateUserRefreshToken(email: string, token: string) {
     try {
       await this.users.updateOne(
         {
@@ -113,7 +110,7 @@ class AuthService {
         },
         {
           $set: {
-            refreshToken: token
+            refreshToken: token,
           },
         }
       );
@@ -123,7 +120,7 @@ class AuthService {
     }
   }
 
-  async updateUserRefreshTokenById(userId: string, token: string){
+  async updateUserRefreshTokenById(userId: string, token: string) {
     try {
       await this.users.updateOne(
         {
@@ -131,7 +128,7 @@ class AuthService {
         },
         {
           $set: {
-            refreshToken: token
+            refreshToken: token,
           },
         }
       );
@@ -158,7 +155,7 @@ class AuthService {
       );
       if (result === null) {
         //User not found
-        throw "";
+        throw '';
       }
       const data: ServiceFoundData = {
         userId: result._id,
@@ -169,10 +166,7 @@ class AuthService {
     }
   }
 
-  async ValidateUserWithCredentials(
-    email: string,
-    password: string
-  ): Promise<ServiceResponse> {
+  async ValidateUserWithCredentials(email: string, password: string): Promise<ServiceResponse> {
     try {
       const result = await this.users.findOne(
         {
@@ -194,10 +188,7 @@ class AuthService {
           customError: Errors.UserNotFoundWithTheseCreds,
         };
       }
-      const isCorrectPassword: boolean = await bcrypt.compare(
-        password,
-        result?.password || ""
-      );
+      const isCorrectPassword: boolean = await bcrypt.compare(password, result?.password || '');
       if (isCorrectPassword === false) {
         throw {
           customError: Errors.UserNotFoundWithTheseCreds,
@@ -224,10 +215,7 @@ class AuthService {
     }
   }
 
-  async ValidateUserPassword(
-    userId: string,
-    password: string
-  ): Promise<ServiceResponse> {
+  async ValidateUserPassword(userId: string, password: string): Promise<ServiceResponse> {
     try {
       const result = await this.users.findOne(
         {
@@ -244,10 +232,7 @@ class AuthService {
           customError: Errors.UserNotFoundWithTheseCreds,
         };
       }
-      const isCorrectPassword: boolean = await bcrypt.compare(
-        password,
-        result?.password || ""
-      );
+      const isCorrectPassword: boolean = await bcrypt.compare(password, result?.password || '');
       if (isCorrectPassword === false) {
         throw {
           customError: Errors.UserNotFoundWithTheseCreds,
@@ -311,7 +296,7 @@ class AuthService {
         }
       );
       if (!!itExists === false) {
-        throw "User not found with this email";
+        throw 'User not found with this email';
       }
       const data: ServiceFoundData = {
         userId: itExists!._id,
@@ -335,7 +320,7 @@ class AuthService {
         }
       );
       if (!!itExists === false) {
-        throw "User not found with this identifier";
+        throw 'User not found with this identifier';
       }
       const data: ServiceFoundData = {
         userId: itExists!._id,

@@ -1,4 +1,4 @@
-import genericAvatar from "./images/genericAvatar.png";
+import genericAvatar from './images/genericAvatar.png';
 
 const Assets = {
   GenericAvatar: genericAvatar,

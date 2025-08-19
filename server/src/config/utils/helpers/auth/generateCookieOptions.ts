@@ -1,20 +1,17 @@
-import { EnvironmentVariables } from "../../constants/EnvironmentVariables";
+import { EnvironmentVariables } from '../../constants/EnvironmentVariables';
 
-export type SameSiteType = boolean | "none" | "lax" | "strict" | undefined;
+export type SameSiteType = boolean | 'none' | 'lax' | 'strict' | undefined;
 
 const cookieExpirationDays = Number(
-  String(EnvironmentVariables.Refresh_Token_Expiration_Time).replace(/\D/, "")
+  String(EnvironmentVariables.Refresh_Token_Expiration_Time).replace(/\D/, '')
 );
 
 const socialCookieExpirationDays = Number(
-  String(EnvironmentVariables.Refresh_Token_Expiration_Time).replace(/\D/, "")
+  String(EnvironmentVariables.Refresh_Token_Expiration_Time).replace(/\D/, '')
 );
 
 const resetCookieExpirationTime = Number(
-  String(EnvironmentVariables.Reset_Pass_Cookie_Expiration_Time).replace(
-    /\D/,
-    ""
-  )
+  String(EnvironmentVariables.Reset_Pass_Cookie_Expiration_Time).replace(/\D/, '')
 );
 
 export const generateCookieOptionsToClear = (isItResetPassword = false) => {
@@ -23,8 +20,8 @@ export const generateCookieOptionsToClear = (isItResetPassword = false) => {
    * *** If for some reason, you miss one of them, it might not be deleted, depending on the browser. ***
    */
   return {
-    path: isItResetPassword === true ? "/v1/auth" : "/",
-    sameSite: "none" as SameSiteType,
+    path: isItResetPassword === true ? '/v1/auth' : '/',
+    sameSite: 'none' as SameSiteType,
     secure: true,
   };
 };
@@ -37,11 +34,11 @@ export const generateCookieOptions = () => {
   const options = {
     signed: false, //refresh token is already signed
     httpOnly: true,
-    sameSite: "none" as SameSiteType,
+    sameSite: 'none' as SameSiteType,
     secure: true,
     expires: cookieExpirationDate,
     maxAge: cookieExpirationDate,
-    path: "/",
+    path: '/',
   };
   return options;
 };
@@ -54,11 +51,11 @@ export const generateSocialCookieOptions = () => {
   const options = {
     signed: false, //social login token is already signed
     httpOnly: true,
-    sameSite: "none" as SameSiteType,
+    sameSite: 'none' as SameSiteType,
     secure: true,
     expires: cookieExpirationDate,
     maxAge: cookieExpirationDate,
-    path: "/",
+    path: '/',
   };
   return options;
 };
@@ -71,7 +68,7 @@ export const generateResetCookieOptions = () => {
   const options = {
     signed: false, //reset token is already signed
     httpOnly: true,
-    sameSite: "none" as SameSiteType,
+    sameSite: 'none' as SameSiteType,
     secure: true,
     expires: cookieExpirationDate,
     maxAge: cookieExpirationDate,

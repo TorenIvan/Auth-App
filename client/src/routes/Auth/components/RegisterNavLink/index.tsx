@@ -1,3 +1,3 @@
-import RegisterNavLink from "./RegisterNavLink";
+import RegisterNavLink from './RegisterNavLink';
 
 export default RegisterNavLink;

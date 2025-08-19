@@ -1,31 +1,29 @@
-import { ForwardedRef, forwardRef } from "react";
-import styles from "./styles.module.scss";
-import { Constants } from "../../utils/Constants";
-import { useTheme } from "../../store";
+import { ForwardedRef, forwardRef } from 'react';
+import styles from './styles.module.scss';
+import { Constants } from '../../utils/Constants';
+import { useTheme } from '../../store';
 
-export const Textarea = forwardRef<HTMLTextAreaElement, IProps>(
-  (props, ref: TRef): JSX.Element => {
-    const [theme] = useTheme();
-    const { labelSlot, attributes, isLoading = false } = props;
+export const Textarea = forwardRef<HTMLTextAreaElement, IProps>((props, ref: TRef): JSX.Element => {
+  const [theme] = useTheme();
+  const { labelSlot, attributes, isLoading = false } = props;
 
-    return (
-      <section className={styles["textarea-container"]}>
-        {labelSlot}
-        {isLoading ? (
-          <div className="textarea-skeleton" /> 
-        ): (
-          <textarea
-            {...attributes}
-            ref={ref}
-            className={`${styles.textarea} ${
-              theme === Constants.LightPalette ? styles.lightBorder : ""
-            }`}
-          />
-        )}
-      </section>
-    );
-  }
-);
+  return (
+    <section className={styles['textarea-container']}>
+      {labelSlot}
+      {isLoading ? (
+        <div className="textarea-skeleton" />
+      ) : (
+        <textarea
+          {...attributes}
+          ref={ref}
+          className={`${styles.textarea} ${
+            theme === Constants.LightPalette ? styles.lightBorder : ''
+          }`}
+        />
+      )}
+    </section>
+  );
+});
 
 interface IProps {
   labelSlot?: JSX.Element;

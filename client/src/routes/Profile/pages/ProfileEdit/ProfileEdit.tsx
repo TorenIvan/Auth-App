@@ -1,5 +1,5 @@
-import { Fragment, useRef } from "react";
-import { NavLink } from "react-router-dom";
+import { Fragment, useRef } from 'react';
+import { NavLink } from 'react-router-dom';
 import {
   faCamera,
   faEnvelope,
@@ -8,21 +8,21 @@ import {
   faLock,
   faPhone,
   faUser,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { GlobalConstants } from "../../../../utils";
-import { InputGroup, Textarea } from "../../../../components";
-import { inputStyles } from "../../../../styles";
-import { Constants } from "../../constants";
-import { isEditFormValid as isFormValid } from "../../helpers";
-import { ProfileEditItem as EditItem, UserPhoto } from "../../components";
-import { useEditUserDataMutation, useImageChange, useRetrieveUserDataQuery } from "../../hooks";
-import styles from "./styles.module.scss";
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { GlobalConstants } from '../../../../utils';
+import { InputGroup, Textarea } from '../../../../components';
+import { inputStyles } from '../../../../styles';
+import { Constants } from '../../constants';
+import { isEditFormValid as isFormValid } from '../../helpers';
+import { ProfileEditItem as EditItem, UserPhoto } from '../../components';
+import { useEditUserDataMutation, useImageChange, useRetrieveUserDataQuery } from '../../hooks';
+import styles from './styles.module.scss';
 
 export function ProfileEdit() {
   const { userInfo, isFetching } = useRetrieveUserDataQuery();
   const { editUser, isMutating } = useEditUserDataMutation();
- 
+
   const inputFileRef = useRef<HTMLInputElement>(null);
   const [image, handleImageChange] = useImageChange(userInfo?.image);
 
@@ -38,14 +38,14 @@ export function ProfileEdit() {
 
     const file = inputFileRef.current?.files?.[0];
     if (file) {
-      formData.append("file", file);
+      formData.append('file', file);
     }
 
-    formData.append("username", (form.username.value as string) || "");
-    formData.append("biography", (form.biography.value as string) || "");
-    formData.append("phone", (form.phone.value as string) || "");
-    formData.append("currentPassword", form.currentPassword.value || "");
-    formData.append("newPassword", form.newPassword.value || "");
+    formData.append('username', (form.username.value as string) || '');
+    formData.append('biography', (form.biography.value as string) || '');
+    formData.append('phone', (form.phone.value as string) || '');
+    formData.append('currentPassword', form.currentPassword.value || '');
+    formData.append('newPassword', form.newPassword.value || '');
 
     if (isFormValid(formData) === false) return;
     editUser(formData);
@@ -53,68 +53,56 @@ export function ProfileEdit() {
 
   if (isFetching === false && userInfo === undefined) return undefined;
   return (
-    <div className={styles["page-container"]}>
-      <NavLink className={styles["back-button"]} to="/profile" end replace>
-        <span className={styles["arrow-left"]} />
+    <div className={styles['page-container']}>
+      <NavLink className={styles['back-button']} to="/profile" end replace>
+        <span className={styles['arrow-left']} />
         <span>{Constants.Back}</span>
       </NavLink>
-      <form
-        className={styles.form}
-        autoComplete="off"
-        onSubmit={handleSubmit}
-      >
+      <form className={styles.form} autoComplete="off" onSubmit={handleSubmit}>
         <article>
           <h3>{Constants.ChangeInfo}</h3>
           <span>{Constants.ChangeInfoSub}</span>
         </article>
-        {
-          isFetching ? (
-            <div className={`avatar-skeleton xl ${styles['margin-loader']}`} />
-          ): (
-            <UserPhoto
-              image={image}
-              handleImage={triggerImageChange}
-              inputSlot={
-                <>
-                  <FontAwesomeIcon
-                    icon={faCamera}
-                    color="#ffffff"
-                    className={styles["edit-photo-icon"]}
-                  />
-                  <input
-                    type="file"
-                    name="file"
-                    accept=".png, .jpg, .jpeg"
-                    ref={inputFileRef}
-                    onChange={handleImageChange}
-                  />
-                </>
-              }
-              paragraphSlot={
-                <span
-                  id={styles["default-photo-text"]}
-                  onClick={triggerImageChange}
-                >
-                  {image === null
-                    ? Constants.AddPhoto.toUpperCase()
-                    : Constants.ChangePhoto.toUpperCase()}
-                </span>
-              }
-            />
-          )
-        }
+        {isFetching ? (
+          <div className={`avatar-skeleton xl ${styles['margin-loader']}`} />
+        ) : (
+          <UserPhoto
+            image={image}
+            handleImage={triggerImageChange}
+            inputSlot={
+              <>
+                <FontAwesomeIcon
+                  icon={faCamera}
+                  color="#ffffff"
+                  className={styles['edit-photo-icon']}
+                />
+                <input
+                  type="file"
+                  name="file"
+                  accept=".png, .jpg, .jpeg"
+                  ref={inputFileRef}
+                  onChange={handleImageChange}
+                />
+              </>
+            }
+            paragraphSlot={
+              <span id={styles['default-photo-text']} onClick={triggerImageChange}>
+                {image === null
+                  ? Constants.AddPhoto.toUpperCase()
+                  : Constants.ChangePhoto.toUpperCase()}
+              </span>
+            }
+          />
+        )}
         <EditItem>
           <InputGroup stylesContainer="profile-input-container">
             <Fragment>
-              <InputGroup.LeftIcon
-                icon={faUser}
-                styles={inputStyles["fa-lock-middle"]}
-              />
+              <InputGroup.LeftIcon icon={faUser} styles={inputStyles['fa-lock-middle']} />
               <InputGroup.Label value={Constants.Name} />
               <InputGroup.Input
                 isLoading={isFetching}
                 attributes={{
-                  name: "username",
+                  name: 'username',
                   placeholder: Constants.NamePlaceholder,
                   defaultValue: userInfo?.username,
                 }}
@@ -127,7 +115,7 @@ export function ProfileEdit() {
             labelSlot={<label>{Constants.Bio}</label>}
             isLoading={isFetching}
             attributes={{
-              name: "biography",
+              name: 'biography',
               placeholder: Constants.BioPlaceholder,
               defaultValue: userInfo?.biography,
             }}
@@ -136,15 +124,12 @@ export function ProfileEdit() {
         <EditItem>
           <InputGroup stylesContainer="profile-input-container">
             <Fragment>
-              <InputGroup.LeftIcon
-                icon={faPhone}
-                styles={inputStyles["fa-lock-middle"]}
-              />
+              <InputGroup.LeftIcon icon={faPhone} styles={inputStyles['fa-lock-middle']} />
               <InputGroup.Label value={Constants.Phone} />
               <InputGroup.Input
                 isLoading={isFetching}
                 attributes={{
-                  name: "phone",
+                  name: 'phone',
                   placeholder: Constants.PhonePlaceholder,
                   defaultValue: userInfo?.phone,
                 }}
@@ -155,10 +140,7 @@ export function ProfileEdit() {
         <EditItem>
           <InputGroup stylesContainer="profile-input-container">
             <Fragment>
-              <InputGroup.LeftIcon
-                icon={faEnvelope}
-                styles={inputStyles["fa-lock-middle"]}
-              />
+              <InputGroup.LeftIcon icon={faEnvelope} styles={inputStyles['fa-lock-middle']} />
               <InputGroup.Label value={Constants.Email} />
               <InputGroup.Input
                 isLoading={isFetching}
@@ -177,24 +159,21 @@ export function ProfileEdit() {
               <InputGroup stylesContainer="profile-input-container">
                 {({ hidePassword, togglePasswordVisibility }) => (
                   <Fragment>
-                    <InputGroup.LeftIcon
-                      icon={faLock}
-                      styles={inputStyles["fa-lock-middle"]}
-                    />
+                    <InputGroup.LeftIcon icon={faLock} styles={inputStyles['fa-lock-middle']} />
                     <InputGroup.Label value={Constants.CurrentPassword} />
                     <InputGroup.Input
                       attributes={{
-                        name: "currentPassword",
+                        name: 'currentPassword',
                         placeholder: Constants.CurrentPasswordPlaceholder,
-                        autoComplete: "new-password",
-                        type: hidePassword === true ? "password" : "text",
+                        autoComplete: 'new-password',
+                        type: hidePassword === true ? 'password' : 'text',
                       }}
                       readonlyFocusEnabled
                       preventCopyPasteEnabled
                     />
                     <InputGroup.RightIcon
                       icon={hidePassword === true ? faEye : faEyeSlash}
-                      styles={inputStyles["fa-eye-middle"]}
+                      styles={inputStyles['fa-eye-middle']}
                       handleClick={togglePasswordVisibility}
                     />
                   </Fragment>
@@ -205,24 +184,21 @@ export function ProfileEdit() {
               <InputGroup stylesContainer="profile-input-container">
                 {({ hidePassword, togglePasswordVisibility }) => (
                   <Fragment>
-                    <InputGroup.LeftIcon
-                      icon={faLock}
-                      styles={inputStyles["fa-lock-middle"]}
-                    />
+                    <InputGroup.LeftIcon icon={faLock} styles={inputStyles['fa-lock-middle']} />
                     <InputGroup.Label value={Constants.NewPassword} />
                     <InputGroup.Input
                       attributes={{
-                        name: "newPassword",
+                        name: 'newPassword',
                         placeholder: Constants.NewPasswordPlaceholder,
-                        autoComplete: "new-password",
-                        type: hidePassword === true ? "password" : "text",
+                        autoComplete: 'new-password',
+                        type: hidePassword === true ? 'password' : 'text',
                       }}
                       readonlyFocusEnabled
                       preventCopyPasteEnabled
                     />
                     <InputGroup.RightIcon
                       icon={hidePassword === true ? faEye : faEyeSlash}
-                      styles={inputStyles["fa-eye-middle"]}
+                      styles={inputStyles['fa-eye-middle']}
                       handleClick={togglePasswordVisibility}
                     />
                   </Fragment>
@@ -232,9 +208,9 @@ export function ProfileEdit() {
           </Fragment>
         )}
         <EditItem>
-          <section className={styles["edit-item"]}>
-            <button id={styles["save-button"]} type="submit" disabled={isMutating || isFetching}>
-              <span id={styles["save-button-text"]}>
+          <section className={styles['edit-item']}>
+            <button id={styles['save-button']} type="submit" disabled={isMutating || isFetching}>
+              <span id={styles['save-button-text']}>
                 {isMutating ? Constants.Saving : Constants.Save}
               </span>
             </button>

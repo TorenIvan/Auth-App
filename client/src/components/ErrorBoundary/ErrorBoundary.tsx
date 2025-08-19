@@ -1,4 +1,4 @@
-import { ErrorInfo, Component, ReactNode } from "react";
+import { ErrorInfo, Component, ReactNode } from 'react';
 
 interface IProps {
   children: ReactNode;
@@ -22,7 +22,7 @@ class ErrorBoundary extends Component<IProps, IState> {
      * In more realistic scenarios you should log this to an external store (e.g MongoDB Atlas)
      * and wake up everyone xD
      */
-    console.error("Uncaught error:", error, errorInfo);
+    console.error('Uncaught error:', error, errorInfo);
   }
 
   public render() {

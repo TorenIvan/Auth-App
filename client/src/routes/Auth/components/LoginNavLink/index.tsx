@@ -1,3 +1,3 @@
-import LoginNavLink from "./LoginNavLink";
+import LoginNavLink from './LoginNavLink';
 
 export default LoginNavLink;

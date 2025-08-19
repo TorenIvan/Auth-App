@@ -1,11 +1,11 @@
-import { ReactNode } from "react";
-import SubMenuItemImage from "../SubMenuItemImage";
-import SubMenuItemText from "../SubMenuItemText";
-import styles from "./styles.module.scss";
+import { ReactNode } from 'react';
+import SubMenuItemImage from '../SubMenuItemImage';
+import SubMenuItemText from '../SubMenuItemText';
+import styles from './styles.module.scss';
 
 function SubMenuItem({ isUsed, children, onClick }: IProps): JSX.Element {
   return (
-    <li className={`${isUsed === true ? styles.used : ""}`} onClick={onClick}>
+    <li className={`${isUsed === true ? styles.used : ''}`} onClick={onClick}>
       {children}
     </li>
   );

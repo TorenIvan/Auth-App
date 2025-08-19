@@ -1,11 +1,11 @@
-import { AxiosError, isAxiosError } from "axios";
-import { axiosInstance } from "../config";
-import { Errors } from "../utils";
+import { AxiosError, isAxiosError } from 'axios';
+import { axiosInstance } from '../config';
+import { Errors } from '../utils';
 
-const uri = "v1/auth/check";
+const uri = 'v1/auth/check';
 
 export const userAuthQuery = {
-  queryKey: ["auth", "status"],
+  queryKey: ['auth', 'status'],
   queryFn: () => checkIfUserIsAuthenticated(),
 };
 

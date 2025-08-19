@@ -1,9 +1,9 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { facebookLogin } from "../api";
-import { useEffect } from "react";
-import { addAuthorizationHeader } from "../../../config";
-import toast from "react-hot-toast";
-import { Errors } from "../errors";
+import { useEffect } from 'react';
+import toast from 'react-hot-toast';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { facebookLogin } from '../api';
+import { addAuthorizationHeader } from '../../../config';
+import { Errors } from '../errors';
 
 export function useFacebookLoginMutation(): UseFacebookLogin {
   const queryClient = useQueryClient();
@@ -11,17 +11,16 @@ export function useFacebookLoginMutation(): UseFacebookLogin {
     mutationFn: (code: string | boolean) => facebookLogin(code),
     retry: 1,
   });
-  
 
   useEffect(() => {
     if (data) {
       addAuthorizationHeader(data);
-      queryClient.setQueryData(["auth", "status"], true);
+      queryClient.setQueryData(['auth', 'status'], true);
     }
     if (isError) {
-      toast.error(typeof error === "string" ? error : Errors.GenericError);
+      toast.error(typeof error === 'string' ? error : Errors.GenericError);
       if (error === Errors.AUserAlreadyAuthenticated) {
-        queryClient.setQueryData(["auth", "status"], true);
+        queryClient.setQueryData(['auth', 'status'], true);
       }
     }
   }, [data, error, queryClient, isError]);
@@ -33,7 +32,7 @@ export function useFacebookLoginMutation(): UseFacebookLogin {
     isLoggingInWithFacebook: isLoading,
     mutate: mutate,
     mutateAsync: mutateAsync,
-  };
+  } as const;
 }
 
 interface UseFacebookLogin {

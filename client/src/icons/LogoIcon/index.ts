@@ -1,3 +1,3 @@
-import LogoIcon from "./LogoIcon";
+import LogoIcon from './LogoIcon';
 
 export { LogoIcon };

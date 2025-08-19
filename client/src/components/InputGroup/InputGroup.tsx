@@ -1,16 +1,16 @@
-import { useHidePassword } from "../../hooks";
-import InputGroupInput from "../InputGroupInput";
-import InputGroupLabel from "../InputGroupLabel";
-import InputGroupLeftIcon from "../InputGroupLeftIcon";
-import InputGroupRightIcon from "../InputGroupRightIcon";
-import styles from "./styles.module.scss";
+import { useHidePassword } from '../../hooks';
+import InputGroupInput from '../InputGroupInput';
+import InputGroupLabel from '../InputGroupLabel';
+import InputGroupLeftIcon from '../InputGroupLeftIcon';
+import InputGroupRightIcon from '../InputGroupRightIcon';
+import styles from './styles.module.scss';
 
 function InputGroup(props: IProps): JSX.Element {
   const [hidePassword, togglePasswordVisibility] = useHidePassword();
   const { stylesContainer, children } = props;
-  const containerClassName = stylesContainer ? styles[stylesContainer] : "";
+  const containerClassName = stylesContainer ? styles[stylesContainer] : '';
 
-  if (typeof children === "function") {
+  if (typeof children === 'function') {
     return (
       <section className={containerClassName}>
         {children({ hidePassword, togglePasswordVisibility })}

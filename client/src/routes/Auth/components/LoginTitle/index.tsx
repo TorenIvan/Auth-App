@@ -1,3 +1,3 @@
-import LoginTitle from "./LoginTitle";
+import LoginTitle from './LoginTitle';
 
 export default LoginTitle;

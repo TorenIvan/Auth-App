@@ -1,1 +1,1 @@
-export { ProfileEditItem as default } from "./ProfileEditItem";
+export { ProfileEditItem as default } from './ProfileEditItem';

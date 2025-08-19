@@ -1,3 +1,3 @@
-import ProfileDetail from "./ProfileDetail";
+import ProfileDetail from './ProfileDetail';
 
 export default ProfileDetail;

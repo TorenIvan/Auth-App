@@ -1,9 +1,6 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-type ReturnType = [
-  isSubMenuOpen: boolean,
-  toggleSubMenu: (isOpen?: boolean) => void
-];
+type ReturnType = [isSubMenuOpen: boolean, toggleSubMenu: (isOpen?: boolean) => void];
 
 export function useToggleSubMenu(): ReturnType {
   const [isSubMenuOpen, setSubMenuOpen] = useState<boolean>(false);
@@ -16,5 +13,5 @@ export function useToggleSubMenu(): ReturnType {
     setSubMenuOpen(isOpen);
   }
 
-  return [isSubMenuOpen, toggleSubMenu];
+  return [isSubMenuOpen, toggleSubMenu] as const;
 }

@@ -1,21 +1,21 @@
-import { Collection, Db, ObjectId, UpdateResult } from "mongodb";
-import { Errors } from "../../../config/utils/constants/Errors";
-import { objectAttributeExistsAndHasValue } from "../../../config/utils/helpers";
-import User from "./user.model";
-import * as bcrypt from "bcryptjs";
-import { EnvironmentVariables } from "../../../config/utils/constants/EnvironmentVariables";
+import { Collection, Db, ObjectId, UpdateResult } from 'mongodb';
+import { Errors } from '../../../config/utils/constants/Errors';
+import { objectAttributeExistsAndHasValue } from '../../../config/utils/helpers';
+import User from './user.model';
+import * as bcrypt from 'bcryptjs';
+import { EnvironmentVariables } from '../../../config/utils/constants/EnvironmentVariables';
 
 class UserService {
   private users: Collection<User>;
 
   constructor(private db: Db) {
-    this.users = this.db.collection<User>("users");
+    this.users = this.db.collection<User>('users');
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private static handleError(error: any): ServiceResponse {
     console.error(error);
-    if (objectAttributeExistsAndHasValue(error, "customError") === true) {
+    if (objectAttributeExistsAndHasValue(error, 'customError') === true) {
       return { success: false, customError: error.customError };
     }
     return { success: false };
@@ -75,10 +75,8 @@ class UserService {
         biography,
       };
 
-      if (newPassword !== "") {
-        const salt = await bcrypt.genSalt(
-          Number(EnvironmentVariables.Salt_Size)
-        );
+      if (newPassword !== '') {
+        const salt = await bcrypt.genSalt(Number(EnvironmentVariables.Salt_Size));
         const hash = await bcrypt.hash(newPassword.trim(), salt);
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore

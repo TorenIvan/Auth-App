@@ -16,7 +16,7 @@ export function AxiosInterceptor({ children }: { children: ReactNode }) {
     }> = [];
 
     function processQueue(error: unknown, token: string | null = null) {
-      missedRequestsForPendingRenewalQueue.forEach(promise => {
+      missedRequestsForPendingRenewalQueue.forEach((promise) => {
         if (error) {
           promise.reject(error);
         } else {
@@ -35,10 +35,12 @@ export function AxiosInterceptor({ children }: { children: ReactNode }) {
           if (isRefreshing) {
             return new Promise((resolve, reject) => {
               missedRequestsForPendingRenewalQueue.push({ resolve, reject });
-            }).then(token => {
-              originalRequest.headers['Authorization'] = `Bearer ${token}`;
-              return axiosInstance(originalRequest);
-            }).catch(err => Promise.reject(err));
+            })
+              .then((token) => {
+                originalRequest.headers['Authorization'] = `Bearer ${token}`;
+                return axiosInstance(originalRequest);
+              })
+              .catch((err) => Promise.reject(err));
           }
 
           originalRequest._retry = true;
@@ -47,21 +49,20 @@ export function AxiosInterceptor({ children }: { children: ReactNode }) {
           try {
             const newToken: string = await renewTokens();
             addAuthorizationHeader(newToken);
-            
+
             queryClient.setQueryData(['auth', 'status'], true);
-            
+
             processQueue(null, newToken);
-            
+
             originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
             return axiosInstance(originalRequest);
-            
           } catch (refreshError) {
             processQueue(refreshError, null);
             clearAuthorizationHeader();
-            
+
             queryClient.setQueryData(['auth', 'status'], false);
             toast.error(Errors.SessionExpired);
-            
+
             return Promise.reject(refreshError);
           } finally {
             isRefreshing = false;

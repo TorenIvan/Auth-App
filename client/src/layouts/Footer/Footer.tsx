@@ -1,14 +1,14 @@
-import { Fragment, memo } from "react";
-import { GlobalConstants } from "../../utils";
-import styles from "./footerStyles.module.css";
+import { Fragment, memo } from 'react';
+import { GlobalConstants } from '../../utils';
+import styles from './footerStyles.module.css';
 
 const Footer = () => {
   return (
     <Fragment>
-      <div className={styles["developer-information"]}>
+      <div className={styles['developer-information']}>
         <span>
-          {GlobalConstants.CreatedBy}{" "}
-          <span id={styles["developer-name"]}>
+          {GlobalConstants.CreatedBy}{' '}
+          <span id={styles['developer-name']}>
             <a
               href={GlobalConstants.DeveloperGitHubProfile}
               target="_blank"

@@ -1,24 +1,24 @@
-import { MongoClient, TransactionOptions } from "mongodb";
-import { FastifyReply, FastifyRequest } from "fastify";
-import { Errors } from "../../../config/utils/constants/Errors";
-import { editUserDetailsBody } from "./user.schema";
-import UserService from "./user.service";
-import AuthService from "../../auth/v1/auth.service";
+import { MongoClient, TransactionOptions } from 'mongodb';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { Errors } from '../../../config/utils/constants/Errors';
+import { editUserDetailsBody } from './user.schema';
+import UserService from './user.service';
+import AuthService from '../../auth/v1/auth.service';
 
 const transactionOptions: TransactionOptions = {
-  readPreference: "primary",
-  readConcern: { level: "local" },
-  writeConcern: { w: "majority" },
+  readPreference: 'primary',
+  readConcern: { level: 'local' },
+  writeConcern: { w: 'majority' },
 };
 
 class UserController {
-  constructor(private client: MongoClient, private userService: UserService, private authService: AuthService) {}
+  constructor(
+    private client: MongoClient,
+    private userService: UserService,
+    private authService: AuthService
+  ) {}
 
-  private static handleError(
-    reply: FastifyReply,
-    errorCode: number,
-    customError?: string
-  ) {
+  private static handleError(reply: FastifyReply, errorCode: number, customError?: string) {
     let error;
     switch (errorCode) {
       case 403:
@@ -39,8 +39,9 @@ class UserController {
 
   async retrieveUserDetails(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const userDetails: ServiceResponse =
-        await this.userService.RetrieveUserDetails(request.userId ?? "");
+      const userDetails: ServiceResponse = await this.userService.RetrieveUserDetails(
+        request.userId ?? ''
+      );
 
       if (userDetails.success === false) {
         return UserController.handleError(reply, 400, userDetails?.customError);
@@ -51,7 +52,7 @@ class UserController {
 
       let imageString: string | undefined = undefined;
       if (image?.data !== undefined) {
-        const bufferToBase64String: string = image.data.toString("base64");
+        const bufferToBase64String: string = image.data.toString('base64');
         imageString = `data:${image?.mimetype};base64,${bufferToBase64String}`;
       }
 
@@ -75,11 +76,10 @@ class UserController {
     reply: FastifyReply
   ) {
     try {
-      const { username, biography, phone, currentPassword, newPassword } =
-        request.body;
+      const { username, biography, phone, currentPassword, newPassword } = request.body;
       const images = request.body.file as Array<UploadedFile>;
 
-      let image: UploadedFile | null = images ? ((images[0] as UploadedFile) || null) : null;
+      let image: UploadedFile | null = images ? (images[0] as UploadedFile) || null : null;
 
       // In theory this is tested due to middleware
       if (image !== null) {
@@ -88,38 +88,28 @@ class UserController {
         }
       }
 
-      const isChangingPassword: boolean = newPassword !== "";
+      const isChangingPassword: boolean = newPassword !== '';
 
       const signInMethod = request.signInMethod;
-      const canChangePassword: boolean = signInMethod === "credentials";
+      const canChangePassword: boolean = signInMethod === 'credentials';
 
       if (isChangingPassword === true && canChangePassword === false) {
-        return UserController.handleError(
-          reply,
-          400,
-          Errors.SignInMethodUpdatePassword
-        );
+        return UserController.handleError(reply, 400, Errors.SignInMethodUpdatePassword);
       }
 
       const session = this.client.startSession();
       try {
         await session.withTransaction(async () => {
           if (isChangingPassword === true) {
-            const verifyUserPassword =
-              await this.authService.ValidateUserPassword(
-                request.userId,
-                currentPassword
-              );
+            const verifyUserPassword = await this.authService.ValidateUserPassword(
+              request.userId,
+              currentPassword
+            );
 
             if (verifyUserPassword.success === false) {
-              return UserController.handleError(
-                reply,
-                400,
-                Errors.IncorrectPassword
-              );
+              return UserController.handleError(reply, 400, Errors.IncorrectPassword);
             }
           }
-      
 
           const updatedUserDetails = await this.userService.UpdateUserDetails(
             request.userId,
@@ -131,11 +121,7 @@ class UserController {
           );
 
           if (updatedUserDetails.success === false) {
-            return UserController.handleError(
-              reply,
-              400,
-              updatedUserDetails?.customError
-            );
+            return UserController.handleError(reply, 400, updatedUserDetails?.customError);
           }
 
           reply.code(200).send();

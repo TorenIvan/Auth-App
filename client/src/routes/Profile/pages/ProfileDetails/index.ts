@@ -1,1 +1,1 @@
-export { ProfileDetails as Component } from "./ProfileDetails";
+export { ProfileDetails as Component } from './ProfileDetails';

@@ -1,1 +1,1 @@
-export { ForgotPassword as Component } from "./ForgotPassword";
+export { ForgotPassword as Component } from './ForgotPassword';

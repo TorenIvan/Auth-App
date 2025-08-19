@@ -1,7 +1,7 @@
-import { ClipboardEvent, FocusEvent, InputHTMLAttributes } from "react";
-import { Constants } from "../../utils/Constants";
-import { useTheme } from "../../store";
-import { inputStyles } from "../../styles";
+import { ClipboardEvent, FocusEvent, InputHTMLAttributes } from 'react';
+import { Constants } from '../../utils/Constants';
+import { useTheme } from '../../store';
+import { inputStyles } from '../../styles';
 
 function InputGroupInput(props: IProps) {
   const [theme] = useTheme();
@@ -10,7 +10,7 @@ function InputGroupInput(props: IProps) {
   function handleFocus(event: FocusEvent<HTMLInputElement>) {
     if (readonlyFocusEnabled === true) {
       event.preventDefault();
-      event.currentTarget.removeAttribute("readOnly");
+      event.currentTarget.removeAttribute('readOnly');
     }
   }
 
@@ -21,13 +21,11 @@ function InputGroupInput(props: IProps) {
   }
 
   if (isLoading) {
-    return (
-      <div className="input-skeleton" /> 
-    );
+    return <div className="input-skeleton" />;
   }
   return (
     <input
-      className={`${inputStyles.input} ${theme === Constants.LightPalette ? inputStyles.lightBorder : ""}`}
+      className={`${inputStyles.input} ${theme === Constants.LightPalette ? inputStyles.lightBorder : ''}`}
       {...attributes}
       onFocus={handleFocus}
       onCopy={preventCopyPaste}

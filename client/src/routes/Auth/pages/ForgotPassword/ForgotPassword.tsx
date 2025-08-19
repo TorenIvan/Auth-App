@@ -1,14 +1,14 @@
-import { FormEvent, Fragment, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
-import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import { InputGroup } from "../../../../components";
-import { isEmailValid } from "../../../../helpers";
-import { inputStyles } from "../../../../styles";
-import { Errors } from "../../errors";
-import { Constants } from "../../constants";
-import { forgotPassword } from "../../api";
-import styles from "./styles.module.scss";
+import { FormEvent, Fragment, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { InputGroup } from '../../../../components';
+import { isEmailValid } from '../../../../helpers';
+import { inputStyles } from '../../../../styles';
+import { Errors } from '../../errors';
+import { Constants } from '../../constants';
+import { forgotPassword } from '../../api';
+import styles from './styles.module.scss';
 
 export function ForgotPassword() {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ export function ForgotPassword() {
 
       try {
         const formData = new FormData(event.currentTarget);
-        const email = (formData.get("email") as string).trim();
+        const email = (formData.get('email') as string).trim();
 
         if (!isEmailValid(email)) {
           toast.error(Errors.InvalidEmail);
@@ -33,7 +33,7 @@ export function ForgotPassword() {
         }
 
         toast.success(Constants.ResetPasswordEmailMessage);
-        navigate("/login");
+        navigate('/login');
       } catch (error) {
         toast.error(error instanceof Error ? error.message : String(error));
       }
@@ -42,11 +42,7 @@ export function ForgotPassword() {
   );
 
   return (
-    <form
-      autoComplete="off"
-      className={styles["form-container"]}
-      onSubmit={handleSubmit}
-    >
+    <form autoComplete="off" className={styles['form-container']} onSubmit={handleSubmit}>
       <section id={styles.header}>
         <h2>{Constants.ForgotPassword}</h2>
         <p>{Constants.ForgotPasswordParagraph}</p>
@@ -54,24 +50,21 @@ export function ForgotPassword() {
       <section id={styles.main}>
         <InputGroup>
           <Fragment>
-            <InputGroup.LeftIcon
-              icon={faEnvelope}
-              styles={inputStyles["fa-lock-forgot"]}
-            />
+            <InputGroup.LeftIcon icon={faEnvelope} styles={inputStyles['fa-lock-forgot']} />
             <InputGroup.Input
               attributes={{
-                id: "email",
-                type: "text",
-                name: "email",
+                id: 'email',
+                type: 'text',
+                name: 'email',
                 placeholder: Constants.EmailPlaceholder,
-                autoComplete: "off",
+                autoComplete: 'off',
                 required: true,
               }}
               preventCopyPasteEnabled
             />
           </Fragment>
         </InputGroup>
-        <div id={styles["submitBox"]}>
+        <div id={styles['submitBox']}>
           <input type="submit" value={Constants.Continue} />
         </div>
       </section>

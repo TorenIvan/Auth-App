@@ -1,16 +1,14 @@
-import { ReactNode } from "react";
-import Divider from "../Divider";
-import SubMenuItem from "../SubMenuItem";
-import styles from "./styles.module.scss";
+import { ReactNode } from 'react';
+import Divider from '../Divider';
+import SubMenuItem from '../SubMenuItem';
+import styles from './styles.module.scss';
 
 function SubMenu({ isOpen, children }: IProps): JSX.Element {
   return (
     <div
-      className={`${styles["account-menu-info-sub-menu"]} ${
-        isOpen === true ? styles.open : ""
-      }`}
+      className={`${styles['account-menu-info-sub-menu']} ${isOpen === true ? styles.open : ''}`}
     >
-      <ul className={styles["account-menu-list-container"]}>{children}</ul>
+      <ul className={styles['account-menu-list-container']}>{children}</ul>
     </div>
   );
 }

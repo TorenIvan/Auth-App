@@ -1,3 +1,3 @@
-import AuthFormFooter from "./AuthFormFooter";
+import AuthFormFooter from './AuthFormFooter';
 
 export default AuthFormFooter;

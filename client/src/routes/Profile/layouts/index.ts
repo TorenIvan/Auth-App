@@ -1,1 +1,1 @@
-export { ProfileLayout as Component } from "./profile.layout";
+export { ProfileLayout as Component } from './profile.layout';

@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from 'zod';
 
 const usernameSchema = z.string().trim().min(2).max(18);
 

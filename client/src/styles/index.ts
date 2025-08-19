@@ -1,1 +1,1 @@
-export { default as inputStyles } from "./InputStyles";
+export { default as inputStyles } from './InputStyles';

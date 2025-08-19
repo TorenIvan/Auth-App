@@ -1,6 +1,6 @@
-import { Fragment } from "react";
-import { toast, ToastBar, Toaster } from "react-hot-toast";
-import styles from "./styles.module.scss";
+import { Fragment } from 'react';
+import { toast, ToastBar, Toaster } from 'react-hot-toast';
+import styles from './styles.module.scss';
 
 export default function Toast() {
   return (
@@ -23,15 +23,12 @@ export default function Toast() {
         <ToastBar toast={t}>
           {({ icon, message }) => (
             <Fragment>
-              <div className={styles["toast-icon"]}>{icon}</div>
-              <div className={styles["toast-message"]}>{message}</div>
+              <div className={styles['toast-icon']}>{icon}</div>
+              <div className={styles['toast-message']}>{message}</div>
               {isDismissable(t.type) === true && (
-                <button
-                  className={styles["toast-button"]}
-                  onClick={() => toast.dismiss(t.id)}
-                >
-                  <span className={styles["button-label"]}>Dismiss</span>
-                  <span className={styles["button-icon"]}>&times;</span>
+                <button className={styles['toast-button']} onClick={() => toast.dismiss(t.id)}>
+                  <span className={styles['button-label']}>Dismiss</span>
+                  <span className={styles['button-icon']}>&times;</span>
                 </button>
               )}
             </Fragment>
@@ -43,10 +40,10 @@ export default function Toast() {
 }
 
 function isDismissable(type: string): boolean {
-  if (type === "loading") {
+  if (type === 'loading') {
     return false;
   }
-  if (type === "success") {
+  if (type === 'success') {
     return false;
   }
   return true;

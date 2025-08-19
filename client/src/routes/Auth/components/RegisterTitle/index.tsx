@@ -1,3 +1,3 @@
-import RegisterTitle from "./RegisterTitle";
+import RegisterTitle from './RegisterTitle';
 
 export default RegisterTitle;

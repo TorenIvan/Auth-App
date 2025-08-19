@@ -1,3 +1,3 @@
-import SubMenuItemText from "./SubMenuItemText";
+import SubMenuItemText from './SubMenuItemText';
 
 export default SubMenuItemText;
