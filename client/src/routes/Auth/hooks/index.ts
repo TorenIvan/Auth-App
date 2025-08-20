@@ -1,4 +1,9 @@
+export { useGoogleLoginMutation } from './useGoogleLoginMutation';
+export { useMicrosoftLoginMutation } from './useMicrosoftLoginMutation';
 export { useFacebookLoginMutation } from './useFacebookLoginMutation';
 export { useGithubLoginMutation } from './useGithubLoginMutation';
+export { useTwitterLoginMutation } from './useTwitterLoginMutation';
+export { useLinkedinLoginMutation } from './useLinkedinLoginMutation';
+export { useDiscordLoginMutation } from './useDiscordLoginMutation';
 export { useLoginMutation } from './useLoginMutation';
 export { useLogoutMutation } from './useLogoutMutation';

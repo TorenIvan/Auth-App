@@ -43,8 +43,27 @@ async function verifySocialProfileToken(
       }
       break;
     }
+    case 'google': {
+      const tokenVerifyInfo = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
+        headers: { Authorization: `Bearer ${socialProfileToken}` },
+      });
+      if (tokenVerifyInfo.status < 200 || tokenVerifyInfo.status >= 300) {
+        logger.debug('Token is invalid. Unauthorized');
+        throw new Error('Token is invalid. Unauthorized');
+      }
+      break;
+    }
+    case 'discord': {
+      const tokenVerifyInfo = await axios.get('https://discord.com/api/users/@me', {
+        headers: { Authorization: `Bearer ${socialProfileToken}` },
+      });
+      if (tokenVerifyInfo.status < 200 || tokenVerifyInfo.status >= 300) {
+        logger.debug('Token is invalid. Unauthorized');
+        throw new Error('Token is invalid. Unauthorized');
+      }
+      break;
+    }
     case 'twitter':
-    case 'google':
     default: {
       throw new Error('No known sign-in method found. Unauthorized');
     }

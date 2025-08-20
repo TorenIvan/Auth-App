@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { facebookLogin } from '../api';
+import { discordLogin } from '../api';
 import { addAuthorizationHeader } from '../../../config';
 import { Errors } from '../errors';
 
-export function useFacebookLoginMutation(): UseFacebookLogin {
+export function useDiscordLoginMutation(): UseDiscordLogin {
   const queryClient = useQueryClient();
   const { data, mutate, mutateAsync, isLoading, error, isError } = useMutation({
-    mutationFn: (code: string | boolean) => facebookLogin(code),
+    mutationFn: (code: string | boolean) => discordLogin(code),
     retry: 1,
   });
 
@@ -29,17 +29,17 @@ export function useFacebookLoginMutation(): UseFacebookLogin {
     data,
     error,
     isError,
-    isLoggingInWithFacebook: isLoading,
+    isLoggingInWithDiscord: isLoading,
     mutate,
     mutateAsync,
   } as const;
 }
 
-interface UseFacebookLogin {
+interface UseDiscordLogin {
   data: string | void | undefined;
   error: unknown;
   isError: boolean;
-  isLoggingInWithFacebook: boolean;
+  isLoggingInWithDiscord: boolean;
   mutate: (code: string | boolean) => void;
   mutateAsync: (code: string | boolean) => Promise<string | void>;
 }

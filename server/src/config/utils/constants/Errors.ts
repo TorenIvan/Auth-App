@@ -37,4 +37,7 @@ export const Errors = {
   InvalidFileType: 'Invalid file type',
   NotRetrievedFacebook: 'Information was not able to be retrieved from Facebook. Please, try again',
   NotRetrievedGithub: 'Information was not able to be retrieved from Github. Please, try again',
+  NotRetrievedGitlab: 'Information was not able to be retrieved from Gitlab. Please, try again',
+  NotRetrievedGoogle: 'Information was not able to be retrieved from Google. Please, try again',
+  NotRetrievedDiscord: 'Information was not able to be retrieved from Discord. Please, try again',
 } as const;

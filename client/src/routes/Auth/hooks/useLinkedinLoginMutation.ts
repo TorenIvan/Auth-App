@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { facebookLogin } from '../api';
+import { linkedinLogin } from '../api';
 import { addAuthorizationHeader } from '../../../config';
 import { Errors } from '../errors';
 
-export function useFacebookLoginMutation(): UseFacebookLogin {
+export function useLinkedinLoginMutation(): UseLinkedinLogin {
   const queryClient = useQueryClient();
   const { data, mutate, mutateAsync, isLoading, error, isError } = useMutation({
-    mutationFn: (code: string | boolean) => facebookLogin(code),
+    mutationFn: (code: string | boolean) => linkedinLogin(code),
     retry: 1,
   });
 
@@ -29,17 +29,17 @@ export function useFacebookLoginMutation(): UseFacebookLogin {
     data,
     error,
     isError,
-    isLoggingInWithFacebook: isLoading,
+    isLoggingInWithLinkedin: isLoading,
     mutate,
     mutateAsync,
   } as const;
 }
 
-interface UseFacebookLogin {
+interface UseLinkedinLogin {
   data: string | void | undefined;
   error: unknown;
   isError: boolean;
-  isLoggingInWithFacebook: boolean;
+  isLoggingInWithLinkedin: boolean;
   mutate: (code: string | boolean) => void;
   mutateAsync: (code: string | boolean) => Promise<string | void>;
 }

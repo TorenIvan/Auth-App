@@ -126,10 +126,6 @@ class AuthController {
     }
   }
 
-  /**
-   * @todo Check if email changed by user on facebook; if yes, change it.
-   * @todo Inside initial insert; if you retrieve user image, insert it as well.
-   */
   async loginFacebookHandler(
     request: FastifyRequest<{ Body: { code: string } }>,
     reply: FastifyReply
@@ -217,10 +213,6 @@ class AuthController {
     }
   }
 
-  /**
-   * @todo Check if email changed by user on facebook; if yes, change it.
-   * @todo Inside initial insert; if you retrieve user image, insert it as well.
-   */
   async loginGithubHandler(
     request: FastifyRequest<{ Body: { code: string } }>,
     reply: FastifyReply
@@ -317,6 +309,275 @@ class AuthController {
         )
         .send({ access_token: access_token });
     } catch (error) {
+      AuthController.handleError(reply, 500, Errors.GenericError);
+    }
+  }
+
+  async loginGoogleHandler(
+    request: FastifyRequest<{ Body: { code: string } }>,
+    reply: FastifyReply
+  ) {
+    try {
+      const { code } = request.body;
+      logger.debug({ code });
+
+      if (!code) {
+        return AuthController.handleError(reply, 400, Errors.GenericError);
+      }
+
+      const googleTokenUri = 'https://oauth2.googleapis.com/token';
+      const params = {
+        code,
+        client_id: EnvironmentVariables.Google_App_Id,
+        client_secret: EnvironmentVariables.Google_App_Secret,
+        redirect_uri: EnvironmentVariables.Google_App_Redirect_Uri,
+        grant_type: 'authorization_code',
+      };
+
+      const tokenResponse = await axios.post(googleTokenUri, new URLSearchParams(params), {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      });
+
+      logger.debug({ tokenResponse: tokenResponse.data });
+
+      const accessTokenGoogle: string | undefined = tokenResponse.data?.access_token;
+      if (!accessTokenGoogle) {
+        return AuthController.handleError(reply, 400, Errors.GenericError);
+      }
+      logger.debug({ accessTokenGoogle });
+
+      const userResponse = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
+        headers: { Authorization: `Bearer ${accessTokenGoogle}` },
+      });
+      logger.debug({ userResponse: userResponse.data });
+
+      const email = userResponse.data?.email;
+      const name = userResponse.data?.name ?? userResponse.data?.given_name;
+      if (!email || !name) {
+        return AuthController.handleError(reply, 400, Errors.NotRetrievedGoogle);
+      }
+
+      let userId: string | undefined = undefined;
+      const checkIfEmailExists: ServiceResponse = await this.authService.CheckEmailExistence(
+        email.trim().toLowerCase()
+      );
+
+      logger.debug('Email ', email, ' exists: ', checkIfEmailExists.success);
+
+      if (checkIfEmailExists.success) {
+        userId = checkIfEmailExists.data!.userId.toString();
+      } else {
+        const userSocialLoginResponse: ServiceResponse =
+          await this.authService.InsertUserWithSocialAccount(
+            name,
+            email.trim().toLowerCase(),
+            '',
+            'google'
+          );
+
+        if (!userSocialLoginResponse.success) {
+          return AuthController.handleError(reply, 400, userSocialLoginResponse?.customError);
+        }
+        userId = userSocialLoginResponse.data!.userId.toString();
+      }
+
+      const cookieOptions = generateSocialCookieOptions();
+      const { access_token, refresh_token } = generateAuthJWTs(userId!, 'google');
+      await this.authService.updateUserRefreshTokenById(userId!, refresh_token);
+
+      reply
+        .code(200)
+        .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
+        .setCookie(
+          EnvironmentVariables.Cookie_Name_Social_Profile,
+          accessTokenGoogle,
+          cookieOptions
+        )
+        .send({ access_token: access_token });
+    } catch (error) {
+      logger.error(error);
+      AuthController.handleError(reply, 500, Errors.GenericError);
+    }
+  }
+
+  async loginDiscordHandler(
+    request: FastifyRequest<{ Body: { code: string } }>,
+    reply: FastifyReply
+  ) {
+    try {
+      const { code } = request.body;
+      logger.debug({ code });
+
+      if (!code) {
+        return AuthController.handleError(reply, 400, Errors.GenericError);
+      }
+
+      const discordTokenUri = 'https://discord.com/api/oauth2/token';
+      const params = new URLSearchParams({
+        client_id: EnvironmentVariables.Discord_App_Id,
+        client_secret: EnvironmentVariables.Discord_App_Secret,
+        grant_type: 'authorization_code',
+        code,
+        redirect_uri: EnvironmentVariables.Discord_App_Redirect_Uri,
+      });
+
+      const tokenResponse = await axios.post(discordTokenUri, params, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      });
+
+      logger.debug({ tokenResponse: tokenResponse.data });
+
+      const accessTokenDiscord: string | undefined = tokenResponse.data?.access_token;
+      if (!accessTokenDiscord) {
+        return AuthController.handleError(reply, 400, Errors.GenericError);
+      }
+
+      const userResponse = await axios.get('https://discord.com/api/users/@me', {
+        headers: { Authorization: `Bearer ${accessTokenDiscord}` },
+      });
+
+      logger.debug({ userResponse: userResponse.data });
+
+      const email = userResponse.data?.email;
+      const name = userResponse.data?.username;
+
+      if (!email || !name) {
+        return AuthController.handleError(reply, 400, Errors.NotRetrievedDiscord);
+      }
+
+      let userId: string | undefined = undefined;
+      const checkIfEmailExists: ServiceResponse = await this.authService.CheckEmailExistence(
+        email.trim().toLowerCase()
+      );
+
+      logger.debug('Email ', email, ' exists: ', checkIfEmailExists.success);
+
+      if (checkIfEmailExists.success) {
+        userId = checkIfEmailExists.data!.userId.toString();
+      } else {
+        const userSocialLoginResponse: ServiceResponse =
+          await this.authService.InsertUserWithSocialAccount(
+            name,
+            email.trim().toLowerCase(),
+            '',
+            'discord'
+          );
+
+        if (!userSocialLoginResponse.success) {
+          return AuthController.handleError(reply, 400, userSocialLoginResponse?.customError);
+        }
+
+        userId = userSocialLoginResponse.data!.userId.toString();
+      }
+
+      const cookieOptions = generateSocialCookieOptions();
+      const { access_token, refresh_token } = generateAuthJWTs(userId!, 'discord');
+      await this.authService.updateUserRefreshTokenById(userId!, refresh_token);
+
+      reply
+        .code(200)
+        .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
+        .setCookie(
+          EnvironmentVariables.Cookie_Name_Social_Profile,
+          accessTokenDiscord,
+          cookieOptions
+        )
+        .send({ access_token });
+    } catch (error) {
+      logger.error(error);
+      AuthController.handleError(reply, 500, Errors.GenericError);
+    }
+  }
+
+  async loginGitlabHandler(
+    request: FastifyRequest<{ Body: { code: string } }>,
+    reply: FastifyReply
+  ) {
+    try {
+      const { code } = request.body;
+      logger.debug({ code });
+
+      if (!code) {
+        return AuthController.handleError(reply, 400, Errors.GenericError);
+      }
+
+      // Exchange code for access token
+      const gitlabTokenUri = 'https://gitlab.com/oauth/token';
+      const params = new URLSearchParams({
+        client_id: EnvironmentVariables.Gitlab_App_Id,
+        client_secret: EnvironmentVariables.Gitlab_App_Secret,
+        code,
+        grant_type: 'authorization_code',
+        redirect_uri: EnvironmentVariables.Gitlab_App_Redirect_Uri,
+      });
+
+      const tokenResponse = await axios.post(gitlabTokenUri, params, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      });
+
+      logger.debug({ tokenResponse: tokenResponse.data });
+
+      const accessTokenGitlab: string | undefined = tokenResponse.data?.access_token;
+      if (!accessTokenGitlab) {
+        return AuthController.handleError(reply, 400, Errors.GenericError);
+      }
+
+      // Get GitLab user info
+      const userResponse = await axios.get('https://gitlab.com/api/v4/user', {
+        headers: { Authorization: `Bearer ${accessTokenGitlab}` },
+      });
+
+      logger.debug({ userResponse: userResponse.data });
+
+      const email = userResponse.data?.email;
+      const name = userResponse.data?.name || userResponse.data?.username;
+
+      if (!email || !name) {
+        return AuthController.handleError(reply, 400, Errors.NotRetrievedGitlab);
+      }
+
+      // Check if user exists in your DB
+      let userId: string | undefined = undefined;
+      const checkIfEmailExists: ServiceResponse = await this.authService.CheckEmailExistence(
+        email.trim().toLowerCase()
+      );
+
+      logger.debug('Email ', email, ' exists: ', checkIfEmailExists.success);
+
+      if (checkIfEmailExists.success) {
+        userId = checkIfEmailExists.data!.userId.toString();
+      } else {
+        const userSocialLoginResponse: ServiceResponse =
+          await this.authService.InsertUserWithSocialAccount(
+            name,
+            email.trim().toLowerCase(),
+            '',
+            'gitlab'
+          );
+
+        if (!userSocialLoginResponse.success) {
+          return AuthController.handleError(reply, 400, userSocialLoginResponse?.customError);
+        }
+
+        userId = userSocialLoginResponse.data!.userId.toString();
+      }
+
+      // Generate JWTs and set cookies
+      const cookieOptions = generateSocialCookieOptions();
+      const { access_token, refresh_token } = generateAuthJWTs(userId!, 'gitlab');
+      await this.authService.updateUserRefreshTokenById(userId!, refresh_token);
+
+      reply
+        .code(200)
+        .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
+        .setCookie(
+          EnvironmentVariables.Cookie_Name_Social_Profile,
+          accessTokenGitlab,
+          cookieOptions
+        )
+        .send({ access_token });
+    } catch (error) {
+      logger.error(error);
       AuthController.handleError(reply, 500, Errors.GenericError);
     }
   }

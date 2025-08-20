@@ -2,12 +2,18 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { Loader } from '../Loader';
 import { useEffect, useMemo } from 'react';
 import {
+  useDiscordLoginMutation,
   useFacebookLoginMutation,
   useGithubLoginMutation,
+  useGoogleLoginMutation,
+  useLinkedinLoginMutation,
   useLoginMutation,
+  useMicrosoftLoginMutation,
+  useTwitterLoginMutation,
 } from '../../routes/Auth/hooks';
 import { useCheckIfUserIsAuthenticatedQuery } from '../../hooks';
 import { useQueryClient } from '@tanstack/react-query';
+import { useGitlabLoginMutation } from '../../routes/Auth/hooks/useGitlabLoginMutation';
 
 const publicRoutes = [
   '/login',
@@ -15,22 +21,57 @@ const publicRoutes = [
   '/verify',
   '/forgot-password',
   '/reset-password',
+  '/oauth2/google',
+  '/oauth2/microsoft',
   '/oauth2/facebook',
   '/oauth2/github',
+  '/oauth2/gitlab',
+  '/oauth2/twitter',
+  '/oauth2/linkedin',
+  '/oauth2/discord',
+  '/terms-of-use',
+  '/privacy-policy',
 ];
 
 export function AuthGuard() {
   const location = useLocation();
   const queryClient = useQueryClient();
 
+  const { isLoggingInWithGoogle } = useGoogleLoginMutation();
+  const { isLoggingInWithMicrosoft } = useMicrosoftLoginMutation();
   const { isLoggingInWithFacebook } = useFacebookLoginMutation();
   const { isLoggingInWithGithub } = useGithubLoginMutation();
+  const { isLoggingInWithGitlab } = useGitlabLoginMutation();
+  const { isLoggingInWithTwitter } = useTwitterLoginMutation();
+  const { isLoggingInWithLinkedin } = useLinkedinLoginMutation();
+  const { isLoggingInWithDiscord } = useDiscordLoginMutation();
   const { isLoggingIn } = useLoginMutation();
   const { isAuthenticated, isAuthenticating } = useCheckIfUserIsAuthenticatedQuery();
 
   const isLoadingAuth = useMemo(
-    () => isAuthenticating || isLoggingIn || isLoggingInWithFacebook || isLoggingInWithGithub,
-    [isAuthenticating, isLoggingIn, isLoggingInWithFacebook, isLoggingInWithGithub]
+    () =>
+      isAuthenticating ||
+      isLoggingIn ||
+      isLoggingInWithGoogle ||
+      isLoggingInWithMicrosoft ||
+      isLoggingInWithFacebook ||
+      isLoggingInWithGithub ||
+      isLoggingInWithGitlab ||
+      isLoggingInWithTwitter ||
+      isLoggingInWithLinkedin ||
+      isLoggingInWithDiscord,
+    [
+      isAuthenticating,
+      isLoggingIn,
+      isLoggingInWithGoogle,
+      isLoggingInWithMicrosoft,
+      isLoggingInWithFacebook,
+      isLoggingInWithGithub,
+      isLoggingInWithGitlab,
+      isLoggingInWithTwitter,
+      isLoggingInWithLinkedin,
+      isLoggingInWithDiscord,
+    ]
   );
 
   /**

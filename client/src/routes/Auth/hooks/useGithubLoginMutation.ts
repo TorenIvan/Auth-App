@@ -26,12 +26,12 @@ export function useGithubLoginMutation(): UseGithubLogin {
   }, [data, error, queryClient, isError]);
 
   return {
-    data: data,
-    error: error,
+    data,
+    error,
     isError,
     isLoggingInWithGithub: isLoading,
-    mutate: mutate,
-    mutateAsync: mutateAsync,
+    mutate,
+    mutateAsync,
   } as const;
 }
 

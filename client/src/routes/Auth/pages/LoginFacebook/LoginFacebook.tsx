@@ -29,7 +29,6 @@ export function LoginFacebook() {
     } else {
       const csrfToken = extractCSRFToken(state);
       const csrfTokenLocalStorage = localStorage.getItem('auth_app_csrf_token');
-      console.log({ csrfToken, csrfTokenLocalStorage });
       if (csrfToken !== csrfTokenLocalStorage) {
         toast.error(Errors.InvalidCSRFToken);
         localStorage.removeItem('auth_app_csrf_token');

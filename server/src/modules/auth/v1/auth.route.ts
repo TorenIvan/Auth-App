@@ -19,6 +19,9 @@ const authRoutesV1 =
     fastify.register(loginWithCredentials(controller), { prefix: '/v1/auth/login/credentials' });
     fastify.register(loginWithFacebook(controller), { prefix: '/v1/auth/login/facebook' });
     fastify.register(loginWithGithub(controller), { prefix: '/v1/auth/login/github' });
+    fastify.register(loginWithGitlab(controller), { prefix: '/v1/auth/login/gitlab' });
+    fastify.register(loginWithGoogle(controller), { prefix: '/v1/auth/login/google' });
+    fastify.register(loginWithDiscord(controller), { prefix: '/v1/auth/login/discord' });
     fastify.register(registerWithCredentials(controller), {
       prefix: '/v1/auth/register/credentials',
     });
@@ -64,29 +67,29 @@ const loginWithFacebook = (controller: AuthController): FastifyPluginAsync => {
   };
 };
 
+const loginWithGoogle = (controller: AuthController): FastifyPluginAsync => {
+  return async (fastify: FastifyInstance) => {
+    fastify.post('/', controller.loginGoogleHandler.bind(controller));
+  };
+};
+
 const loginWithGithub = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance) => {
     fastify.post('/', controller.loginGithubHandler.bind(controller));
   };
 };
 
-// async function loginWithGoogle(fastify: FastifyInstance): Promise<void> {
-//   fastify.get("/", async function (request, reply) {
-//     return "this is a login example route with google";
-//   });
-// }
+const loginWithGitlab = (controller: AuthController): FastifyPluginAsync => {
+  return async (fastify: FastifyInstance) => {
+    fastify.post('/', controller.loginGitlabHandler.bind(controller));
+  };
+};
 
-//async function loginWithGithub(fastify: FastifyInstance): Promise<void> {
-//  fastify.get("/", async function (request, reply) {
-//    return "this is a login example route with github";
-//  });
-//}
-
-// async function loginWithTwitter(fastify: FastifyInstance): Promise<void> {
-//   fastify.get("/", async function (request, reply) {
-//     return "this is a login example route with twitter";
-//   });
-// }
+const loginWithDiscord = (controller: AuthController): FastifyPluginAsync => {
+  return async (fastify: FastifyInstance) => {
+    fastify.post('/', controller.loginDiscordHandler.bind(controller));
+  };
+};
 
 const registerWithCredentials = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance): Promise<void> => {

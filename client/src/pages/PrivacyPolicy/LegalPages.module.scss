@@ -1,0 +1,31 @@
+.container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem 2rem;
+  font-family: Arial, sans-serif;
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: white;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: white;
+  }
+
+  p {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    color: white;
+  }
+
+  section {
+    margin-bottom: 1.5rem;
+    color: white;
+  }
+}

@@ -1,17 +1,20 @@
-import { ObjectId } from "mongodb";
-import { Strings } from "../constants/Strings";
+import { ObjectId } from 'mongodb';
+import { Strings } from '../constants/Strings';
 
-declare module "@fastify/autoload";
-declare module "@fastify/cookie";
-declare module "@fastify/cors";
+declare module '@fastify/autoload';
+declare module '@fastify/cookie';
+declare module '@fastify/cors';
 
 declare global {
   type SignInMethod =
-    | "credentials"
-    | "facebook"
-    | "twitter"
-    | "google"
-    | "github";
+    | 'credentials'
+    | 'facebook'
+    | 'twitter'
+    | 'google'
+    | 'github'
+    | 'discord'
+    | 'linkedin'
+    | 'gitlab';
 
   type ServiceResponse = {
     success: boolean;
@@ -41,9 +44,7 @@ declare global {
 
   type TokenType = Strings.ConfirmEmailType | Strings.ForgotPasswordType;
 
-  type SendEmailAction =
-    | Strings.ActionConfirmEmail
-    | Strings.ActionResetPassword;
+  type SendEmailAction = Strings.ActionConfirmEmail | Strings.ActionResetPassword;
 
   type InsertedFile = {
     data: Buffer;

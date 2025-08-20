@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { Errors } from '../../errors';
-import { useGithubLoginMutation } from '../../hooks';
+import { useMicrosoftLoginMutation } from '../../hooks';
 import { LoginOAuth } from '../../components';
 
-export function LoginGithub() {
+export function LoginMicrosoft() {
   const [isParamsValid, setIsParamsValid] = useState(true);
-  const { isError, mutate } = useGithubLoginMutation();
+  const { isError, mutate } = useMicrosoftLoginMutation();
 
   /**
    * *** Extract params from URL ***

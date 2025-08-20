@@ -4,7 +4,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 90%;
+  width: 85%;
   margin-left: 5%;
   margin-top: 5%;
   position: relative;
@@ -20,35 +20,52 @@
   line-height: 19px;
   color: var(--text-primary);
   cursor: default;
+  justify-self: flex-end;
 }
 
 #social-profiles {
   cursor: default;
-  width: 70%;
+  width: 100%;
   padding-right: 8%;
-  flex: 1;
   display: flex;
+  margin-bottom: 1.25rem;
+  display: flex;
+  gap: 0.2rem;
   flex-direction: row;
   align-items: center;
   justify-content: space-evenly;
   list-style-type: none;
+}
 
-  li {
-    cursor: default;
+.list-item {
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
 
-    svg {
-      cursor: pointer;
-      transition: fill 0.2s, opacity 0.2s;
-    }
+  svg {
+    transition: fill 0.2s ease;
+  }
 
-    &[data-loading="false"] svg:hover {
-      fill: var(--svg-contrast);
-    }
+  &[data-loading='false']:hover {
+    background-color: var(--svg-contrast); 
+    transform: scale(1.05); 
+  }
 
-    &[data-loading="true"] svg {
-      opacity: 0.5;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
+  &[data-loading='false']:hover svg {
+    fill: var(--svg-contrast);
+  }
+
+  &[data-loading='true'] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
   }
 }
