@@ -1,9 +1,12 @@
 import { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from 'fastify';
 import fp from 'fastify-plugin';
+import { ObjectId } from 'mongodb';
 import { verifyJWT } from '../utils/helpers/auth/generateJWTs';
 import { EnvironmentVariables } from '../utils/constants/EnvironmentVariables';
 import { Strings } from '../utils/constants/Strings';
+import { generateCookieOptionsToClear } from '../utils/helpers/auth/generateCookieOptions';
 import {
+  logger,
   retrieveAccessToken,
   retrieveRefreshToken,
   verifySocialProfileToken,
@@ -99,13 +102,31 @@ const authMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): 
         const data = verifyJWT(token!, EnvironmentVariables.Refresh_Token_Secret);
         validateTokenPayload(data);
 
+        const user = await fastify.db.collection('users').findOne({
+          _id: new ObjectId(data.userId),
+          isActive: true,
+          refreshToken: token,
+        });
+        logger.debug(user);
+
+        if (!user) {
+          throw new Error(
+            `User with id: ${data.userId} has an invalid user or has an inactive account or the refresh token is invalid. Authentication failed!`
+          );
+        }
+
         request.userId = data.userId;
         request.signInMethod = (data.signInMethod as SignInMethod) ?? 'credentials';
-      } catch {
+      } catch (error) {
+        logger.debug(error);
         reply
-          .clearCookie(EnvironmentVariables.Cookie_Name, { path: '/' })
-          .clearCookie(EnvironmentVariables.Cookie_Name_Social_Profile, { path: '/' });
-        return reply.status(401).send(fastify.httpErrors.unauthorized());
+          .status(401)
+          .clearCookie(EnvironmentVariables.Cookie_Name, generateCookieOptionsToClear())
+          .clearCookie(
+            EnvironmentVariables.Cookie_Name_Social_Profile,
+            generateCookieOptionsToClear()
+          )
+          .send(fastify.httpErrors.unauthorized());
       }
     }
   );
@@ -127,9 +148,13 @@ const authMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): 
         await verifySocialProfileToken(request.cookies, request.signInMethod);
       } catch {
         reply
-          .clearCookie(EnvironmentVariables.Cookie_Name, { path: '/' })
-          .clearCookie(EnvironmentVariables.Cookie_Name_Social_Profile, { path: '/' });
-        return reply.status(401).send(fastify.httpErrors.unauthorized());
+          .status(401)
+          .clearCookie(EnvironmentVariables.Cookie_Name, generateCookieOptionsToClear())
+          .clearCookie(
+            EnvironmentVariables.Cookie_Name_Social_Profile,
+            generateCookieOptionsToClear()
+          )
+          .send(fastify.httpErrors.unauthorized());
       }
     }
   );
@@ -249,15 +274,33 @@ const authMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): 
             refreshToken!,
             EnvironmentVariables.Refresh_Token_Secret
           );
-          if (refreshTokenData?.userId && refreshTokenData?.signInMethod) {
-            await verifySocialProfileToken(request.cookies, refreshTokenData.signInMethod);
-            return reply.status(200).send();
+          validateTokenPayload(refreshTokenData);
+
+          const user = await fastify.db.collection('users').findOne({
+            _id: new ObjectId(refreshTokenData.userId),
+            isActive: true,
+            refreshToken: refreshToken,
+          });
+
+          if (!user) {
+            throw new Error('Invalid user, inactive account, or invalid refresh token');
           }
+
+          await verifySocialProfileToken(request.cookies, refreshTokenData.signInMethod);
+          return reply.status(200).send();
         }
 
         return reply.status(403).send();
-      } catch {
-        return reply.status(403).send();
+      } catch (error) {
+        logger.debug('Authentication failed on isAuthenticated middleware:', error);
+        reply
+          .status(403)
+          .clearCookie(EnvironmentVariables.Cookie_Name, generateCookieOptionsToClear())
+          .clearCookie(
+            EnvironmentVariables.Cookie_Name_Social_Profile,
+            generateCookieOptionsToClear()
+          )
+          .send(fastify.httpErrors.forbidden());
       }
     }
   );

@@ -33,6 +33,7 @@ declare global {
     phone: string;
     signInMethod: SignInMethod;
     isVerified?: boolean;
+    isActive?: boolean;
     image?: InsertedFile;
   };
 

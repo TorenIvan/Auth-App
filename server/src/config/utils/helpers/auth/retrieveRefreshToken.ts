@@ -1,8 +1,6 @@
-import { EnvironmentVariables } from "../../constants/EnvironmentVariables";
+import { EnvironmentVariables } from '../../constants/EnvironmentVariables';
 
-const retrieveRefreshToken = (cookies: {
-  [cookieName: string]: string | undefined;
-}) => {
+const retrieveRefreshToken = (cookies: { [cookieName: string]: string | undefined }) => {
   let refreshToken: string | null = null;
   let requestCookiesExist: boolean = false;
 

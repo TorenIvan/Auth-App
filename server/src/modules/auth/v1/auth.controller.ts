@@ -31,16 +31,16 @@ class AuthController {
     let error;
     switch (errorCode) {
       case 403:
-        error = customError ?? 'Forbidden';
+        error = customError ?? 'User is forbidden';
         break;
       case 401:
-        error = customError ?? 'Unauthorized';
+        error = customError ?? 'User is not authorized';
         break;
       case 500:
         error = customError ?? 'Internal server error';
         break;
       default:
-        error = customError ?? 'Invalid request';
+        error = customError ?? 'Something went wrong, please try again later';
         break;
     }
     reply.code(errorCode).send(error);
@@ -598,10 +598,14 @@ class AuthController {
         return AuthController.handleError(reply, 400, userCredsResponse?.customError);
       }
 
+      const isUserActive: boolean = !!(userCredsResponse.data as ServiceInsertedData)?.isActive;
+      if (!isUserActive) {
+        return AuthController.handleError(reply, 403);
+      }
+
       const hasConfirmedEmail: boolean | null | undefined = (
         userCredsResponse.data as ServiceInsertedData
       )?.isVerified;
-
       if (hasConfirmedEmail === false) {
         const new_email_token = generateJWT(
           {
@@ -765,7 +769,7 @@ class AuthController {
   }
 
   async checkIfUserIsAuthenticated(_: FastifyRequest, reply: FastifyReply) {
-    reply.code(403).send();
+    reply.code(401).send();
   }
 }
 

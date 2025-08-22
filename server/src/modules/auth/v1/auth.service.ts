@@ -180,6 +180,7 @@ class AuthService {
             email: 1,
             password: 1,
             isVerified: 1,
+            isActive: 1,
             _id: 1,
           },
         }
@@ -209,6 +210,7 @@ class AuthService {
         phone: result.phone,
         image: result.image,
         isVerified: result.isVerified,
+        isActive: result.isActive,
         signInMethod: result.signInMethod as SignInMethod,
       };
       return { success: true, data: data };
@@ -290,6 +292,7 @@ class AuthService {
       const itExists = await this.users.findOne(
         {
           email: email,
+          isActive: true,
         },
         {
           projection: {
