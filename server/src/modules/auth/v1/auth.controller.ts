@@ -562,7 +562,6 @@ class AuthController {
         userId = userSocialLoginResponse.data!.userId.toString();
       }
 
-      // Generate JWTs and set cookies
       const cookieOptions = generateSocialCookieOptions();
       const { access_token, refresh_token } = generateAuthJWTs(userId!, 'gitlab');
       await this.authService.updateUserRefreshTokenById(userId!, refresh_token);

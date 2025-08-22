@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { Db, ObjectId } from 'mongodb';
-import * as bcrypt from "bcryptjs";
+import * as bcrypt from 'bcryptjs';
 import User, { Image } from '../../modules/user/v1/user.model';
 
 export interface SeedOptions {
@@ -21,15 +21,72 @@ export interface SeededData {
 function generateTestImageBuffer(): Buffer {
   // Create a simple 1x1 PNG buffer for testing
   const pngBuffer = Buffer.from([
-    0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, // PNG signature
-    0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52, // IHDR chunk
-    0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, // 1x1 dimensions
-    0x08, 0x02, 0x00, 0x00, 0x00, 0x90, 0x77, 0x53,
-    0xDE, 0x00, 0x00, 0x00, 0x0C, 0x49, 0x44, 0x41, // IDAT chunk
-    0x54, 0x08, 0x99, 0x01, 0x01, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x37, 0x6E, 0xF9, 0x24, 0x00, 0x00,
-    0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, // IEND chunk
-    0x60, 0x82
+    0x89,
+    0x50,
+    0x4e,
+    0x47,
+    0x0d,
+    0x0a,
+    0x1a,
+    0x0a, // PNG signature
+    0x00,
+    0x00,
+    0x00,
+    0x0d,
+    0x49,
+    0x48,
+    0x44,
+    0x52, // IHDR chunk
+    0x00,
+    0x00,
+    0x00,
+    0x01,
+    0x00,
+    0x00,
+    0x00,
+    0x01, // 1x1 dimensions
+    0x08,
+    0x02,
+    0x00,
+    0x00,
+    0x00,
+    0x90,
+    0x77,
+    0x53,
+    0xde,
+    0x00,
+    0x00,
+    0x00,
+    0x0c,
+    0x49,
+    0x44,
+    0x41, // IDAT chunk
+    0x54,
+    0x08,
+    0x99,
+    0x01,
+    0x01,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x37,
+    0x6e,
+    0xf9,
+    0x24,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x49,
+    0x45,
+    0x4e,
+    0x44,
+    0xae,
+    0x42, // IEND chunk
+    0x60,
+    0x82,
   ]);
   return pngBuffer;
 }
@@ -41,7 +98,7 @@ function generateTestImage(): Image {
     filename: `${faker.system.fileName()}.png`,
     mimetype: 'image/png',
     encoding: '7bit',
-    data: generateTestImageBuffer()
+    data: generateTestImageBuffer(),
   };
 }
 
@@ -55,8 +112,10 @@ function generateValidPassword(): string {
   const lowercase = faker.string.alpha({ length: 2, casing: 'lower' });
   const numbers = faker.string.numeric(2);
   const remaining = faker.string.alphanumeric(length - 6);
-  
-  const password = faker.helpers.shuffle([...uppercase, ...lowercase, ...numbers, ...remaining]).join('');
+
+  const password = faker.helpers
+    .shuffle([...uppercase, ...lowercase, ...numbers, ...remaining])
+    .join('');
   return password;
 }
 
@@ -66,7 +125,7 @@ export function generateAuthCredentials(): {
 } {
   return {
     email: faker.internet.email().toLowerCase(),
-    password: generateValidPassword()
+    password: generateValidPassword(),
   };
 }
 
@@ -74,7 +133,7 @@ export function generateForgotPasswordData(): {
   email: string;
 } {
   return {
-    email: faker.internet.email().toLowerCase()
+    email: faker.internet.email().toLowerCase(),
   };
 }
 
@@ -85,7 +144,7 @@ export function generateResetPasswordData(): {
   const password = generateValidPassword();
   return {
     newPassword: password,
-    confirmNewPassword: password
+    confirmNewPassword: password,
   };
 }
 
@@ -95,17 +154,20 @@ export function generateEmailVerificationData(): {
 } {
   return {
     email: faker.internet.email().toLowerCase(),
-    token: faker.string.uuid()
+    token: faker.string.uuid(),
   };
 }
 
-export async function generateTestUser(options: {
-  withImage?: boolean;
-  isVerified?: boolean;
-  signInMethod?: string;
-  customEmail?: string;
-  customPassword?: string;
-} = {}): Promise<{ user: User; plainPassword: string }> {
+export async function generateTestUser(
+  options: {
+    withImage?: boolean;
+    isVerified?: boolean;
+    isActive?: boolean;
+    signInMethod?: string;
+    customEmail?: string;
+    customPassword?: string;
+  } = {}
+): Promise<{ user: User; plainPassword: string }> {
   const plainPassword = options.customPassword || faker.internet.password({ length: 12 });
   const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
@@ -119,8 +181,9 @@ export async function generateTestUser(options: {
     password: hashedPassword,
     signInMethod: options.signInMethod || 'email',
     isVerified: options.isVerified ?? faker.datatype.boolean({ probability: 0.8 }),
+    isActive: options.isActive ?? faker.datatype.boolean({ probability: 0.8 }),
     image: options.withImage ? generateTestImage() : undefined,
-    refreshToken: faker.string.uuid()
+    refreshToken: faker.string.uuid(),
   };
 
   return { user, plainPassword };
@@ -129,17 +192,20 @@ export async function generateTestUser(options: {
 /**
  * @description Generate multiple test users
  */
-export async function generateTestUsers(count: number, options: {
-  withImages?: boolean;
-  allVerified?: boolean;
-} = {}): Promise<{ users: User[]; passwords: { [email: string]: string } }> {
+export async function generateTestUsers(
+  count: number,
+  options: {
+    withImages?: boolean;
+    allVerified?: boolean;
+  } = {}
+): Promise<{ users: User[]; passwords: { [email: string]: string } }> {
   const users: User[] = [];
   const passwords: { [email: string]: string } = {};
 
   for (let i = 0; i < count; i++) {
     const { user, plainPassword } = await generateTestUser({
       withImage: options.withImages,
-      isVerified: options.allVerified ?? undefined
+      isVerified: options.allVerified ?? undefined,
     });
     users.push(user);
     passwords[user.email] = plainPassword;
@@ -149,20 +215,16 @@ export async function generateTestUsers(count: number, options: {
 }
 
 export async function seedDatabase(db: Db, options: SeedOptions = {}): Promise<SeededData> {
-  const {
-    userCount = 10,
-    withImages = false,
-    includeAdmin = true
-  } = options;
+  const { userCount = 10, withImages = false, includeAdmin = true } = options;
 
   const seededData: SeededData = {
     users: [],
-    testPasswords: {}
+    testPasswords: {},
   };
 
   const { users, passwords } = await generateTestUsers(userCount, {
     withImages,
-    allVerified: false
+    allVerified: false,
   });
 
   seededData.users = users;
@@ -175,7 +237,7 @@ export async function seedDatabase(db: Db, options: SeedOptions = {}): Promise<S
       isVerified: true,
       signInMethod: 'email',
       customEmail: 'admin@test.com',
-      customPassword: 'AdminPass123!'
+      customPassword: 'AdminPass123!',
     });
 
     seededData.adminUser = adminUser;

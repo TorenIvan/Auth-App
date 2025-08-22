@@ -25,7 +25,8 @@ const UserSchema = z.object({
   biography: z.string(),
   password: z.string().optional(),
   signInMethod: z.string(),
-  isVerified: z.boolean(),
+  isVerified: z.boolean().default(false),
+  isActive: z.boolean().default(true),
   image: z.union([ImageSchema, z.undefined()]),
   refreshToken: z.string(),
 });

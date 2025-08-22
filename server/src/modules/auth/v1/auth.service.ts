@@ -46,6 +46,7 @@ class AuthService {
         isVerified: false,
         schemaVersion: 0,
         refreshToken: '',
+        isActive: true,
       });
       const data: ServiceInsertedData = {
         userId: result.insertedId,
@@ -87,6 +88,7 @@ class AuthService {
         signInMethod: signInMethod,
         isVerified: true,
         schemaVersion: 0,
+        isActive: true,
       });
       const data: ServiceInsertedData = {
         userId: result.insertedId,
