@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { EnvironmentVariables } from '../../../config/utils/constants/EnvironmentVariables';
 import { Errors } from '../../../config/utils/constants/Errors';
@@ -20,9 +21,8 @@ import {
   queryConfirmEmail,
   resetPasswordUserInput,
 } from './auth.schema';
-import AuthService from './auth.service';
-import axios from 'axios';
 import { logger } from '../../../config/utils/helpers';
+import AuthService from './auth.service';
 
 class AuthController {
   constructor(private authService: AuthService) {}
