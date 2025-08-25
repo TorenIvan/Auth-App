@@ -15,7 +15,7 @@ export async function sendEmail(email: string, token: string, action: SendEmailA
 
   const mailOptions = {
     from: EnvironmentVariables.Email_Username,
-    to: email,
+    to: [email],
     subject: Strings.VerificationEmailSubject,
     text: Strings.VerificationEmailText,
     html: `<p>Please, click <a href=${emailLink}?email=${email}&token=${token}>here</a> to ${action}</p>`,

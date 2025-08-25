@@ -107,8 +107,6 @@ const authMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): 
           isActive: true,
           refreshToken: token,
         });
-        logger.debug(user);
-
         if (!user) {
           throw new Error(
             `User with id: ${data.userId} has an invalid user or has an inactive account or the refresh token is invalid. Authentication failed!`

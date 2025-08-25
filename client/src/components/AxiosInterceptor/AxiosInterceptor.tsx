@@ -11,20 +11,20 @@ export function AxiosInterceptor({ children }: { children: ReactNode }) {
   useEffect(() => {
     let lastAxiosHeaders = {};
     let isRefreshing = false;
-    let missedRequestsForPendingRenewalQueue: Array<{
+    let failedQueue: Array<{
       resolve: (token: string) => void;
       reject: (error: unknown) => void;
     }> = [];
 
     function processQueue(error: unknown, token: string | null = null) {
-      missedRequestsForPendingRenewalQueue.forEach((promise) => {
+      failedQueue.forEach((promise) => {
         if (error) {
           promise.reject(error);
         } else {
           promise.resolve(token!);
         }
       });
-      missedRequestsForPendingRenewalQueue = [];
+      failedQueue = [];
     }
 
     const reqInterceptor = axiosInstance.interceptors.request.use(
@@ -43,7 +43,7 @@ export function AxiosInterceptor({ children }: { children: ReactNode }) {
         if (error.response?.status === 401 && !originalRequest._retry) {
           if (isRefreshing) {
             return new Promise((resolve, reject) => {
-              missedRequestsForPendingRenewalQueue.push({ resolve, reject });
+              failedQueue.push({ resolve, reject });
             })
               .then((token) => {
                 originalRequest.headers['Authorization'] = `Bearer ${token}`;
