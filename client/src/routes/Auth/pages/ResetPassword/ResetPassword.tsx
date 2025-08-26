@@ -56,9 +56,16 @@ export function ResetPassword() {
         navigate('/login');
       } catch (error) {
         setIsMutating(false);
+        console.log({ error });
+
         if ((error as ForbiddenError)?.isForbidden) {
-          const errorMessage = (error as ForbiddenError)?.message ?? null;
-          if (errorMessage) toast.error(errorMessage);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const errorMessage = ((error as ForbiddenError)?.message as any).message ?? null;
+          if (errorMessage) {
+            toast.error(errorMessage);
+          } else {
+            toast.error(Errors.GenericError);
+          }
           navigate('/login');
         } else {
           toast.error(error instanceof Error ? error.message : String(error));
@@ -71,8 +78,8 @@ export function ResetPassword() {
   return (
     <form autoComplete="off" onSubmit={handleSubmit} className={styles['form-container']}>
       <section id={styles.header}>
-        <h2>{Constants.ForgotPassword}</h2>
-        <p>{Constants.ForgotPasswordParagraph}</p>
+        <h2>{Constants.ResetPassword}</h2>
+        <p>{Constants.ResetPasswordParagraph}</p>
       </section>
       <section id={styles.main}>
         <div className={styles['auth-item']}>
@@ -143,5 +150,5 @@ export function ResetPassword() {
 }
 interface ForbiddenError {
   isForbidden?: boolean;
-  message: string;
+  message?: object;
 }

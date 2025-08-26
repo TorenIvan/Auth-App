@@ -23,6 +23,8 @@ export const Constants = {
   Continue: 'Continue',
   Continuing: 'Continuing...',
   ResetPassword: 'Reset Password',
+  ResetPasswordParagraph:
+    'Enter your new password and confirm it in order to proceed with resetting it',
   Resetting: 'Resetting...',
   ConfirmHeader: 'Congratulations!',
   ConfirmHeaderLoading: 'Confirmation in progress',
