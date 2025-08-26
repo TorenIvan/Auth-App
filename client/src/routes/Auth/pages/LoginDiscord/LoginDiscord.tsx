@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
+import { extractCSRFToken } from '../../../../helpers';
 import { Errors } from '../../errors';
 import { useDiscordLoginMutation } from '../../hooks';
 import { LoginOAuth } from '../../components';
@@ -49,9 +50,4 @@ export function LoginDiscord() {
   }, [isParamsValid, code, mutate]);
 
   return <LoginOAuth isParamsValid={isParamsValid} isError={isError} />;
-}
-
-function extractCSRFToken(state: string | null | undefined): string | undefined {
-  if (!state) return undefined;
-  return decodeURIComponent(state);
 }

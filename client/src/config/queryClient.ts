@@ -19,14 +19,7 @@ export const queryClient = new QueryClient({
     },
     mutations: {
       networkMode: 'online', // Mutations will be paused when offline and resumed when back online
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      retry: (failureCount, error: any) => {
-        if (error?.response?.status === 401 || error?.response?.status === 403) {
-          return false;
-        }
-        // Retry network errors once for mutations
-        return failureCount < 1;
-      },
+      retry: false,
     },
   },
 });

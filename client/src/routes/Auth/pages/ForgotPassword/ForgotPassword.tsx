@@ -1,4 +1,4 @@
-import { FormEvent, Fragment, useCallback } from 'react';
+import { FormEvent, Fragment, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
@@ -12,6 +12,7 @@ import styles from './styles.module.scss';
 
 export function ForgotPassword() {
   const navigate = useNavigate();
+  const [isMutating, setIsMutating] = useState<boolean>(false);
 
   const handleSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
@@ -26,6 +27,7 @@ export function ForgotPassword() {
           return;
         }
 
+        setIsMutating(true);
         const isOperationSuccessful = await forgotPassword(email);
         if (!isOperationSuccessful) {
           toast.error(Errors.GenericError);
@@ -33,9 +35,11 @@ export function ForgotPassword() {
         }
 
         toast.success(Constants.ResetPasswordEmailMessage);
+        setIsMutating(false);
         navigate('/login');
       } catch (error) {
         toast.error(error instanceof Error ? error.message : String(error));
+        setIsMutating(false);
       }
     },
     [navigate]
@@ -65,7 +69,12 @@ export function ForgotPassword() {
           </Fragment>
         </InputGroup>
         <div id={styles['submitBox']}>
-          <input type="submit" value={Constants.Continue} />
+          <input
+            type="submit"
+            value={isMutating ? Constants.Continuing : Constants.Continue}
+            disabled={isMutating === true}
+            data-loading={isMutating ? 'true' : 'false'}
+          />
         </div>
       </section>
     </form>

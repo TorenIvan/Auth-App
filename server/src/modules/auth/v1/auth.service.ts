@@ -1,7 +1,7 @@
 import { Collection, Db, ObjectId } from 'mongodb';
+import * as bcrypt from 'bcryptjs';
 import { Errors } from '../../../config/utils/constants/Errors';
 import { objectAttributeExistsAndHasValue } from '../../../config/utils/helpers';
-import * as bcrypt from 'bcryptjs';
 import { EnvironmentVariables } from '../../../config/utils/constants/EnvironmentVariables';
 import User from '../../user/v1/user.model';
 
@@ -23,20 +23,26 @@ class AuthService {
 
   async InsertUserWithCredentials(email: string, password: string): Promise<ServiceResponse> {
     const username: string = email.split('@')[0];
+
     try {
-      const userExists: boolean = !!(await this.users.findOne({
-        email: email,
-      }));
-      if (userExists === true) {
+      // Pre-generate salt and hash in parallel with user existence check
+      const [userExists, salt] = await Promise.all([
+        this.users.findOne({ email: email }, { projection: { _id: 1 } }),
+        bcrypt.genSalt(Number(EnvironmentVariables.Salt_Size)),
+      ]);
+
+      if (userExists) {
         throw {
           customError: Errors.UserAlreadyExists,
         };
       }
-      const salt = await bcrypt.genSalt(Number(EnvironmentVariables.Salt_Size));
+
+      // Hash password with the pre-generated salt
       const hash = await bcrypt.hash(password, salt);
 
-      const result = await this.users.insertOne({
-        _id: new ObjectId(),
+      const userId = new ObjectId();
+      await this.users.insertOne({
+        _id: userId,
         username: username,
         email: email,
         biography: '',
@@ -48,14 +54,16 @@ class AuthService {
         refreshToken: '',
         isActive: true,
       });
+
       const data: ServiceInsertedData = {
-        userId: result.insertedId,
+        userId: userId,
         username: username,
         email: email,
         biography: '',
         phone: '',
         signInMethod: 'credentials',
       };
+
       return { success: true, data: data };
     } catch (error) {
       return AuthService.handleError(error);
@@ -69,16 +77,17 @@ class AuthService {
     signInMethod: SignInMethod
   ) {
     try {
-      const userExists: boolean = !!(await this.users.findOne({
+      const userExists = await this.users.findOne({
         email: email,
-      }));
-      if (userExists === true) {
+      });
+      if (userExists) {
         throw {
           customError: Errors.UserAlreadyExists,
         };
       }
-      const result = await this.users.insertOne({
-        _id: new ObjectId(),
+      const userId = new ObjectId();
+      await this.users.insertOne({
+        _id: userId,
         username: username,
         email: email,
         biography: biography,
@@ -91,7 +100,7 @@ class AuthService {
         isActive: true,
       });
       const data: ServiceInsertedData = {
-        userId: result.insertedId,
+        userId: userId,
         username: username,
         email: email,
         biography: biography,
@@ -197,11 +206,6 @@ class AuthService {
           customError: Errors.UserNotFoundWithTheseCreds,
         };
       }
-
-      //   if (result.image) {
-      //     result.image.data = result.image.data;
-      //   }
-
       const data: ServiceInsertedData = {
         userId: result._id,
         username: result.username,

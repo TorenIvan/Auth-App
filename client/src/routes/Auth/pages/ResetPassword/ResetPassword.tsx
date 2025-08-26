@@ -1,4 +1,4 @@
-import { Fragment, FormEvent, useCallback } from 'react';
+import { Fragment, FormEvent, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { faEye, faEyeSlash, faLock } from '@fortawesome/free-solid-svg-icons';
@@ -12,6 +12,7 @@ import styles from './styles.module.scss';
 
 export function ResetPassword() {
   const navigate = useNavigate();
+  const [isMutating, setIsMutating] = useState<boolean>(false);
 
   const handleSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
@@ -44,16 +45,17 @@ export function ResetPassword() {
           return;
         }
 
+        setIsMutating(true);
         const isOperationSuccessful = await resetPassword(email, token, password, confirmPassword);
-
         if (!isOperationSuccessful) {
           toast.error(Errors.GenericError);
           return;
         }
-
         toast.success(Constants.PasswordResetMessage);
+        setIsMutating(false);
         navigate('/login');
       } catch (error) {
+        setIsMutating(false);
         if ((error as ForbiddenError)?.isForbidden) {
           const errorMessage = (error as ForbiddenError)?.message ?? null;
           if (errorMessage) toast.error(errorMessage);
@@ -72,7 +74,6 @@ export function ResetPassword() {
         <h2>{Constants.ForgotPassword}</h2>
         <p>{Constants.ForgotPasswordParagraph}</p>
       </section>
-
       <section id={styles.main}>
         <div className={styles['auth-item']}>
           <InputGroup>
@@ -101,7 +102,6 @@ export function ResetPassword() {
             )}
           </InputGroup>
         </div>
-
         <div className={styles['auth-item']}>
           <InputGroup>
             {({ hidePassword, togglePasswordVisibility }) => (
@@ -129,9 +129,13 @@ export function ResetPassword() {
             )}
           </InputGroup>
         </div>
-
         <div id={styles['submitBox']}>
-          <input type="submit" value={Constants.ResetPassword} />
+          <input
+            type="submit"
+            value={isMutating ? Constants.Resetting : Constants.ResetPassword}
+            disabled={isMutating === true}
+            data-loading={isMutating ? 'true' : 'false'}
+          />
         </div>
       </section>
     </form>

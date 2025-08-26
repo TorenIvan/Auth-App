@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Lock Shackle - Super thick and simple -->
+  <path d="M120 200 L120 120 Q120 40 256 40 Q392 40 392 120 L392 200" 
+        fill="none" 
+        stroke="#ffffff" 
+        stroke-width="60" 
+        stroke-linecap="round"/>
+  
+  <!-- Lock Body - Massive rounded rectangle -->
+  <rect x="80" y="180" width="352" height="300" rx="40" 
+        fill="url(#mainGradient)" 
+        stroke="#ffffff" 
+        stroke-width="12"/>
+  
+  <!-- Simple keyhole - Just a circle -->
+  <circle cx="256" cy="330" r="50" fill="#ffffff"/>
+</svg>

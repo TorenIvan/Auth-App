@@ -43,7 +43,7 @@
     line-height: 22px;
   }
 
-  input[type="submit"] {
+  input[type='submit'] {
     padding-top: 10px;
     padding-bottom: 10px;
     font-size: 16px;
@@ -61,8 +61,14 @@
     width: 100%;
   }
 
-  input[type="submit"]:hover {
+  input[type='submit']:hover {
     opacity: 1;
+  }
+
+  input[data-loading='true'] {
+    opacity: 0.4;
+    cursor: not-allowed !important;
+    pointer-events: none;
   }
 }
 

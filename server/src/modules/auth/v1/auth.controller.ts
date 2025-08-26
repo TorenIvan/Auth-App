@@ -67,7 +67,7 @@ class AuthController {
     try {
       const { email, password } = request.body;
       const serviceResponse: ServiceResponse = await this.authService.InsertUserWithCredentials(
-        email.toLowerCase(),
+        email.trim().toLowerCase(),
         password
       );
 
@@ -132,8 +132,6 @@ class AuthController {
   ) {
     try {
       const { code } = request.body;
-      logger.debug(code);
-
       if (!code) {
         return AuthController.handleError(reply, 400, Errors.GenericError);
       }
@@ -145,8 +143,6 @@ class AuthController {
           Origin: EnvironmentVariables.ServerUri,
         },
       });
-      logger.debug(tokenResponse?.data?.access_token);
-
       if (!tokenResponse?.data?.access_token) {
         return AuthController.handleError(reply, 400, Errors.GenericError);
       }
@@ -157,8 +153,6 @@ class AuthController {
           headers: { Origin: EnvironmentVariables.ServerUri },
         }
       );
-      logger.debug({ data: userResponse?.data });
-
       if (!userResponse?.data?.email || !userResponse?.data?.name) {
         return AuthController.handleError(reply, 400, Errors.NotRetrievedFacebook);
       }
@@ -167,8 +161,6 @@ class AuthController {
       const checkIfEmailExists: ServiceResponse = await this.authService.CheckEmailExistence(
         userResponse.data.email.trim().toLowerCase()
       );
-
-      logger.debug('Email ', userResponse.data.email, ' exists: ', checkIfEmailExists.success);
 
       const givenSocialPlatformEmailExist: boolean = checkIfEmailExists.success;
       if (givenSocialPlatformEmailExist === true) {
@@ -195,7 +187,6 @@ class AuthController {
       }
       const cookieOptions = generateSocialCookieOptions();
 
-      logger.debug('UserId ', userId);
       const { access_token, refresh_token } = generateAuthJWTs(userId!, 'facebook');
       await this.authService.updateUserRefreshTokenById(userId!, refresh_token);
 
@@ -219,8 +210,6 @@ class AuthController {
   ) {
     try {
       const { code } = request.body;
-      logger.debug({ code });
-
       if (!code) {
         return AuthController.handleError(reply, 400, Errors.GenericError);
       }
@@ -236,14 +225,10 @@ class AuthController {
       const tokenResponse = await axios.post(githubTokenUri, params, {
         headers: { Accept: 'application/json' },
       });
-      logger.debug({ tokenResponse });
-
       const accessTokenGithub: string | undefined = tokenResponse.data?.access_token;
       if (!accessTokenGithub) {
         return AuthController.handleError(reply, 400, Errors.GenericError);
       }
-      logger.debug({ accessTokenGithub });
-
       const [userResponse, emailResponse] = await Promise.all([
         axios.get('https://api.github.com/user', {
           headers: { Authorization: `Bearer ${accessTokenGithub}` },
@@ -252,15 +237,11 @@ class AuthController {
           headers: { Authorization: `Bearer ${accessTokenGithub}` },
         }),
       ]);
-      logger.debug({ userResponse, emailResponse });
-
       // Find primary, verified email
       const primaryEmailObj = Array.isArray(emailResponse.data)
         ? emailResponse.data.find((e) => e.primary && e.verified)
         : undefined;
       const email = primaryEmailObj?.email || userResponse.data.email;
-      logger.debug({ email });
-
       if (!email || !userResponse.data.name) {
         return AuthController.handleError(reply, 400, Errors.NotRetrievedGithub);
       }
@@ -268,8 +249,6 @@ class AuthController {
       const checkIfEmailExists: ServiceResponse = await this.authService.CheckEmailExistence(
         email.trim().toLowerCase()
       );
-
-      logger.debug('Email ', userResponse.data.email, ' exists: ', checkIfEmailExists.success);
 
       const givenSocialPlatformEmailExist: boolean = checkIfEmailExists.success;
       if (givenSocialPlatformEmailExist === true) {
@@ -319,8 +298,6 @@ class AuthController {
   ) {
     try {
       const { code } = request.body;
-      logger.debug({ code });
-
       if (!code) {
         return AuthController.handleError(reply, 400, Errors.GenericError);
       }
@@ -338,19 +315,13 @@ class AuthController {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       });
 
-      logger.debug({ tokenResponse: tokenResponse.data });
-
       const accessTokenGoogle: string | undefined = tokenResponse.data?.access_token;
       if (!accessTokenGoogle) {
         return AuthController.handleError(reply, 400, Errors.GenericError);
       }
-      logger.debug({ accessTokenGoogle });
-
       const userResponse = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
         headers: { Authorization: `Bearer ${accessTokenGoogle}` },
       });
-      logger.debug({ userResponse: userResponse.data });
-
       const email = userResponse.data?.email;
       const name = userResponse.data?.name ?? userResponse.data?.given_name;
       if (!email || !name) {
@@ -361,8 +332,6 @@ class AuthController {
       const checkIfEmailExists: ServiceResponse = await this.authService.CheckEmailExistence(
         email.trim().toLowerCase()
       );
-
-      logger.debug('Email ', email, ' exists: ', checkIfEmailExists.success);
 
       if (checkIfEmailExists.success) {
         userId = checkIfEmailExists.data!.userId.toString();
@@ -406,8 +375,6 @@ class AuthController {
   ) {
     try {
       const { code } = request.body;
-      logger.debug({ code });
-
       if (!code) {
         return AuthController.handleError(reply, 400, Errors.GenericError);
       }
@@ -425,8 +392,6 @@ class AuthController {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       });
 
-      logger.debug({ tokenResponse: tokenResponse.data });
-
       const accessTokenDiscord: string | undefined = tokenResponse.data?.access_token;
       if (!accessTokenDiscord) {
         return AuthController.handleError(reply, 400, Errors.GenericError);
@@ -435,8 +400,6 @@ class AuthController {
       const userResponse = await axios.get('https://discord.com/api/users/@me', {
         headers: { Authorization: `Bearer ${accessTokenDiscord}` },
       });
-
-      logger.debug({ userResponse: userResponse.data });
 
       const email = userResponse.data?.email;
       const name = userResponse.data?.username;
@@ -449,8 +412,6 @@ class AuthController {
       const checkIfEmailExists: ServiceResponse = await this.authService.CheckEmailExistence(
         email.trim().toLowerCase()
       );
-
-      logger.debug('Email ', email, ' exists: ', checkIfEmailExists.success);
 
       if (checkIfEmailExists.success) {
         userId = checkIfEmailExists.data!.userId.toString();
@@ -495,8 +456,6 @@ class AuthController {
   ) {
     try {
       const { code } = request.body;
-      logger.debug({ code });
-
       if (!code) {
         return AuthController.handleError(reply, 400, Errors.GenericError);
       }
@@ -515,8 +474,6 @@ class AuthController {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       });
 
-      logger.debug({ tokenResponse: tokenResponse.data });
-
       const accessTokenGitlab: string | undefined = tokenResponse.data?.access_token;
       if (!accessTokenGitlab) {
         return AuthController.handleError(reply, 400, Errors.GenericError);
@@ -526,8 +483,6 @@ class AuthController {
       const userResponse = await axios.get('https://gitlab.com/api/v4/user', {
         headers: { Authorization: `Bearer ${accessTokenGitlab}` },
       });
-
-      logger.debug({ userResponse: userResponse.data });
 
       const email = userResponse.data?.email;
       const name = userResponse.data?.name || userResponse.data?.username;
@@ -541,8 +496,6 @@ class AuthController {
       const checkIfEmailExists: ServiceResponse = await this.authService.CheckEmailExistence(
         email.trim().toLowerCase()
       );
-
-      logger.debug('Email ', email, ' exists: ', checkIfEmailExists.success);
 
       if (checkIfEmailExists.success) {
         userId = checkIfEmailExists.data!.userId.toString();
@@ -589,7 +542,7 @@ class AuthController {
       const { email, password } = request.body;
 
       const userCredsResponse: ServiceResponse = await this.authService.ValidateUserWithCredentials(
-        email.toLowerCase(),
+        email.trim().toLowerCase(),
         password
       );
 
@@ -624,7 +577,7 @@ class AuthController {
       const { access_token, refresh_token } = generateAuthJWTs(
         userCredsResponse.data!.userId.toString()
       );
-      await this.authService.updateUserRefreshToken(email.toLowerCase(), refresh_token);
+      await this.authService.updateUserRefreshToken(email.trim().toLowerCase(), refresh_token);
 
       const cookieOptions = generateCookieOptions();
 

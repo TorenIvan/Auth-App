@@ -39,6 +39,7 @@ async function createIndexes(db: Db) {
   const usersCollection = db.collection('users');
 
   await usersCollection.createIndex({ email: 1 }, { unique: true });
+  await usersCollection.createIndex({ email: 1, signInMethod: 1 });
   await usersCollection.createIndex({ isVerified: 1 });
   await usersCollection.createIndex({ isActive: 1 });
   await usersCollection.createIndex({ refreshToken: 1 });

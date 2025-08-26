@@ -1,6 +1,7 @@
 export const Strings = {
   CloseDB: 'Closing DataBase...',
   VerificationEmailSubject: 'Authentication App Email Verification',
+  ResetEmailSubject: 'Authentication App Email Reset',
   VerificationEmailText: 'Authentication App Dev Team',
   ConfirmEmailType: 'confirmEmail',
   ForgotPasswordType: 'forgotPassword',
