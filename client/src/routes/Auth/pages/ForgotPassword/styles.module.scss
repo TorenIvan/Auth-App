@@ -1,3 +1,35 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.back-button {
+  margin-left: 1rem;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 25px;
+  color: var(--nav-button-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+
+  span {
+    display: inline-block;
+    cursor: pointer;
+  }
+}
+
+.arrow-left {
+  border: solid var(--nav-button-primary);
+  border-width: 0 0.2rem 0.2rem 0;
+  padding: 4px;
+  transform: rotate(135deg);
+}
+
 .form-container {
   border: 1px solid var(--border-primary);
   box-sizing: border-box;

@@ -33,6 +33,7 @@ export const Constants = {
   ConfirmParagraphLoading: 'This might take a few seconds...',
   ConfirmParagraphError: 'Sign In to send you a new confirmation link',
   BackToSignIn: 'Back to Sign In',
+  Back: 'Back',
   ConfirmEmailMessage:
     'Almost done! An email will be sent to your account soon. Follow the instructions to verify your account.',
   ResetPasswordEmailMessage:

@@ -7,7 +7,7 @@ import { AxiosInterceptor, Toast } from './components';
 import indexRouter from './routes';
 import './App.css';
 
-const App = (): JSX.Element => {
+export default function App(): JSX.Element {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
@@ -19,10 +19,8 @@ const App = (): JSX.Element => {
         <Toast />
       </ThemeProvider>
       {import.meta.env.VITE_NODE_ENV === 'development' ? (
-        <ReactQueryDevtools initialIsOpen={false} panelPosition="right" />
+        <ReactQueryDevtools initialIsOpen={false} panelPosition="bottom" />
       ) : undefined}
     </QueryClientProvider>
   );
-};
-
-export default App;
+}

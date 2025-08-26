@@ -1,5 +1,5 @@
 import { FormEvent, Fragment, useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { InputGroup } from '../../../../components';
@@ -46,37 +46,43 @@ export function ForgotPassword() {
   );
 
   return (
-    <form autoComplete="off" className={styles['form-container']} onSubmit={handleSubmit}>
-      <section id={styles.header}>
-        <h2>{Constants.ForgotPassword}</h2>
-        <p>{Constants.ForgotPasswordParagraph}</p>
-      </section>
-      <section id={styles.main}>
-        <InputGroup>
-          <Fragment>
-            <InputGroup.LeftIcon icon={faEnvelope} styles={inputStyles['fa-lock-forgot']} />
-            <InputGroup.Input
-              attributes={{
-                id: 'email',
-                type: 'text',
-                name: 'email',
-                placeholder: Constants.EmailPlaceholder,
-                autoComplete: 'off',
-                required: true,
-              }}
-              preventCopyPasteEnabled
+    <section className={styles.container}>
+      <NavLink className={styles['back-button']} to="/login" end replace>
+        <span className={styles['arrow-left']} />
+        <span>{Constants.Back}</span>
+      </NavLink>
+      <form autoComplete="off" className={styles['form-container']} onSubmit={handleSubmit}>
+        <section id={styles.header}>
+          <h2>{Constants.ForgotPassword}</h2>
+          <p>{Constants.ForgotPasswordParagraph}</p>
+        </section>
+        <section id={styles.main}>
+          <InputGroup>
+            <Fragment>
+              <InputGroup.LeftIcon icon={faEnvelope} styles={inputStyles['fa-lock-forgot']} />
+              <InputGroup.Input
+                attributes={{
+                  id: 'email',
+                  type: 'text',
+                  name: 'email',
+                  placeholder: Constants.EmailPlaceholder,
+                  autoComplete: 'off',
+                  required: true,
+                }}
+                preventCopyPasteEnabled
+              />
+            </Fragment>
+          </InputGroup>
+          <div id={styles['submitBox']}>
+            <input
+              type="submit"
+              value={isMutating ? Constants.Continuing : Constants.Continue}
+              disabled={isMutating === true}
+              data-loading={isMutating ? 'true' : 'false'}
             />
-          </Fragment>
-        </InputGroup>
-        <div id={styles['submitBox']}>
-          <input
-            type="submit"
-            value={isMutating ? Constants.Continuing : Constants.Continue}
-            disabled={isMutating === true}
-            data-loading={isMutating ? 'true' : 'false'}
-          />
-        </div>
-      </section>
-    </form>
+          </div>
+        </section>
+      </form>
+    </section>
   );
 }

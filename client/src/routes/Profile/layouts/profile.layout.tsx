@@ -1,7 +1,7 @@
 import { Fragment, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { BroadcastChannel } from 'broadcast-channel';
-import { faCircleUser, faRightFromBracket, faUserGroup } from '@fortawesome/free-solid-svg-icons';
+import { faCircleUser, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { Header, Main, Footer } from '../../../layouts';
 import { useToggleSubMenu } from '../hooks';
 import { Constants } from '../constants';
@@ -38,10 +38,10 @@ export function ProfileLayout() {
                 <SideMenu.SubMenu.Item.Image icon={faCircleUser} size="xl" />
                 <SideMenu.SubMenu.Item.Text value={Constants.MyProfile} />
               </SideMenu.SubMenu.Item>
-              <SideMenu.SubMenu.Item isUsed={false} onClick={() => {}}>
+              {/* <SideMenu.SubMenu.Item isUsed={false} onClick={() => {}}>
                 <SideMenu.SubMenu.Item.Image icon={faUserGroup} size="lg" />
                 <SideMenu.SubMenu.Item.Text value={Constants.GroupChat} />
-              </SideMenu.SubMenu.Item>
+              </SideMenu.SubMenu.Item> */}
               <SideMenu.SubMenu.Divider />
               <SideMenu.SubMenu.Item isUsed={false} onClick={handleLogout}>
                 <SideMenu.SubMenu.Item.Image icon={faRightFromBracket} size="lg" color="#EB5757" />

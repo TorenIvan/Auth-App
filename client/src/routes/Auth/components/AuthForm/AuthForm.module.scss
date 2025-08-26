@@ -9,16 +9,15 @@
 }
 
 .auth-item {
-  margin-bottom: 1em;
+  margin-bottom: 0.1em;
   width: clamp(65%, 357px, 90%);
   position: relative;
 }
 
 #submitBox {
   flex: 0.8;
-  margin-top: 5%;
+  margin-top: calc(5% + 0.2rem);
   width: clamp(65%, 357px, 90%);
-
   justify-content: center;
   align-items: center;
 }
@@ -34,12 +33,12 @@
   border-radius: 8px;
 }
 
-.auth-item input[type="password"]::placeholder,
-.auth-item input[type="email"]::placeholder {
+.auth-item input[type='password']::placeholder,
+.auth-item input[type='email']::placeholder {
   padding-left: 10px;
 }
 
-#submitBox > input[type="submit"] {
+#submitBox > input[type='submit'] {
   background-color: var(--background-button);
   outline: none;
   border: none;
@@ -52,11 +51,11 @@
   text-align: center;
 }
 
-#submitBox > input[type="submit"]:hover {
+#submitBox > input[type='submit']:hover {
   cursor: pointer;
 }
 
-#submitBox input[data-loading="true"] {
+#submitBox input[data-loading='true'] {
   opacity: 0.4;
   cursor: not-allowed !important;
   pointer-events: none;
