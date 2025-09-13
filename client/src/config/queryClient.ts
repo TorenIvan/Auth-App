@@ -5,7 +5,7 @@ export const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       refetchOnMount: false,
-      staleTime: 120000, // 2 minutes
+      staleTime: 120000, // 2 minutes default stale time
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       retry: (failureCount, error: any) => {
         if (error?.response?.status === 401 || error?.response?.status === 403) {
@@ -18,7 +18,7 @@ export const queryClient = new QueryClient({
       networkMode: 'online',
     },
     mutations: {
-      networkMode: 'online', // Mutations will be paused when offline and resumed when back online
+      networkMode: 'online',
       retry: false,
     },
   },

@@ -2,6 +2,7 @@ export { useGoogleLoginMutation } from './useGoogleLoginMutation';
 export { useMicrosoftLoginMutation } from './useMicrosoftLoginMutation';
 export { useFacebookLoginMutation } from './useFacebookLoginMutation';
 export { useGithubLoginMutation } from './useGithubLoginMutation';
+export { useGitlabLoginMutation } from './useGitlabLoginMutation';
 export { useTwitterLoginMutation } from './useTwitterLoginMutation';
 export { useLinkedinLoginMutation } from './useLinkedinLoginMutation';
 export { useDiscordLoginMutation } from './useDiscordLoginMutation';

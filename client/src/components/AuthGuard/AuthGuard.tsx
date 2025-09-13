@@ -1,37 +1,19 @@
+import { useEffect } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { Loader } from '../Loader';
-import { useEffect, useMemo } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCheckIfUserIsAuthenticatedQuery } from '../../hooks';
 import {
   useDiscordLoginMutation,
   useFacebookLoginMutation,
   useGithubLoginMutation,
+  useGitlabLoginMutation,
   useGoogleLoginMutation,
   useLinkedinLoginMutation,
   useLoginMutation,
   useMicrosoftLoginMutation,
   useTwitterLoginMutation,
 } from '../../routes/Auth/hooks';
-import { useCheckIfUserIsAuthenticatedQuery } from '../../hooks';
-import { useQueryClient } from '@tanstack/react-query';
-import { useGitlabLoginMutation } from '../../routes/Auth/hooks/useGitlabLoginMutation';
-
-const publicRoutes = [
-  '/login',
-  '/register',
-  '/verify',
-  '/forgot-password',
-  '/reset-password',
-  '/oauth2/google',
-  '/oauth2/microsoft',
-  '/oauth2/facebook',
-  '/oauth2/github',
-  '/oauth2/gitlab',
-  '/oauth2/twitter',
-  '/oauth2/linkedin',
-  '/oauth2/discord',
-  '/terms-of-use',
-  '/privacy-policy',
-];
+import { Loader } from '../Loader';
 
 export function AuthGuard() {
   const location = useLocation();
@@ -48,31 +30,17 @@ export function AuthGuard() {
   const { isLoggingIn } = useLoginMutation();
   const { isAuthenticated, isAuthenticating } = useCheckIfUserIsAuthenticatedQuery();
 
-  const isLoadingAuth = useMemo(
-    () =>
-      isAuthenticating ||
-      isLoggingIn ||
-      isLoggingInWithGoogle ||
-      isLoggingInWithMicrosoft ||
-      isLoggingInWithFacebook ||
-      isLoggingInWithGithub ||
-      isLoggingInWithGitlab ||
-      isLoggingInWithTwitter ||
-      isLoggingInWithLinkedin ||
-      isLoggingInWithDiscord,
-    [
-      isAuthenticating,
-      isLoggingIn,
-      isLoggingInWithGoogle,
-      isLoggingInWithMicrosoft,
-      isLoggingInWithFacebook,
-      isLoggingInWithGithub,
-      isLoggingInWithGitlab,
-      isLoggingInWithTwitter,
-      isLoggingInWithLinkedin,
-      isLoggingInWithDiscord,
-    ]
-  );
+  const isLoadingAuth =
+    isAuthenticating ||
+    isLoggingIn ||
+    isLoggingInWithGoogle ||
+    isLoggingInWithMicrosoft ||
+    isLoggingInWithFacebook ||
+    isLoggingInWithGithub ||
+    isLoggingInWithGitlab ||
+    isLoggingInWithTwitter ||
+    isLoggingInWithLinkedin ||
+    isLoggingInWithDiscord;
 
   /**
    * *** Smart Selective Clearing::Reset all private-specific cached data after logging out ***
@@ -98,3 +66,21 @@ export function AuthGuard() {
   }
   return <Outlet />;
 }
+
+const publicRoutes = [
+  '/login',
+  '/register',
+  '/verify',
+  '/forgot-password',
+  '/reset-password',
+  '/oauth2/google',
+  '/oauth2/microsoft',
+  '/oauth2/facebook',
+  '/oauth2/github',
+  '/oauth2/gitlab',
+  '/oauth2/twitter',
+  '/oauth2/linkedin',
+  '/oauth2/discord',
+  '/terms-of-use',
+  '/privacy-policy',
+];

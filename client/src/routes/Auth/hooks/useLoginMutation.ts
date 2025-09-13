@@ -11,13 +11,10 @@ export function useLoginMutation() {
 
   const login = useCallback(async ({ email, password }: { email: string; password: string }) => {
     try {
-      console.log('Before api call');
       const accessToken = await mutateAsync({ email, password });
-      console.log('After api call');
       addAuthorizationHeader(accessToken);
       queryClient.setQueryData(['auth', 'status'], true);
     } catch (localError) {
-      console.log('After api call with error');
       if (typeof localError === 'string' || localError instanceof String) {
         toast.error(localError as string);
       } else {

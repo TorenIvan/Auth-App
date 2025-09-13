@@ -6,8 +6,6 @@ import { Errors } from '../../errors';
 import { LoginTitle, LoginNavLink, ForgotPasswordLink, AuthFormGroup } from '../../components';
 import { useLoginMutation } from '../../hooks';
 
-// type SocialItem = "facebook" | "google" | "twitter" | "github";
-
 export function Login() {
   const { login, isLoggingIn } = useLoginMutation();
 

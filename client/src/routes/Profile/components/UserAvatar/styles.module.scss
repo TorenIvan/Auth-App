@@ -11,10 +11,12 @@
   filter: invert(100%);
 }
 
-.avatar {
-  vertical-align: middle;
-  width: 72px;
-  height: 72px;
+.userIcon {
+  inline-size: 32px;
+  aspect-ratio: 1;
+  object-fit: cover;
   border-radius: 10%;
   margin: 10px;
+  padding-right: 4px;
+  vertical-align: middle;
 }
