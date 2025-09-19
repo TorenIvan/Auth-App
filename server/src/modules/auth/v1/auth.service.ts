@@ -37,7 +37,6 @@ class AuthService {
         };
       }
 
-      // Hash password with the pre-generated salt
       const hash = await bcrypt.hash(password, salt);
 
       const userId = new ObjectId();

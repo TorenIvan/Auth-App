@@ -13,8 +13,6 @@ export async function sendEmail(email: string, token: string, action: SendEmailA
     emailSubject = Strings.ResetEmailSubject;
   }
 
-  logger.debug(email);
-
   const mailOptions = {
     from: EnvironmentVariables.Email_Username,
     to: [email],

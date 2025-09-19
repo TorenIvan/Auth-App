@@ -237,7 +237,7 @@ class AuthController {
           headers: { Authorization: `Bearer ${accessTokenGithub}` },
         }),
       ]);
-      // Find primary, verified email
+
       const primaryEmailObj = Array.isArray(emailResponse.data)
         ? emailResponse.data.find((e) => e.primary && e.verified)
         : undefined;
@@ -255,9 +255,6 @@ class AuthController {
         userId = checkIfEmailExists.data!.userId.toString();
       }
 
-      /**
-       * Start of register user operation
-       */
       if (givenSocialPlatformEmailExist === false) {
         const userSocialLoginResponse: ServiceResponse =
           await this.authService.InsertUserWithSocialAccount(
@@ -460,7 +457,6 @@ class AuthController {
         return AuthController.handleError(reply, 400, Errors.GenericError);
       }
 
-      // Exchange code for access token
       const gitlabTokenUri = 'https://gitlab.com/oauth/token';
       const params = new URLSearchParams({
         client_id: EnvironmentVariables.Gitlab_App_Id,
@@ -479,7 +475,6 @@ class AuthController {
         return AuthController.handleError(reply, 400, Errors.GenericError);
       }
 
-      // Get GitLab user info
       const userResponse = await axios.get('https://gitlab.com/api/v4/user', {
         headers: { Authorization: `Bearer ${accessTokenGitlab}` },
       });
@@ -491,7 +486,6 @@ class AuthController {
         return AuthController.handleError(reply, 400, Errors.NotRetrievedGitlab);
       }
 
-      // Check if user exists in your DB
       let userId: string | undefined = undefined;
       const checkIfEmailExists: ServiceResponse = await this.authService.CheckEmailExistence(
         email.trim().toLowerCase()
