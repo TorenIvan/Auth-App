@@ -2,9 +2,8 @@ import { FormEvent, Fragment, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { isEmailValid, isPasswordValid } from '../../../../helpers';
-import { Constants } from '../../constants';
 import { registerUser } from '../../api';
-import { Errors } from '../../errors';
+import { Errors, Constants } from '../../../../utils';
 import { RegisterTitle, RegisterNavLink, AuthFormGroup } from '../../components';
 
 export function Register() {

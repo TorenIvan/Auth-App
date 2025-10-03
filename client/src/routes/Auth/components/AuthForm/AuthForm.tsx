@@ -3,8 +3,8 @@ import 'font-awesome/css/font-awesome.min.css';
 import { faEnvelope, faEye, faEyeSlash, faLock } from '@fortawesome/free-solid-svg-icons';
 import { InputGroup } from '../../../../components';
 import { inputStyles } from '../../../../styles';
-import { Constants } from '../../constants';
 import mainStyles from './AuthForm.module.scss';
+import { Constants } from '../../../../utils';
 
 function AuthForm(props: IProps): JSX.Element {
   const { submitButtonText, forgotPasswordSlot, onSubmit, isSubmitting } = props;

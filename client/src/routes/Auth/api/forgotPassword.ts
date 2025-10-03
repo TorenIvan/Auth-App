@@ -1,6 +1,6 @@
 import { AxiosResponse, isAxiosError } from 'axios';
 import { axiosInstance } from '../../../config';
-import { Errors } from '../errors';
+import { Errors } from '../../../utils';
 
 const forgotPasswordUri = 'v1/auth/forgot-password';
 

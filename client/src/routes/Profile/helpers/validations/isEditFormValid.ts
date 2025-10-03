@@ -1,6 +1,6 @@
 import { toast } from 'react-hot-toast';
 import { isPasswordValid } from '../../../../helpers';
-import { Errors } from '../../errors';
+import { Errors } from '../../../../utils';
 import { isUsernameValid } from './isUsernameValid';
 import { isBiographyValid } from './isBiographyValid';
 import { isPhoneValid } from './isPhoneValid';

@@ -4,7 +4,7 @@ import { BroadcastChannel } from 'broadcast-channel';
 import { faCircleUser, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { Header, Main, Footer } from '../../../layouts';
 import { useToggleSubMenu } from '../hooks';
-import { Constants } from '../constants';
+import { Constants } from '../../../utils';
 import { SideMenu } from '../components';
 import { useLogoutMutation } from '../../Auth/hooks';
 
@@ -12,10 +12,6 @@ export function ProfileLayout() {
   const { logout } = useLogoutMutation();
   const [isSubMenuOpen, toggleSubMenu] = useToggleSubMenu();
   const logoutChannel = new BroadcastChannel('logout');
-
-  function handleLogout() {
-    logoutChannel.postMessage('logout');
-  }
 
   useEffect(() => {
     logoutChannel.onmessage = async () => {
@@ -27,6 +23,10 @@ export function ProfileLayout() {
       logoutChannel.close();
     };
   }, []);
+
+  function handleLogout() {
+    logoutChannel.postMessage('logout');
+  }
 
   return (
     <Fragment>

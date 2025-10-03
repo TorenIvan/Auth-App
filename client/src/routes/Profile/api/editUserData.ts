@@ -1,13 +1,15 @@
 import { AxiosResponse, isAxiosError } from 'axios';
 import { axiosInstance } from '../../../config';
-import { Errors } from '../errors';
+import { Errors } from '../../../utils';
 
 const userEditUri = 'v1/user/edit';
 
 export async function editUserData(formData: FormData): Promise<void> {
   try {
     const result: AxiosResponse<void> = await axiosInstance.post(userEditUri, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     });
     return result.data;
   } catch (error: unknown) {

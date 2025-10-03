@@ -1,6 +1,6 @@
 import { AxiosError, isAxiosError } from 'axios';
 import { axiosInstance } from '../../../config';
-import { Errors } from '../errors';
+import { Errors } from '../../../utils';
 
 const logoutUri = 'v1/auth/logout';
 

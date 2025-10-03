@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { extractCSRFToken } from '../../../../helpers';
-import { Errors } from '../../errors';
+import { Errors } from '../../../../utils';
 import { useLinkedinLoginMutation } from '../../hooks';
 import { LoginOAuth } from '../../components';
 

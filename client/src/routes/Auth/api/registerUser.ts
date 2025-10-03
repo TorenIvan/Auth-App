@@ -1,5 +1,5 @@
 import axios, { isAxiosError } from 'axios';
-import { Errors } from '../errors';
+import { Errors } from '../../../utils';
 
 const registerUri = `${import.meta.env.VITE_SERVER_URI}v1/auth/register/credentials`;
 

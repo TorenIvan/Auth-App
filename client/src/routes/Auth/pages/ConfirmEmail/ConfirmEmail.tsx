@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark, faEnvelopeCircleCheck, faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { Errors } from '../../errors';
-import { Constants } from '../../constants';
+import { Errors, Constants } from '../../../../utils';
 import { confirmEmail } from '../../api';
 import styles from './styles.module.scss';
 

@@ -1,4 +1,4 @@
-import { GlobalConstants } from '../../utils';
+import { Constants } from '../../utils';
 import { useTheme } from '../../store';
 import { DevChallengesDark, DevChallengesLight } from '../ThemeSpecific';
 import styles from './styles.module.scss';
@@ -7,7 +7,7 @@ const LogoIcon = (): JSX.Element => {
   const [theme] = useTheme();
 
   let themeIcon: JSX.Element = <DevChallengesLight />;
-  if (theme === GlobalConstants.LightPalette) {
+  if (theme === Constants.LightPalette) {
     themeIcon = <DevChallengesDark />;
   }
 

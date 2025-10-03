@@ -10,10 +10,9 @@ import {
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { GlobalConstants } from '../../../../utils';
+import { Constants } from '../../../../utils';
 import { InputGroup, Textarea } from '../../../../components';
 import { inputStyles } from '../../../../styles';
-import { Constants } from '../../constants';
 import { isEditFormValid as isFormValid } from '../../helpers';
 import { ProfileEditItem as EditItem, UserPhoto } from '../../components';
 import { useEditUserDataMutation, useImageChange, useRetrieveUserDataQuery } from '../../hooks';
@@ -153,7 +152,7 @@ export function ProfileEdit() {
             </Fragment>
           </InputGroup>
         </EditItem>
-        {userInfo?.signInMethod === GlobalConstants.Credentials && (
+        {userInfo?.signInMethod === Constants.Credentials && (
           <Fragment>
             <EditItem>
               <InputGroup stylesContainer="profile-input-container">

@@ -1,7 +1,7 @@
 import { isAxiosError } from 'axios';
 import { axiosInstance } from '../../../config';
 import { generateCsrfToken } from '../../../helpers';
-import { Errors } from '../errors';
+import { Errors } from '../../../utils';
 
 export async function gitlabLogin(code: string | boolean): Promise<string | void> {
   try {

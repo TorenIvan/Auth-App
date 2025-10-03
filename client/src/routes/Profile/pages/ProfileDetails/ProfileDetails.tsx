@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Constants } from '../../constants';
+import { Constants } from '../../../../utils';
 import { ProfileDetail, UserPhoto } from '../../components';
 import { useRetrieveUserDataQuery } from '../../hooks';
 import styles from './styles.module.scss';
@@ -28,8 +28,8 @@ export function ProfileDetails(): JSX.Element | undefined {
           </div>
           <NavLink
             className={styles['details-first-row-value-column']}
-            end
             to="/profile/edit"
+            end
             replace
           >
             <span>{Constants.Edit}</span>

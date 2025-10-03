@@ -1,5 +1,5 @@
 import { createContext, useContext, ReactNode, useCallback, useEffect } from 'react';
-import { GlobalConstants, Theme } from '../../utils';
+import { Constants, Theme } from '../../utils';
 import { useLocalStorage } from '../../hooks';
 
 interface IThemeContextValue {
@@ -8,7 +8,7 @@ interface IThemeContextValue {
 }
 
 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-const defaultTheme = prefersDark ? GlobalConstants.DarkPalette : GlobalConstants.LightPalette;
+const defaultTheme = prefersDark ? Constants.DarkPalette : Constants.LightPalette;
 
 const ThemeContext = createContext<IThemeContextValue | undefined>(undefined);
 
@@ -17,9 +17,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const toggleTheme = useCallback(() => {
     const newTheme =
-      theme === GlobalConstants.LightPalette
-        ? GlobalConstants.DarkPalette
-        : GlobalConstants.LightPalette;
+      theme === Constants.LightPalette ? Constants.DarkPalette : Constants.LightPalette;
     setTheme(newTheme);
   }, [theme, setTheme]);
 

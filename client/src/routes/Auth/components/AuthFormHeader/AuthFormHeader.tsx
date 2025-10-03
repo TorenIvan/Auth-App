@@ -1,4 +1,4 @@
-import { Constants } from '../../constants';
+import { Constants } from '../../../../utils';
 import headerStyles from './AuthFormHeader.module.scss';
 
 function AuthFormHeader(props: IProps): JSX.Element {

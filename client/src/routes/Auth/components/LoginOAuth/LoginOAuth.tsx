@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { faCircleXmark, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Constants } from '../../constants';
+import { Constants } from '../../../../utils';
 import styles from './styles.module.scss';
 
 export function LoginOAuth({

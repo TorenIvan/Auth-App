@@ -13,7 +13,7 @@ export default function App(): JSX.Element {
       <ThemeProvider>
         <AxiosInterceptor>
           <div className="screen-container">
-            <RouterProvider router={indexRouter()} />
+            <RouterProvider router={indexRouter} />
           </div>
         </AxiosInterceptor>
         <Toast />

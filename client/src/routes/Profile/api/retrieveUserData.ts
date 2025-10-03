@@ -1,6 +1,6 @@
 import { AxiosError, AxiosResponse, isAxiosError } from 'axios';
 import { axiosInstance } from '../../../config';
-import { Errors } from '../errors';
+import { Errors } from '../../../utils';
 
 const userDetailsUri = 'v1/user/details';
 
@@ -12,7 +12,6 @@ export const userDetailsQuery = {
 async function retrieveUserData(): Promise<IResponse> {
   try {
     const result: AxiosResponse<IResponse> = await axiosInstance.get(userDetailsUri);
-
     return result.data;
   } catch (error: unknown | AxiosError) {
     if (isAxiosError(error)) {

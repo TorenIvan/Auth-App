@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { addAuthorizationHeader } from '../../../config';
-import { Errors } from '../errors';
+import { Errors } from '../../../utils';
 import { loginUser } from '../api';
 
 export function useLoginMutation() {

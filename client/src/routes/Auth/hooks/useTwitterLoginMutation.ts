@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { twitterLogin } from '../api';
 import { addAuthorizationHeader } from '../../../config';
-import { Errors } from '../errors';
+import { Errors } from '../../../utils';
 
 export function useTwitterLoginMutation(): UseTwitterLogin {
   const queryClient = useQueryClient();

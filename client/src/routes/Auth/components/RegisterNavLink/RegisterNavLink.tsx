@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Constants } from '../../constants';
+import { Constants } from '../../../../utils';
 import styles from './styles.module.css';
 
 const RegisterNavLink = (): JSX.Element => {

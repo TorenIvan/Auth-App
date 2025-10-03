@@ -4,26 +4,24 @@ import { AuthGuard } from '../components';
 import authRoutes from './Auth';
 import profileRoutes from './Profile';
 
-function indexRouter() {
-  return createBrowserRouter([
-    {
-      path: '/',
-      Component: AuthGuard,
-      ErrorBoundary: ErrorPage,
-      children: [
-        {
-          index: true,
-          element: <Navigate to="/profile" replace />,
-        },
-        ...authRoutes(),
-        ...profileRoutes(),
-        {
-          path: '*',
-          element: <Navigate to="/profile" replace />,
-        },
-      ],
-    },
-  ]);
-}
+const indexRouter = createBrowserRouter([
+  {
+    path: '/',
+    Component: AuthGuard,
+    ErrorBoundary: ErrorPage,
+    children: [
+      {
+        index: true,
+        element: <Navigate to="/profile" replace />,
+      },
+      ...authRoutes,
+      ...profileRoutes,
+      {
+        path: '*',
+        element: <Navigate to="/profile" replace />,
+      },
+    ],
+  },
+]);
 
 export default indexRouter;

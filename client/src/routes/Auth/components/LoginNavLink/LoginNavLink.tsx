@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
-import { Constants } from '../../constants';
 import styles from './styles.module.css';
+import { Constants } from '../../../../utils';
 
 const LoginNavLink = (): JSX.Element => {
   return (

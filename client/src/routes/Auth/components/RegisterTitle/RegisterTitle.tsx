@@ -1,4 +1,4 @@
-import { Constants } from '../../constants';
+import { Constants } from '../../../../utils';
 
 const RegisterTitle = (): JSX.Element => {
   return (

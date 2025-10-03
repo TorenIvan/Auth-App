@@ -1,11 +1,11 @@
 import { DiscordIcon, GithubIcon, GitlabIcon, GoogleIcon } from '../../../../icons';
+import { Constants } from '../../../../utils';
 import {
   discordInitLoginFlow,
   githubInitLoginFlow,
   gitlabInitLoginFlow,
   googleInitLoginFlow,
 } from '../../api';
-import { Constants } from '../../constants';
 import footerStyles from './AuthFormFooter.module.scss';
 
 function AuthFormFooter(props: IProps): JSX.Element {

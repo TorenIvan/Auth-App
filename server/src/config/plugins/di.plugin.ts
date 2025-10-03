@@ -9,7 +9,7 @@ import AuthController from '../../modules/auth/v1/auth.controller';
  * @description
  * Dependency Injection plugin - creates singleton services and wires controllers.
  *
- * **Pattern:**
+ * **Pattern**:
  * - Services are singletons sharing the same DB connection.
  * - Controllers receive dependencies via constructor injection.
  * - All wiring happens in one place (composition root).

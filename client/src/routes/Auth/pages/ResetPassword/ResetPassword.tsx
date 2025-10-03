@@ -5,8 +5,7 @@ import { faEye, faEyeSlash, faLock } from '@fortawesome/free-solid-svg-icons';
 import { InputGroup } from '../../../../components';
 import { isPasswordValid } from '../../../../helpers';
 import { inputStyles } from '../../../../styles';
-import { Errors } from '../../errors';
-import { Constants } from '../../constants';
+import { Errors, Constants } from '../../../../utils';
 import { resetPassword } from '../../api';
 import styles from './styles.module.scss';
 

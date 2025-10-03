@@ -5,8 +5,7 @@ import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { InputGroup } from '../../../../components';
 import { isEmailValid } from '../../../../helpers';
 import { inputStyles } from '../../../../styles';
-import { Errors } from '../../errors';
-import { Constants } from '../../constants';
+import { Errors, Constants } from '../../../../utils';
 import { forgotPassword } from '../../api';
 import styles from './styles.module.scss';
 

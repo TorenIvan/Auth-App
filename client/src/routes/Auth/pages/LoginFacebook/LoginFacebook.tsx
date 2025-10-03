@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { Errors } from '../../errors';
+import { Errors } from '../../../../utils';
 import { useFacebookLoginMutation } from '../../hooks';
 import { LoginOAuth } from '../../components';
 

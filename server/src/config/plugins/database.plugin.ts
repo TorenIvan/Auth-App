@@ -13,7 +13,7 @@ import { logger } from '../utils/helpers';
  * - Runs on `ONE process`, `ONE thread` (due to Node.js).
  * - Creates `ONE MongoClient` instance with connection pooling (120 connections max).
  * - Node.js event loop handles async I/O without blocking the main thread.
- * - Multiple requests share the same client but use different pool connections.
+ * - Multiple requests share the same client, but use different pool connections.
  * - Services can be singletons because DB operations are non-blocking.
  *
  * @example
