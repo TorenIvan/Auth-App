@@ -65,12 +65,19 @@ export default databasePlugin;
  */
 async function createIndexes(db: Db) {
   const usersCollection = db.collection('users');
+  const refreshTokensCollection = db.collection('refresh_tokens');
 
   await usersCollection.createIndex({ email: 1 }, { unique: true });
   await usersCollection.createIndex({ email: 1, signInMethod: 1 });
   await usersCollection.createIndex({ isVerified: 1 });
   await usersCollection.createIndex({ isActive: 1 });
-  await usersCollection.createIndex({ refreshToken: 1 });
+
+  await refreshTokensCollection.createIndex({ userId: 1, revoked: 1, expiresAt: 1 });
+  await refreshTokensCollection.createIndex({ token: 1 }, { unique: true });
+  await refreshTokensCollection.createIndex(
+    { deleteAt: 1 },
+    { expireAfterSeconds: 0, sparse: true } // sparse: true skips docs without deleteAt. Only documents with a deleteAt field are indexed.
+  );
 
   logger.debug('Database indexes created successfully');
 }

@@ -28,7 +28,7 @@ const UserSchema = z.object({
   isVerified: z.boolean().default(false),
   isActive: z.boolean().default(true),
   image: z.union([ImageSchema, z.undefined()]),
-  refreshToken: z.string(),
+  // refreshToken: z.string(),
 });
 
 type User = z.infer<typeof UserSchema>;

@@ -4,12 +4,15 @@ import { Errors } from '../../../config/utils/constants/Errors';
 import { objectAttributeExistsAndHasValue } from '../../../config/utils/helpers';
 import { EnvironmentVariables } from '../../../config/utils/constants/EnvironmentVariables';
 import User from '../../user/v1/user.model';
+import RefreshToken from './auth.model';
 
 class AuthService {
   private users: Collection<User>;
+  private refreshTokens: Collection<RefreshToken>;
 
   constructor(private db: Db) {
     this.users = this.db.collection<User>('users');
+    this.refreshTokens = this.db.collection<RefreshToken>('refresh_tokens');
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -19,6 +22,47 @@ class AuthService {
       return { success: false, customError: error.customError };
     }
     return { success: false };
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private static handleTokenError(error: any): ServiceResponseToken {
+    console.error(error);
+    if (objectAttributeExistsAndHasValue(error, 'customError') === true) {
+      return { success: false, customError: error.customError };
+    }
+    return { success: false };
+  }
+
+  async CreateRefreshToken(
+    userId: string,
+    token: string,
+    ip?: string,
+    userAgent?: string
+  ): Promise<ServiceResponseToken> {
+    try {
+      const userObjectId = new ObjectId(userId);
+      const expiresAt = new Date();
+      expiresAt.setDate(
+        expiresAt.getDate() +
+          parseInt(EnvironmentVariables.Refresh_Token_Expiration_Time.replace(/\D/g, ''), 10)
+      );
+
+      const tokenId = new ObjectId();
+      await this.refreshTokens.insertOne({
+        _id: tokenId,
+        userId: userObjectId,
+        token,
+        createdAt: new Date(),
+        expiresAt,
+        revoked: false,
+        ip,
+        userAgent,
+      });
+
+      return { success: true, data: { tokenId } };
+    } catch (error) {
+      return AuthService.handleTokenError(error);
+    }
   }
 
   async InsertUserWithCredentials(email: string, password: string): Promise<ServiceResponse> {
@@ -50,7 +94,6 @@ class AuthService {
         signInMethod: 'credentials',
         isVerified: false,
         schemaVersion: 0,
-        refreshToken: '',
         isActive: true,
       });
 
@@ -64,6 +107,38 @@ class AuthService {
       };
 
       return { success: true, data: data };
+    } catch (error) {
+      return AuthService.handleError(error);
+    }
+  }
+
+  async UpdateRefreshToken(
+    tokenId: string,
+    newToken: string,
+    ip?: string,
+    userAgent?: string
+  ): Promise<ServiceResponse> {
+    try {
+      const expiresAt = new Date();
+      expiresAt.setDate(
+        expiresAt.getDate() +
+          parseInt(EnvironmentVariables.Refresh_Token_Expiration_Time.replace(/\D/g, ''), 10)
+      );
+
+      await this.refreshTokens.updateOne(
+        { _id: new ObjectId(tokenId) },
+        {
+          $set: {
+            token: newToken,
+            createdAt: new Date(),
+            expiresAt,
+            ip,
+            userAgent,
+          },
+        }
+      );
+
+      return { success: true };
     } catch (error) {
       return AuthService.handleError(error);
     }
@@ -92,7 +167,6 @@ class AuthService {
         biography: biography,
         phone: '',
         password: '',
-        refreshToken: '',
         signInMethod: signInMethod,
         isVerified: true,
         schemaVersion: 0,
@@ -107,41 +181,6 @@ class AuthService {
         signInMethod: signInMethod,
       };
       return { success: true, data: data };
-    } catch (error) {
-      return AuthService.handleError(error);
-    }
-  }
-
-  async updateUserRefreshToken(email: string, token: string) {
-    try {
-      await this.users.updateOne(
-        {
-          email,
-        },
-        {
-          $set: {
-            refreshToken: token,
-          },
-        }
-      );
-      return { success: true };
-    } catch (error) {
-      return AuthService.handleError(error);
-    }
-  }
-
-  async updateUserRefreshTokenById(userId: string, token: string) {
-    try {
-      await this.users.updateOne(
-        {
-          _id: new ObjectId(userId),
-        },
-        {
-          $set: {
-            refreshToken: token,
-          },
-        }
-      );
     } catch (error) {
       return AuthService.handleError(error);
     }
@@ -171,6 +210,50 @@ class AuthService {
         userId: result._id,
       };
       return { success: true, data: data };
+    } catch (error) {
+      return AuthService.handleError(error);
+    }
+  }
+
+  async RevokeRefreshToken(tokenId: string): Promise<ServiceResponse> {
+    try {
+      const now = new Date();
+      const deleteAfter = new Date();
+      deleteAfter.setDate(deleteAfter.getDate() + Number(EnvironmentVariables.Token_Deletion_Time));
+
+      await this.refreshTokens.updateOne(
+        { _id: new ObjectId(tokenId) },
+        {
+          $set: {
+            revoked: true,
+            revokedAt: now,
+            deleteAt: deleteAfter, // When to auto-delete (x days after revoked)
+          },
+        }
+      );
+      return { success: true };
+    } catch (error) {
+      return AuthService.handleError(error);
+    }
+  }
+
+  async RevokeRefreshTokenByToken(token: string): Promise<ServiceResponse> {
+    try {
+      const now = new Date();
+      const deleteAfter = new Date();
+      deleteAfter.setDate(deleteAfter.getDate() + Number(EnvironmentVariables.Token_Deletion_Time));
+
+      await this.refreshTokens.updateOne(
+        { token: token, revoked: false },
+        {
+          $set: {
+            revoked: true,
+            revokedAt: now,
+            deleteAt: deleteAfter, // When to auto-delete (x days after revoked)
+          },
+        }
+      );
+      return { success: true };
     } catch (error) {
       return AuthService.handleError(error);
     }

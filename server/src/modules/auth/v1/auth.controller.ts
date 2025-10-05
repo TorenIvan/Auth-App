@@ -188,7 +188,14 @@ class AuthController {
       const cookieOptions = generateSocialCookieOptions();
 
       const { access_token, refresh_token } = generateAuthJWTs(userId!, 'facebook');
-      await this.authService.updateUserRefreshTokenById(userId!, refresh_token);
+      const ip = request.ip || request.headers['x-forwarded-for'] || request.headers['x-real-ip'];
+      const userAgent = request.headers['user-agent'];
+      await this.authService.CreateRefreshToken(
+        userId!,
+        refresh_token,
+        typeof ip === 'string' ? ip : ip?.[0],
+        userAgent || 'Unknown'
+      );
 
       reply
         .code(200)
@@ -273,7 +280,14 @@ class AuthController {
       const cookieOptions = generateSocialCookieOptions();
 
       const { access_token, refresh_token } = generateAuthJWTs(userId!, 'github');
-      await this.authService.updateUserRefreshTokenById(userId!, refresh_token);
+      const ip = request.ip || request.headers['x-forwarded-for'] || request.headers['x-real-ip'];
+      const userAgent = request.headers['user-agent'];
+      await this.authService.CreateRefreshToken(
+        userId!,
+        refresh_token,
+        typeof ip === 'string' ? ip : ip?.[0],
+        userAgent || 'Unknown'
+      );
 
       reply
         .code(200)
@@ -349,7 +363,14 @@ class AuthController {
 
       const cookieOptions = generateSocialCookieOptions();
       const { access_token, refresh_token } = generateAuthJWTs(userId!, 'google');
-      await this.authService.updateUserRefreshTokenById(userId!, refresh_token);
+      const ip = request.ip || request.headers['x-forwarded-for'] || request.headers['x-real-ip'];
+      const userAgent = request.headers['user-agent'];
+      await this.authService.CreateRefreshToken(
+        userId!,
+        refresh_token,
+        typeof ip === 'string' ? ip : ip?.[0],
+        userAgent || 'Unknown'
+      );
 
       reply
         .code(200)
@@ -430,7 +451,14 @@ class AuthController {
 
       const cookieOptions = generateSocialCookieOptions();
       const { access_token, refresh_token } = generateAuthJWTs(userId!, 'discord');
-      await this.authService.updateUserRefreshTokenById(userId!, refresh_token);
+      const ip = request.ip || request.headers['x-forwarded-for'] || request.headers['x-real-ip'];
+      const userAgent = request.headers['user-agent'];
+      await this.authService.CreateRefreshToken(
+        userId!,
+        refresh_token,
+        typeof ip === 'string' ? ip : ip?.[0],
+        userAgent || 'Unknown'
+      );
 
       reply
         .code(200)
@@ -511,7 +539,14 @@ class AuthController {
 
       const cookieOptions = generateSocialCookieOptions();
       const { access_token, refresh_token } = generateAuthJWTs(userId!, 'gitlab');
-      await this.authService.updateUserRefreshTokenById(userId!, refresh_token);
+      const ip = request.ip || request.headers['x-forwarded-for'] || request.headers['x-real-ip'];
+      const userAgent = request.headers['user-agent'];
+      await this.authService.CreateRefreshToken(
+        userId!,
+        refresh_token,
+        typeof ip === 'string' ? ip : ip?.[0],
+        userAgent || 'Unknown'
+      );
 
       reply
         .code(200)
@@ -571,7 +606,14 @@ class AuthController {
       const { access_token, refresh_token } = generateAuthJWTs(
         userCredsResponse.data!.userId.toString()
       );
-      await this.authService.updateUserRefreshToken(email.trim().toLowerCase(), refresh_token);
+      const ip = request.ip || request.headers['x-forwarded-for'] || request.headers['x-real-ip'];
+      const userAgent = request.headers['user-agent'];
+      await this.authService.CreateRefreshToken(
+        userCredsResponse.data!.userId.toString(),
+        refresh_token,
+        typeof ip === 'string' ? ip : ip?.[0],
+        userAgent || 'Unknown'
+      );
 
       const cookieOptions = generateCookieOptions();
 
@@ -643,13 +685,20 @@ class AuthController {
 
   async renewTokens(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const { userId, signInMethod } = request;
-
+      const { userId, signInMethod, refreshTokenId } = request;
       const { access_token, refresh_token } = generateAuthJWTs(userId, signInMethod);
-      await this.authService.updateUserRefreshTokenById(userId, refresh_token);
+
+      const ip = request.ip || request.headers['x-forwarded-for'] || request.headers['x-real-ip'];
+      const userAgent = request.headers['user-agent'];
+
+      await this.authService.UpdateRefreshToken(
+        refreshTokenId,
+        refresh_token,
+        typeof ip === 'string' ? ip : ip?.[0],
+        userAgent || 'Unknown'
+      );
 
       const cookieOptions = generateCookieOptions();
-
       reply
         .code(200)
         .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
@@ -707,12 +756,23 @@ class AuthController {
     }
   }
 
-  async logout(_: FastifyRequest, reply: FastifyReply) {
-    return reply
-      .code(200)
-      .clearCookie(EnvironmentVariables.Cookie_Name, generateCookieOptionsToClear())
-      .clearCookie(EnvironmentVariables.Cookie_Name_Social_Profile, generateCookieOptionsToClear())
-      .send({ message: 'Logged out successfully' });
+  async logout(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const refreshToken = request.cookies[EnvironmentVariables.Cookie_Name];
+      if (refreshToken) {
+        await this.authService.RevokeRefreshTokenByToken(refreshToken);
+      }
+      return reply
+        .code(200)
+        .clearCookie(EnvironmentVariables.Cookie_Name, generateCookieOptionsToClear())
+        .clearCookie(
+          EnvironmentVariables.Cookie_Name_Social_Profile,
+          generateCookieOptionsToClear()
+        )
+        .send({ message: 'Logged out successfully' });
+    } catch (error) {
+      AuthController.handleError(reply, 500, Errors.GenericError);
+    }
   }
 
   async checkIfUserIsAuthenticated(_: FastifyRequest, reply: FastifyReply) {

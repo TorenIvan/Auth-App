@@ -22,8 +22,18 @@ declare global {
     data?: ServiceInsertedData | ServiceFoundData;
   };
 
+  type ServiceResponseToken = {
+    success: boolean;
+    customError?: string;
+    data?: ServiceTokenData;
+  };
+
   type ServiceFoundData = {
     userId: ObjectId;
+  };
+
+  type ServiceTokenData = {
+    tokenId: ObjectId;
   };
 
   type ServiceInsertedData = ServiceFoundData & {

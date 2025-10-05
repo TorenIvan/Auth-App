@@ -1,13 +1,13 @@
-import { Db, MongoClient } from "mongodb";
-import UserService from "../../../modules/user/v1/user.service";
-import AuthService from "../../../modules/auth/v1/auth.service";
-import UserController from "../../../modules/user/v1/user.controller";
-import AuthController from "../../../modules/auth/v1/auth.controller";
+import { Db, MongoClient } from 'mongodb';
+import UserService from '../../../modules/user/v1/user.service';
+import AuthService from '../../../modules/auth/v1/auth.service';
+import UserController from '../../../modules/user/v1/user.controller';
+import AuthController from '../../../modules/auth/v1/auth.controller';
 
-declare module "fastify" {
+declare module 'fastify' {
   export interface FastifyInstance {
     db: Db;
-    mongoClient: MongoClient,
+    mongoClient: MongoClient;
     services: {
       auth: AuthService;
       user: UserService;
@@ -16,38 +16,17 @@ declare module "fastify" {
       auth: AuthController;
       user: UserController;
     };
-    verifyAccessTokenHeader: (
-      request: FastifyRequest,
-      reply: FastifyReply
-    ) => Promise<void>;
-    verifySocialProfileTokenCookie: (
-      request: FastifyRequest,
-      reply: FastifyReply
-    ) => Promise<void>;
-    verifyRefreshTokenCookie: (
-      request: FastifyRequest,
-      reply: FastifyReply
-    ) => Promise<void>;
-    verifyResetPasswordCookie: (
-      request: FastifyRequest,
-      reply: FastifyReply
-    ) => Promise<void>;
-    checkIfTokenAlreadyExists: (
-      request: FastifyRequest,
-      reply: FastifyReply
-    ) => Promise<void>;
-    isAuthenticated: (
-      request: FastifyRequest,
-      reply: FastifyReply
-    ) => Promise<void>;
+    verifyAccessTokenHeader: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
+    verifySocialProfileTokenCookie: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
+    verifyRefreshTokenCookie: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
+    verifyResetPasswordCookie: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
+    checkIfTokenAlreadyExists: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
+    isAuthenticated: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
     actionForbiddenToAuthenticatedUser: (
       request: FastifyRequest,
       reply: FastifyReply
     ) => Promise<void>;
-    verifyImageUpload: (
-      request: FastifyRequest,
-      reply: FastifyReply
-    ) => Promise<void>;
+    verifyImageUpload: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
   }
 
   export interface FastifyMultipartFile {
@@ -64,6 +43,7 @@ declare module "fastify" {
   export interface FastifyRequest {
     userId: string;
     signInMethod: SignInMethod;
+    refreshTokenId: string;
     cookies: { [cookieName: string]: string | undefined };
     file: FastifyMultipartFile;
   }
@@ -76,21 +56,14 @@ declare module "fastify" {
      * @param value Cookie value
      * @param options Serialize options
      */
-    setCookie(
-      name: string,
-      value: string,
-      options?: fastifyCookie.CookieSerializeOptions
-    ): this;
+    setCookie(name: string, value: string, options?: fastifyCookie.CookieSerializeOptions): this;
 
     /**
      * clear response cookie
      * @param name Cookie name
      * @param options Serialize options
      */
-    clearCookie(
-      name: string,
-      options?: fastifyCookie.CookieSerializeOptions
-    ): this;
+    clearCookie(name: string, options?: fastifyCookie.CookieSerializeOptions): this;
   }
 }
 

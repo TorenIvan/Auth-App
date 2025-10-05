@@ -39,4 +39,5 @@ export const EnvironmentVariables = {
   Discord_App_Redirect_Uri: process.env.DISCORD_APP_REDIRECT_URI!,
   Cookie_Name_Social_Profile: process.env.COOKIE_NAME_SOCIAL_PROFILE!,
   Log_Level: process.env.LOG_LEVEL!,
+  Token_Deletion_Time: process.env.TOKEN_DELETION_TIME!,
 } as const;

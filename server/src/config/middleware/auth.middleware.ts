@@ -44,6 +44,17 @@ const authMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): 
   fastify.decorateRequest('signInMethod', 'credentials');
 
   /**
+   * Decorates the Fastify request object with a `refreshTokenId` property.
+   *
+   * This property stores the MongoDB ObjectId of the current refresh token document being used.
+   * Used to identify which specific device/session token should be revoked during logout operations.
+   * Initialized as an empty string by default and populated by verifyRefreshTokenCookie middleware.
+   *
+   * @property {string} refreshTokenId - The refresh token document's ID for the current session.
+   */
+  fastify.decorateRequest('refreshTokenId', '');
+
+  /**
    * Verifies the access token from the Authorization header.
    *
    * - Extracts token using `retrieveAccessToken` from the Authorization header.
@@ -105,15 +116,25 @@ const authMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): 
         const user = await fastify.db.collection('users').findOne({
           _id: new ObjectId(data.userId),
           isActive: true,
-          refreshToken: token,
         });
+
         if (!user) {
-          throw new Error(
-            `User with id: ${data.userId} has an invalid user or has an inactive account or the refresh token is invalid. Authentication failed!`
-          );
+          throw new Error(`User with id: ${data.userId} not found or inactive.`);
+        }
+
+        const refreshTokenDocument = await fastify.db.collection('refresh_tokens').findOne({
+          userId: new ObjectId(data.userId),
+          token: token,
+          revoked: false,
+          expiresAt: { $gt: new Date() },
+        });
+
+        if (!refreshTokenDocument) {
+          throw new Error(`Refresh token invalid, revoked, or expired.`);
         }
 
         request.userId = data.userId;
+        request.refreshTokenId = refreshTokenDocument._id.toString();
         request.signInMethod = (data.signInMethod as SignInMethod) ?? 'credentials';
       } catch (error) {
         logger.debug(error);
@@ -277,11 +298,21 @@ const authMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): 
           const user = await fastify.db.collection('users').findOne({
             _id: new ObjectId(refreshTokenData.userId),
             isActive: true,
-            refreshToken: refreshToken,
           });
 
           if (!user) {
-            throw new Error('Invalid user, inactive account, or invalid refresh token');
+            throw new Error('Invalid user or inactive account');
+          }
+
+          const refreshTokenDoc = await fastify.db.collection('refresh_tokens').findOne({
+            userId: new ObjectId(refreshTokenData.userId),
+            token: refreshToken,
+            revoked: false,
+            expiresAt: { $gt: new Date() },
+          });
+
+          if (!refreshTokenDoc) {
+            throw new Error('Invalid, revoked, or expired refresh token');
           }
 
           await verifySocialProfileToken(request.cookies, refreshTokenData.signInMethod);

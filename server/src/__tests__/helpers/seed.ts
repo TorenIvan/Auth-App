@@ -183,7 +183,6 @@ export async function generateTestUser(
     isVerified: options.isVerified ?? faker.datatype.boolean({ probability: 0.8 }),
     isActive: options.isActive ?? faker.datatype.boolean({ probability: 0.8 }),
     image: options.withImage ? generateTestImage() : undefined,
-    refreshToken: faker.string.uuid(),
   };
 
   return { user, plainPassword };
