@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode, MouseEvent } from 'react';
 import { useTheme } from '../../store';
 import { LogoIcon, ThemeIcon } from '../../icons';
 import styles from './styles.module.scss';
@@ -6,7 +6,7 @@ import styles from './styles.module.scss';
 function Header({ rightSlot }: IProps) {
   const [theme, toggleTheme] = useTheme();
 
-  const handleThemeIconClick = (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleThemeIconClick = (event: MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
     toggleTheme();
   };

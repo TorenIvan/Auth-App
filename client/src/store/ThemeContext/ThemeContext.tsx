@@ -15,15 +15,15 @@ const ThemeContext = createContext<IThemeContextValue | undefined>(undefined);
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useLocalStorage<Theme>('app-theme', defaultTheme);
 
+  useEffect(() => {
+    document.body.className = theme;
+  }, [theme]);
+
   const toggleTheme = useCallback(() => {
     const newTheme =
       theme === Constants.LightPalette ? Constants.DarkPalette : Constants.LightPalette;
     setTheme(newTheme);
   }, [theme, setTheme]);
-
-  useEffect(() => {
-    document.body.className = theme;
-  }, [theme]);
 
   return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>;
 }

@@ -7,8 +7,7 @@ export const logger = pino({
     target: 'pino-pretty',
     options: {
       colorize: true,
-      // You can add more pretty options here if you want
     },
   },
-  redact: ['DATABASE_URL'], // redact sensitive info
+  redact: ['DATABASE_URL'],
 });

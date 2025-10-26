@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 export function useLocalStorage<T>(
   key: string,
@@ -15,14 +15,14 @@ export function useLocalStorage<T>(
     }
   });
 
-  const updateStoredValue = (value: T) => {
+  const updateStoredValue = useCallback((value: T) => {
     try {
       window.localStorage.setItem(key, JSON.stringify(value));
       setStoredValue(value);
     } catch (error) {
       console.error(`Failed to Update Local Storage Value with key: ${key} error: ${error}`);
     }
-  };
+  }, []);
 
   return [storedValue, updateStoredValue] as const;
 }
