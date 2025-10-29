@@ -1,0 +1,12 @@
+{
+  "name": "AuthApp",
+  "version": "1.0.0",
+  "scripts": {
+    "install:server": "cd server && npm install",
+    "install:client": "cd client && npm install",
+    "build:client": "cd client && npm run build",
+    "build:server": "cd server && npm run build:ts",
+    "build": "npm run install:server && npm run install:client && npm run build:client && npm run build:server",
+    "start": "cd server && npm start"
+  }
+}

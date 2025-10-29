@@ -1,0 +1,16 @@
+node_modules
+.env*
+!.env.example
+*.log
+.git
+.vscode
+.idea
+coverage
+*.test.ts
+*.spec.ts
+test/
+tests/
+__tests__/
+*.pem
+key.pem
+cert.pem
