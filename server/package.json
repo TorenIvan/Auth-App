@@ -12,7 +12,7 @@
     "test:coverage": "vitest --coverage",
     "build:ts": "tsc",
     "dev": "NODE_ENV=development tsc && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"tsc -w\" \" export NODE_ENV=development && fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js\"",
-    "start": "NODE_ENV=production node dist/server.js"
+    "start": "NODE_ENV=production node dist/app.js"
   },
   "keywords": [],
   "author": "TorenIvan",
