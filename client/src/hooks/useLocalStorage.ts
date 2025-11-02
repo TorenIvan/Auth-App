@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 export function useLocalStorage<T>(
   key: string,
   value: T
-): [storedValue: T, updateStoredValue: (value: T) => void] {
+): readonly [storedValue: T, updateStoredValue: (value: T) => void] {
   const [storedValue, setStoredValue] = useState(() => {
     try {
       const item = window.localStorage.getItem(key);

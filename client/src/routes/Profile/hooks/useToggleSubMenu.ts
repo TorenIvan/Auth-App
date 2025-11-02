@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-type ReturnType = [isSubMenuOpen: boolean, toggleSubMenu: (isOpen?: boolean) => void];
+type ReturnType = readonly [isSubMenuOpen: boolean, toggleSubMenu: (isOpen?: boolean) => void];
 
 export function useToggleSubMenu(): ReturnType {
   const [isSubMenuOpen, setSubMenuOpen] = useState<boolean>(false);
