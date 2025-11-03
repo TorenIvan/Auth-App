@@ -88,8 +88,13 @@ const appPlugin: FastifyPluginAsync<AppOptions> = async (fastify, options): Prom
   await fastify.register(DIPlugin);
   await fastify.register(authMiddleware, options);
   await fastify.register(userMiddleware, options);
-  await fastify.register(authRoutesV1(fastify.controllers.auth), options);
-  await fastify.register(userRoutesV1(fastify.controllers.user), options);
+  await fastify.register(
+    async function (api) {
+      await api.register(authRoutesV1(api.controllers.auth));
+      await api.register(userRoutesV1(api.controllers.user));
+    },
+    { prefix: '/api' }
+  );
   await fastify.register(httpErrorPlugin, options);
 
   if (process.env.NODE_ENV === 'production') {
