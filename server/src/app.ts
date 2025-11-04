@@ -58,7 +58,7 @@ const appPlugin: FastifyPluginAsync<AppOptions> = async (fastify, options): Prom
               defaultSrc: ["'self'"],
               styleSrc: ["'self'", "'unsafe-inline'"],
               scriptSrc: ["'self'"],
-              imgSrc: ["'self'", 'data:', 'https:'],
+              imgSrc: ["'self'", 'data:', 'https:', 'blob:'],
               connectSrc: ["'self'"],
             },
           }
