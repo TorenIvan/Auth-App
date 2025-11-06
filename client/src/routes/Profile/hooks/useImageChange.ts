@@ -1,14 +1,11 @@
-import { ChangeEvent, useState, useEffect, useRef } from 'react';
+import { ChangeEvent, useState, useEffect } from 'react';
 
 function useImageChange(imageName: string | undefined) {
   const [image, setImage] = useState<string | null>(findPhoto(imageName));
-  const hasPreviewRef = useRef(false); // Track if user uploaded a preview
 
   useEffect(() => {
-    if (!hasPreviewRef.current) {
-      setImage(findPhoto(imageName));
-    }
-  }, [imageName]);
+    setImage(findPhoto(imageName));
+  }, []);
 
   function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
     event.stopPropagation();
@@ -20,14 +17,9 @@ function useImageChange(imageName: string | undefined) {
 
     const imageUrl = URL.createObjectURL(files[0]);
     setImage(imageUrl);
-    hasPreviewRef.current = true;
   }
 
-  function resetPreview() {
-    hasPreviewRef.current = false;
-  }
-
-  return [image, handleImageChange, resetPreview] as const;
+  return [image, handleImageChange] as const;
 }
 
 export { useImageChange };

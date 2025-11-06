@@ -21,9 +21,8 @@ import styles from './styles.module.scss';
 export function ProfileEdit() {
   const { userInfo, isFetching } = useRetrieveUserDataQuery();
   const { editUser, isMutating } = useEditUserDataMutation();
-
+  const [image, handleImageChange] = useImageChange(userInfo?.image);
   const inputFileRef = useRef<HTMLInputElement>(null);
-  const [image, handleImageChange, resetPreview] = useImageChange(userInfo?.image);
 
   function triggerImageChange() {
     inputFileRef?.current?.click();
@@ -48,7 +47,6 @@ export function ProfileEdit() {
 
     if (isFormValid(formData) === false) return;
     editUser(formData);
-    resetPreview();
   }
 
   if (isFetching === false && userInfo === undefined) return undefined;
