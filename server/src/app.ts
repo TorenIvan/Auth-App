@@ -96,6 +96,7 @@ const appPlugin: FastifyPluginAsync<AppOptions> = async (fastify, options): Prom
     { prefix: '/api' }
   );
   await fastify.register(httpErrorPlugin, options);
+  await fastify.register(notFoundPlugin, options);
 
   if (process.env.NODE_ENV === 'production') {
     await fastify.register(fastifyStatic, {
@@ -103,8 +104,6 @@ const appPlugin: FastifyPluginAsync<AppOptions> = async (fastify, options): Prom
       prefix: '/',
     });
   }
-
-  await fastify.register(notFoundPlugin, options);
 };
 
 if (require.main === module) {
