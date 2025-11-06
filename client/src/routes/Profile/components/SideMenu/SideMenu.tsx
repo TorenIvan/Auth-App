@@ -6,7 +6,7 @@ import styles from './styles.module.scss';
 
 interface IProps {
   isOpen: boolean;
-  onPressingOpenButton: (isOpen?: boolean) => void;
+  onPressingOpenButton: (isOpen: boolean) => void;
   children: ReactNode;
 }
 
@@ -18,7 +18,7 @@ function SideMenu({ isOpen, onPressingOpenButton, children }: IProps) {
       className={styles['account-menu']}
       onMouseOver={() => onPressingOpenButton(true)}
       onMouseOut={() => onPressingOpenButton(false)}
-      onClick={() => onPressingOpenButton()}
+      onClick={() => onPressingOpenButton(!isOpen)}
     >
       <div className={styles['account-menu-dropdown']}>
         <UserAvatar userImage={userInfo?.image} isLoading={isFetching} />
