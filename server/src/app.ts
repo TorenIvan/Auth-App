@@ -95,9 +95,7 @@ const appPlugin: FastifyPluginAsync<AppOptions> = async (fastify, options): Prom
         const accept = request.headers.accept || '';
         const isBrowserNavigation = accept.includes('text/html');
         if (isBrowserNavigation && process.env.NODE_ENV === 'production') {
-          const indexPath = resolve(__dirname, '../../client/dist/index.html');
-          const html = readFileSync(indexPath, 'utf-8');
-          return reply.type('text/html').send(html);
+          return reply.sendFile('index.html');
         }
       });
       await api.register(authRoutesV1(api.controllers.auth));
