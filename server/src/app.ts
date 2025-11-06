@@ -102,6 +102,7 @@ const appPlugin: FastifyPluginAsync<AppOptions> = async (fastify, options): Prom
     await fastify.register(fastifyStatic, {
       root: resolve(__dirname, '../../client/dist'),
       prefix: '/',
+      wildcard: false,
     });
   }
 };
