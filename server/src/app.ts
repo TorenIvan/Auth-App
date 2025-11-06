@@ -90,6 +90,16 @@ const appPlugin: FastifyPluginAsync<AppOptions> = async (fastify, options): Prom
   await fastify.register(userMiddleware, options);
   await fastify.register(
     async function (api) {
+      api.addHook('onRequest', async (request, reply) => {
+        if (request.method !== 'GET') return;
+        const accept = request.headers.accept || '';
+        const isBrowserNavigation = accept.includes('text/html');
+        if (isBrowserNavigation && process.env.NODE_ENV === 'production') {
+          const indexPath = resolve(__dirname, '../../client/dist/index.html');
+          const html = readFileSync(indexPath, 'utf-8');
+          return reply.type('text/html').send(html);
+        }
+      });
       await api.register(authRoutesV1(api.controllers.auth));
       await api.register(userRoutesV1(api.controllers.user));
     },
