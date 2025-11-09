@@ -26,7 +26,7 @@ Fastify TypeScript backend API implementing secure authentication with JWT-based
 
 ### User Management
 -  User profile CRUD operations
--  Profile image upload (JPEG/PNG, max 16MB)
+-  Profile image upload (JPEG/PNG)
 -  Email notifications via Resend
 
 ## Tech Stack
