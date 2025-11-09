@@ -229,7 +229,6 @@ export async function seedDatabase(db: Db, options: SeedOptions = {}): Promise<S
   seededData.users = users;
   seededData.testPasswords = passwords;
 
-  // If added admin and roles in the future
   if (includeAdmin) {
     const { user: adminUser, plainPassword } = await generateTestUser({
       withImage: withImages,

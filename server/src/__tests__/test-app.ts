@@ -14,19 +14,17 @@ import notFoundPlugin from '../config/plugins/notFound.plugin';
 
 export async function createTestApp(): Promise<FastifyInstance> {
   const fastify = Fastify({
-    logger: false // Disable logging in tests
+    logger: false,
   });
 
   const options = {
-    // Override environment variables for testing
     DatabaseUri: testDbUri,
-    DatabaseName: testDbName
+    DatabaseName: testDbName,
   };
 
-  // Register your plugins in the same order as your main app
   await fastify.register(databasePlugin, options);
   await fastify.register(fastifyAutoload, {
-    dir: join(__dirname, "../src/config/utils"),
+    dir: join(__dirname, '../src/config/utils'),
     options: options,
   });
   await fastify.register(fastifySensible);

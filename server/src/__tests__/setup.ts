@@ -20,8 +20,8 @@ beforeAll(async () => {
 
   process.env.DB_URI = testDbUri;
   process.env.DB_NAME = testDbName;
-  process.env.DB_USERNAME = "";
-  process.env.DB_PASSWORD = "";
+  process.env.DB_USERNAME = '';
+  process.env.DB_PASSWORD = '';
 
   // Create a client for test utilities
   mongoClient = new MongoClient(testDbUri);
@@ -34,10 +34,9 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  // Clean database before each test
   const db = mongoClient.db(testDbName);
   const collections = await db.listCollections().toArray();
-  
+
   for (const collection of collections) {
     await db.collection(collection.name).deleteMany({});
   }
