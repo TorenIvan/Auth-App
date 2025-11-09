@@ -226,6 +226,12 @@ The application is deployed on Railway with custom domain and SSL/TLS certificat
 
 This project was originally inspired by a challenge from the legacy DevChallenges.io platform, which provided initial design mockups and requirements. The implementation has been significantly enhanced with modern security patterns and features.
 
+## Project Details
+
+For more detailed information:
+- [Client Documentation](./client/README.md) - Frontend implementation details
+- [Server Documentation](./server/README.md) - Backend API documentation
+
 ## License
 
 MIT
