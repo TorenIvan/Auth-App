@@ -138,7 +138,7 @@ if (require.main === module) {
       await fastify.listen({ port, host });
 
       const protocol = isDevelopment ? 'https' : 'http';
-      console.log(`🚀 Server running on ${protocol}://${host}:${port}`);
+      console.log(`Server is running on ${protocol}://${host}:${port}`);
     } catch (err) {
       fastify.log.error(err);
       process.exit(1);

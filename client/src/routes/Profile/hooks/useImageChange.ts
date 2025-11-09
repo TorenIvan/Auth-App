@@ -5,7 +5,7 @@ function useImageChange(imageName: string | undefined) {
 
   useEffect(() => {
     setImage(findPhoto(imageName));
-  }, []);
+  }, [imageName]);
 
   function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
     event.stopPropagation();
