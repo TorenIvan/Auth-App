@@ -57,7 +57,6 @@ auth-app/
 - **React Router v6** for routing
 - **React Query v4** (TanStack Query) for server state management
 - **Axios** for API communication
-- **Tailwind CSS** for styling
 
 ### Backend
 - **Node.js** with TypeScript
