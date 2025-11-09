@@ -104,13 +104,6 @@ PORT=3000
 NODE_ENV=development
 CLIENT_URL=http://localhost:5173
 
-# Email Service (e.g., Gmail, SendGrid, etc.)
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USER=your-email@gmail.com
-EMAIL_PASSWORD=your-app-password
-EMAIL_FROM=noreply@yourapp.com
-
 # OAuth2 - Google
 GOOGLE_CLIENT_ID=your-google-client-id
 GOOGLE_CLIENT_SECRET=your-google-client-secret
