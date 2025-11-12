@@ -103,7 +103,7 @@ class AuthController {
       }
 
       const hasConfirmedEmail: ServiceResponse = await this.authService.CheckUserEmailConfirmation(
-        request.query.email.toLowerCase()
+        request.query.email.trim().toLowerCase()
       );
 
       if (hasConfirmedEmail.success === false) {
@@ -634,13 +634,13 @@ class AuthController {
       const { email } = request.body;
 
       const serviceResponse: ServiceResponse = await this.authService.CheckEmailExistence(
-        email.toLowerCase()
+        email.trim().toLowerCase()
       );
 
       const emailExists: boolean = serviceResponse.success;
 
       const hasConfirmedEmail: ServiceResponse = await this.authService.CheckUserEmailConfirmation(
-        email.toLowerCase()
+        email.trim().toLowerCase()
       );
 
       const emailConfirmed: boolean = hasConfirmedEmail.success;

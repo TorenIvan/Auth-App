@@ -1,9 +1,9 @@
 import { Collection, Db, ObjectId, UpdateResult } from 'mongodb';
+import * as bcrypt from 'bcryptjs';
+import { EnvironmentVariables } from '../../../config/utils/constants/EnvironmentVariables';
 import { Errors } from '../../../config/utils/constants/Errors';
 import { objectAttributeExistsAndHasValue } from '../../../config/utils/helpers';
 import User from './user.model';
-import * as bcrypt from 'bcryptjs';
-import { EnvironmentVariables } from '../../../config/utils/constants/EnvironmentVariables';
 
 class UserService {
   private users: Collection<User>;
@@ -75,7 +75,7 @@ class UserService {
         biography,
       };
 
-      if (newPassword !== '') {
+      if (newPassword.trim() !== '') {
         const salt = await bcrypt.genSalt(Number(EnvironmentVariables.Salt_Size));
         const hash = await bcrypt.hash(newPassword.trim(), salt);
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

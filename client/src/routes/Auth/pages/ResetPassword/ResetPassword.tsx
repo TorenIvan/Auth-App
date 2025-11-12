@@ -55,8 +55,6 @@ export function ResetPassword() {
         navigate('/login');
       } catch (error) {
         setIsMutating(false);
-        console.log({ error });
-
         if ((error as ForbiddenError)?.isForbidden) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const errorMessage = ((error as ForbiddenError)?.message as any).message ?? null;

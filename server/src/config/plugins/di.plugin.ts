@@ -23,7 +23,7 @@ const DIPlugin: FastifyPluginAsync = fp(async (fastify: FastifyInstance) => {
 
   // Instantiate controllers with required dependencies
   const authController = new AuthController(authService);
-  const userController = new UserController(fastify.mongoClient, userService, authService);
+  const userController = new UserController(userService, authService);
 
   // Decorate Fastify with services
   fastify.decorate('services', {

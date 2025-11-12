@@ -6,7 +6,7 @@ export const axiosInstance = axios.create({
     'Content-Type': 'application/json',
   },
   withCredentials: true,
-  timeout: 10000,
+  timeout: 20000,
 });
 
 export function addAuthorizationHeader(accessToken: string): void {
