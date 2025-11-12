@@ -42,8 +42,8 @@ export function ProfileEdit() {
     formData.append('username', (form.username.value as string) || '');
     formData.append('biography', (form.biography.value as string) || '');
     formData.append('phone', (form.phone.value as string) || '');
-    formData.append('currentPassword', form.currentPassword.value || '');
-    formData.append('newPassword', form.newPassword.value || '');
+    formData.append('currentPassword', form.currentPassword?.value || '');
+    formData.append('newPassword', form.newPassword?.value || '');
 
     if (isFormValid(formData) === false) return;
     editUser(formData);
