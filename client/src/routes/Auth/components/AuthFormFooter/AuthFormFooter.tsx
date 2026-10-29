@@ -16,11 +16,6 @@ function AuthFormFooter(props: IProps): JSX.Element {
     googleInitLoginFlow();
   };
 
-  // const responseMicrosoft = async () => {
-  //   if (isSubmitting) return;
-  //   microsoftInitLoginFlow();
-  // };
-
   // const responseFacebook = async () => {
   //   if (isSubmitting) return;
   //   facebookInitLoginFlow();
@@ -35,16 +30,6 @@ function AuthFormFooter(props: IProps): JSX.Element {
     if (isSubmitting) return;
     gitlabInitLoginFlow();
   };
-
-  // const responseTwitter = async () => {
-  //   if (isSubmitting) return;
-  //   twitterInitLoginFlow();
-  // };
-
-  // const responseLinkedin = async () => {
-  //   if (isSubmitting) return;
-  //   linkedinInitLoginFlow();
-  // };
 
   const responseDiscord = async () => {
     if (isSubmitting) return;
@@ -67,15 +52,6 @@ function AuthFormFooter(props: IProps): JSX.Element {
           <GoogleIcon />
         </li>
         {/* <li
-          key="1"
-          className={footerStyles['list-item']}
-          data-loading={isSubmitting ? 'true' : 'false'}
-          onClick={responseMicrosoft}
-          title="Microsoft"
-        >
-          <MicrosoftIcon />
-        </li>
-        <li
           key="2"
           className={footerStyles['list-item']}
           data-loading={isSubmitting ? 'true' : 'false'}
@@ -83,15 +59,6 @@ function AuthFormFooter(props: IProps): JSX.Element {
           title="Facebook"
         >
           <FacebookIcon />
-        </li> */}
-        {/* <li
-          key="6"
-          className={footerStyles['list-item']}
-          data-loading={isSubmitting ? 'true' : 'false'}
-          onClick={responseLinkedin}
-          title="LinkedIn"
-        >
-          <LinkedInIcon />
         </li> */}
         <li
           key="3"
@@ -111,15 +78,6 @@ function AuthFormFooter(props: IProps): JSX.Element {
         >
           <GitlabIcon />
         </li>
-        {/* <li
-          key="5"
-          className={footerStyles['list-item']}
-          data-loading={isSubmitting ? 'true' : 'false'}
-          onClick={responseTwitter}
-          title="Twitter"
-        >
-          <TwitterIcon />
-        </li> */}
         <li
           key="7"
           className={footerStyles['list-item']}

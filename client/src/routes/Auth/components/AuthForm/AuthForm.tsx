@@ -1,5 +1,4 @@
 import { FormEvent, Fragment } from 'react';
-import 'font-awesome/css/font-awesome.min.css';
 import { faEnvelope, faEye, faEyeSlash, faLock } from '@fortawesome/free-solid-svg-icons';
 import { InputGroup } from '../../../../components';
 import { inputStyles } from '../../../../styles';
