@@ -168,7 +168,8 @@ export async function generateTestUser(
     customPassword?: string;
   } = {}
 ): Promise<{ user: User; plainPassword: string }> {
-  const plainPassword = options.customPassword || faker.internet.password({ length: 12 });
+  // Always satisfies the password policy (upper, lower, digit, 8-36 chars)
+  const plainPassword = options.customPassword || `Aa1${faker.string.alphanumeric(9)}`;
   const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
   const user: User = {
@@ -179,9 +180,10 @@ export async function generateTestUser(
     phone: faker.helpers.maybe(() => faker.phone.number(), { probability: 0.7 }) || '',
     biography: faker.helpers.maybe(() => faker.lorem.paragraph(), { probability: 0.6 }) || '',
     password: hashedPassword,
-    signInMethod: options.signInMethod || 'email',
-    isVerified: options.isVerified ?? faker.datatype.boolean({ probability: 0.8 }),
-    isActive: options.isActive ?? faker.datatype.boolean({ probability: 0.8 }),
+    signInMethod: options.signInMethod || 'credentials',
+    // Deterministic defaults; tests opt into unverified/inactive users explicitly
+    isVerified: options.isVerified ?? true,
+    isActive: options.isActive ?? true,
     image: options.withImage ? generateTestImage() : undefined,
   };
 

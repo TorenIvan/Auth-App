@@ -29,35 +29,49 @@ import { logger } from '../utils/helpers';
  * Ensures non-blocking I/O with safe concurrent access across all requests.
  * @param {FastifyInstance} fastify Encapsulated Fastify Instance.
  */
-const databasePlugin: FastifyPluginAsync = fp(async (fastify: FastifyInstance): Promise<void> => {
-  try {
-    // Single client instance with connection pool for concurrent operations
-    const client: MongoClient = new MongoClient(EnvironmentVariables.DatabaseUri, {
-      maxPoolSize: 120, // Connection pool: up to 120 concurrent DB operations
-      serverSelectionTimeoutMS: 5000, // Fail fast if DB unavailable
-      socketTimeoutMS: 45000, // Drop long-hanging sockets
-      monitorCommands: true, // Debug/logging support
-    });
-    await client.connect();
+const databasePlugin: FastifyPluginAsync<DatabasePluginOptions> = fp(
+  async (fastify: FastifyInstance, options: DatabasePluginOptions): Promise<void> => {
+    try {
+      // Options take precedence (e.g. the in-memory test database), otherwise the environment
+      const databaseUri: string = options.DatabaseUri ?? EnvironmentVariables.DatabaseUri;
+      const databaseName: string | undefined =
+        options.DatabaseName ?? EnvironmentVariables.DatabaseName;
 
-    // DB reference; shared across all requests safely
-    const db: Db = client.db(EnvironmentVariables.DatabaseName);
-    await createIndexes(db);
+      // Single client instance with connection pool for concurrent operations
+      const client: MongoClient = new MongoClient(databaseUri, {
+        maxPoolSize: 120, // Connection pool: up to 120 concurrent DB operations
+        serverSelectionTimeoutMS: 5000, // Fail fast if DB unavailable
+        socketTimeoutMS: 45000, // Drop long-hanging sockets
+        monitorCommands: true, // Debug/logging support
+      });
+      await client.connect();
 
-    // Decorate Fastify db and client instances for dependency injection
-    fastify.decorate('db', db);
-    fastify.decorate('mongoClient', client);
+      // DB reference; shared across all requests safely
+      const db: Db = client.db(databaseName);
+      await createIndexes(db);
 
-    fastify.addHook('onClose', async () => {
-      await client.close();
-      fastify.log.info(Strings.CloseDB);
-    });
-  } catch (error) {
-    console.error(error);
+      // Decorate Fastify db and client instances for dependency injection
+      fastify.decorate('db', db);
+      fastify.decorate('mongoClient', client);
+
+      fastify.addHook('onClose', async () => {
+        await client.close();
+        fastify.log.info(Strings.CloseDB);
+      });
+    } catch (error) {
+      // Fail fast: the app must not stay up without a database
+      logger.error(error);
+      throw error;
+    }
   }
-});
+);
 
 export default databasePlugin;
+
+interface DatabasePluginOptions {
+  DatabaseUri?: string;
+  DatabaseName?: string;
+}
 
 /**
  * @description Creates database indexes for optimal query performance.

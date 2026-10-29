@@ -2,6 +2,8 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { FastifyInstance } from 'fastify';
 import { createTestApp } from '../test-app';
 import { generateTestUser, generateAuthCredentials } from '../helpers/seed';
+import { sendEmail } from '../../config/utils/helpers/general/sendEmail';
+import { Strings } from '../../config/utils/constants/Strings';
 
 describe('Auth Login Credentials', () => {
   let app: FastifyInstance;
@@ -55,9 +57,10 @@ describe('Auth Login Credentials', () => {
       });
 
       expect(response.statusCode).toBe(403);
-      expect(response.json()).toMatchObject({
-        message: expect.stringContaining('confirm'),
-      });
+      // handleError sends the message as plain text
+      expect(response.body).toContain('confirm');
+      expect(sendEmail).toHaveBeenCalledTimes(1);
+      expect(sendEmail).toHaveBeenCalledWith(user.email, expect.any(String), Strings.ActionConfirmEmail);
     });
 
     it('should reject login with invalid credentials', async () => {
@@ -164,14 +167,14 @@ describe('Auth Login Credentials', () => {
       expect(response.json()).toHaveProperty('access_token');
     });
 
-    it('should update refresh token on successful login', async () => {
+    it('should store a refresh token session on successful login', async () => {
       const { user, plainPassword } = await generateTestUser({
         isVerified: true,
       });
 
       await app.db.collection('users').insertOne(user);
 
-      await app.inject({
+      const response = await app.inject({
         method: 'POST',
         url: '/v1/auth/login/credentials',
         payload: {
@@ -180,8 +183,14 @@ describe('Auth Login Credentials', () => {
         },
       });
 
-      const updatedUser = await app.db.collection('users').findOne({ email: user.email });
-      console.log(updatedUser);
+      expect(response.statusCode).toBe(200);
+      const sessions = await app.db
+        .collection('refresh_tokens')
+        .find({ userId: user._id })
+        .toArray();
+      expect(sessions).toHaveLength(1);
+      expect(sessions[0].revoked).toBe(false);
+      expect(sessions[0].expiresAt.getTime()).toBeGreaterThan(Date.now());
     });
   });
 });

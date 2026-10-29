@@ -1,7 +1,7 @@
 import Fastify, { FastifyInstance } from 'fastify';
-import fastifyAutoload from '@fastify/autoload';
 import fastifySensible from '@fastify/sensible';
-import { join } from 'path';
+import cookie from '@fastify/cookie';
+import multipart from '@fastify/multipart';
 import { testDbUri, testDbName } from './setup';
 import databasePlugin from '../config/plugins/database.plugin';
 import loggerPlugin from '../config/plugins/logger.plugin';
@@ -22,11 +22,17 @@ export async function createTestApp(): Promise<FastifyInstance> {
     DatabaseName: testDbName,
   };
 
-  await fastify.register(databasePlugin, options);
-  await fastify.register(fastifyAutoload, {
-    dir: join(__dirname, '../src/config/utils'),
-    options: options,
+  // Same request parsing as app.ts
+  await fastify.register(cookie, { hook: 'onRequest', parseOptions: {} });
+  await fastify.register(multipart, {
+    addToBody: true,
+    limits: {
+      fileSize: 16 * 1024 * 1024,
+      files: 1,
+    },
   });
+
+  await fastify.register(databasePlugin, options);
   await fastify.register(fastifySensible);
   await fastify.register(loggerPlugin);
   await fastify.register(DIPlugin, options);

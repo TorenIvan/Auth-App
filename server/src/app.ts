@@ -2,13 +2,12 @@ import { FastifyPluginAsync } from 'fastify';
 import FastifyOverview from 'fastify-overview';
 import fastifyHelmet from '@fastify/helmet';
 import fastifyStatic from '@fastify/static';
-import AutoLoad, { AutoloadPluginOptions } from '@fastify/autoload';
 import cookie from '@fastify/cookie';
 import type { FastifyCookieOptions } from '@fastify/cookie';
 import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
 import fastifySensible from '@fastify/sensible';
-import { join, resolve } from 'path';
+import { resolve } from 'path';
 import { config } from 'dotenv';
 import Fastify from 'fastify';
 import { readFileSync } from 'fs';
@@ -25,7 +24,7 @@ import { authMiddleware, userMiddleware } from './config/middleware';
 import { authRoutesV1 } from './modules/auth/v1';
 import { userRoutesV1 } from './modules/user/v1';
 
-export type AppOptions = Partial<AutoloadPluginOptions>;
+export type AppOptions = Record<string, unknown>;
 
 const appPlugin: FastifyPluginAsync<AppOptions> = async (fastify, options): Promise<void> => {
   if (process.env.NODE_ENV === 'development') {
@@ -79,10 +78,6 @@ const appPlugin: FastifyPluginAsync<AppOptions> = async (fastify, options): Prom
   });
 
   await fastify.register(databasePlugin, options);
-  await fastify.register(AutoLoad, {
-    dir: join(__dirname, './config/utils'),
-    options: options,
-  });
   await fastify.register(fastifySensible);
   await fastify.register(loggerPlugin);
   await fastify.register(DIPlugin);
