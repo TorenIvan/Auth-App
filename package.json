@@ -1,9 +1,12 @@
 {
   "name": "AuthApp",
   "version": "1.0.0",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
-    "install:server": "cd server && npm install --legacy-peer-deps",
-    "install:client": "cd client && npm install --legacy-peer-deps",
+    "install:server": "cd server && npm ci --include=dev --legacy-peer-deps",
+    "install:client": "cd client && npm ci --include=dev --legacy-peer-deps",
     "build:client": "cd client && npm run build",
     "build:server": "cd server && npm run build:ts",
     "build": "npm run install:server && npm run install:client && npm run build:client && npm run build:server",

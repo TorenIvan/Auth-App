@@ -6,30 +6,28 @@
   "directories": {
     "test": "test"
   },
- "scripts": {
+  "scripts": {
     "test": "vitest",
+    "test:run": "vitest run",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "build:ts": "tsc",
     "dev": "NODE_ENV=development tsc && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"tsc -w\" \" export NODE_ENV=development && fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js\"",
-    "start": "NODE_ENV=production node dist/app.js"
+    "start": "NODE_ENV=production node dist/app.js",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [],
   "author": "TorenIvan",
   "license": "ISC",
   "dependencies": {
-    "@fastify/autoload": "^5.7.1",
     "@fastify/cookie": "^8.3.0",
     "@fastify/cors": "^8.2.0",
     "@fastify/helmet": "^10.1.1",
     "@fastify/multipart": "^7.6.0",
-    "@fastify/oauth2": "^7.5.0",
     "@fastify/sensible": "^5.2.0",
     "@fastify/static": "^6.12.0",
-    "@sinclair/typebox": "^0.23.5",
     "@types/bcryptjs": "^2.4.2",
     "@types/jsonwebtoken": "^9.0.1",
-    "@types/nodemailer": "^6.4.7",
     "axios": "^1.6.0",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.0.2",
@@ -37,11 +35,10 @@
     "fastify-cli": "^5.9.0",
     "fastify-overview": "^3.3.0",
     "fastify-plugin": "^4.5.0",
-    "install": "^0.13.0",
     "jsonwebtoken": "^9.0.0",
     "mongodb": "^4.13.0",
-    "nodemailer": "^6.9.1",
-    "path": "^0.12.7",
+    "pino": "9.14.0",
+    "pino-pretty": "10.2.3",
     "resend": "^6.0.1",
     "zod": "^3.21.4"
   },
@@ -53,16 +50,10 @@
     "concurrently": "^7.0.0",
     "eslint": "^8.52.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^5.5.4",
-    "eslint-plugin-react": "^7.33.2",
-    "faker": "^6.6.6",
-    "faker-js": "^1.0.0",
     "fastify-tsconfig": "^1.0.1",
     "mongodb-memory-server": "^10.2.0",
-    "nodemon": "^2.0.15",
     "prettier": "^3.6.2",
-    "ts-node": "^10.4.0",
     "typescript": "^5.2.2",
     "vitest": "^3.2.4"
   }

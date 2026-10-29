@@ -1,0 +1,32 @@
+# Keeps dependencies on "latest" with a supply-chain cooldown.
+# Every Dependabot PR must pass the supply-chain gate before merge
+# (npm audit signatures, npm audit --omit=dev, lockfile registry/integrity check).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directories:
+      - /server
+      - /client
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      fastify:
+        patterns: ['fastify*', '@fastify/*', 'pino*']
+      react:
+        patterns: ['react', 'react-dom', '@types/react*', 'react-router*']
+      tanstack:
+        patterns: ['@tanstack/*']
+      vite:
+        patterns: ['vite', 'vite-*', '@vitejs/*', 'vitest']
+      eslint:
+        patterns: ['eslint*', '@typescript-eslint/*', 'typescript-eslint', 'prettier']
+    ignore:
+      # Held back on purpose (see plan, section E)
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
+      - dependency-name: eslint
+        update-types: ['version-update:semver-major']
