@@ -218,49 +218,6 @@ const authMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): 
   );
 
   /**
-   * Middleware to forbid actions for authenticated users.
-   *
-   * - Checks for valid access or refresh tokens.
-   * - If user is authenticated, responds with 403 Forbidden.
-   * - Otherwise, allows request to proceed.
-   * - Useful to block authenticated users from accessing sign-in or sign-up routes.
-   *
-   * @param {FastifyRequest} request - The incoming Fastify request object.
-   * @param {FastifyReply} reply - The Fastify reply object used to send responses.
-   * @returns {Promise<void>}
-   */
-  fastify.decorate(
-    'actionForbiddenToAuthenticatedUser',
-    async function (request: FastifyRequest, reply: FastifyReply): Promise<void> {
-      try {
-        const authHeader = request.headers.authorization;
-        const accessToken = retrieveAccessToken(authHeader);
-
-        if (accessToken) {
-          const accessTokenData = verifyJWT(accessToken!, EnvironmentVariables.Access_Token_Secret);
-          if (accessTokenData?.userId && accessTokenData?.signInMethod) {
-            return reply.status(403).send();
-          }
-        }
-
-        const refreshToken = retrieveRefreshToken(request.cookies);
-        if (refreshToken) {
-          const refreshTokenData = verifyJWT(
-            refreshToken!,
-            EnvironmentVariables.Refresh_Token_Secret
-          );
-          if (refreshTokenData?.userId && refreshTokenData?.signInMethod) {
-            return reply.status(403).send();
-          }
-        }
-        // If no tokens or invalid tokens, just continue
-      } catch {
-        return reply.status(400).send();
-      }
-    }
-  );
-
-  /**
    * Middleware to check if a user is authenticated.
    *
    * - Verifies access token and refresh token if present.
@@ -321,7 +278,7 @@ const authMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): 
 
         return reply.status(403).send();
       } catch (error) {
-        logger.debug('Authentication failed on isAuthenticated middleware:', error);
+        logger.debug({ error }, 'Authentication failed on isAuthenticated middleware');
         reply
           .status(403)
           .clearCookie(EnvironmentVariables.Cookie_Name, generateCookieOptionsToClear())

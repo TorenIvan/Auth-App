@@ -20,12 +20,7 @@ declare module 'fastify' {
     verifySocialProfileTokenCookie: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
     verifyRefreshTokenCookie: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
     verifyResetPasswordCookie: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
-    checkIfTokenAlreadyExists: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
     isAuthenticated: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
-    actionForbiddenToAuthenticatedUser: (
-      request: FastifyRequest,
-      reply: FastifyReply
-    ) => Promise<void>;
     verifyImageUpload: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
   }
 
