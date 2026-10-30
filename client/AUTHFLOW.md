@@ -106,3 +106,24 @@ Refresh token: httpOnly cookie, stateful (one session document per login, stored
   Keeping the access token in memory limits how long a stolen token is useful, it does not prevent XSS.
 - A stolen access token stays valid until it expires, also after logout or "logout all devices".
   Short access token lifetimes keep that window small.
+
+## Further reading
+
+What exists and what it leaves out compared to this implementation (checked on 2026-10-29):
+
+- **RFC 10017 — OAuth 2.0 for Browser-Based Applications** (IETF, formerly draft-ietf-oauth-browser-based-apps):
+  https://datatracker.ietf.org/doc/draft-ietf-oauth-browser-based-apps/
+  Ranks the architectures by security: Backend For Frontend (§6.1, tokens never reach the browser),
+  Token-Mediating Backend (§6.2), browser-based OAuth client (§6.3). It targets OAuth clients; this app has
+  its own first-party login, but it is the reference for "why not a BFF or a plain session cookie".
+- **Hasura — The Ultimate Guide to handling JWTs on frontend clients (GraphQL)**:
+  https://hasura.io/blog/best-practices-of-using-jwt-with-graphql
+  Access token in memory (its code uses sessionStorage), logout sync between tabs via the `storage` event.
+  No httpOnly refresh cookie in the client code, no rotation, no reuse detection.
+- **Auth0 — Refresh Token Rotation**:
+  https://auth0.com/docs/secure/tokens/refresh-tokens/refresh-token-rotation
+  Rotation and revoking the whole token family on reuse. Concepts for their product only: no cookie, no code,
+  no grace window.
+- **Auth0 blog — What Are Refresh Tokens and How to Use Them Securely**:
+  https://auth0.com/blog/refresh-tokens-what-are-they-and-when-to-use-them/
+  The same concepts, theory only.

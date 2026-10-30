@@ -266,6 +266,7 @@ This project was originally inspired by a challenge from the legacy DevChallenge
 For more detailed information:
 - [Client Documentation](./client/README.md) - Frontend implementation details
 - [Server Documentation](./server/README.md) - Backend API documentation
+- [Auth Flow](./client/AUTHFLOW.md) - How the tokens flow, plus [further reading](./client/AUTHFLOW.md#further-reading) (RFC 10017/BFF, Hasura, Auth0)
 
 ## License
 
