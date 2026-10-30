@@ -249,7 +249,13 @@ The application is deployed on Railway (Railpack builder, Node 24, `npm ci`) wit
 - Uploaded images checked by content (magic bytes), 2 MB limit
 - No tokens or query strings in logs, no internal error messages in responses
 - TypeScript for type safety
-- Known limits: an XSS on the page can still call the API (same origin); a stolen access token is valid until it expires
+- Known limits (accepted, from the localhost penetration test):
+  - An XSS on the page can still call the API (same origin); a stolen access token is valid until it expires
+  - `trustProxy` trusts exactly one hop (Railway's proxy). Reached directly or behind another proxy, the
+    `X-Forwarded-For` header could bypass the rate limits: adjust `trustProxy` to the real topology
+  - Registration and the reset cookie of forgot-password reveal whether an email has a (verified) account
+  - Images are checked by their signature, not fully decoded: a PNG with trailing bytes is stored, but it is only
+    ever served as `data:image/png` (nosniff, strict CSP), so it cannot run
 
 ## Inspiration
 

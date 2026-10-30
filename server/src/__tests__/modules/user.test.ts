@@ -249,6 +249,20 @@ describe('C9 profile: details and edit', () => {
     expect(image === undefined || image.startsWith('data:image/')).toBe(true);
   });
 
+  it('answers an unauthenticated edit with a single 401 and stores nothing', async () => {
+    const { user } = await createUser(app);
+    const { payload, headers } = multipartBody(editFields(), [
+      { filename: 'a.html', mimetype: 'image/png', data: Buffer.from('<html>') },
+    ]);
+
+    const response = await app.inject({ method: 'POST', url: '/v1/user/edit', payload, headers });
+
+    expect(response.statusCode).toBe(401);
+    expect((await app.db.collection('users').findOne({ _id: user._id }))!.username).toBe(
+      user.username
+    );
+  });
+
   it('ignores email, isVerified and signInMethod in the body', async () => {
     const { user, plainPassword } = await createUser(app);
     const { accessToken } = await loginAndGetSession(app, user, plainPassword);
