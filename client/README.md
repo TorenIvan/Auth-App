@@ -33,14 +33,14 @@ React TypeScript frontend implementing a secure Single Page Application with tok
 
 ## Tech Stack
 
-- **React 18** - UI library with TypeScript
+- **React 19** - UI library with TypeScript
 - **Vite** - Next-generation frontend tooling
-- **React Router v6** - Declarative routing for SPAs with lazy loading
-- **TanStack Query (React Query)** - Server state management and caching
+- **React Router v8** - Declarative routing for SPAs with lazy loading
+- **TanStack Query v5** - Server state management and caching
 - **Axios** - Promise-based HTTP client with interceptors
 - **Zod** - TypeScript-first schema validation
 - **react-hot-toast** - Lightweight toast notifications
-- **broadcast-channel** - Cross-tab communication for auth sync
+- **BroadcastChannel** (native) - Cross-tab login/logout sync
 - **Font Awesome** - Icon library
 
 ## Architecture
@@ -159,14 +159,13 @@ Features:
 
 ### Prerequisites
 
-- Node.js v18 or higher
-- npm
+- Node.js 24 and npm 11.10 or higher
 
 ### Installation
 
 ```bash
 cd client
-npm install
+npm ci
 ```
 
 ### Environment Variables
