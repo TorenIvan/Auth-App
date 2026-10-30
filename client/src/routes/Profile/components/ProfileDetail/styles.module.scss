@@ -14,7 +14,7 @@ $value-text: var(--text-secondary);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font-family: "Noto Sans";
+  font-family: 'Noto Sans';
   color: $value-text;
 
   span {
@@ -36,7 +36,7 @@ $value-text: var(--text-secondary);
   flex: 1;
   user-select: none;
   span {
-    font-family: "Noto Sans";
+    font-family: 'Noto Sans';
     font-style: normal;
     font-weight: 500;
     font-size: 13px;

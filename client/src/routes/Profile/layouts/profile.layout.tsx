@@ -1,5 +1,5 @@
 import { Fragment, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router';
 import { BroadcastChannel } from 'broadcast-channel';
 import { faCircleUser, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { Header, Main, Footer } from '../../../layouts';

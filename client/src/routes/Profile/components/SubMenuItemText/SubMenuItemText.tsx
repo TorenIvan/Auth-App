@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, type JSX } from 'react';
 import styles from './styles.module.scss';
 
 function SubMenuItemText({ value, color }: IProps): JSX.Element {

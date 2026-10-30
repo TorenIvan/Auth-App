@@ -7,7 +7,7 @@ import { Errors } from '../../../utils';
 
 export function useFacebookLoginMutation(): UseFacebookLogin {
   const queryClient = useQueryClient();
-  const { data, mutate, mutateAsync, isLoading, error, isError } = useMutation({
+  const { data, mutate, mutateAsync, isPending, error, isError } = useMutation({
     mutationFn: (code: string | boolean) => facebookLogin(code),
     retry: 1,
   });
@@ -29,7 +29,7 @@ export function useFacebookLoginMutation(): UseFacebookLogin {
     data,
     error,
     isError,
-    isLoggingInWithFacebook: isLoading,
+    isLoggingInWithFacebook: isPending,
     mutate,
     mutateAsync,
   } as const;

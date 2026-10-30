@@ -7,7 +7,7 @@ import { logoutUser } from '../../Profile/api';
 
 export function useLogoutMutation() {
   const queryClient = useQueryClient();
-  const { mutateAsync, isLoading, isError } = useMutation(logoutUser);
+  const { mutateAsync, isPending, isError } = useMutation({ mutationFn: logoutUser });
 
   const logout = useCallback(async () => {
     try {
@@ -26,7 +26,7 @@ export function useLogoutMutation() {
 
   return {
     logout,
-    isLoggingOut: isLoading,
+    isLoggingOut: isPending,
     isErrorLogout: isError,
   } as const;
 }

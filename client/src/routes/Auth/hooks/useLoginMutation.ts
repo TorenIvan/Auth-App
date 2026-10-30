@@ -7,7 +7,7 @@ import { loginUser } from '../api';
 
 export function useLoginMutation() {
   const queryClient = useQueryClient();
-  const { mutateAsync, isLoading, isError } = useMutation(loginUser);
+  const { mutateAsync, isPending, isError } = useMutation({ mutationFn: loginUser });
 
   const login = useCallback(async ({ email, password }: { email: string; password: string }) => {
     try {
@@ -25,7 +25,7 @@ export function useLoginMutation() {
 
   return {
     login,
-    isLoggingIn: isLoading,
+    isLoggingIn: isPending,
     isErrorLogin: isError,
   } as const;
 }

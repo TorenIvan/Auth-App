@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, type JSX } from 'react';
 import Divider from '../Divider';
 import SubMenuItem from '../SubMenuItem';
 import styles from './styles.module.scss';

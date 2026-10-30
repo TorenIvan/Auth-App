@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { DiscordIcon, GithubIcon, GitlabIcon, GoogleIcon } from '../../../../icons';
 import { Constants } from '../../../../utils';
 import {

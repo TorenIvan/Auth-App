@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import toast from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Errors, Constants } from '../../../utils';
@@ -8,7 +8,9 @@ import { editUserData, userDetailsQuery } from '../api';
 export function useEditUserDataMutation() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { mutateAsync, isLoading, isError, isSuccess, error } = useMutation(editUserData);
+  const { mutateAsync, isPending, isError, isSuccess, error } = useMutation({
+    mutationFn: editUserData,
+  });
 
   useEffect(() => {
     if (isError) {
@@ -19,7 +21,7 @@ export function useEditUserDataMutation() {
       }
     }
     if (isSuccess) {
-      queryClient.invalidateQueries(userDetailsQuery.queryKey);
+      queryClient.invalidateQueries({ queryKey: userDetailsQuery.queryKey });
       toast.success(Constants.ProfileUpdatedSuccess);
       navigate('/profile');
     }
@@ -27,7 +29,7 @@ export function useEditUserDataMutation() {
 
   return {
     editUser: mutateAsync,
-    isMutating: isLoading,
+    isMutating: isPending,
     isError,
     isSuccess,
     error,

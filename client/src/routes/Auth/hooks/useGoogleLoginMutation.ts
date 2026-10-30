@@ -7,7 +7,7 @@ import { Errors } from '../../../utils';
 
 export function useGoogleLoginMutation(): UseGoogleLogin {
   const queryClient = useQueryClient();
-  const { data, mutate, mutateAsync, isLoading, error, isError } = useMutation({
+  const { data, mutate, mutateAsync, isPending, error, isError } = useMutation({
     mutationFn: (code: string | boolean) => googleLogin(code),
     retry: 1,
   });
@@ -29,7 +29,7 @@ export function useGoogleLoginMutation(): UseGoogleLogin {
     data,
     error,
     isError,
-    isLoggingInWithGoogle: isLoading,
+    isLoggingInWithGoogle: isPending,
     mutate,
     mutateAsync,
   } as const;

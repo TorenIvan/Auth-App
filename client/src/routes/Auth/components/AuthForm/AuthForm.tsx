@@ -1,4 +1,4 @@
-import { FormEvent, Fragment } from 'react';
+import { FormEvent, Fragment, type JSX } from 'react';
 import { faEnvelope, faEye, faEyeSlash, faLock } from '@fortawesome/free-solid-svg-icons';
 import { InputGroup } from '../../../../components';
 import { inputStyles } from '../../../../styles';

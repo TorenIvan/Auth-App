@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import AuthFormHeader from '../AuthFormHeader';
 import AuthFormFooter from '../AuthFormFooter';
 import AuthForm from '../AuthForm';

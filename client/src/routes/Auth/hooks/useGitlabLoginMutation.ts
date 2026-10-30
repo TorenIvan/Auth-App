@@ -7,7 +7,7 @@ import { Errors } from '../../../utils';
 
 export function useGitlabLoginMutation(): UseGitlabLogin {
   const queryClient = useQueryClient();
-  const { data, mutate, mutateAsync, isLoading, error, isError } = useMutation({
+  const { data, mutate, mutateAsync, isPending, error, isError } = useMutation({
     mutationFn: (code: string | boolean) => gitlabLogin(code),
     retry: 1,
   });
@@ -29,7 +29,7 @@ export function useGitlabLoginMutation(): UseGitlabLogin {
     data,
     error,
     isError,
-    isLoggingInWithGitlab: isLoading,
+    isLoggingInWithGitlab: isPending,
     mutate,
     mutateAsync,
   } as const;

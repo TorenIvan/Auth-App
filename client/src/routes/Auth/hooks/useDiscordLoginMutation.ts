@@ -7,7 +7,7 @@ import { Errors } from '../../../utils';
 
 export function useDiscordLoginMutation(): UseDiscordLogin {
   const queryClient = useQueryClient();
-  const { data, mutate, mutateAsync, isLoading, error, isError } = useMutation({
+  const { data, mutate, mutateAsync, isPending, error, isError } = useMutation({
     mutationFn: (code: string | boolean) => discordLogin(code),
     retry: 1,
   });
@@ -29,7 +29,7 @@ export function useDiscordLoginMutation(): UseDiscordLogin {
     data,
     error,
     isError,
-    isLoggingInWithDiscord: isLoading,
+    isLoggingInWithDiscord: isPending,
     mutate,
     mutateAsync,
   } as const;

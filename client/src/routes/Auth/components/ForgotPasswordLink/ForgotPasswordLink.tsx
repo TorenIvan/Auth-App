@@ -1,4 +1,5 @@
-import { NavLink } from 'react-router-dom';
+import type { JSX } from 'react';
+import { NavLink } from 'react-router';
 import styles from './styles.module.css';
 import { Constants } from '../../../../utils';
 

@@ -1,4 +1,5 @@
-import { RouterProvider } from 'react-router-dom';
+import type { JSX } from 'react';
+import { RouterProvider } from 'react-router/dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { queryClient } from './config';
@@ -19,7 +20,7 @@ export default function App(): JSX.Element {
         <Toast />
       </ThemeProvider>
       {import.meta.env.VITE_NODE_ENV === 'development' ? (
-        <ReactQueryDevtools initialIsOpen={false} panelPosition="bottom" />
+        <ReactQueryDevtools initialIsOpen={false} position="bottom" />
       ) : undefined}
     </QueryClientProvider>
   );

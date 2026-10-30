@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router';
 import { ErrorPage } from '../pages';
 import { AuthGuard } from '../components';
 import authRoutes from './Auth';

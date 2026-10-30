@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { Constants } from '../../utils';
 import { useTheme } from '../../store';
 import { DevChallengesDark, DevChallengesLight } from '../ThemeSpecific';

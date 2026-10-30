@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { Constants } from '../../../../utils';
 
 const LoginTitle = (): JSX.Element => {

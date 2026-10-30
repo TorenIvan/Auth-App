@@ -39,7 +39,7 @@ $two-franctions: repeat(2, minmax(0, 1fr));
 
 #text-container {
   width: clamp(min(30vw, 50rem), 400px, 65%);
-  font-family: "Space Mono";
+  font-family: 'Space Mono';
   @media screen and (min-width: $limit-screen-width) {
     margin-right: 20vw;
   }

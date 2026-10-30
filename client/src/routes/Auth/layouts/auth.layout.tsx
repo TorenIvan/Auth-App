@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router';
 import { Footer, Header, Main } from '../../../layouts';
 
 function Layout() {

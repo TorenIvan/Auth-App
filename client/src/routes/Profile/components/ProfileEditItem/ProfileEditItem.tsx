@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import styles from './styles.module.scss';
 
 export function ProfileEditItem({ children }: IProps): JSX.Element {

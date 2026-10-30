@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, type JSX } from 'react';
 import { MoonIcon, SunIcon } from './ThemeSpecific';
 import { Constants, Theme } from '../utils';
 

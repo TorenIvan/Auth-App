@@ -1,5 +1,5 @@
 import { Fragment, FormEvent, useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { toast } from 'react-hot-toast';
 import { faEye, faEyeSlash, faLock } from '@fortawesome/free-solid-svg-icons';
 import { InputGroup } from '../../../../components';

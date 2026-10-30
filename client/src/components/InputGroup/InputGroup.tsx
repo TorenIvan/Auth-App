@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { useHidePassword } from '../../hooks';
 import InputGroupInput from '../InputGroupInput';
 import InputGroupLabel from '../InputGroupLabel';

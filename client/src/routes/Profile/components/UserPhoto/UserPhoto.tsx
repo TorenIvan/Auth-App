@@ -1,4 +1,4 @@
-import { CSSProperties } from 'react';
+import { CSSProperties, type JSX } from 'react';
 import styles from './styles.module.scss';
 
 export function UserPhoto(props: IProps): JSX.Element {

@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef } from 'react';
+import { ForwardedRef, forwardRef, type JSX } from 'react';
 import styles from './styles.module.scss';
 import { Constants } from '../../utils/Constants';
 import { useTheme } from '../../store';

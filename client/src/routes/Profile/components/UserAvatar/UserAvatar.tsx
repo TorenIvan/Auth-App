@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import Assets from '../../../../assets';
 import { Constants } from '../../../../utils';
 import { useTheme } from '../../../../store';

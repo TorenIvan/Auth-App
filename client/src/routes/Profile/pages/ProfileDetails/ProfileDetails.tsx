@@ -1,4 +1,5 @@
-import { NavLink } from 'react-router-dom';
+import type { JSX } from 'react';
+import { NavLink } from 'react-router';
 import { Constants } from '../../../../utils';
 import { ProfileDetail, UserPhoto } from '../../components';
 import { useRetrieveUserDataQuery } from '../../hooks';

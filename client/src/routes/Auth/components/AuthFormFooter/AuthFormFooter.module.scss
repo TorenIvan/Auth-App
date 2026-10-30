@@ -55,8 +55,8 @@
   }
 
   &[data-loading='false']:hover {
-    background-color: var(--svg-contrast); 
-    transform: scale(1.05); 
+    background-color: var(--svg-contrast);
+    transform: scale(1.05);
   }
 
   &[data-loading='false']:hover svg {

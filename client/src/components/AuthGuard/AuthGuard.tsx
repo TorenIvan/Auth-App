@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCheckIfUserIsAuthenticatedQuery } from '../../hooks';
 import { Loader } from '../Loader';
@@ -14,7 +14,7 @@ export function AuthGuard() {
    */
   useEffect(() => {
     if (isAuthenticated === false) {
-      queryClient.resetQueries(['user']);
+      queryClient.resetQueries({ queryKey: ['user'] });
     }
   }, [isAuthenticated]);
 

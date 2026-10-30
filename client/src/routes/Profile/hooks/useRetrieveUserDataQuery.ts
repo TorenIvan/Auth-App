@@ -5,7 +5,7 @@ import { Errors } from '../../../utils';
 import { userDetailsQuery } from '../api';
 
 export function useRetrieveUserDataQuery() {
-  const { data, isLoading, isFetching, isError, error } = useQuery(userDetailsQuery);
+  const { data, isFetching, isError, error } = useQuery(userDetailsQuery);
 
   useEffect(() => {
     if (isError) {
@@ -19,7 +19,6 @@ export function useRetrieveUserDataQuery() {
 
   return {
     userInfo: data,
-    isLoading,
     isFetching,
     isError,
     error,

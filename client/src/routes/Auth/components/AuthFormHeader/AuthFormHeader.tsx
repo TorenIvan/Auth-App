@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { Constants } from '../../../../utils';
 import headerStyles from './AuthFormHeader.module.scss';
 

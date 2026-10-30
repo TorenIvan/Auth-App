@@ -2,7 +2,11 @@ import { DefaultError } from '../../utils';
 import errorStyles from './styles.module.scss';
 
 function ErrorPage(props: IProps) {
-  const { image, title, body } = props;
+  const {
+    image = DefaultError.image,
+    title = DefaultError.title,
+    body = DefaultError.body,
+  } = props;
   return (
     <div className={errorStyles.ErrorContainer}>
       <div id={errorStyles['image-container']}>
@@ -15,8 +19,6 @@ function ErrorPage(props: IProps) {
     </div>
   );
 }
-
-ErrorPage.defaultProps = { ...DefaultError };
 
 export default ErrorPage;
 
