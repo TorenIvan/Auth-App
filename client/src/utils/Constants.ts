@@ -10,6 +10,8 @@ export const Constants = {
   MyProfile: 'My Profile',
   GroupChat: 'Group Chat',
   Logout: 'Logout',
+  LogoutAllDevices: 'Logout all devices',
+  ConfirmLogoutAllDevices: 'Log out from all devices, including this one?',
   ProfileInfo: 'Personal Info',
   ProfileInfoSubText: 'Basic info, like your name and photo',
   ProfileHeaderTitle: 'Profile',

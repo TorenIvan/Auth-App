@@ -1,7 +1,15 @@
 import { useEffect, ReactNode } from 'react';
 import toast from 'react-hot-toast';
+import { isAxiosError } from 'axios';
 import { useQueryClient } from '@tanstack/react-query';
-import { axiosInstance, addAuthorizationHeader, clearAuthorizationHeader } from '../../config';
+import {
+  axiosInstance,
+  addAuthorizationHeader,
+  clearAuthorizationHeader,
+  authChannel,
+  broadcastAuthEvent,
+} from '../../config';
+import type { AuthEvent } from '../../config';
 import { Errors } from '../../utils';
 import { renewTokens } from '../../api';
 
@@ -9,7 +17,6 @@ export function AxiosInterceptor({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    let lastAxiosHeaders = {};
     let isRefreshing = false;
     let failedQueue: Array<{
       resolve: (token: string) => void;
@@ -27,29 +34,26 @@ export function AxiosInterceptor({ children }: { children: ReactNode }) {
       failedQueue = [];
     }
 
-    const reqInterceptor = axiosInstance.interceptors.request.use(
-      (config) => {
-        lastAxiosHeaders = { ...config.headers };
-        return config;
-      },
-      (error) => Promise.reject(error)
-    );
+    function endSession() {
+      clearAuthorizationHeader();
+      queryClient.setQueryData(['auth', 'status'], false);
+    }
 
     const resInterceptor = axiosInstance.interceptors.response.use(
       (response) => response,
       async (error) => {
+        // The failed request keeps its own headers (e.g. multipart); only the token is replaced
         const originalRequest = error.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
           if (isRefreshing) {
             return new Promise((resolve, reject) => {
               failedQueue.push({ resolve, reject });
-            })
-              .then((token) => {
-                originalRequest.headers['Authorization'] = `Bearer ${token}`;
-                return axiosInstance(originalRequest);
-              })
-              .catch((err) => Promise.reject(err));
+            }).then((token) => {
+              originalRequest._retry = true;
+              originalRequest.headers['Authorization'] = `Bearer ${token}`;
+              return axiosInstance(originalRequest);
+            });
           }
 
           originalRequest._retry = true;
@@ -63,17 +67,23 @@ export function AxiosInterceptor({ children }: { children: ReactNode }) {
 
             processQueue(null, newToken);
 
-            originalRequest.headers = {
-              ...lastAxiosHeaders,
-              Authorization: `Bearer ${newToken}`,
-            };
+            originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
             return axiosInstance(originalRequest);
           } catch (refreshError) {
             processQueue(refreshError, null);
-            clearAuthorizationHeader();
 
-            queryClient.setQueryData(['auth', 'status'], false);
-            toast.error(Errors.SessionExpired);
+            /**
+             * *** Only the server saying the session is over ends it (401/403) ***
+             * Offline, timeouts or 5xx just fail this request; the session is still valid.
+             */
+            const refreshStatus = isAxiosError(refreshError)
+              ? refreshError.response?.status
+              : undefined;
+            if (refreshStatus === 401 || refreshStatus === 403) {
+              endSession();
+              toast.error(Errors.SessionExpired);
+              broadcastAuthEvent('logout');
+            }
 
             return Promise.reject(refreshError);
           } finally {
@@ -85,9 +95,22 @@ export function AxiosInterceptor({ children }: { children: ReactNode }) {
       }
     );
 
+    /**
+     * *** Login/logout of another tab: the cookie is shared, the in-memory access token is not ***
+     */
+    function onAuthEvent(event: MessageEvent<AuthEvent>) {
+      if (event.data === 'logout') {
+        endSession();
+      }
+      if (event.data === 'login') {
+        queryClient.invalidateQueries({ queryKey: ['auth', 'status'] });
+      }
+    }
+    authChannel?.addEventListener('message', onAuthEvent);
+
     return () => {
-      axiosInstance.interceptors.request.eject(reqInterceptor);
       axiosInstance.interceptors.response.eject(resInterceptor);
+      authChannel?.removeEventListener('message', onAuthEvent);
     };
   }, [queryClient]);
 

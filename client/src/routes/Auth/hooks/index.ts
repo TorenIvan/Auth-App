@@ -5,3 +5,4 @@ export { useGitlabLoginMutation } from './useGitlabLoginMutation';
 export { useDiscordLoginMutation } from './useDiscordLoginMutation';
 export { useLoginMutation } from './useLoginMutation';
 export { useLogoutMutation } from './useLogoutMutation';
+export { useLogoutAllMutation } from './useLogoutAllMutation';

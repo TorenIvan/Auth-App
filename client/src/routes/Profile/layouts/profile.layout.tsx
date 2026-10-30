@@ -1,31 +1,28 @@
-import { Fragment, useEffect } from 'react';
+import { Fragment } from 'react';
 import { Outlet } from 'react-router';
-import { BroadcastChannel } from 'broadcast-channel';
-import { faCircleUser, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faCircleUser, faPowerOff, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { Header, Main, Footer } from '../../../layouts';
 import { useToggleSubMenu } from '../hooks';
 import { Constants } from '../../../utils';
 import { SideMenu } from '../components';
-import { useLogoutMutation } from '../../Auth/hooks';
+import { useLogoutAllMutation, useLogoutMutation } from '../../Auth/hooks';
 
 export function ProfileLayout() {
   const { logout } = useLogoutMutation();
+  const { logoutAll } = useLogoutAllMutation();
   const [isSubMenuOpen, toggleSubMenu] = useToggleSubMenu();
-  const logoutChannel = new BroadcastChannel('logout');
 
-  useEffect(() => {
-    logoutChannel.onmessage = async () => {
-      await logout();
-      logoutChannel.close();
-    };
-
-    return () => {
-      logoutChannel.close();
-    };
-  }, []);
-
+  /**
+   * *** The other tabs are notified by the auth channel (see AxiosInterceptor) ***
+   */
   function handleLogout() {
-    logoutChannel.postMessage('logout');
+    logout();
+  }
+
+  function handleLogoutAllDevices() {
+    if (window.confirm(Constants.ConfirmLogoutAllDevices)) {
+      logoutAll();
+    }
   }
 
   return (
@@ -46,6 +43,10 @@ export function ProfileLayout() {
               <SideMenu.SubMenu.Item isUsed={false} onClick={handleLogout}>
                 <SideMenu.SubMenu.Item.Image icon={faRightFromBracket} size="lg" color="#EB5757" />
                 <SideMenu.SubMenu.Item.Text value={Constants.Logout} color="#EB5757" />
+              </SideMenu.SubMenu.Item>
+              <SideMenu.SubMenu.Item isUsed={false} onClick={handleLogoutAllDevices}>
+                <SideMenu.SubMenu.Item.Image icon={faPowerOff} size="lg" color="#EB5757" />
+                <SideMenu.SubMenu.Item.Text value={Constants.LogoutAllDevices} color="#EB5757" />
               </SideMenu.SubMenu.Item>
             </SideMenu.SubMenu>
           </SideMenu>

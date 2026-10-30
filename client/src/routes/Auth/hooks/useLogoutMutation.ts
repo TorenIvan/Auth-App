@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { clearAuthorizationHeader } from '../../../config';
+import { broadcastAuthEvent, clearAuthorizationHeader } from '../../../config';
 import { Errors } from '../../../utils';
 import { logoutUser } from '../../Profile/api';
 
@@ -15,6 +15,7 @@ export function useLogoutMutation() {
       clearAuthorizationHeader();
       await queryClient.cancelQueries();
       queryClient.setQueryData(['auth', 'status'], false);
+      broadcastAuthEvent('logout');
     } catch (localError) {
       if (typeof localError === 'string' || localError instanceof String) {
         toast.error(localError as string);

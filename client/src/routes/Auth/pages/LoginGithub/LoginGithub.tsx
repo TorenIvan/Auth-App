@@ -30,9 +30,10 @@ export function LoginGithub() {
     } else {
       const csrfToken = extractCSRFToken(state);
       const csrfTokenLocalStorage = localStorage.getItem('auth_app_csrf_token');
+      // The state is single use, whether it matches or not
+      localStorage.removeItem('auth_app_csrf_token');
       if (csrfToken !== csrfTokenLocalStorage) {
         toast.error(Errors.InvalidCSRFToken);
-        localStorage.removeItem('auth_app_csrf_token');
         valid = false;
       }
     }

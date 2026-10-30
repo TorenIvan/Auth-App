@@ -2,20 +2,20 @@ import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { facebookLogin } from '../api';
-import { addAuthorizationHeader } from '../../../config';
+import { addAuthorizationHeader, broadcastAuthEvent } from '../../../config';
 import { Errors } from '../../../utils';
 
 export function useFacebookLoginMutation(): UseFacebookLogin {
   const queryClient = useQueryClient();
   const { data, mutate, mutateAsync, isPending, error, isError } = useMutation({
     mutationFn: (code: string | boolean) => facebookLogin(code),
-    retry: 1,
   });
 
   useEffect(() => {
     if (data) {
       addAuthorizationHeader(data);
       queryClient.setQueryData(['auth', 'status'], true);
+      broadcastAuthEvent('login');
     }
     if (isError) {
       toast.error(typeof error === 'string' ? error : Errors.GenericError);
