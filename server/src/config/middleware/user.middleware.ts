@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyPluginAsync, FastifyReply, FastifyRequest } from 'fastify';
 import fp from 'fastify-plugin';
-import { isFileSizeExceeded } from '../utils/helpers';
+import { isFileSizeExceeded, isImageContentValid } from '../utils/helpers';
 import { Errors } from '../utils/constants/Errors';
 
 const userMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): Promise<void> => {
@@ -19,6 +19,10 @@ const userMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): 
 
         if (!Buffer.isBuffer(image.data) || image.data.length === 0) {
           return reply.status(400).send(createUserReadableError(Errors.InvalidFileData));
+        }
+
+        if (isImageContentValid(image.data, image.mimetype) === false) {
+          return reply.status(400).send(createUserReadableError(Errors.InvalidFileType));
         }
 
         if (isFileSizeExceeded(image) === true) {

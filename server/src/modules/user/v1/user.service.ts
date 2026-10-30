@@ -2,7 +2,7 @@ import { Collection, Db, ObjectId, UpdateResult } from 'mongodb';
 import * as bcrypt from 'bcryptjs';
 import { EnvironmentVariables } from '../../../config/utils/constants/EnvironmentVariables';
 import { Errors } from '../../../config/utils/constants/Errors';
-import { objectAttributeExistsAndHasValue } from '../../../config/utils/helpers';
+import { logger, objectAttributeExistsAndHasValue } from '../../../config/utils/helpers';
 import User from './user.model';
 
 class UserService {
@@ -14,7 +14,7 @@ class UserService {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private static handleError(error: any): ServiceResponse {
-    console.error(error);
+    logger.error(error);
     if (objectAttributeExistsAndHasValue(error, 'customError') === true) {
       return { success: false, customError: error.customError };
     }
@@ -81,6 +81,9 @@ class UserService {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         updateFields.password = hash;
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        updateFields.passwordChangedAt = new Date();
       }
 
       if (image !== null) {

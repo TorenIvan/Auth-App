@@ -1,17 +1,21 @@
 import fp from 'fastify-plugin';
-import { FastifyPluginAsync } from 'fastify';
+import { FastifyPluginAsync, FastifyRequest } from 'fastify';
 import { logger } from '../utils/helpers';
+
+/**
+ * The route pattern is logged instead of the raw URL: query strings carry email and reset tokens.
+ */
+const routeOf = (request: FastifyRequest): string =>
+  request.routeOptions.url ?? request.url.split('?')[0];
 
 const loggerPlugin: FastifyPluginAsync = async (fastify) => {
   fastify.addHook('onRequest', async (request) => {
-    const { method, url } = request.raw;
-    logger.info({ method, url }, 'Incoming request');
+    logger.info({ method: request.method, url: routeOf(request) }, 'Incoming request');
   });
 
   fastify.addHook('onResponse', async (request, reply) => {
-    const { method, url } = request.raw;
     const statusCode = reply.statusCode;
-    logger.info({ method, url, statusCode }, 'Request completed');
+    logger.info({ method: request.method, url: routeOf(request), statusCode }, 'Request completed');
   });
 };
 

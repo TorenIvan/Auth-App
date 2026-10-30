@@ -4,22 +4,23 @@ import { ObjectId } from 'mongodb';
 import { verifyJWT } from '../utils/helpers/auth/generateJWTs';
 import { EnvironmentVariables } from '../utils/constants/EnvironmentVariables';
 import { Strings } from '../utils/constants/Strings';
-import { generateCookieOptionsToClear } from '../utils/helpers/auth/generateCookieOptions';
 import {
+  clearAuthCookies,
+  hashToken,
+  isRequestFromSameOrigin,
   logger,
   retrieveAccessToken,
   retrieveRefreshToken,
-  verifySocialProfileToken,
 } from '../utils/helpers';
 import { Errors } from '../utils/constants/Errors';
 
 /**
  * Summary: This Fastify plugin decorates the instance with reusable authentication verification functions.
  *
- * - Tokens can be extracted from HTTP headers (access token) or cookies (refresh, social profile, reset password).
+ * - Tokens can be extracted from HTTP headers (access token) or cookies (refresh, reset password).
  * - Tokens are verified and validated before attaching user information to requests.
  * - Provides proper error handling for unauthorized or invalid tokens.
- * - Supports special cases such as reset password flows, forbidding authenticated users from certain routes,
+ * - Supports special cases such as reset password flows, cross-site request rejection
  *   and checking authentication status.
  */
 const authMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): Promise<void> => {
@@ -46,21 +47,59 @@ const authMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): 
   /**
    * Decorates the Fastify request object with a `refreshTokenId` property.
    *
-   * This property stores the MongoDB ObjectId of the current refresh token document being used.
-   * Used to identify which specific device/session token should be revoked during logout operations.
-   * Initialized as an empty string by default and populated by verifyRefreshTokenCookie middleware.
+   * This property stores the MongoDB ObjectId of the session (refresh token document) being refreshed.
+   * It is the `sid` claim of the refresh token. Populated by verifyRefreshTokenCookie middleware.
    *
    * @property {string} refreshTokenId - The refresh token document's ID for the current session.
    */
   fastify.decorateRequest('refreshTokenId', '');
 
   /**
+   * Decorates the Fastify request object with a `refreshTokenHash` property.
+   *
+   * The sha256 of the presented refresh token, compared atomically during rotation.
+   * Populated by verifyRefreshTokenCookie middleware.
+   *
+   * @property {string} refreshTokenHash - The hash of the presented refresh token.
+   */
+  fastify.decorateRequest('refreshTokenHash', '');
+
+  /**
+   * Decorates the Fastify request object with a `sessionId` property.
+   *
+   * The `sid` claim of the access token: the session the request belongs to.
+   * Populated by verifyAccessTokenHeader middleware.
+   *
+   * @property {string} sessionId - The session of the access token.
+   */
+  fastify.decorateRequest('sessionId', '');
+
+  /**
+   * Rejects cross-site and same-site requests on the routes that read the refresh token cookie.
+   *
+   * - Uses `isRequestFromSameOrigin` on the Sec-Fetch-Site header.
+   * - On failure, responds with 403 Forbidden and leaves the cookies untouched (no logout CSRF).
+   *
+   * @param {FastifyRequest} request - The incoming Fastify request object.
+   * @param {FastifyReply} reply - The Fastify reply object used to send responses.
+   * @returns {Promise<void>}
+   */
+  fastify.decorate(
+    'verifySameOrigin',
+    async function (request: FastifyRequest, reply: FastifyReply): Promise<void> {
+      if (isRequestFromSameOrigin(request) === false) {
+        return reply.status(403).send(fastify.httpErrors.forbidden());
+      }
+    }
+  );
+
+  /**
    * Verifies the access token from the Authorization header.
    *
    * - Extracts token using `retrieveAccessToken` from the Authorization header.
    * - Verifies the JWT token using the access token secret.
-   * - Validates the token payload to ensure it contains `userId` and `signInMethod`.
-   * - On success, attaches `userId` and `signInMethod` to the request object.
+   * - Validates the token payload to ensure it contains `userId`, `signInMethod` and `sid`.
+   * - On success, attaches `userId`, `signInMethod` and `sessionId` to the request object.
    * - On failure, responds with 401 Unauthorized error.
    *
    * @param {FastifyRequest} request - The incoming Fastify request object.
@@ -82,6 +121,7 @@ const authMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): 
 
         request.userId = data.userId;
         request.signInMethod = (data.signInMethod as SignInMethod) ?? 'credentials';
+        request.sessionId = data.sid;
       } catch {
         return reply.status(401).send(fastify.httpErrors.unauthorized());
       }
@@ -93,9 +133,11 @@ const authMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): 
    *
    * - Extracts token using `retrieveRefreshToken` from the request cookies.
    * - Verifies the JWT token using the refresh token secret.
-   * - Validates the token payload to ensure it contains `userId` and `signInMethod`.
-   * - On success, attaches `userId` and `signInMethod` to the request object.
-   * - On failure, clears relevant authentication cookies and responds with 401 Unauthorized.
+   * - Validates the token payload to ensure it contains `userId`, `signInMethod` and `sid`.
+   * - Checks that the user is active and that its session (`sid`) exists, is not revoked and not expired.
+   *   Whether the token is the current one of the session is decided atomically during rotation.
+   * - On success, attaches `userId`, `signInMethod`, `refreshTokenId` and `refreshTokenHash` to the request.
+   * - On failure, clears the authentication cookies and responds with 401 Unauthorized.
    *
    * @param {FastifyRequest} request - The incoming Fastify request object.
    * @param {FastifyReply} reply - The Fastify reply object used to send responses.
@@ -122,58 +164,24 @@ const authMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): 
           throw new Error(`User with id: ${data.userId} not found or inactive.`);
         }
 
-        const refreshTokenDocument = await fastify.db.collection('refresh_tokens').findOne({
+        const session = await fastify.db.collection('refresh_tokens').findOne({
+          _id: new ObjectId(data.sid),
           userId: new ObjectId(data.userId),
-          token: token,
           revoked: false,
           expiresAt: { $gt: new Date() },
         });
 
-        if (!refreshTokenDocument) {
-          throw new Error(`Refresh token invalid, revoked, or expired.`);
+        if (!session) {
+          throw new Error(`Refresh token session invalid, revoked, or expired.`);
         }
 
         request.userId = data.userId;
-        request.refreshTokenId = refreshTokenDocument._id.toString();
+        request.refreshTokenId = data.sid;
+        request.refreshTokenHash = hashToken(token);
         request.signInMethod = (data.signInMethod as SignInMethod) ?? 'credentials';
       } catch (error) {
-        logger.debug(error);
-        reply
-          .status(401)
-          .clearCookie(EnvironmentVariables.Cookie_Name, generateCookieOptionsToClear())
-          .clearCookie(
-            EnvironmentVariables.Cookie_Name_Social_Profile,
-            generateCookieOptionsToClear()
-          )
-          .send(fastify.httpErrors.unauthorized());
-      }
-    }
-  );
-
-  /**
-   * Verifies the social profile token present in cookies.
-   *
-   * - Calls `verifySocialProfileToken` helper with cookies and the sign-in method.
-   * - On failure, clears authentication cookies and responds with 401 Unauthorized.
-   *
-   * @param {FastifyRequest} request - The incoming Fastify request object.
-   * @param {FastifyReply} reply - The Fastify reply object used to send responses.
-   * @returns {Promise<void>}
-   */
-  fastify.decorate(
-    'verifySocialProfileTokenCookie',
-    async function (request: FastifyRequest, reply: FastifyReply): Promise<void> {
-      try {
-        await verifySocialProfileToken(request.cookies, request.signInMethod);
-      } catch {
-        reply
-          .status(401)
-          .clearCookie(EnvironmentVariables.Cookie_Name, generateCookieOptionsToClear())
-          .clearCookie(
-            EnvironmentVariables.Cookie_Name_Social_Profile,
-            generateCookieOptionsToClear()
-          )
-          .send(fastify.httpErrors.unauthorized());
+        logger.debug({ error }, 'Refresh token verification failed');
+        clearAuthCookies(reply).status(401).send(fastify.httpErrors.unauthorized());
       }
     }
   );
@@ -184,6 +192,7 @@ const authMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): 
    * - Checks for presence of the reset password cookie.
    * - Verifies JWT token using the reset password secret.
    * - Validates the token payload contains a valid `userId` and `type` equal to `ForgotPasswordType`.
+   * - On success, attaches the cookie's `userId` to the request, so the email link can be bound to it.
    * - On failure, responds with 403 Forbidden and a relevant error message.
    *
    * @param {FastifyRequest} request - The incoming Fastify request object.
@@ -209,6 +218,8 @@ const authMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): 
         if (!data?.userId || !data?.type || data.type !== Strings.ForgotPasswordType) {
           throw new Error('Invalid reset password token');
         }
+
+        request.userId = data.userId;
       } catch {
         return reply
           .status(403)
@@ -220,10 +231,12 @@ const authMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): 
   /**
    * Middleware to check if a user is authenticated.
    *
-   * - Verifies access token and refresh token if present.
-   * - Also verifies social profile token as part of authentication.
+   * - A valid access token is enough.
+   * - Otherwise (missing, expired or invalid access token) the refresh token cookie is checked:
+   *   active user, live session, and the token is the current one or the previous one within the grace window.
+   *   Nothing is rotated here.
    * - If authenticated, responds with 200 OK.
-   * - If not authenticated, responds with 403 Forbidden.
+   * - If not authenticated, clears the cookies and responds with 403 Forbidden.
    *
    * @param {FastifyRequest} request - The incoming Fastify request object.
    * @param {FastifyReply} reply - The Fastify reply object used to send responses.
@@ -237,10 +250,15 @@ const authMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): 
         const accessToken = retrieveAccessToken(authHeader);
 
         if (accessToken) {
-          const accessTokenData = verifyJWT(accessToken!, EnvironmentVariables.Access_Token_Secret);
-          if (accessTokenData?.userId && accessTokenData?.signInMethod) {
-            await verifySocialProfileToken(request.cookies, accessTokenData.signInMethod);
+          try {
+            const accessTokenData = verifyJWT(
+              accessToken!,
+              EnvironmentVariables.Access_Token_Secret
+            );
+            validateTokenPayload(accessTokenData);
             return reply.status(200).send();
+          } catch {
+            // An expired access token is normal here: fall back to the refresh token cookie
           }
         }
 
@@ -261,32 +279,32 @@ const authMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): 
             throw new Error('Invalid user or inactive account');
           }
 
-          const refreshTokenDoc = await fastify.db.collection('refresh_tokens').findOne({
+          const refreshTokenHash = hashToken(refreshToken);
+          const session = await fastify.db.collection('refresh_tokens').findOne({
+            _id: new ObjectId(refreshTokenData.sid),
             userId: new ObjectId(refreshTokenData.userId),
-            token: refreshToken,
             revoked: false,
             expiresAt: { $gt: new Date() },
+            $or: [
+              { token: refreshTokenHash },
+              {
+                previousToken: refreshTokenHash,
+                rotatedAt: { $gt: new Date(Date.now() - Strings.RefreshTokenReuseGraceMs) },
+              },
+            ],
           });
 
-          if (!refreshTokenDoc) {
+          if (!session) {
             throw new Error('Invalid, revoked, or expired refresh token');
           }
 
-          await verifySocialProfileToken(request.cookies, refreshTokenData.signInMethod);
           return reply.status(200).send();
         }
 
         return reply.status(403).send();
       } catch (error) {
         logger.debug({ error }, 'Authentication failed on isAuthenticated middleware');
-        reply
-          .status(403)
-          .clearCookie(EnvironmentVariables.Cookie_Name, generateCookieOptionsToClear())
-          .clearCookie(
-            EnvironmentVariables.Cookie_Name_Social_Profile,
-            generateCookieOptionsToClear()
-          )
-          .send(fastify.httpErrors.forbidden());
+        clearAuthCookies(reply).status(403).send(fastify.httpErrors.forbidden());
       }
     }
   );
@@ -296,16 +314,23 @@ export default authMiddleware;
 
 function validateTokenPayload(
   data: unknown
-): asserts data is { userId: string; signInMethod: string } {
+): asserts data is { userId: string; signInMethod: string; sid: string } {
   if (
     typeof data !== 'object' ||
     data === null ||
     !('userId' in data) ||
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     typeof (data as any).userId !== 'string' ||
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ObjectId.isValid((data as any).userId) === false ||
     !('signInMethod' in data) ||
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    typeof (data as any).signInMethod !== 'string'
+    typeof (data as any).signInMethod !== 'string' ||
+    !('sid' in data) ||
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    typeof (data as any).sid !== 'string' ||
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ObjectId.isValid((data as any).sid) === false
   ) {
     throw new Error('Invalid token payload');
   }

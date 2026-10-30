@@ -11,7 +11,7 @@ const refreshUri = 'v1/auth/refresh';
 
 export async function renewTokens(): Promise<string> {
   try {
-    const result = await axiosRenewInstance.get(refreshUri);
+    const result = await axiosRenewInstance.post(refreshUri);
     const data = result.data;
     if (data?.access_token === undefined) {
       throw new Error('Access token not found in response');

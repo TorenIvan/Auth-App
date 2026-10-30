@@ -88,6 +88,8 @@ async function createIndexes(db: Db) {
 
   await refreshTokensCollection.createIndex({ userId: 1, revoked: 1, expiresAt: 1 });
   await refreshTokensCollection.createIndex({ token: 1 }, { unique: true });
+  // Expired sessions (including ones never revoked) delete themselves
+  await refreshTokensCollection.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
   await refreshTokensCollection.createIndex(
     { deleteAt: 1 },
     { expireAfterSeconds: 0, sparse: true } // sparse: true skips docs without deleteAt. Only documents with a deleteAt field are indexed.

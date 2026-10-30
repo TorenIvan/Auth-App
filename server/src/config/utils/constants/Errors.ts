@@ -40,4 +40,5 @@ export const Errors = {
   NotRetrievedGitlab: 'Information was not able to be retrieved from Gitlab. Please, try again',
   NotRetrievedGoogle: 'Information was not able to be retrieved from Google. Please, try again',
   NotRetrievedDiscord: 'Information was not able to be retrieved from Discord. Please, try again',
+  RefreshTokenReused: 'Refresh token was already used',
 } as const;

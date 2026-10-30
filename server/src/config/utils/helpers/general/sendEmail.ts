@@ -18,7 +18,7 @@ export async function sendEmail(email: string, token: string, action: SendEmailA
     to: [email],
     subject: emailSubject,
     text: Strings.VerificationEmailText,
-    html: `<p>Please, click <a href=${emailLink}?email=${email}&token=${token}>here</a> to ${action}</p>`,
+    html: `<p>Please, click <a href="${emailLink}?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}">here</a> to ${action}</p>`,
   };
 
   const { error } = await resend.emails.send(mailOptions);

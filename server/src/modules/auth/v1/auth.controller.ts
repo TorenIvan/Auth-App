@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { ObjectId } from 'mongodb';
 import { EnvironmentVariables } from '../../../config/utils/constants/EnvironmentVariables';
 import { Errors } from '../../../config/utils/constants/Errors';
 import { Strings } from '../../../config/utils/constants/Strings';
@@ -7,21 +8,27 @@ import {
   generateCookieOptions,
   generateCookieOptionsToClear,
   generateResetCookieOptions,
-  generateSocialCookieOptions,
 } from '../../../config/utils/helpers/auth/generateCookieOptions';
 import {
   generateAuthJWTs,
   generateJWT,
+  getTokenExpiration,
   verifyJWT,
 } from '../../../config/utils/helpers/auth/generateJWTs';
 import { sendEmail } from '../../../config/utils/helpers/general/sendEmail';
 import {
   credentialsUserInput,
   forgotPasswordInput,
+  oauthCodeInput,
   queryConfirmEmail,
   resetPasswordUserInput,
 } from './auth.schema';
-import { logger } from '../../../config/utils/helpers';
+import {
+  clearAuthCookies,
+  hashToken,
+  logger,
+  retrieveRefreshToken,
+} from '../../../config/utils/helpers';
 import AuthService from './auth.service';
 
 class AuthController {
@@ -46,6 +53,13 @@ class AuthController {
     reply.code(errorCode).send(error);
   }
 
+  /**
+   * Provider errors carry the request config (client secret, code), so only the message is logged.
+   */
+  private static logProviderError(error: unknown) {
+    logger.error({ message: (error as Error)?.message }, 'Social login failed');
+  }
+
   private static verifyQueryToken(query: { token?: string }): TokenInterface | null {
     try {
       const token = query.token;
@@ -58,6 +72,102 @@ class AuthController {
     } catch (error) {
       return null;
     }
+  }
+
+  /**
+   * @description Starts a new session (token family): its document id is the `sid` of both tokens,
+   * the refresh token is stored hashed and sent as an httpOnly cookie, the access token in the body.
+   */
+  private async issueSession(
+    request: FastifyRequest,
+    reply: FastifyReply,
+    userId: string,
+    signInMethod: SignInMethod
+  ) {
+    const sessionId = new ObjectId();
+    const { access_token, refresh_token } = generateAuthJWTs(
+      userId,
+      signInMethod,
+      sessionId.toString()
+    );
+
+    const sessionCreated: ServiceResponseToken = await this.authService.CreateRefreshToken(
+      sessionId,
+      userId,
+      hashToken(refresh_token),
+      getTokenExpiration(refresh_token),
+      request.ip,
+      request.headers['user-agent'] || 'Unknown'
+    );
+    if (sessionCreated.success === false) {
+      return AuthController.handleError(reply, 500, Errors.GenericError);
+    }
+
+    return reply
+      .code(200)
+      .setCookie(
+        EnvironmentVariables.Cookie_Name,
+        refresh_token,
+        generateCookieOptions(refresh_token)
+      )
+      .send({ access_token: access_token });
+  }
+
+  /**
+   * @description Finds or creates the user of a social profile whose email the provider has verified.
+   * - Inactive users are forbidden.
+   * - Facebook does not say whether the email is verified, so it is never linked to an account created
+   *   with another sign in method.
+   * - An unverified account with this email (possibly pre-registered by someone else) is claimed:
+   *   it becomes verified and loses its password.
+   */
+  private async loginWithSocialProfile(
+    request: FastifyRequest,
+    reply: FastifyReply,
+    email: string,
+    name: string,
+    biography: string,
+    signInMethod: SignInMethod
+  ) {
+    const normalizedEmail: string = email.trim().toLowerCase();
+    let userId: string;
+
+    const existingUserResponse: ServiceResponse =
+      await this.authService.FindUserByEmail(normalizedEmail);
+
+    if (existingUserResponse.success === true) {
+      const existingUser = existingUserResponse.data as ServiceInsertedData;
+
+      if (existingUser.isActive !== true) {
+        return AuthController.handleError(reply, 403);
+      }
+      if (signInMethod === 'facebook' && existingUser.signInMethod !== 'facebook') {
+        return AuthController.handleError(reply, 400, Errors.UserAlreadyExists);
+      }
+      if (existingUser.isVerified !== true) {
+        const claimed: ServiceResponse = await this.authService.ClaimUnverifiedAccount(
+          existingUser.userId.toString()
+        );
+        if (claimed.success === false) {
+          return AuthController.handleError(reply, 500, Errors.GenericError);
+        }
+      }
+      userId = existingUser.userId.toString();
+    } else {
+      const userSocialLoginResponse: ServiceResponse =
+        await this.authService.InsertUserWithSocialAccount(
+          name,
+          normalizedEmail,
+          biography,
+          signInMethod
+        );
+      if (userSocialLoginResponse.success === false) {
+        return AuthController.handleError(reply, 400, userSocialLoginResponse?.customError);
+      }
+      userId = userSocialLoginResponse.data!.userId.toString();
+    }
+
+    return this.issueSession(request, reply, userId, signInMethod);
   }
 
   async registerCredentialsHandler(
@@ -127,18 +237,20 @@ class AuthController {
   }
 
   async loginFacebookHandler(
-    request: FastifyRequest<{ Body: { code: string } }>,
+    request: FastifyRequest<{ Body: oauthCodeInput }>,
     reply: FastifyReply
   ) {
     try {
       const { code } = request.body;
-      if (!code) {
-        return AuthController.handleError(reply, 400, Errors.GenericError);
-      }
 
-      const fbRetrieveTokenUri = `https://graph.facebook.com/v23.0/oauth/access_token?client_id=${EnvironmentVariables.Facebook_App_Id}&redirect_uri=${encodeURIComponent(EnvironmentVariables.Facebook_App_Redirect_Uri)}&client_secret=${EnvironmentVariables.Facebook_App_Secret}&code=${code}`;
-
-      const tokenResponse = await axios.get(fbRetrieveTokenUri, {
+      // Values go through axios params (encoded), never interpolated into the URL
+      const tokenResponse = await axios.get('https://graph.facebook.com/v23.0/oauth/access_token', {
+        params: {
+          client_id: EnvironmentVariables.Facebook_App_Id,
+          redirect_uri: EnvironmentVariables.Facebook_App_Redirect_Uri,
+          client_secret: EnvironmentVariables.Facebook_App_Secret,
+          code,
+        },
         headers: {
           Origin: EnvironmentVariables.ServerUri,
         },
@@ -147,79 +259,34 @@ class AuthController {
         return AuthController.handleError(reply, 400, Errors.GenericError);
       }
 
-      const userResponse = await axios.get(
-        `https://graph.facebook.com/me?fields=id,email,name,about&access_token=${tokenResponse.data.access_token}`,
-        {
-          headers: { Origin: EnvironmentVariables.ServerUri },
-        }
-      );
+      const userResponse = await axios.get('https://graph.facebook.com/me', {
+        params: {
+          fields: 'id,email,name,about',
+          access_token: tokenResponse.data.access_token,
+        },
+        headers: { Origin: EnvironmentVariables.ServerUri },
+      });
       if (!userResponse?.data?.email || !userResponse?.data?.name) {
         return AuthController.handleError(reply, 400, Errors.NotRetrievedFacebook);
       }
 
-      let userId: string | undefined = undefined;
-      const checkIfEmailExists: ServiceResponse = await this.authService.CheckEmailExistence(
-        userResponse.data.email.trim().toLowerCase()
+      return await this.loginWithSocialProfile(
+        request,
+        reply,
+        userResponse.data.email,
+        userResponse.data.name,
+        userResponse.data.about ?? '',
+        'facebook'
       );
-
-      const givenSocialPlatformEmailExist: boolean = checkIfEmailExists.success;
-      if (givenSocialPlatformEmailExist === true) {
-        userId = checkIfEmailExists.data!.userId.toString();
-      }
-
-      /**
-       * Start of register user operation
-       */
-      if (givenSocialPlatformEmailExist === false) {
-        const userSocialLoginResponse: ServiceResponse =
-          await this.authService.InsertUserWithSocialAccount(
-            userResponse.data.name,
-            userResponse.data.email.trim().toLowerCase(),
-            userResponse.data.about ?? '',
-            'facebook'
-          );
-
-        const inserted: boolean = userSocialLoginResponse.success;
-        if (inserted === false) {
-          return AuthController.handleError(reply, 400, userSocialLoginResponse?.customError);
-        }
-        userId = userSocialLoginResponse.data!.userId.toString();
-      }
-      const cookieOptions = generateSocialCookieOptions();
-
-      const { access_token, refresh_token } = generateAuthJWTs(userId!, 'facebook');
-      const ip = request.ip || request.headers['x-forwarded-for'] || request.headers['x-real-ip'];
-      const userAgent = request.headers['user-agent'];
-      await this.authService.CreateRefreshToken(
-        userId!,
-        refresh_token,
-        typeof ip === 'string' ? ip : ip?.[0],
-        userAgent || 'Unknown'
-      );
-
-      reply
-        .code(200)
-        .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
-        .setCookie(
-          EnvironmentVariables.Cookie_Name_Social_Profile,
-          tokenResponse.data.access_token,
-          cookieOptions
-        )
-        .send({ access_token: access_token });
     } catch (error) {
+      AuthController.logProviderError(error);
       AuthController.handleError(reply, 500, Errors.GenericError);
     }
   }
 
-  async loginGithubHandler(
-    request: FastifyRequest<{ Body: { code: string } }>,
-    reply: FastifyReply
-  ) {
+  async loginGithubHandler(request: FastifyRequest<{ Body: oauthCodeInput }>, reply: FastifyReply) {
     try {
       const { code } = request.body;
-      if (!code) {
-        return AuthController.handleError(reply, 400, Errors.GenericError);
-      }
 
       const githubTokenUri = 'https://github.com/login/oauth/access_token';
       const params = {
@@ -245,73 +312,32 @@ class AuthController {
         }),
       ]);
 
+      // Only the primary email that GitHub has verified identifies the user
       const primaryEmailObj = Array.isArray(emailResponse.data)
         ? emailResponse.data.find((e) => e.primary && e.verified)
         : undefined;
-      const email = primaryEmailObj?.email || userResponse.data.email;
+      const email: string | undefined = primaryEmailObj?.email;
       if (!email || !userResponse.data.name) {
         return AuthController.handleError(reply, 400, Errors.NotRetrievedGithub);
       }
-      let userId: string | undefined = undefined;
-      const checkIfEmailExists: ServiceResponse = await this.authService.CheckEmailExistence(
-        email.trim().toLowerCase()
+
+      return await this.loginWithSocialProfile(
+        request,
+        reply,
+        email,
+        userResponse.data.name,
+        userResponse.data.about ?? '',
+        'github'
       );
-
-      const givenSocialPlatformEmailExist: boolean = checkIfEmailExists.success;
-      if (givenSocialPlatformEmailExist === true) {
-        userId = checkIfEmailExists.data!.userId.toString();
-      }
-
-      if (givenSocialPlatformEmailExist === false) {
-        const userSocialLoginResponse: ServiceResponse =
-          await this.authService.InsertUserWithSocialAccount(
-            userResponse.data.name,
-            email.trim().toLowerCase(),
-            userResponse.data.about ?? '',
-            'github'
-          );
-
-        const inserted: boolean = userSocialLoginResponse.success;
-        if (inserted === false) {
-          return AuthController.handleError(reply, 400, userSocialLoginResponse?.customError);
-        }
-        userId = userSocialLoginResponse.data!.userId.toString();
-      }
-      const cookieOptions = generateSocialCookieOptions();
-
-      const { access_token, refresh_token } = generateAuthJWTs(userId!, 'github');
-      const ip = request.ip || request.headers['x-forwarded-for'] || request.headers['x-real-ip'];
-      const userAgent = request.headers['user-agent'];
-      await this.authService.CreateRefreshToken(
-        userId!,
-        refresh_token,
-        typeof ip === 'string' ? ip : ip?.[0],
-        userAgent || 'Unknown'
-      );
-
-      reply
-        .code(200)
-        .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
-        .setCookie(
-          EnvironmentVariables.Cookie_Name_Social_Profile,
-          accessTokenGithub,
-          cookieOptions
-        )
-        .send({ access_token: access_token });
     } catch (error) {
+      AuthController.logProviderError(error);
       AuthController.handleError(reply, 500, Errors.GenericError);
     }
   }
 
-  async loginGoogleHandler(
-    request: FastifyRequest<{ Body: { code: string } }>,
-    reply: FastifyReply
-  ) {
+  async loginGoogleHandler(request: FastifyRequest<{ Body: oauthCodeInput }>, reply: FastifyReply) {
     try {
       const { code } = request.body;
-      if (!code) {
-        return AuthController.handleError(reply, 400, Errors.GenericError);
-      }
 
       const googleTokenUri = 'https://oauth2.googleapis.com/token';
       const params = {
@@ -335,67 +361,24 @@ class AuthController {
       });
       const email = userResponse.data?.email;
       const name = userResponse.data?.name ?? userResponse.data?.given_name;
-      if (!email || !name) {
+      const isEmailVerified: boolean = userResponse.data?.verified_email === true;
+      if (!email || !name || isEmailVerified === false) {
         return AuthController.handleError(reply, 400, Errors.NotRetrievedGoogle);
       }
 
-      let userId: string | undefined = undefined;
-      const checkIfEmailExists: ServiceResponse = await this.authService.CheckEmailExistence(
-        email.trim().toLowerCase()
-      );
-
-      if (checkIfEmailExists.success) {
-        userId = checkIfEmailExists.data!.userId.toString();
-      } else {
-        const userSocialLoginResponse: ServiceResponse =
-          await this.authService.InsertUserWithSocialAccount(
-            name,
-            email.trim().toLowerCase(),
-            '',
-            'google'
-          );
-
-        if (!userSocialLoginResponse.success) {
-          return AuthController.handleError(reply, 400, userSocialLoginResponse?.customError);
-        }
-        userId = userSocialLoginResponse.data!.userId.toString();
-      }
-
-      const cookieOptions = generateSocialCookieOptions();
-      const { access_token, refresh_token } = generateAuthJWTs(userId!, 'google');
-      const ip = request.ip || request.headers['x-forwarded-for'] || request.headers['x-real-ip'];
-      const userAgent = request.headers['user-agent'];
-      await this.authService.CreateRefreshToken(
-        userId!,
-        refresh_token,
-        typeof ip === 'string' ? ip : ip?.[0],
-        userAgent || 'Unknown'
-      );
-
-      reply
-        .code(200)
-        .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
-        .setCookie(
-          EnvironmentVariables.Cookie_Name_Social_Profile,
-          accessTokenGoogle,
-          cookieOptions
-        )
-        .send({ access_token: access_token });
+      return await this.loginWithSocialProfile(request, reply, email, name, '', 'google');
     } catch (error) {
-      logger.error(error);
+      AuthController.logProviderError(error);
       AuthController.handleError(reply, 500, Errors.GenericError);
     }
   }
 
   async loginDiscordHandler(
-    request: FastifyRequest<{ Body: { code: string } }>,
+    request: FastifyRequest<{ Body: oauthCodeInput }>,
     reply: FastifyReply
   ) {
     try {
       const { code } = request.body;
-      if (!code) {
-        return AuthController.handleError(reply, 400, Errors.GenericError);
-      }
 
       const discordTokenUri = 'https://discord.com/api/oauth2/token';
       const params = new URLSearchParams({
@@ -421,69 +404,22 @@ class AuthController {
 
       const email = userResponse.data?.email;
       const name = userResponse.data?.username;
+      const isEmailVerified: boolean = userResponse.data?.verified === true;
 
-      if (!email || !name) {
+      if (!email || !name || isEmailVerified === false) {
         return AuthController.handleError(reply, 400, Errors.NotRetrievedDiscord);
       }
 
-      let userId: string | undefined = undefined;
-      const checkIfEmailExists: ServiceResponse = await this.authService.CheckEmailExistence(
-        email.trim().toLowerCase()
-      );
-
-      if (checkIfEmailExists.success) {
-        userId = checkIfEmailExists.data!.userId.toString();
-      } else {
-        const userSocialLoginResponse: ServiceResponse =
-          await this.authService.InsertUserWithSocialAccount(
-            name,
-            email.trim().toLowerCase(),
-            '',
-            'discord'
-          );
-
-        if (!userSocialLoginResponse.success) {
-          return AuthController.handleError(reply, 400, userSocialLoginResponse?.customError);
-        }
-
-        userId = userSocialLoginResponse.data!.userId.toString();
-      }
-
-      const cookieOptions = generateSocialCookieOptions();
-      const { access_token, refresh_token } = generateAuthJWTs(userId!, 'discord');
-      const ip = request.ip || request.headers['x-forwarded-for'] || request.headers['x-real-ip'];
-      const userAgent = request.headers['user-agent'];
-      await this.authService.CreateRefreshToken(
-        userId!,
-        refresh_token,
-        typeof ip === 'string' ? ip : ip?.[0],
-        userAgent || 'Unknown'
-      );
-
-      reply
-        .code(200)
-        .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
-        .setCookie(
-          EnvironmentVariables.Cookie_Name_Social_Profile,
-          accessTokenDiscord,
-          cookieOptions
-        )
-        .send({ access_token });
+      return await this.loginWithSocialProfile(request, reply, email, name, '', 'discord');
     } catch (error) {
-      logger.error(error);
+      AuthController.logProviderError(error);
       AuthController.handleError(reply, 500, Errors.GenericError);
     }
   }
 
-  async loginGitlabHandler(
-    request: FastifyRequest<{ Body: { code: string } }>,
-    reply: FastifyReply
-  ) {
+  async loginGitlabHandler(request: FastifyRequest<{ Body: oauthCodeInput }>, reply: FastifyReply) {
     try {
       const { code } = request.body;
-      if (!code) {
-        return AuthController.handleError(reply, 400, Errors.GenericError);
-      }
 
       const gitlabTokenUri = 'https://gitlab.com/oauth/token';
       const params = new URLSearchParams({
@@ -509,56 +445,16 @@ class AuthController {
 
       const email = userResponse.data?.email;
       const name = userResponse.data?.name || userResponse.data?.username;
+      // confirmed_at is set once the GitLab account (its primary email) has been confirmed
+      const isEmailVerified: boolean = !!userResponse.data?.confirmed_at;
 
-      if (!email || !name) {
+      if (!email || !name || isEmailVerified === false) {
         return AuthController.handleError(reply, 400, Errors.NotRetrievedGitlab);
       }
 
-      let userId: string | undefined = undefined;
-      const checkIfEmailExists: ServiceResponse = await this.authService.CheckEmailExistence(
-        email.trim().toLowerCase()
-      );
-
-      if (checkIfEmailExists.success) {
-        userId = checkIfEmailExists.data!.userId.toString();
-      } else {
-        const userSocialLoginResponse: ServiceResponse =
-          await this.authService.InsertUserWithSocialAccount(
-            name,
-            email.trim().toLowerCase(),
-            '',
-            'gitlab'
-          );
-
-        if (!userSocialLoginResponse.success) {
-          return AuthController.handleError(reply, 400, userSocialLoginResponse?.customError);
-        }
-
-        userId = userSocialLoginResponse.data!.userId.toString();
-      }
-
-      const cookieOptions = generateSocialCookieOptions();
-      const { access_token, refresh_token } = generateAuthJWTs(userId!, 'gitlab');
-      const ip = request.ip || request.headers['x-forwarded-for'] || request.headers['x-real-ip'];
-      const userAgent = request.headers['user-agent'];
-      await this.authService.CreateRefreshToken(
-        userId!,
-        refresh_token,
-        typeof ip === 'string' ? ip : ip?.[0],
-        userAgent || 'Unknown'
-      );
-
-      reply
-        .code(200)
-        .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
-        .setCookie(
-          EnvironmentVariables.Cookie_Name_Social_Profile,
-          accessTokenGitlab,
-          cookieOptions
-        )
-        .send({ access_token });
+      return await this.loginWithSocialProfile(request, reply, email, name, '', 'gitlab');
     } catch (error) {
-      logger.error(error);
+      AuthController.logProviderError(error);
       AuthController.handleError(reply, 500, Errors.GenericError);
     }
   }
@@ -603,24 +499,12 @@ class AuthController {
         return AuthController.handleError(reply, 403, Errors.ConfirmEmailInOrderToContinue);
       }
 
-      const { access_token, refresh_token } = generateAuthJWTs(
-        userCredsResponse.data!.userId.toString()
-      );
-      const ip = request.ip || request.headers['x-forwarded-for'] || request.headers['x-real-ip'];
-      const userAgent = request.headers['user-agent'];
-      await this.authService.CreateRefreshToken(
+      return await this.issueSession(
+        request,
+        reply,
         userCredsResponse.data!.userId.toString(),
-        refresh_token,
-        typeof ip === 'string' ? ip : ip?.[0],
-        userAgent || 'Unknown'
+        'credentials'
       );
-
-      const cookieOptions = generateCookieOptions();
-
-      reply
-        .code(200)
-        .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
-        .send({ access_token: access_token });
     } catch (error) {
       AuthController.handleError(reply, 500, Errors.GenericError);
     }
@@ -666,14 +550,12 @@ class AuthController {
           EnvironmentVariables.Reset_Pass_Cookie_Expiration_Time
         );
 
-        const cookieOptions = generateResetCookieOptions();
-
         reply
           .code(200)
           .setCookie(
             EnvironmentVariables.Reset_Pass_Cookie_Name,
             reset_password_cookie_token,
-            cookieOptions
+            generateResetCookieOptions(reset_password_cookie_token)
           );
       }
 
@@ -683,25 +565,46 @@ class AuthController {
     }
   }
 
+  /**
+   * @description Refresh token rotation. The middleware has verified the cookie and found its session;
+   * the service rotates it atomically. A token that is neither current nor in the grace window is an old
+   * token of this family being reused: the whole session is revoked.
+   */
   async renewTokens(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const { userId, signInMethod, refreshTokenId } = request;
-      const { access_token, refresh_token } = generateAuthJWTs(userId, signInMethod);
-
-      const ip = request.ip || request.headers['x-forwarded-for'] || request.headers['x-real-ip'];
-      const userAgent = request.headers['user-agent'];
-
-      await this.authService.UpdateRefreshToken(
-        refreshTokenId,
-        refresh_token,
-        typeof ip === 'string' ? ip : ip?.[0],
-        userAgent || 'Unknown'
+      const { userId, signInMethod, refreshTokenId, refreshTokenHash } = request;
+      const { access_token, refresh_token } = generateAuthJWTs(
+        userId,
+        signInMethod,
+        refreshTokenId
       );
 
-      const cookieOptions = generateCookieOptions();
+      const rotated: ServiceResponse = await this.authService.RotateRefreshToken(
+        refreshTokenId,
+        userId,
+        refreshTokenHash,
+        hashToken(refresh_token),
+        getTokenExpiration(refresh_token),
+        request.ip,
+        request.headers['user-agent'] || 'Unknown'
+      );
+
+      if (rotated.success === false) {
+        if (rotated.customError === Errors.RefreshTokenReused) {
+          await this.authService.RevokeRefreshToken(refreshTokenId, userId);
+          clearAuthCookies(reply);
+          return AuthController.handleError(reply, 401);
+        }
+        return AuthController.handleError(reply, 500, Errors.GenericError);
+      }
+
       reply
         .code(200)
-        .setCookie(EnvironmentVariables.Cookie_Name, refresh_token, cookieOptions)
+        .setCookie(
+          EnvironmentVariables.Cookie_Name,
+          refresh_token,
+          generateCookieOptions(refresh_token)
+        )
         .send({ access_token: access_token });
     } catch (error) {
       AuthController.handleError(reply, 500, Errors.GenericError);
@@ -725,10 +628,27 @@ class AuthController {
       if (type !== Strings.ForgotPasswordType) {
         return AuthController.handleError(reply, 403, Errors.IncorrectResetToken);
       }
+
+      // The email link must belong to the user of the reset cookie that forgot-password set
+      const isLinkOfCookieUser: boolean = userId === request.userId;
+      if (isLinkOfCookieUser === false) {
+        return AuthController.handleError(reply, 403, Errors.GenericErrorResetPassword);
+      }
+
       const userExistsResponse: ServiceResponse =
         await this.authService.CheckUserIdExistence(userId);
 
       if (userExistsResponse.success === false) {
+        return AuthController.handleError(reply, 403, Errors.GenericErrorResetPassword);
+      }
+
+      // Single use: a link issued before the last password change is no longer valid
+      const passwordChangedAt: Date | undefined = (userExistsResponse.data as ServiceFoundData)
+        .passwordChangedAt;
+      const isLinkUsed: boolean =
+        passwordChangedAt !== undefined &&
+        (tokenVerifiedData.iat ?? 0) * 1000 < passwordChangedAt.getTime();
+      if (isLinkUsed === true) {
         return AuthController.handleError(reply, 403, Errors.GenericErrorResetPassword);
       }
 
@@ -745,12 +665,16 @@ class AuthController {
         return AuthController.handleError(reply, 400, Errors.GenericErrorResetPassword);
       }
 
+      // Whoever had a session (possibly an attacker) is logged out everywhere
+      const sessionsRevoked: ServiceResponse = await this.authService.RevokeAllUserSessions(userId);
+      if (sessionsRevoked.success === false) {
+        return AuthController.handleError(reply, 500, Errors.GenericError);
+      }
+
       reply
         .code(200)
-        .clearCookie(
-          EnvironmentVariables.Reset_Pass_Cookie_Name,
-          generateCookieOptionsToClear(true)
-        );
+        .clearCookie(EnvironmentVariables.Reset_Pass_Cookie_Name, generateCookieOptionsToClear())
+        .send();
     } catch (error) {
       AuthController.handleError(reply, 500, Errors.GenericError);
     }
@@ -758,25 +682,49 @@ class AuthController {
 
   async logout(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const refreshToken = request.cookies[EnvironmentVariables.Cookie_Name];
+      const refreshToken = retrieveRefreshToken(request.cookies);
       if (refreshToken) {
-        await this.authService.RevokeRefreshTokenByToken(refreshToken);
+        try {
+          const refreshTokenData = verifyJWT(
+            refreshToken,
+            EnvironmentVariables.Refresh_Token_Secret
+          );
+          // Only a session of the user of the access token can be revoked
+          const isSessionOfUser: boolean = refreshTokenData.userId === request.userId;
+          if (isSessionOfUser === true && refreshTokenData.sid) {
+            await this.authService.RevokeRefreshToken(refreshTokenData.sid, request.userId);
+          }
+        } catch {
+          // Invalid or expired cookie: there is no session to revoke, cookies are still cleared
+        }
       }
-      return reply
-        .code(200)
-        .clearCookie(EnvironmentVariables.Cookie_Name, generateCookieOptionsToClear())
-        .clearCookie(
-          EnvironmentVariables.Cookie_Name_Social_Profile,
-          generateCookieOptionsToClear()
-        )
-        .send({ message: 'Logged out successfully' });
+      return clearAuthCookies(reply).code(200).send({ message: Strings.LoggedOut });
+    } catch (error) {
+      AuthController.handleError(reply, 500, Errors.GenericError);
+    }
+  }
+
+  /**
+   * @description Revokes every session of the user. Other devices keep their (stateless) access token
+   * until it expires; their next refresh fails.
+   */
+  async logoutAllDevices(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const sessionsRevoked: ServiceResponse = await this.authService.RevokeAllUserSessions(
+        request.userId
+      );
+      if (sessionsRevoked.success === false) {
+        return AuthController.handleError(reply, 500, Errors.GenericError);
+      }
+      return clearAuthCookies(reply).code(200).send({ message: Strings.LoggedOutAllDevices });
     } catch (error) {
       AuthController.handleError(reply, 500, Errors.GenericError);
     }
   }
 
   async checkIfUserIsAuthenticated(_: FastifyRequest, reply: FastifyReply) {
-    reply.code(401).send();
+    // The isAuthenticated preHandler always replies; this only runs if that ever changes
+    reply.code(200).send();
   }
 }
 

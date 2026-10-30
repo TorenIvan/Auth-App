@@ -4,9 +4,16 @@ import { validateRequestBody, validateRequestQuery } from '../../../config/utils
 import {
   authCredentialsBodySchema,
   forgotPasswordRequestSchema,
+  oauthCodeBodySchema,
   resetPasswordRequestSchema,
   verifyEmailQueryStringSchema,
 } from './auth.schema';
+
+/**
+ * @description Brute force protection for the routes that accept credentials or send emails.
+ * The rate limit plugin is registered once in app.ts (global: false); routes opt in with this config.
+ */
+const authRateLimit = { rateLimit: { max: 5, timeWindow: '1 minute' } };
 
 /**
  * @description Encapsulates all the routes belonging to auth in version 1
@@ -26,6 +33,7 @@ const authRoutesV1 =
       prefix: '/v1/auth/register/credentials',
     });
     fastify.register(logout(controller), { prefix: '/v1/auth/logout' });
+    fastify.register(logoutAll(controller), { prefix: '/v1/auth/logout-all' });
     fastify.register(confirmEmail(controller), { prefix: '/v1/auth/verify' });
     fastify.register(forgotPassword(controller), { prefix: '/v1/auth/forgot-password' });
     fastify.register(resetPassword(controller), { prefix: '/v1/auth/reset-password' });
@@ -36,16 +44,20 @@ export default authRoutesV1;
 const refreshTokens = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance) => {
     fastify.addHook('onRequest', async (request, reply) => {
+      await fastify.verifySameOrigin(request, reply);
+      if (reply.sent) return;
       await fastify.verifyRefreshTokenCookie(request, reply);
-      await fastify.verifySocialProfileTokenCookie(request, reply);
     });
-    fastify.get('/', controller.renewTokens.bind(controller));
+    // POST: rotating the refresh token changes state
+    fastify.post('/', controller.renewTokens.bind(controller));
   };
 };
 
 const checkIsAuthenticated = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance) => {
     fastify.addHook('preHandler', async (request, reply) => {
+      await fastify.verifySameOrigin(request, reply);
+      if (reply.sent) return;
       await fastify.isAuthenticated(request, reply);
     });
     fastify.get('/', {}, controller.checkIfUserIsAuthenticated.bind(controller));
@@ -57,36 +69,55 @@ const loginWithCredentials = (controller: AuthController): FastifyPluginAsync =>
     fastify.addHook('preHandler', async (request: FastifyRequest, reply: FastifyReply) => {
       await validateRequestBody(request, reply, authCredentialsBodySchema);
     });
-    fastify.post('/', controller.loginCredentialsHandler.bind(controller));
+    fastify.post(
+      '/',
+      { config: authRateLimit },
+      controller.loginCredentialsHandler.bind(controller)
+    );
   };
 };
 
 const loginWithFacebook = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance) => {
+    fastify.addHook('preHandler', async (request, reply) => {
+      await validateRequestBody(request, reply, oauthCodeBodySchema);
+    });
     fastify.post('/', controller.loginFacebookHandler.bind(controller));
   };
 };
 
 const loginWithGoogle = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance) => {
+    fastify.addHook('preHandler', async (request, reply) => {
+      await validateRequestBody(request, reply, oauthCodeBodySchema);
+    });
     fastify.post('/', controller.loginGoogleHandler.bind(controller));
   };
 };
 
 const loginWithGithub = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance) => {
+    fastify.addHook('preHandler', async (request, reply) => {
+      await validateRequestBody(request, reply, oauthCodeBodySchema);
+    });
     fastify.post('/', controller.loginGithubHandler.bind(controller));
   };
 };
 
 const loginWithGitlab = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance) => {
+    fastify.addHook('preHandler', async (request, reply) => {
+      await validateRequestBody(request, reply, oauthCodeBodySchema);
+    });
     fastify.post('/', controller.loginGitlabHandler.bind(controller));
   };
 };
 
 const loginWithDiscord = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance) => {
+    fastify.addHook('preHandler', async (request, reply) => {
+      await validateRequestBody(request, reply, oauthCodeBodySchema);
+    });
     fastify.post('/', controller.loginDiscordHandler.bind(controller));
   };
 };
@@ -96,16 +127,33 @@ const registerWithCredentials = (controller: AuthController): FastifyPluginAsync
     fastify.addHook('preHandler', async (request, reply) => {
       await validateRequestBody(request, reply, authCredentialsBodySchema);
     });
-    fastify.post('/', controller.registerCredentialsHandler.bind(controller));
+    fastify.post(
+      '/',
+      { config: authRateLimit },
+      controller.registerCredentialsHandler.bind(controller)
+    );
   };
 };
 
 const logout = (controller: AuthController): FastifyPluginAsync => {
   return async (fastify: FastifyInstance) => {
     fastify.addHook('preHandler', async (request, reply) => {
+      await fastify.verifySameOrigin(request, reply);
+      if (reply.sent) return;
       await fastify.verifyAccessTokenHeader(request, reply);
     });
     fastify.post('/', {}, controller.logout.bind(controller));
+  };
+};
+
+const logoutAll = (controller: AuthController): FastifyPluginAsync => {
+  return async (fastify: FastifyInstance) => {
+    fastify.addHook('preHandler', async (request, reply) => {
+      await fastify.verifySameOrigin(request, reply);
+      if (reply.sent) return;
+      await fastify.verifyAccessTokenHeader(request, reply);
+    });
+    fastify.post('/', {}, controller.logoutAllDevices.bind(controller));
   };
 };
 
@@ -123,7 +171,7 @@ const forgotPassword = (controller: AuthController): FastifyPluginAsync => {
     fastify.addHook('preHandler', async (request, reply) => {
       await validateRequestBody(request, reply, forgotPasswordRequestSchema);
     });
-    fastify.post('/', controller.forgotPasswordHandler.bind(controller));
+    fastify.post('/', { config: authRateLimit }, controller.forgotPasswordHandler.bind(controller));
   };
 };
 
@@ -134,8 +182,9 @@ const resetPassword = (controller: AuthController): FastifyPluginAsync => {
     });
     fastify.addHook('preHandler', async (request, reply) => {
       await validateRequestQuery(request, reply, verifyEmailQueryStringSchema);
+      if (reply.sent) return;
       await validateRequestBody(request, reply, resetPasswordRequestSchema);
     });
-    fastify.post('/', controller.resetPasswordHandler.bind(controller));
+    fastify.post('/', { config: authRateLimit }, controller.resetPasswordHandler.bind(controller));
   };
 };

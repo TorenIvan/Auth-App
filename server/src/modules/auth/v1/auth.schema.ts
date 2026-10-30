@@ -7,6 +7,7 @@ export const authCredentialsBodySchema = z.object({
       required_error: Errors.EmailRequired,
       invalid_type_error: Errors.EmailInvalid,
     })
+    .trim()
     .email({ message: Errors.EmailInvalid }),
   password: z
     .string({
@@ -20,7 +21,7 @@ export const authCredentialsBodySchema = z.object({
 });
 
 export const verifyEmailQueryStringSchema = z.object({
-  email: z.string().email(),
+  email: z.string().trim().email(),
   token: z.string().min(1, { message: Errors.TokenRequired }),
 });
 
@@ -30,6 +31,7 @@ export const forgotPasswordRequestSchema = z.object({
       required_error: Errors.EmailRequired,
       invalid_type_error: Errors.EmailInvalid,
     })
+    .trim()
     .email({ message: Errors.EmailInvalid }),
 });
 
@@ -54,7 +56,12 @@ export const resetPasswordRequestSchema = z.object({
     }),
 });
 
+export const oauthCodeBodySchema = z.object({
+  code: z.string().min(1).max(2048),
+});
+
 export type credentialsUserInput = z.infer<typeof authCredentialsBodySchema>;
 export type forgotPasswordInput = z.infer<typeof forgotPasswordRequestSchema>;
 export type resetPasswordUserInput = z.infer<typeof resetPasswordRequestSchema>;
 export type queryConfirmEmail = z.infer<typeof verifyEmailQueryStringSchema>;
+export type oauthCodeInput = z.infer<typeof oauthCodeBodySchema>;

@@ -3,8 +3,18 @@ import * as bcrypt from 'bcryptjs';
 import { Errors } from '../../../config/utils/constants/Errors';
 import { objectAttributeExistsAndHasValue } from '../../../config/utils/helpers';
 import { EnvironmentVariables } from '../../../config/utils/constants/EnvironmentVariables';
+import { Strings } from '../../../config/utils/constants/Strings';
+import { logger } from '../../../config/utils/helpers';
 import User from '../../user/v1/user.model';
 import RefreshToken from './auth.model';
+
+/**
+ * Compared against when the user does not exist, so login takes the same time either way (no user enumeration).
+ */
+const DUMMY_PASSWORD_HASH: string = bcrypt.hashSync(
+  'dummy-password',
+  Number(EnvironmentVariables.Salt_Size)
+);
 
 class AuthService {
   private users: Collection<User>;
@@ -17,7 +27,7 @@ class AuthService {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private static handleError(error: any): ServiceResponse {
-    console.error(error);
+    logger.error(error);
     if (objectAttributeExistsAndHasValue(error, 'customError') === true) {
       return { success: false, customError: error.customError };
     }
@@ -26,32 +36,29 @@ class AuthService {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private static handleTokenError(error: any): ServiceResponseToken {
-    console.error(error);
+    logger.error(error);
     if (objectAttributeExistsAndHasValue(error, 'customError') === true) {
       return { success: false, customError: error.customError };
     }
     return { success: false };
   }
 
+  /**
+   * @description Creates the session (token family) document. Its _id is the `sid` claim of the tokens.
+   */
   async CreateRefreshToken(
+    sessionId: ObjectId,
     userId: string,
-    token: string,
+    tokenHash: string,
+    expiresAt: Date,
     ip?: string,
     userAgent?: string
   ): Promise<ServiceResponseToken> {
     try {
-      const userObjectId = new ObjectId(userId);
-      const expiresAt = new Date();
-      expiresAt.setDate(
-        expiresAt.getDate() +
-          parseInt(EnvironmentVariables.Refresh_Token_Expiration_Time.replace(/\D/g, ''), 10)
-      );
-
-      const tokenId = new ObjectId();
       await this.refreshTokens.insertOne({
-        _id: tokenId,
-        userId: userObjectId,
-        token,
+        _id: sessionId,
+        userId: new ObjectId(userId),
+        token: tokenHash,
         createdAt: new Date(),
         expiresAt,
         revoked: false,
@@ -59,7 +66,7 @@ class AuthService {
         userAgent,
       });
 
-      return { success: true, data: { tokenId } };
+      return { success: true, data: { tokenId: sessionId } };
     } catch (error) {
       return AuthService.handleTokenError(error);
     }
@@ -112,33 +119,65 @@ class AuthService {
     }
   }
 
-  async UpdateRefreshToken(
-    tokenId: string,
-    newToken: string,
+  /**
+   * @description Atomic refresh token rotation with reuse detection.
+   * 1. The presented token is the current one: rotate it and remember it as previousToken.
+   * 2. It is the previous one, rotated less than the grace window ago (aborted response, e.g. reload):
+   *    issue a new token, previousToken stays the same.
+   * 3. Anything else is a reuse of an old token of this family: the caller revokes the session.
+   * Two plain updateOne calls (no aggregation pipeline), so values such as the user agent can never be
+   * interpreted as field paths.
+   */
+  async RotateRefreshToken(
+    sessionId: string,
+    userId: string,
+    presentedTokenHash: string,
+    newTokenHash: string,
+    expiresAt: Date,
     ip?: string,
     userAgent?: string
   ): Promise<ServiceResponse> {
     try {
-      const expiresAt = new Date();
-      expiresAt.setDate(
-        expiresAt.getDate() +
-          parseInt(EnvironmentVariables.Refresh_Token_Expiration_Time.replace(/\D/g, ''), 10)
-      );
+      const now = new Date();
+      const sessionFilter = {
+        _id: new ObjectId(sessionId),
+        userId: new ObjectId(userId),
+        revoked: false,
+        expiresAt: { $gt: now },
+      };
 
-      await this.refreshTokens.updateOne(
-        { _id: new ObjectId(tokenId) },
+      const rotated = await this.refreshTokens.updateOne(
+        { ...sessionFilter, token: presentedTokenHash },
         {
           $set: {
-            token: newToken,
-            createdAt: new Date(),
+            previousToken: presentedTokenHash,
+            token: newTokenHash,
+            rotatedAt: now,
             expiresAt,
             ip,
             userAgent,
           },
         }
       );
+      if (rotated.modifiedCount === 1) {
+        return { success: true };
+      }
 
-      return { success: true };
+      const rotatedWithinGrace = await this.refreshTokens.updateOne(
+        {
+          ...sessionFilter,
+          previousToken: presentedTokenHash,
+          rotatedAt: { $gt: new Date(now.getTime() - Strings.RefreshTokenReuseGraceMs) },
+        },
+        { $set: { token: newTokenHash, expiresAt, ip, userAgent } }
+      );
+      if (rotatedWithinGrace.modifiedCount === 1) {
+        return { success: true };
+      }
+
+      throw {
+        customError: Errors.RefreshTokenReused,
+      };
     } catch (error) {
       return AuthService.handleError(error);
     }
@@ -215,14 +254,14 @@ class AuthService {
     }
   }
 
-  async RevokeRefreshToken(tokenId: string): Promise<ServiceResponse> {
+  async RevokeRefreshToken(sessionId: string, userId: string): Promise<ServiceResponse> {
     try {
       const now = new Date();
       const deleteAfter = new Date();
       deleteAfter.setDate(deleteAfter.getDate() + Number(EnvironmentVariables.Token_Deletion_Time));
 
       await this.refreshTokens.updateOne(
-        { _id: new ObjectId(tokenId) },
+        { _id: new ObjectId(sessionId), userId: new ObjectId(userId), revoked: false },
         {
           $set: {
             revoked: true,
@@ -237,14 +276,22 @@ class AuthService {
     }
   }
 
-  async RevokeRefreshTokenByToken(token: string): Promise<ServiceResponse> {
+  /**
+   * @description Revokes every session of the user (password reset/change, logout from all devices).
+   * Succeeds even when there is nothing left to revoke.
+   */
+  async RevokeAllUserSessions(userId: string, exceptSessionId?: string): Promise<ServiceResponse> {
     try {
       const now = new Date();
       const deleteAfter = new Date();
       deleteAfter.setDate(deleteAfter.getDate() + Number(EnvironmentVariables.Token_Deletion_Time));
 
-      await this.refreshTokens.updateOne(
-        { token: token, revoked: false },
+      await this.refreshTokens.updateMany(
+        {
+          userId: new ObjectId(userId),
+          revoked: false,
+          ...(exceptSessionId !== undefined && { _id: { $ne: new ObjectId(exceptSessionId) } }),
+        },
         {
           $set: {
             revoked: true,
@@ -254,6 +301,56 @@ class AuthService {
         }
       );
       return { success: true };
+    } catch (error) {
+      return AuthService.handleError(error);
+    }
+  }
+
+  /**
+   * @description A social provider has just proven ownership of the email: an unverified credentials
+   * account with that email (possibly pre-registered by someone else) becomes verified and loses its password.
+   */
+  async ClaimUnverifiedAccount(userId: string): Promise<ServiceResponse> {
+    try {
+      await this.users.updateOne(
+        { _id: new ObjectId(userId), isVerified: false },
+        { $set: { isVerified: true, password: '' } }
+      );
+      return { success: true };
+    } catch (error) {
+      return AuthService.handleError(error);
+    }
+  }
+
+  async FindUserByEmail(email: string): Promise<ServiceResponse> {
+    try {
+      const result = await this.users.findOne(
+        { email: email },
+        {
+          projection: {
+            _id: 1,
+            username: 1,
+            email: 1,
+            signInMethod: 1,
+            isVerified: 1,
+            isActive: 1,
+          },
+        }
+      );
+      if (result === null) {
+        throw 'User not found with this email';
+      }
+      const data: ServiceInsertedData = {
+        userId: result._id,
+        username: result.username,
+        email: result.email,
+        biography: '',
+        phone: '',
+        signInMethod: result.signInMethod as SignInMethod,
+        isVerified: result.isVerified,
+        isActive: result.isActive,
+      };
+      return { success: true, data: data };
     } catch (error) {
       return AuthService.handleError(error);
     }
@@ -278,6 +375,7 @@ class AuthService {
       );
 
       if (result === null) {
+        await bcrypt.compare(password, DUMMY_PASSWORD_HASH);
         throw {
           customError: Errors.UserNotFoundWithTheseCreds,
         };
@@ -407,6 +505,7 @@ class AuthService {
         {
           projection: {
             _id: 1,
+            passwordChangedAt: 1,
           },
         }
       );
@@ -415,6 +514,7 @@ class AuthService {
       }
       const data: ServiceFoundData = {
         userId: itExists!._id,
+        passwordChangedAt: itExists!.passwordChangedAt,
       };
       return { success: true, data: data };
     } catch (error) {
@@ -433,6 +533,7 @@ class AuthService {
         {
           $set: {
             password: hash,
+            passwordChangedAt: new Date(),
           },
         }
       );

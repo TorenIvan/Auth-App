@@ -6,6 +6,7 @@ import cookie from '@fastify/cookie';
 import type { FastifyCookieOptions } from '@fastify/cookie';
 import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
+import rateLimit from '@fastify/rate-limit';
 import fastifySensible from '@fastify/sensible';
 import { resolve } from 'path';
 import { config } from 'dotenv';
@@ -20,6 +21,7 @@ import databasePlugin from './config/plugins/database.plugin';
 import loggerPlugin from './config/plugins/logger.plugin';
 import httpErrorPlugin from './config/plugins/httpError.plugin';
 import notFoundPlugin from './config/plugins/notFound.plugin';
+import { MAX_FILE_SIZE_MB } from './config/utils/helpers/general/isFileSizeExceeded';
 import { authMiddleware, userMiddleware } from './config/middleware';
 import { authRoutesV1 } from './modules/auth/v1';
 import { userRoutesV1 } from './modules/user/v1';
@@ -72,13 +74,17 @@ const appPlugin: FastifyPluginAsync<AppOptions> = async (fastify, options): Prom
   await fastify.register(multipart, {
     addToBody: true,
     limits: {
-      fileSize: 16 * 1024 * 1024,
+      fileSize: MAX_FILE_SIZE_MB * 1024 * 1024,
       files: 1,
     },
   });
 
+  // Routes opt in with config.rateLimit (see auth.route.ts)
+  await fastify.register(rateLimit, { global: false });
+
   await fastify.register(databasePlugin, options);
   await fastify.register(fastifySensible);
+  await fastify.register(httpErrorPlugin, options);
   await fastify.register(loggerPlugin);
   await fastify.register(DIPlugin);
   await fastify.register(authMiddleware, options);
@@ -98,7 +104,6 @@ const appPlugin: FastifyPluginAsync<AppOptions> = async (fastify, options): Prom
     },
     { prefix: '/api' }
   );
-  await fastify.register(httpErrorPlugin, options);
   await fastify.register(notFoundPlugin, options);
 
   if (process.env.NODE_ENV === 'production') {
@@ -114,7 +119,14 @@ if (require.main === module) {
   const isDevelopment = process.env.NODE_ENV === 'development';
 
   const fastify = Fastify({
-    logger: true,
+    logger: {
+      serializers: {
+        // Query strings carry email and reset tokens: never log them
+        req: (request) => ({ method: request.method, url: request.url.split('?')[0] }),
+      },
+    },
+    // Railway's proxy is the only hop in front of the app; trusting just it keeps request.ip unspoofable
+    trustProxy: isDevelopment ? false : 1,
     ...(isDevelopment && {
       https: {
         key: readFileSync(resolve(__dirname, '../key.pem')),

@@ -1,77 +1,48 @@
-import { EnvironmentVariables } from '../../constants/EnvironmentVariables';
+import { Strings } from '../../constants/Strings';
+import { getTokenExpiration } from './generateJWTs';
 
 export type SameSiteType = boolean | 'none' | 'lax' | 'strict' | undefined;
 
-const cookieExpirationDays = Number(
-  String(EnvironmentVariables.Refresh_Token_Expiration_Time).replace(/\D/, '')
-);
+/**
+ * @description Max-Age in whole seconds (cookie libraries reject non-integers), derived from the token's exp.
+ */
+const secondsUntilExpiration = (token: string): number => {
+  return Math.max(0, Math.floor((getTokenExpiration(token).getTime() - Date.now()) / 1000));
+};
 
-const socialCookieExpirationDays = Number(
-  String(EnvironmentVariables.Refresh_Token_Expiration_Time).replace(/\D/, '')
-);
-
-const resetCookieExpirationTime = Number(
-  String(EnvironmentVariables.Reset_Pass_Cookie_Expiration_Time).replace(/\D/, '')
-);
-
-export const generateCookieOptionsToClear = (isItResetPassword = false) => {
+export const generateCookieOptionsToClear = (path: string = Strings.AuthCookiePath) => {
   /**
    * *** The below attributes +domain which is known here, are needed to identify the cookie from browser in order to be deleted. ***
    * *** If for some reason, you miss one of them, it might not be deleted, depending on the browser. ***
    */
   return {
-    path: isItResetPassword === true ? '/v1/auth' : '/',
-    sameSite: 'none' as SameSiteType,
+    path: path,
+    sameSite: 'strict' as SameSiteType,
     secure: true,
+    httpOnly: true,
   };
 };
 
-export const generateCookieOptions = () => {
-  const cookieExpirationDate = new Date(
-    new Date().setDate(new Date().getDate() + cookieExpirationDays)
-  );
-
+export const generateCookieOptions = (token: string) => {
   const options = {
     signed: false, //refresh token is already signed
     httpOnly: true,
-    sameSite: 'none' as SameSiteType,
+    sameSite: 'strict' as SameSiteType,
     secure: true,
-    expires: cookieExpirationDate,
-    maxAge: cookieExpirationDate,
-    path: '/',
+    maxAge: secondsUntilExpiration(token),
+    path: Strings.AuthCookiePath,
   };
   return options;
 };
 
-export const generateSocialCookieOptions = () => {
-  const cookieExpirationDate = new Date(
-    new Date().setDate(new Date().getDate() + socialCookieExpirationDays)
-  );
-
-  const options = {
-    signed: false, //social login token is already signed
-    httpOnly: true,
-    sameSite: 'none' as SameSiteType,
-    secure: true,
-    expires: cookieExpirationDate,
-    maxAge: cookieExpirationDate,
-    path: '/',
-  };
-  return options;
-};
-
-export const generateResetCookieOptions = () => {
-  const cookieExpirationDate = new Date(
-    new Date().setTime(new Date().getTime() + resetCookieExpirationTime * 60000)
-  );
-
+export const generateResetCookieOptions = (token: string) => {
   const options = {
     signed: false, //reset token is already signed
     httpOnly: true,
-    sameSite: 'none' as SameSiteType,
+    sameSite: 'strict' as SameSiteType,
     secure: true,
-    expires: cookieExpirationDate,
-    maxAge: cookieExpirationDate,
+    maxAge: secondsUntilExpiration(token),
+    path: Strings.AuthCookiePath,
   };
   return options;
 };

@@ -110,6 +110,17 @@ class UserController {
         return UserController.handleError(reply, 400, updatedUserDetails?.customError);
       }
 
+      if (isChangingPassword === true) {
+        // Every other session (possibly someone else's) is logged out, this one stays
+        const sessionsRevoked = await this.authService.RevokeAllUserSessions(
+          request.userId,
+          request.sessionId
+        );
+        if (sessionsRevoked.success === false) {
+          return UserController.handleError(reply, 500, Errors.GenericError);
+        }
+      }
+
       return reply.code(200).send();
     } catch (error) {
       return UserController.handleError(reply, 500, Errors.GenericError);

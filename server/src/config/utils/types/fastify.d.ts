@@ -16,8 +16,8 @@ declare module 'fastify' {
       auth: AuthController;
       user: UserController;
     };
+    verifySameOrigin: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
     verifyAccessTokenHeader: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
-    verifySocialProfileTokenCookie: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
     verifyRefreshTokenCookie: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
     verifyResetPasswordCookie: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
     isAuthenticated: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
@@ -39,6 +39,8 @@ declare module 'fastify' {
     userId: string;
     signInMethod: SignInMethod;
     refreshTokenId: string;
+    refreshTokenHash: string;
+    sessionId: string;
     cookies: { [cookieName: string]: string | undefined };
     file: FastifyMultipartFile;
   }
