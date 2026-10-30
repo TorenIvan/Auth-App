@@ -14,7 +14,8 @@
     "build:ts": "tsc",
     "dev": "NODE_ENV=development tsc && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"tsc -w\" \" export NODE_ENV=development && fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js\"",
     "start": "NODE_ENV=production node dist/app.js",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src"
   },
   "keywords": [],
   "author": "TorenIvan",
@@ -43,18 +44,18 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@eslint/js": "10.0.1",
     "@faker-js/faker": "10.6.0",
     "@types/node": "24.19.2",
-    "@typescript-eslint/eslint-plugin": "6.21.0",
-    "@typescript-eslint/parser": "6.21.0",
     "concurrently": "10.0.6",
-    "eslint": "8.57.1",
+    "eslint": "10.13.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.7",
     "fastify-tsconfig": "3.0.0",
     "mongodb-memory-server": "11.3.0",
     "prettier": "3.9.10",
     "typescript": "6.0.3",
+    "typescript-eslint": "8.72.0",
     "vitest": "5.0.5"
   }
 }

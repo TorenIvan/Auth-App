@@ -13,7 +13,7 @@ class ErrorBoundary extends Component<IProps, IState> {
     hasError: false,
   };
 
-  public static getDerivedStateFromError(_: Error): IState {
+  public static getDerivedStateFromError(): IState {
     return { hasError: true };
   }
 
@@ -26,9 +26,6 @@ class ErrorBoundary extends Component<IProps, IState> {
   }
 
   public render() {
-    if (this.state.hasError === true) {
-    }
-
     return this.props.children;
   }
 }

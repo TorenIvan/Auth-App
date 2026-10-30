@@ -12,7 +12,7 @@ export const ImageSchema = z.object({
 });
 export type Image = z.infer<typeof ImageSchema>;
 
-const UserSchema = z.object({
+export const UserSchema = z.object({
   _id: z.instanceof(ObjectId),
   schemaVersion: z.number(),
   username: z.string(),
