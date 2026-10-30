@@ -60,7 +60,11 @@ describe('Auth Login Credentials', () => {
       // handleError sends the message as plain text
       expect(response.body).toContain('confirm');
       expect(sendEmail).toHaveBeenCalledTimes(1);
-      expect(sendEmail).toHaveBeenCalledWith(user.email, expect.any(String), Strings.ActionConfirmEmail);
+      expect(sendEmail).toHaveBeenCalledWith(
+        user.email,
+        expect.any(String),
+        Strings.ActionConfirmEmail
+      );
     });
 
     it('should reject login with invalid credentials', async () => {
