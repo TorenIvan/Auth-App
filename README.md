@@ -28,7 +28,7 @@ auth-app/
 
 ### Authentication
 -  **Credential-based auth** - Email/password registration and login
--  **Refresh token rotation** - Secure token refresh mechanism with automatic rotation
+-  **Refresh token rotation** - Every refresh rotates the token; reusing an old one revokes the session
 -  **Access tokens** - Short-lived tokens stored in memory
 -  **HTTP-only cookies** - Refresh tokens stored securely
 -  **OAuth2 providers** - Google, GitHub, GitLab, and Discord integration
@@ -39,13 +39,15 @@ auth-app/
 -  **Profile management** - Edit bio, name, and other details
 -  **Profile images** - Upload and manage profile pictures
 -  **User dashboard** - View account details and information
--  **Secure logout** - Token invalidation on logout
+-  **Secure logout** - Revokes the current session, or every session with *Logout all devices*
 
 ### Security
--  Refresh token rotation to prevent token reuse
--  HTTP-only and secure cookies for refresh tokens
+-  Refresh token rotation with reuse detection (one session document per login, tokens stored hashed)
+-  HTTP-only, Secure, `SameSite=Strict` cookies scoped to `/api/v1/auth`, plus a `Sec-Fetch-Site` check
 -  In-memory access token storage (no localStorage/sessionStorage)
--  Automatic token refresh on expiry using Auth Guard
+-  Automatic token refresh on expiry, serialized across tabs; login/logout synced between tabs
+-  Password reset/change revokes sessions; reset links are single use
+-  Social logins accept only provider-verified emails
 - ️ Zod for runtime validation
 -  TypeScript for type safety across the stack
 
@@ -53,9 +55,9 @@ auth-app/
 
 ### Frontend
 - **Vite** as build tool
-- **React 18** with TypeScript
-- **React Router v6** for routing
-- **React Query v4** (TanStack Query) for server state management
+- **React 19** with TypeScript
+- **React Router v8** for routing
+- **TanStack Query v5** for server state management
 - **Axios** for API communication
 
 ### Backend
@@ -72,7 +74,7 @@ auth-app/
 
 ## Prerequisites
 
-- Node.js v18 or higher
+- Node.js 24 (see `.nvmrc`) and npm 11.10 or higher (for the `.npmrc` supply-chain settings)
 - MongoDB (local)
 - npm 
 - Email service credentials (for email verification/password reset)
@@ -132,14 +134,18 @@ VITE_CLIENT_URI=https://localhost:5173/
 ### 3. Install dependencies
 
 ```bash
-# Install server dependencies
+# Install server dependencies (exactly the lockfile)
 cd server
-npm install
+npm ci
 
 # Install client dependencies
 cd ../client
-npm install
+npm ci
 ```
+
+> **Supply chain:** `server/.npmrc` and `client/.npmrc` only install versions published at least 7 days ago,
+> never run install scripts and never fetch git dependencies. Upgrade with `npm install <pkg>@latest`
+> (a dist-tag, not an exact version), then check `npm audit signatures` and `npm audit`.
 
 ### 4. Start MongoDB
 
@@ -162,8 +168,24 @@ npm run dev
 ```
 
 The application will be available at:
-- **Frontend:** http://localhost:5173
-- **Backend API:** http://localhost:3000
+- **Frontend:** https://localhost:5173
+- **Backend API:** https://localhost:5173/api (Vite proxies `/api` to http://localhost:3000, so development is same-origin like production)
+
+#### Tests
+
+```bash
+cd server
+npm run test:run
+```
+
+Tests run against an in-memory MongoDB and never reach the network (emails, providers and `fetch` are mocked).
+The MongoDB binary is fetched once, outside test runs:
+
+```bash
+cd server
+MONGOMS_VERSION=8.2.6 MONGOMS_DOWNLOAD_DIR=$HOME/.cache/mongodb-binaries MONGOMS_MD5_CHECK=1 \
+  node -e "require('mongodb-memory-server').MongoBinary.getPath().then(console.log)"
+```
 
 #### Production build
 
@@ -188,39 +210,46 @@ npm start
 ## Authentication Flow
 
 ### Token Strategy
-1. User logs in with credentials or OAuth2
-2. Server generates:
-   - **Access token** (short-lived, ~5 minutes) - sent in response body
-   - **Refresh token** (long-lived, ~30 days) - sent as HTTP-only, secure cookie
-3. Client stores access token in memory (JS)
-4. On access token expiry, client automatically requests new token using refresh token
-5. Refresh token rotates on each use (old token invalidated, new one issued)
-6. On logout, refresh token is revoked
+1. User logs in with credentials or OAuth2: a session (token family) is created
+2. Server generates (both carry the session id `sid` and a unique `jti`):
+   - **Access token** (short-lived) - sent in response body, kept in memory (stateless)
+   - **Refresh token** (long-lived) - sent as HTTP-only cookie, stored hashed in the session (stateful)
+3. On a 401 the client calls `POST /api/v1/auth/refresh` once (requests wait in a queue, tabs wait on a Web Lock)
+4. The refresh token rotates atomically; the previous one stays valid for a 10s grace window (lost responses)
+5. Reusing an older token revokes the whole session (possible theft)
+6. Logout revokes the session; *Logout all devices* revokes every session. Access tokens of other devices
+   stay valid until they expire: that is the price of stateless access tokens
 
 ### OAuth2 Flow
 1. User clicks social login button
 2. Redirected to OAuth provider
 3. After authorization, redirected back to callback URL
-4. Server exchanges code for user info
-5. Creates/updates user in database
+4. Server exchanges code for user info and accepts only a provider-verified email
+5. Creates the user, or logs into the existing one (an unverified account with that email is claimed
+   and loses its password; Facebook never links to other accounts)
 6. Issues access and refresh tokens
-7. Redirects to client with tokens
 
 ## Deployment
 
-The application is deployed on Railway with custom domain and SSL/TLS certificate.
+The application is deployed on Railway (Railpack builder, Node 24, `npm ci`) with custom domain and SSL/TLS certificate.
+
+> **Migration (auth hardening):** sessions created before it are not valid anymore (no `sid`, tokens were not
+> hashed), so every user logs in once again. Legacy `path=/` cookies are cleared until 2027-01-31.
 
 ## Security Considerations
 
 - Access tokens stored in memory (cleared on page refresh)
-- Refresh tokens in HTTP-only, Secure cookies (not accessible via JavaScript)
-- Refresh token rotation prevents reuse attacks
-- CORS configured for specific origins
+- Refresh tokens in HTTP-only, Secure, `SameSite=Strict` cookies (not accessible via JavaScript)
+- Refresh token rotation with reuse detection
+- Same-origin deployment (CORS only in development), `Sec-Fetch-Site` check on cookie routes
 - Password hashing with bcryptjs
 - Input validation with Zod on both client and server
-- Rate limiting on authentication endpoints
+- Rate limiting on login, register, forgot and reset password
 - Email verification for new accounts
+- Uploaded images checked by content (magic bytes), 2 MB limit
+- No tokens or query strings in logs, no internal error messages in responses
 - TypeScript for type safety
+- Known limits: an XSS on the page can still call the API (same origin); a stolen access token is valid until it expires
 
 ## Inspiration
 

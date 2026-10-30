@@ -6,8 +6,8 @@ Fastify TypeScript backend API implementing secure authentication with JWT-based
 
 ### Authentication & Security
 -  JWT-based authentication (access + refresh tokens)
--  Refresh token rotation with automatic revocation
--  HTTP-only, Secure, SameSite cookies for refresh tokens
+-  Refresh token rotation with reuse detection (atomic, 10s grace window)
+-  HTTP-only, Secure, SameSite=Strict cookies for refresh tokens, `Sec-Fetch-Site` check
 -  OAuth2 integration (Google, GitHub, GitLab, Discord)
 -  Email verification system with Resend
 -  Password reset flow with secure tokens
@@ -69,19 +69,18 @@ Services and controllers are wired together using a DI Plugin:
 
 ### Middleware System
 Fastify decorators provide reusable authentication guards:
+- `verifySameOrigin`: Rejects cross-site requests on the routes that read the refresh cookie
 - `verifyAccessTokenHeader`: Validates JWT from Authorization header
-- `verifyRefreshTokenCookie`: Validates refresh token from cookies
-- `verifySocialProfileTokenCookie`: Validates OAuth profile tokens
+- `verifyRefreshTokenCookie`: Validates refresh token from cookies and finds its session
 - `verifyResetPasswordCookie`: Validates password reset tokens
-- `isAuthenticated`: Checks if user has valid authentication
-- `actionForbiddenToAuthenticatedUser`: Blocks authenticated users from auth routes (not actually needed)
-- `verifyImageUpload`: Validates uploaded image files
+- `isAuthenticated`: Checks if user has valid authentication (access token, or the refresh cookie)
+- `verifyImageUpload`: Validates uploaded image files (mimetype, magic bytes, size)
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js v18 or higher
+- Node.js 24 and npm 11.10 or higher
 - MongoDB running locally or connection string
 - OAuth2 credentials from providers (Google, GitHub, GitLab, Discord)
 - Resend API key for email sending
@@ -90,17 +89,17 @@ Fastify decorators provide reusable authentication guards:
 
 ```bash
 cd server
-npm install
+npm ci
 ```
 
 ### Development
 
-Start the development server with HTTPS:
+Start the development server:
 ```bash
 npm run dev
 ```
 
-Server runs on `https://localhost:3000` (HTTPS with self-signed cert)
+Server runs on `http://localhost:3000`; the client reaches it same-origin through the Vite proxy (`https://localhost:5173/api`).
 
 ### Production
 
@@ -117,6 +116,9 @@ npm start
 | `npm run dev` | Start development server with hot reload |
 | `npm run build` | Compile TypeScript to JavaScript |
 | `npm start` | Run production build |
+| `npm run test:run` | Run the tests once (in-memory MongoDB, no network) |
+| `npm run typecheck` | Type check without emitting |
+| `npm run lint` | ESLint (flat config) |
 
 ## Environment Variables
 
@@ -147,7 +149,7 @@ RESET_PASS_COOKIE_EXPIRATION_TIME=30m
 
 # Cookie Names
 COOKIE_NAME=refreshToken
-COOKIE_NAME_SOCIAL_PROFILE=socialProfile
+COOKIE_NAME_SOCIAL_PROFILE=socialProfile # legacy, only to clear the old cookie until 2027-01-31
 RESET_PASS_COOKIE_NAME=resetPassword
 
 # Password Hashing
@@ -193,15 +195,15 @@ DISCORD_CLIENT_SECRET=your-discord-client-secret
 ### Token Refresh
 
 1. Client detects expired access token (401)
-2. Calls refresh endpoint with refresh token cookie
-3. Server verifies token (JWT + DB check)
-4. Generates new token pair with **rotation**
-5. Old refresh token revoked and auto-deleted via MongoDB TTL index
-6. Returns new tokens
+2. Calls `POST /v1/auth/refresh` with the refresh token cookie
+3. Server verifies the JWT, the user and the session (`sid`)
+4. Rotates atomically: the stored hash must be the current token, or the previous one within 10 seconds
+5. Any other token of the session is a reuse: the session is revoked
+6. Returns the new access token (body) and refresh token (cookie)
 
 ### Logout
 
-1. Server marks refresh token as revoked in DB
+1. Server marks the session as revoked in DB (`POST /v1/auth/logout-all` revokes every session of the user)
 2. Sets `deleteAt` field for auto-deletion
 3. Clears all authentication cookies
 
@@ -210,9 +212,10 @@ DISCORD_CLIENT_SECRET=your-discord-client-secret
 ### Token Security
 - ✅ Access tokens in memory on client (3 minutes lifetime)
 - ✅ Refresh tokens in HTTP-only, Secure cookies (30 days lifetime)
-- ✅ Refresh token rotation (old tokens revoked immediately)
+- ✅ Refresh token rotation with reuse detection; tokens stored as sha256
 - ✅ Device tracking (IP + user agent stored with tokens)
-- ✅ Auto-deletion of revoked tokens via MongoDB TTL indexes
+- ✅ Auto-deletion of revoked and expired sessions via MongoDB TTL indexes
+- ✅ Password reset/change revokes sessions; reset links bound to the reset cookie and single use
 
 ### Password & API Security
 - ✅ bcryptjs hashing with salt rounds
@@ -222,12 +225,14 @@ DISCORD_CLIENT_SECRET=your-discord-client-secret
 - ✅ Helmet security headers
 - ✅ Input validation with Zod
 - ✅ TypeScript for type safety
-- ✅ File upload validation (type, size)
+- ✅ File upload validation (type, magic bytes, size)
+- ✅ Rate limiting on credential and email routes
 
 ## Development Notes
 
 ### HTTPS in Development
-Development server uses self-signed SSL certificates (`cert.pem`, `key.pem`) for local HTTPS. These files are git-ignored.
+`npm run dev` serves HTTP; HTTPS comes from the Vite dev server (mkcert). Running `dist/app.js` with
+`NODE_ENV=development` uses self-signed SSL certificates (`cert.pem`, `key.pem`). These files are git-ignored.
 
 Generate new certificates:
 ```bash
