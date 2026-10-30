@@ -24,17 +24,6 @@ declare module 'fastify' {
     verifyImageUpload: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
   }
 
-  export interface FastifyMultipartFile {
-    name: string;
-    data: Buffer;
-    encoding: string;
-    mimetype: string;
-    filename: string;
-    limit: number;
-    fields: object;
-    size: number;
-  }
-
   export interface FastifyRequest {
     userId: string;
     signInMethod: SignInMethod;
@@ -42,25 +31,6 @@ declare module 'fastify' {
     refreshTokenHash: string;
     sessionId: string;
     cookies: { [cookieName: string]: string | undefined };
-    file: FastifyMultipartFile;
-  }
-
-  export interface FastifyReply {
-    /**
-     * Set response cookie
-     * @name setCookie
-     * @param name Cookie name
-     * @param value Cookie value
-     * @param options Serialize options
-     */
-    setCookie(name: string, value: string, options?: fastifyCookie.CookieSerializeOptions): this;
-
-    /**
-     * clear response cookie
-     * @param name Cookie name
-     * @param options Serialize options
-     */
-    clearCookie(name: string, options?: fastifyCookie.CookieSerializeOptions): this;
   }
 }
 

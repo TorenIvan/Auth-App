@@ -1,4 +1,4 @@
-import { FastifyPluginAsync } from 'fastify';
+import { FastifyError, FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
 import { ZodError } from 'zod';
 
@@ -7,7 +7,7 @@ import { ZodError } from 'zod';
  * that exists when the route is declared, so registering it later never applies it.
  */
 const httpErrorPlugin: FastifyPluginAsync = fp(async (fastify) => {
-  fastify.setErrorHandler((error, request, reply) => {
+  fastify.setErrorHandler<FastifyError>((error, request, reply) => {
     // Handle Fastify validation errors
     if (error.validation) {
       return reply.status(400).send({
@@ -19,7 +19,7 @@ const httpErrorPlugin: FastifyPluginAsync = fp(async (fastify) => {
 
     // Handle Zod errors with custom formatting
     if (error instanceof ZodError) {
-      const formattedErrors = error.errors.map((err) => ({
+      const formattedErrors = error.issues.map((err) => ({
         path: err.path.join('.'),
         message: err.message,
         code: err.code,

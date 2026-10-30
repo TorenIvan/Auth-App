@@ -3,6 +3,7 @@ import { FastifyInstance } from 'fastify';
 import { createTestApp } from '../test-app';
 import { createUser, getSession, login, loginAndGetSession, refresh } from '../helpers/auth';
 import { Errors } from '../../config/utils/constants/Errors';
+import { generateAuthJWTs } from '../../config/utils/helpers/auth/generateJWTs';
 
 const PNG = Buffer.concat([
   Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
@@ -176,7 +177,6 @@ describe('C9 profile: details and edit', () => {
     const { user } = await createUser(app, { signInMethod: 'google' });
     // A social session, as a provider login would create it
     await app.db.collection('users').updateOne({ _id: user._id }, { $set: { password: '' } });
-    const { generateAuthJWTs } = await import('../../config/utils/helpers/auth/generateJWTs');
     const { access_token } = generateAuthJWTs(
       user._id.toString(),
       'google',

@@ -14,14 +14,14 @@ import Fastify from 'fastify';
 import { readFileSync } from 'fs';
 
 const nodeEnv = process.env.NODE_ENV || 'development';
-config({ path: resolve(__dirname, `../.env.${nodeEnv}`) });
+config({ path: resolve(__dirname, `../.env.${nodeEnv}`), quiet: true });
 
 import { DIPlugin } from './config/plugins/di.plugin';
 import databasePlugin from './config/plugins/database.plugin';
 import loggerPlugin from './config/plugins/logger.plugin';
 import httpErrorPlugin from './config/plugins/httpError.plugin';
 import notFoundPlugin from './config/plugins/notFound.plugin';
-import { MAX_FILE_SIZE_MB } from './config/utils/helpers/general/isFileSizeExceeded';
+import { multipartOptions } from './config/utils/helpers/general/multipartOptions';
 import { authMiddleware, userMiddleware } from './config/middleware';
 import { authRoutesV1 } from './modules/auth/v1';
 import { userRoutesV1 } from './modules/user/v1';
@@ -71,13 +71,7 @@ const appPlugin: FastifyPluginAsync<AppOptions> = async (fastify, options): Prom
     parseOptions: {},
   } as FastifyCookieOptions);
 
-  await fastify.register(multipart, {
-    addToBody: true,
-    limits: {
-      fileSize: MAX_FILE_SIZE_MB * 1024 * 1024,
-      files: 1,
-    },
-  });
+  await fastify.register(multipart, multipartOptions);
 
   // Routes opt in with config.rateLimit (see auth.route.ts)
   await fastify.register(rateLimit, { global: false });
@@ -126,7 +120,7 @@ if (require.main === module) {
       },
     },
     // Railway's proxy is the only hop in front of the app; trusting just it keeps request.ip unspoofable
-    trustProxy: isDevelopment ? false : 1,
+    trustProxy: isDevelopment ? false : (_address: string, hop: number) => hop < 1,
     ...(isDevelopment && {
       https: {
         key: readFileSync(resolve(__dirname, '../key.pem')),

@@ -8,8 +8,7 @@ const userMiddleware: FastifyPluginAsync = fp(async (fastify: FastifyInstance): 
     'verifyImageUpload',
     async function (request: FastifyRequest, reply: FastifyReply): Promise<void> {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const images = (request.body as any).file as Array<UploadedFile>;
-      const image: UploadedFile | null = images ? (images[0] as UploadedFile) || null : null;
+      const image: UploadedFile | null = ((request.body as any).file as UploadedFile) ?? null;
       if (image !== null) {
         const allowedTypes = ['image/jpeg', 'image/png'];
 

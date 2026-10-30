@@ -28,7 +28,7 @@ const UserSchema = z.object({
   isVerified: z.boolean().default(false),
   isActive: z.boolean().default(true),
   passwordChangedAt: z.date().optional(), // email reset links issued before this are rejected
-  image: z.union([ImageSchema, z.undefined()]),
+  image: ImageSchema.optional(),
   // refreshToken: z.string(),
 });
 

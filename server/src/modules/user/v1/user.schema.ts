@@ -15,7 +15,7 @@ export const userEditRequestBodySchema = z.object({
     }),
   currentPassword: z
     .string({
-      invalid_type_error: Errors.PasswordInvalid,
+      error: Errors.PasswordInvalid,
     })
     .trim()
     .refine((value) => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$|^$/.test(value), {
@@ -23,7 +23,7 @@ export const userEditRequestBodySchema = z.object({
     }),
   newPassword: z
     .string({
-      invalid_type_error: Errors.PasswordInvalid,
+      error: Errors.PasswordInvalid,
     })
     .trim()
     .refine((value) => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$|^$/.test(value), {

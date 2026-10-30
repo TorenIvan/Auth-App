@@ -4,7 +4,7 @@ import { MongoClient } from 'mongodb';
 import { config } from 'dotenv';
 import { resolve } from 'path';
 
-config({ path: resolve(__dirname, `../../.env.test`) });
+config({ path: resolve(__dirname, `../../.env.test`), quiet: true });
 
 /**
  * *** No network requests may leave the test environment ***

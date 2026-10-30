@@ -10,7 +10,7 @@ export async function validateRequestBody<T>(
     request.body = await schema.parseAsync(request.body);
   } catch (error) {
     if (error instanceof ZodError) {
-      const firstError = error.errors[0];
+      const firstError = error.issues[0];
       return reply.status(400).send(firstError);
     }
     return reply.status(400).send(error);
@@ -26,7 +26,7 @@ export async function validateRequestQuery<T>(
     request.query = await schema.parseAsync(request.query);
   } catch (error) {
     if (error instanceof ZodError) {
-      const firstError = error.errors[0];
+      const firstError = error.issues[0];
       return reply.status(400).send(firstError);
     }
     return reply.status(400).send(error);

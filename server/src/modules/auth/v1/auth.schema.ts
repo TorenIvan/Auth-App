@@ -4,15 +4,14 @@ import { Errors } from '../../../config/utils/constants/Errors';
 export const authCredentialsBodySchema = z.object({
   email: z
     .string({
-      required_error: Errors.EmailRequired,
-      invalid_type_error: Errors.EmailInvalid,
+      error: (issue) => (issue.input === undefined ? Errors.EmailRequired : Errors.EmailInvalid),
     })
     .trim()
     .email({ message: Errors.EmailInvalid }),
   password: z
     .string({
-      required_error: Errors.PasswordRequired,
-      invalid_type_error: Errors.PasswordInvalid,
+      error: (issue) =>
+        issue.input === undefined ? Errors.PasswordRequired : Errors.PasswordInvalid,
     })
     .trim()
     .refine((value) => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/.test(value), {
@@ -28,8 +27,7 @@ export const verifyEmailQueryStringSchema = z.object({
 export const forgotPasswordRequestSchema = z.object({
   email: z
     .string({
-      required_error: Errors.EmailRequired,
-      invalid_type_error: Errors.EmailInvalid,
+      error: (issue) => (issue.input === undefined ? Errors.EmailRequired : Errors.EmailInvalid),
     })
     .trim()
     .email({ message: Errors.EmailInvalid }),
@@ -38,8 +36,8 @@ export const forgotPasswordRequestSchema = z.object({
 export const resetPasswordRequestSchema = z.object({
   newPassword: z
     .string({
-      required_error: Errors.PasswordRequired,
-      invalid_type_error: Errors.PasswordInvalid,
+      error: (issue) =>
+        issue.input === undefined ? Errors.PasswordRequired : Errors.PasswordInvalid,
     })
     .trim()
     .refine((value) => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/.test(value), {
@@ -47,8 +45,8 @@ export const resetPasswordRequestSchema = z.object({
     }),
   confirmNewPassword: z
     .string({
-      required_error: Errors.PasswordRequired,
-      invalid_type_error: Errors.PasswordInvalid,
+      error: (issue) =>
+        issue.input === undefined ? Errors.PasswordRequired : Errors.PasswordInvalid,
     })
     .trim()
     .refine((value) => /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,36}$/.test(value), {

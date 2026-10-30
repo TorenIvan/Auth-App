@@ -12,7 +12,7 @@ import { authRoutesV1 } from '../modules/auth/v1';
 import { userRoutesV1 } from '../modules/user/v1';
 import httpErrorPlugin from '../config/plugins/httpError.plugin';
 import notFoundPlugin from '../config/plugins/notFound.plugin';
-import { MAX_FILE_SIZE_MB } from '../config/utils/helpers/general/isFileSizeExceeded';
+import { multipartOptions } from '../config/utils/helpers/general/multipartOptions';
 
 /**
  * @description Same plugins and order as app.ts. `beforeRoutes` lets a test declare extra routes
@@ -32,13 +32,7 @@ export async function createTestApp(
 
   // Same request parsing as app.ts
   await fastify.register(cookie, { hook: 'onRequest', parseOptions: {} });
-  await fastify.register(multipart, {
-    addToBody: true,
-    limits: {
-      fileSize: MAX_FILE_SIZE_MB * 1024 * 1024,
-      files: 1,
-    },
-  });
+  await fastify.register(multipart, multipartOptions);
   await fastify.register(rateLimit, { global: false });
 
   await fastify.register(databasePlugin, options);

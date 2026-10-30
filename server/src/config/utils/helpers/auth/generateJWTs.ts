@@ -4,7 +4,10 @@ import { EnvironmentVariables } from '../../constants/EnvironmentVariables';
 
 export const generateJWT = (data: TokenInterface, secret: string, expIn: string) => {
   // jwtid makes every token unique, even when two are issued for the same user in the same second
-  const token = jwt.sign(data, secret, { expiresIn: expIn, jwtid: randomUUID() });
+  const token = jwt.sign(data, secret, {
+    expiresIn: expIn as jwt.SignOptions['expiresIn'],
+    jwtid: randomUUID(),
+  });
   return token;
 };
 

@@ -87,11 +87,9 @@ class UserService {
       }
 
       if (image !== null) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { limit, ...restImageProperties } = image;
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        updateFields.image = restImageProperties;
+        updateFields.image = image;
       }
 
       const result: UpdateResult = await this.users.updateOne(

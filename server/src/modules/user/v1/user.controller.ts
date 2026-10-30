@@ -69,8 +69,8 @@ class UserController {
   ) {
     try {
       const { username, biography, phone, currentPassword, newPassword } = request.body;
-      const images = request.body.file as Array<UploadedFile>;
-      let image: UploadedFile | null = images ? (images[0] as UploadedFile) || null : null;
+      // A single uploaded file is an object (multipart keyValues), not an array
+      let image: UploadedFile | null = (request.body.file as UploadedFile | undefined) ?? null;
 
       if (image !== null) {
         if (!image.data || image.data.length === 0) {
