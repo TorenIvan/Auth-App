@@ -5,7 +5,7 @@ import { createTestApp } from '../test-app';
 import { createUser, findCookie, login, refreshCookieName } from '../helpers/auth';
 import { Errors } from '../../config/utils/constants/Errors';
 
-type Provider = 'google' | 'github' | 'gitlab' | 'discord' | 'facebook';
+type Provider = 'google' | 'github' | 'gitlab' | 'discord';
 type Profile = { email?: string; name?: string; verified?: boolean };
 
 const networkDisabled = () => Promise.reject(new Error('Network disabled in tests'));
@@ -29,8 +29,6 @@ function mockProvider(profile: Profile) {
     },
     'https://discord.com/api/oauth2/token': { access_token: 'provider-token' },
     'https://discord.com/api/users/@me': { email, username: name, verified },
-    'https://graph.facebook.com/v23.0/oauth/access_token': { access_token: 'provider-token' },
-    'https://graph.facebook.com/me': { email, name },
   };
   const respond = (url: string) =>
     url in responses ? Promise.resolve({ status: 200, data: responses[url] }) : networkDisabled();
@@ -55,7 +53,7 @@ describe('C10 social logins (providers mocked)', () => {
   const socialLogin = (provider: Provider, payload: object = { code: 'auth-code' }) =>
     app.inject({ method: 'POST', url: `/v1/auth/login/${provider}`, payload });
 
-  const providers: Provider[] = ['google', 'github', 'gitlab', 'discord', 'facebook'];
+  const providers: Provider[] = ['google', 'github', 'gitlab', 'discord'];
 
   it.each(providers)(
     '%s: creates a verified user and a session, without a social cookie',
@@ -140,20 +138,6 @@ describe('C10 social logins (providers mocked)', () => {
     }
   );
 
-  it.each([
-    ['credentials', 'credentials'],
-    ['google', 'google'],
-  ])('facebook: never links to an account created with %s', async (_, signInMethod) => {
-    await createUser(app, { signInMethod, customEmail: 'linked@example.com' });
-    mockProvider({ email: 'linked@example.com' });
-
-    const response = await socialLogin('facebook');
-
-    expect(response.statusCode).toBe(400);
-    expect(response.body).toBe(Errors.UserAlreadyExists);
-    expect(await app.db.collection('refresh_tokens').countDocuments()).toBe(0);
-  });
-
   it.each(providers)('%s: forbids an inactive user without a session', async (provider) => {
     await createUser(app, {
       isActive: false,
@@ -179,18 +163,6 @@ describe('C10 social logins (providers mocked)', () => {
     expect(response.statusCode).toBe(400);
     expect(axios.post).not.toHaveBeenCalled();
     expect(axios.get).not.toHaveBeenCalled();
-  });
-
-  it('facebook: passes the code as an encoded param, never inside the URL', async () => {
-    mockProvider({ email: 'fb-param@example.com' });
-
-    await socialLogin('facebook', { code: 'x&redirect_uri=https://evil.example' });
-
-    const [url, config] = vi.mocked(axios.get).mock.calls[0];
-    expect(url).toBe('https://graph.facebook.com/v23.0/oauth/access_token');
-    expect((config as { params: { code: string } }).params.code).toBe(
-      'x&redirect_uri=https://evil.example'
-    );
   });
 
   it('answers a generic 500 when the provider fails', async () => {

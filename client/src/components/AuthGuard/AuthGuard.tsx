@@ -41,7 +41,6 @@ const publicRoutes = [
   '/forgot-password',
   '/reset-password',
   '/oauth2/google',
-  '/oauth2/facebook',
   '/oauth2/github',
   '/oauth2/gitlab',
   '/oauth2/discord',

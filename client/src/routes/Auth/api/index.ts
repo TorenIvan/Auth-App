@@ -4,7 +4,6 @@ export { confirmEmail } from './confirmEmail';
 export { forgotPassword } from './forgotPassword';
 export { resetPassword } from './resetPassword';
 export { googleInitLoginFlow, googleLogin } from './google';
-export { facebookInitLoginFlow, facebookLogin } from './facebook';
 export { githubInitLoginFlow, githubLogin } from './github';
 export { gitlabInitLoginFlow, gitlabLogin } from './gitlab';
 export { discordInitLoginFlow, discordLogin } from './discord';

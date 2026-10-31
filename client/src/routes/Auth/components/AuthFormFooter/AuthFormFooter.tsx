@@ -17,11 +17,6 @@ function AuthFormFooter(props: IProps): JSX.Element {
     googleInitLoginFlow();
   };
 
-  // const responseFacebook = async () => {
-  //   if (isSubmitting) return;
-  //   facebookInitLoginFlow();
-  // };
-
   const responseGithub = async () => {
     if (isSubmitting) return;
     githubInitLoginFlow();
@@ -52,15 +47,6 @@ function AuthFormFooter(props: IProps): JSX.Element {
         >
           <GoogleIcon />
         </li>
-        {/* <li
-          key="2"
-          className={footerStyles['list-item']}
-          data-loading={isSubmitting ? 'true' : 'false'}
-          onClick={responseFacebook}
-          title="Facebook"
-        >
-          <FacebookIcon />
-        </li> */}
         <li
           key="3"
           className={footerStyles['list-item']}

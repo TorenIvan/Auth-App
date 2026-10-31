@@ -28,10 +28,6 @@ const authRoutes = [
         lazy: () => import('./pages/LoginGoogle'),
       },
       {
-        path: 'oauth2/facebook',
-        lazy: () => import('./pages/LoginFacebook'),
-      },
-      {
         path: 'oauth2/github',
         lazy: () => import('./pages/LoginGithub'),
       },

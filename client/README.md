@@ -272,9 +272,7 @@ React Router lazy loading reduces initial bundle size:
 
 ## OAuth2 Provider Disclaimer
 
-**Note**: The application includes route handlers for multiple OAuth2 providers (Google, GitHub, GitLab, Discord, Microsoft, Twitter, LinkedIn). However, only **Google, GitHub, GitLab and Discord** are currently functional. 
-
-Other providers (Microsoft, Twitter, LinkedIn, Facebook) require a registered business entity to obtain OAuth credentials, which is not available for this personal project. The frontend routes and components are implemented and ready to use once proper credentials are obtained.
+**Note**: The application supports **Google, GitHub, GitLab and Discord**. Other providers (Facebook, Microsoft, Twitter, LinkedIn) are not supported.
 
 ## Troubleshooting
 

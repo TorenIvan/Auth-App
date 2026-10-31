@@ -116,8 +116,6 @@ class AuthController {
   /**
    * @description Finds or creates the user of a social profile whose email the provider has verified.
    * - Inactive users are forbidden.
-   * - Facebook does not say whether the email is verified, so it is never linked to an account created
-   *   with another sign in method.
    * - An unverified account with this email (possibly pre-registered by someone else) is claimed:
    *   it becomes verified and loses its password.
    */
@@ -140,9 +138,6 @@ class AuthController {
 
       if (existingUser.isActive !== true) {
         return AuthController.handleError(reply, 403);
-      }
-      if (signInMethod === 'facebook' && existingUser.signInMethod !== 'facebook') {
-        return AuthController.handleError(reply, 400, Errors.UserAlreadyExists);
       }
       if (existingUser.isVerified !== true) {
         const claimed: ServiceResponse = await this.authService.ClaimUnverifiedAccount(
@@ -232,54 +227,6 @@ class AuthController {
       }
       reply.code(200).send();
     } catch (error) {
-      AuthController.handleError(reply, 500, Errors.GenericError);
-    }
-  }
-
-  async loginFacebookHandler(
-    request: FastifyRequest<{ Body: oauthCodeInput }>,
-    reply: FastifyReply
-  ) {
-    try {
-      const { code } = request.body;
-
-      // Values go through axios params (encoded), never interpolated into the URL
-      const tokenResponse = await axios.get('https://graph.facebook.com/v23.0/oauth/access_token', {
-        params: {
-          client_id: EnvironmentVariables.Facebook_App_Id,
-          redirect_uri: EnvironmentVariables.Facebook_App_Redirect_Uri,
-          client_secret: EnvironmentVariables.Facebook_App_Secret,
-          code,
-        },
-        headers: {
-          Origin: EnvironmentVariables.ServerUri,
-        },
-      });
-      if (!tokenResponse?.data?.access_token) {
-        return AuthController.handleError(reply, 400, Errors.GenericError);
-      }
-
-      const userResponse = await axios.get('https://graph.facebook.com/me', {
-        params: {
-          fields: 'id,email,name,about',
-          access_token: tokenResponse.data.access_token,
-        },
-        headers: { Origin: EnvironmentVariables.ServerUri },
-      });
-      if (!userResponse?.data?.email || !userResponse?.data?.name) {
-        return AuthController.handleError(reply, 400, Errors.NotRetrievedFacebook);
-      }
-
-      return await this.loginWithSocialProfile(
-        request,
-        reply,
-        userResponse.data.email,
-        userResponse.data.name,
-        userResponse.data.about ?? '',
-        'facebook'
-      );
-    } catch (error) {
-      AuthController.logProviderError(error);
       AuthController.handleError(reply, 500, Errors.GenericError);
     }
   }

@@ -24,7 +24,6 @@ const authRoutesV1 =
     fastify.register(refreshTokens(controller), { prefix: '/v1/auth/refresh' });
     fastify.register(checkIsAuthenticated(controller), { prefix: '/v1/auth/check' });
     fastify.register(loginWithCredentials(controller), { prefix: '/v1/auth/login/credentials' });
-    fastify.register(loginWithFacebook(controller), { prefix: '/v1/auth/login/facebook' });
     fastify.register(loginWithGithub(controller), { prefix: '/v1/auth/login/github' });
     fastify.register(loginWithGitlab(controller), { prefix: '/v1/auth/login/gitlab' });
     fastify.register(loginWithGoogle(controller), { prefix: '/v1/auth/login/google' });
@@ -74,15 +73,6 @@ const loginWithCredentials = (controller: AuthController): FastifyPluginAsync =>
       { config: authRateLimit },
       controller.loginCredentialsHandler.bind(controller)
     );
-  };
-};
-
-const loginWithFacebook = (controller: AuthController): FastifyPluginAsync => {
-  return async (fastify: FastifyInstance) => {
-    fastify.addHook('preHandler', async (request, reply) => {
-      await validateRequestBody(request, reply, oauthCodeBodySchema);
-    });
-    fastify.post('/', controller.loginFacebookHandler.bind(controller));
   };
 };
 

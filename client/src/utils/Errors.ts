@@ -28,7 +28,6 @@ export const Errors = {
     'It seems that you are already authenticated with an account. To continue with reset email operation, please logout and click the email link again. Otherwise, ignore the email.',
   InvalidQueryParameters: 'Invalid url; something went wrong, please try again',
   InvalidCSRFToken: 'Invalid url; suspicious act found; redirecting...',
-  UserDeniedFacebook: 'It seems that you denied to authorize facebook, redirecting to login',
   UserAlreadyAuthenticated: 'It seems that user is already authenticated, redirecting to login',
   AUserAlreadyAuthenticated: 'It seems that a user is already authenticated, redirecting...',
 } as const;

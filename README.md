@@ -226,7 +226,7 @@ npm start
 3. After authorization, redirected back to callback URL
 4. Server exchanges code for user info and accepts only a provider-verified email
 5. Creates the user, or logs into the existing one (an unverified account with that email is claimed
-   and loses its password; Facebook never links to other accounts)
+   and loses its password)
 6. Issues access and refresh tokens
 
 ## Deployment
